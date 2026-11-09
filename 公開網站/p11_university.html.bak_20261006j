@@ -1,0 +1,696 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TLI Connect｜大學合作方案</title>
+<meta name="description" content="TLI Connect 大學合作方案：由合作大學支付授權費用予 TLI，在學學生的學費已含在內，不另收費，即可使用華語學習資源，含影片、音檔、測驗與 Mandarin Lounge 會話預約。">
+<style>
+:root{
+  --c-primary:#1B4E8C;
+  --c-primary-dark:#123A66;
+  --c-accent:#E8792B;
+  --c-accent-dark:#CF691F;
+  --c-secondary:#0F9B79;
+  --c-bg:#F5F7FA;
+  --c-border:#E4E7EC;
+  --c-muted:#667085;
+  --c-text:#101828;
+  --radius:14px;
+  --shadow:0 1px 3px rgba(16,24,40,.06);
+}
+*{box-sizing:border-box;}
+html,body{margin:0;padding:0;overflow-x:hidden;}
+body{font-family:"Noto Sans TC","Microsoft JhengHei",system-ui,-apple-system,"Segoe UI",sans-serif;background:#fff;color:var(--c-text);line-height:1.7;font-size:16px;}
+a{color:inherit;text-decoration:none;}
+img{max-width:100%;display:block;}
+ul{margin:0;padding:0;list-style:none;}
+h1,h2,h3,p{margin:0;}
+
+/* 站台頁首（與 p10 同套） */
+.site-header{background:#fff;border-bottom:1px solid var(--c-border);padding:12px 24px;display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;position:sticky;top:0;z-index:40;}
+.brand{font-weight:700;font-size:20px;color:var(--c-primary);display:flex;align-items:center;gap:8px;letter-spacing:.2px;}
+.brand img{height:32px;width:auto;display:block;}
+.site-nav{display:flex;gap:22px;align-items:center;font-size:14px;font-weight:600;color:var(--c-text);}
+.site-nav a:hover{color:var(--c-primary);}
+.header-right{display:flex;gap:10px;align-items:center;flex-wrap:wrap;}
+.menu-toggle{display:none;background:none;border:1px solid var(--c-border);border-radius:6px;padding:6px 10px;font-size:16px;cursor:pointer;}
+@media(max-width:780px){
+  .brand img{height:26px;}
+  .site-nav{display:none;width:100%;order:3;flex-direction:column;align-items:flex-start;gap:12px;padding-top:12px;border-top:1px solid var(--c-border);margin-top:10px;}
+  .site-nav.open{display:flex;}
+  .menu-toggle{display:inline-block;min-width:44px;min-height:44px;}
+  .site-nav a{display:flex;align-items:center;width:100%;min-height:44px;box-sizing:border-box;}
+}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;border:none;border-radius:6px;padding:10px 20px;font-size:14px;font-weight:700;cursor:pointer;font-family:inherit;transition:background .15s;white-space:nowrap;}
+.btn-primary{background:var(--c-primary);color:#fff;}
+.btn-primary:hover{background:var(--c-primary-dark);}
+.btn-accent{background:var(--c-accent);color:#fff;}
+.btn-accent:hover{background:var(--c-accent-dark);}
+.btn-outline{background:#fff;border:1px solid var(--c-border);color:var(--c-text);}
+.btn-outline:hover{background:var(--c-bg);}
+.btn-sm{padding:7px 14px;font-size:13px;}
+.btn:disabled{background:var(--c-border)!important;color:#98A2B3!important;cursor:not-allowed;}
+.text-link{color:var(--c-primary);font-weight:700;font-size:15px;display:inline-flex;align-items:center;gap:4px;}
+.text-link:hover{text-decoration:underline;}
+
+main{max-width:1040px;margin:0 auto;padding:0 24px;}
+
+/* Hero */
+.uni-hero{padding:56px 24px 8px;}
+.uni-hero-inner{max-width:1040px;margin:0 auto;}
+.uni-hero-eyebrow{display:block;color:var(--c-secondary);font-weight:700;font-size:14px;letter-spacing:.3px;margin-bottom:16px;}
+.uni-hero h1{font-size:38px;font-weight:800;line-height:1.35;letter-spacing:-.4px;margin-bottom:16px;max-width:760px;}
+@media(max-width:600px){.uni-hero h1{font-size:27px;}}
+.uni-hero-lead{font-size:16px;color:var(--c-muted);max-width:680px;}
+.uni-name-tag{display:inline-flex;align-items:center;gap:8px;background:var(--c-bg);border:1px solid var(--c-border);border-radius:999px;padding:8px 16px;font-size:14px;font-weight:700;color:var(--c-primary);margin-bottom:20px;}
+.demo-note{font-size:12.5px;color:var(--c-muted);background:#FFF8EE;border:1px solid #F3DFB8;border-radius:8px;padding:8px 12px;display:inline-block;margin-top:18px;}
+
+.home-section{padding:56px 0;}
+@media(max-width:780px){.home-section{padding:40px 0;}}
+.section-head2{max-width:640px;margin:0 auto 32px;}
+.section-head2 h2{font-size:24px;font-weight:800;}
+.section-head2 p{font-size:14.5px;color:var(--c-muted);margin-top:8px;}
+
+/* 驗證卡片 */
+.verify-card{background:var(--c-bg);border:1px solid var(--c-border);border-radius:var(--radius);padding:32px;max-width:560px;}
+.verify-field{margin-bottom:14px;}
+.verify-field label{display:block;font-size:13px;font-weight:700;margin-bottom:6px;}
+.verify-field input,.verify-field select{width:100%;border:1px solid var(--c-border);border-radius:8px;padding:12px 14px;font-size:14px;font-family:inherit;background:#fff;box-sizing:border-box;}
+.verify-hint{font-size:12.5px;color:var(--c-muted);margin-top:6px;}
+.verify-msg{font-size:13.5px;font-weight:700;margin-top:12px;padding:10px 12px;border-radius:8px;display:none;}
+.verify-msg.show{display:block;}
+.verify-msg.ok{background:#E4F5F0;color:#0B6B52;}
+.verify-msg.err{background:#FBEAEA;color:#912018;}
+
+/* 必填標示與欄位驗證（與 p07 同套） */
+.field-required-note{font-size:12px;color:var(--c-muted);margin-bottom:18px;}
+.opt-mark{color:#6B7280;font-weight:400;margin-left:4px;}
+.req-mark{color:#D92D20;margin-left:2px;}
+.field-error{display:none;font-size:12px;color:#D92D20;margin-top:5px;line-height:1.5;}
+.field-error.show{display:block;}
+.verify-field input.invalid,.verify-field select.invalid{border-color:#D92D20;}
+.phone-row{display:flex;gap:8px;}
+.phone-row select{flex:0 0 128px;}
+.phone-row input{flex:1;min-width:0;}
+.or-divider{display:flex;align-items:center;gap:10px;color:var(--c-muted);font-size:12px;margin:10px 0;}
+.or-divider:before,.or-divider:after{content:"";flex:1;height:1px;background:var(--c-border);}
+.field-checkbox .checkbox-label{display:flex;align-items:flex-start;gap:8px;font-size:13px;color:var(--c-text);cursor:pointer;}
+.field-checkbox .checkbox-label input{margin-top:3px;flex:none;width:16px;height:16px;}
+.field-checkbox .checkbox-label a{color:var(--c-primary);font-weight:600;}
+.field-checkbox .checkbox-label a:hover{text-decoration:underline;}
+.email-dup-note{display:none;font-size:12.5px;background:#FEF3F2;border:1px solid #FECDCA;color:#B42318;border-radius:6px;padding:10px 12px;margin-top:8px;}
+.email-dup-note.show{display:block;}
+.email-dup-note button{margin-top:8px;}
+
+/* 條款示範 modal（與 p07 同套） */
+.modal-overlay{position:fixed;inset:0;background:rgba(16,24,40,.45);display:none;align-items:center;justify-content:center;z-index:300;padding:20px;}
+.modal-overlay.show{display:flex;}
+.modal-box{background:#fff;border-radius:12px;max-width:520px;width:100%;max-height:80vh;display:flex;flex-direction:column;box-shadow:0 8px 24px rgba(16,24,40,.10);}
+.modal-head{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:16px 20px;border-bottom:1px solid var(--c-border);}
+.modal-head h3{font-size:15px;font-weight:800;}
+.modal-close-btn{background:none;border:none;cursor:pointer;color:var(--c-muted);padding:6px;flex:none;}
+.modal-close-btn:hover{color:var(--c-text);}
+.modal-body{padding:18px 20px;overflow-y:auto;font-size:13px;color:var(--c-muted);line-height:1.8;}
+.modal-body h4{font-size:13.5px;color:var(--c-text);margin:14px 0 6px;}
+.modal-body h4:first-child{margin-top:0;}
+.modal-body p{margin-bottom:8px;}
+.modal-foot{padding:14px 20px;border-top:1px solid var(--c-border);text-align:right;}
+
+/* 方案卡 */
+.plan-card-uni{border:1.5px solid var(--c-primary);border-radius:var(--radius);padding:32px;max-width:560px;background:#fff;box-shadow:var(--shadow);}
+.plan-card-uni .plan-badge2{display:inline-block;background:#E6EEF8;color:var(--c-primary);font-size:12px;font-weight:700;padding:4px 10px;border-radius:6px;margin-bottom:12px;}
+.plan-card-uni h3{font-size:21px;font-weight:800;margin-bottom:6px;}
+.plan-card-uni .plan-sub{font-size:13.5px;color:var(--c-muted);margin-bottom:18px;}
+.plan-includes2{display:flex;flex-direction:column;gap:0;margin-bottom:18px;}
+.plan-item{display:flex;align-items:flex-start;gap:10px;padding:11px 0;border-top:1px dashed var(--c-border);font-size:14px;}
+.plan-item:first-child{border-top:none;}
+.plan-item svg{flex:none;color:var(--c-secondary);margin-top:2px;}
+.plan-item .pi-name{font-weight:700;}
+.plan-item .pi-desc{color:var(--c-muted);font-size:13px;margin-top:2px;}
+.plan-price-row{display:flex;align-items:baseline;justify-content:space-between;border-top:1px solid var(--c-border);padding-top:16px;margin-bottom:18px;}
+.plan-price-row .pp-label{font-size:13.5px;color:var(--c-muted);}
+.plan-price-row .pp-value{font-size:20px;font-weight:800;color:var(--c-primary);}
+.pending-tag{font-size:11.5px;font-weight:700;background:#FCEBDC;color:#9A4A0F;padding:2px 8px;border-radius:6px;margin-left:6px;vertical-align:middle;}
+.sponsor-row{display:flex;align-items:center;justify-content:space-between;border-top:1px solid var(--c-border);padding-top:16px;margin-bottom:18px;gap:12px;flex-wrap:wrap;}
+.sponsor-row .pp-label{font-size:13.5px;color:var(--c-muted);}
+.sponsor-badge{display:inline-flex;align-items:center;gap:6px;background:#E4F5F0;color:#0B6B52;font-size:13px;font-weight:800;padding:6px 12px;border-radius:8px;}
+
+/* 三個月期程說明 */
+.program-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;}
+@media(max-width:780px){.program-grid{grid-template-columns:1fr;}}
+.program-box{background:#fff;border:1px solid var(--c-border);border-radius:var(--radius);padding:22px;box-shadow:var(--shadow);}
+.program-box .pb-icon{width:36px;height:36px;border-radius:9px;background:#E6EEF8;color:var(--c-primary);display:flex;align-items:center;justify-content:center;margin-bottom:12px;}
+.program-box .pb-icon svg{width:19px;height:19px;}
+.program-box h3{font-size:15.5px;font-weight:800;margin-bottom:6px;}
+.program-box p{font-size:13.5px;color:var(--c-muted);}
+.program-box .pb-who{display:inline-block;font-size:11.5px;font-weight:700;padding:2px 9px;border-radius:6px;margin-bottom:10px;}
+.pb-who.uni{background:#FCEBDC;color:#9A4A0F;}
+.pb-who.tli{background:#E4F5F0;color:#0B6B52;}
+.pb-who.connect{background:#E6EEF8;color:var(--c-primary);}
+.period-strip{display:flex;align-items:center;gap:10px;background:var(--c-bg);border:1px solid var(--c-border);border-radius:10px;padding:12px 16px;font-size:13.5px;font-weight:700;margin-top:20px;flex-wrap:wrap;}
+.period-strip svg{color:var(--c-primary);flex:none;}
+
+.site-footer{background:#101828;color:#CBD3DE;padding:44px 24px 24px;}
+.footer-inner{max-width:1040px;margin:0 auto;display:grid;grid-template-columns:1.4fr 1fr 1fr 1fr;gap:32px;padding-bottom:32px;}
+@media(max-width:700px){.footer-inner{grid-template-columns:1fr 1fr;}}
+.footer-inner h4{color:#fff;font-size:14px;margin-bottom:14px;}
+.footer-inner li,.footer-inner p{font-size:13px;color:#98A2B3;line-height:1.9;}
+.footer-inner ul li a:hover{color:#fff;}
+.footer-bottom{max-width:1040px;margin:0 auto;border-top:1px solid #2A3444;padding-top:20px;display:flex;align-items:center;gap:10px;font-size:12.5px;color:#667085;}
+.footer-bottom img{height:20px;width:auto;filter:brightness(0) invert(1);opacity:.6;}
+
+.toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(20px);background:#101828;color:#fff;padding:10px 20px;border-radius:8px;font-size:13px;opacity:0;pointer-events:none;transition:.2s;z-index:200;max-width:80vw;text-align:center;}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
+</style>
+</head>
+<body>
+
+<header class="site-header">
+  <a class="brand" href="p01_home.html"><img src="../assets/tli-logo.svg" alt="TLI"></a>
+  <button class="menu-toggle" onclick="document.querySelector('.site-nav').classList.toggle('open')" aria-label="開啟選單" data-i18n-aria-label="menu_toggle_aria"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg></button>
+  <nav class="site-nav">
+    <a href="p02_courses.html" data-i18n="nav_courses">課程</a>
+    <a href="p10_enterprise.html" data-i18n="nav_enterprise">企業培訓</a>
+    <a href="p15_placement_test.html" data-i18n="nav_placement">程度測驗</a>
+    <a href="p09_events.html" data-i18n="nav_events">活動</a>
+    <a href="p04_teachers.html" data-i18n="nav_teachers">師資</a>
+    <a href="p05_about_locations.html" data-i18n="nav_about">品牌與校區</a>
+    <a href="p08_faq.html" data-i18n="nav_faq">常見問題</a>
+  </nav>
+  <div class="header-right tb-actions">
+    <a class="btn btn-primary btn-sm" data-i18n="btn_consult" href="p06_trial.html?type=consult">預約諮詢</a>
+    <a class="btn btn-accent btn-sm" data-i18n="btn_trial" href="p06_trial.html?type=trial">預約試聽</a>
+    <a class="btn btn-outline btn-sm" data-i18n="btn_login" href="p07_login_register.html">登入</a>
+  </div>
+</header>
+
+<section class="uni-hero">
+  <div class="uni-hero-inner">
+    <span class="uni-hero-eyebrow" data-i18n="p11_hero_eyebrow">專案合作・大學合作</span>
+    <div><span class="uni-name-tag"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 10L12 5 2 10l10 5 10-5z"/><path d="M6 12v5c0 1.5 2.7 3 6 3s6-1.5 6-3v-5"/></svg><span data-i18n="p11_uni_name">範例州立大學</span></span></div>
+    <h1 data-i18n="p11_hero_h1">範例州立大學合作方案：在學期間，半導體技能與華語一起學</h1>
+    <p class="uni-hero-lead" data-i18n="p11_hero_lead">TLI 與範例州立大學合作，為期 3 個月的產學合作期程由大學支付授權費用，在學學生的學費已含此費用，不需另外支付。期程內由大學開設半導體技能課程，TLI 同步開設半導體相關中文課程，並透過 Connect 提供自學影片、音檔、測驗；並提供 Mandarin Lounge：每場 30 分鐘、6–10 人，需預約團體場次，以 Teams 或 Zoom 視訊，強化實作與口說應用。</p>
+  </div>
+</section>
+
+<main>
+  <section class="home-section" style="padding-top:24px;">
+    <div class="section-head2">
+      <h2 data-i18n="p11_program_h2">3 個月合作期程怎麼安排</h2>
+      <p data-i18n="p11_program_lead">期程內三方各自負責的內容如下，Connect 是學生每週使用的學習平台。</p>
+    </div>
+    <div class="program-grid">
+      <div class="program-box">
+        <span class="pb-who uni" data-i18n="p11_uni_name">範例州立大學</span>
+        <div class="pb-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 10L12 5 2 10l10 5 10-5z"/><path d="M6 12v5c0 1.5 2.7 3 6 3s6-1.5 6-3v-5"/></svg></div>
+        <h3 data-i18n="p11_program1_h">半導體技能課程</h3>
+        <p data-i18n="p11_program1_p">由大學開設專業課程，教授半導體產業所需的技能與知識。</p>
+      </div>
+      <div class="program-box">
+        <span class="pb-who tli">TLI</span>
+        <div class="pb-icon" style="background:#E4F5F0;color:var(--c-secondary);"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 016.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 014 19.5v-15A2.5 2.5 0 016.5 2z"/></svg></div>
+        <h3 data-i18n="p11_program2_h">半導體相關中文課程</h3>
+        <p data-i18n="p11_program2_p">由 TLI 專業老師開設，聚焦半導體職場情境的中文表達與溝通。</p>
+      </div>
+      <div class="program-box">
+        <span class="pb-who connect" data-i18n="p11_program3_who">Connect 平台</span>
+        <div class="pb-icon" style="background:#FCEBDC;color:var(--c-accent-dark);"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2"/></svg></div>
+        <h3 data-i18n="p11_program3_h">自學資源＋Mandarin Lounge</h3>
+        <p data-i18n="p11_program3_p">提供影片、音檔、測驗自主練習；Mandarin Lounge 口說練習由 TLI 老師帶領，每月有預約額度，報名團體場次。</p>
+      </div>
+    </div>
+    <div class="period-strip">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>
+      <span data-i18n="p11_period_text">期程長度：3 個月（實際起訖日期以學校公告為準）</span>
+    </div>
+  </section>
+
+  <section class="home-section">
+    <div class="section-head2">
+      <h2 data-i18n="p11_step1_h2">Step 1．驗證在學身分</h2>
+      <p data-i18n="p11_step1_lead">請填寫以下必填資訊完成身分驗證，驗證成功後即可開通方案。</p>
+    </div>
+    <div class="verify-card">
+      <div class="field-required-note"><span class="req-mark">*</span><span data-i18n="p11_required_note"> 為必填欄位</span></div>
+      <div class="verify-field">
+        <label for="uniName"><span data-i18n="p11_label_name">姓名</span><span class="req-mark">*</span></label>
+        <input type="text" id="uniName" placeholder="請輸入姓名" data-i18n-placeholder="p11_ph_name" autocomplete="name" onblur="validateUniName()">
+        <div class="field-error" id="err_uniName"></div>
+      </div>
+      <div class="verify-field" id="identityGroup">
+        <label for="uniCode"><span data-i18n="p11_label_unicode">機構代碼</span><span class="req-mark">*</span></label>
+        <input type="text" id="uniCode" placeholder="例如：STATE2026-CHI" data-i18n-placeholder="p11_ph_unicode" autocomplete="off" onblur="validateUniIdentity()">
+        <div class="or-divider" data-i18n="p11_or_divider">或</div>
+        <label for="uniEmail"><span data-i18n="p11_label_uniemail">校內信箱</span><span class="req-mark">*</span></label>
+        <input type="email" id="uniEmail" placeholder="you@example-state.edu" autocomplete="email" onblur="validateUniIdentity()">
+        <div class="field-error" id="err_uniIdentity"></div>
+        <div class="email-dup-note" id="uniEmailDupNote">
+          <div data-i18n="p11_dup_note">此信箱已完成開通，請直接登入</div>
+          <button type="button" class="btn btn-outline btn-sm" onclick="goToLoginWithUniEmail()" data-i18n="p11_dup_btn">前往登入</button>
+        </div>
+        <div class="verify-hint" data-i18n="p11_identity_hint">機構代碼與校內信箱擇一填寫即可</div>
+      </div>
+      <div class="verify-field">
+        <label for="uniPhone"><span data-i18n="p11_label_phone">手機</span><span class="opt-mark" data-i18n="p11_optional_mark">（選填）</span></label>
+        <div class="phone-row">
+          <select id="uniPhoneCc" aria-label="國碼" data-i18n-aria-label="p11_cc_aria"></select>
+          <input type="tel" id="uniPhone" placeholder="請輸入手機號碼" data-i18n-placeholder="p11_ph_phone" onblur="validateUniPhone()">
+        </div>
+        <div class="field-error" id="err_uniPhone"></div>
+      </div>
+      <div class="verify-field">
+        <label for="uniTimezone"><span data-i18n="p11_label_timezone">所在時區</span><span class="req-mark">*</span></label>
+        <select id="uniTimezone" onchange="validateUniTimezone()"></select>
+        <div class="field-error" id="err_uniTimezone"></div>
+      </div>
+      <div class="verify-field">
+        <label for="uniNativeLang"><span data-i18n="p11_label_nativelang">母語</span><span class="req-mark">*</span></label>
+        <select id="uniNativeLang" onchange="validateUniNativeLang()"></select>
+        <div class="field-error" id="err_uniNativeLang"></div>
+      </div>
+      <div class="verify-field">
+        <label for="uniStudentId" data-i18n="p11_label_studentid">學號</label>
+        <input type="text" id="uniStudentId" placeholder="請輸入學號（選填）" data-i18n-placeholder="p11_ph_studentid" autocomplete="off">
+      </div>
+      <div class="verify-field field-checkbox">
+        <label class="checkbox-label">
+          <input type="checkbox" id="uniTerms" onchange="validateUniTerms()">
+          <span class="checkbox-label-text"><span data-i18n="p11_terms_pre">我已閱讀並同意</span><a href="#" onclick="openUniTermsModal();return false;" data-i18n="p11_terms_link">服務條款與個資蒐集告知</a><span class="req-mark">*</span></span>
+        </label>
+        <div class="field-error" id="err_uniTerms"></div>
+      </div>
+      <button class="btn btn-primary" id="verifyBtn" onclick="verifyStudent()" data-i18n="p11_verify_btn">驗證身分</button>
+      <div class="verify-hint" data-i18n="p11_verify_hint2">填寫全部必填欄位並通過驗證即視為身分驗證成功；未通過時會提示第一個錯誤欄位。</div>
+      <div class="verify-msg" id="verifyMsg"></div>
+    </div>
+  </section>
+
+  <section class="home-section" style="padding-top:0;">
+    <div class="section-head2">
+      <h2 data-i18n="p11_step2_h2">Step 2．開通方案</h2>
+      <p data-i18n="p11_step2_lead">方案涵蓋自學影片、音檔、測驗；Mandarin Lounge 以 6–10 人團體場次練習口說，每月有預約額度。</p>
+    </div>
+    <div class="plan-card-uni">
+      <span class="plan-badge2" data-i18n="p11_plan_badge">在學期間適用・3 個月期程</span>
+      <h3 data-i18n="p11_plan_title">在學期間資源方案（範例州立大學）</h3>
+      <div class="plan-sub" data-i18n="p11_plan_sub">適用對象：範例州立大學在學學生（憑專屬代碼或校內信箱開通）</div>
+      <div class="plan-includes2">
+        <div class="plan-item">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2"/></svg>
+          <div><div class="pi-name" data-i18n="p11_plan1_name">自學影片</div><div class="pi-desc" data-i18n="p11_plan1_desc">分級華語教學影片，不限次數觀看</div></div>
+        </div>
+        <div class="plan-item">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg>
+          <div><div class="pi-name" data-i18n="p11_plan2_name">自學音檔</div><div class="pi-desc" data-i18n="p11_plan2_desc">聽力與口說練習音檔，可離線下載</div></div>
+        </div>
+        <div class="plan-item">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="8" y="2" width="8" height="4" rx="1"/><path d="M9 4H6a2 2 0 00-2 2v14a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2h-3"/><path d="M9 14l2 2 4-4"/></svg>
+          <div><div class="pi-name" data-i18n="p11_plan3_name">自我測驗</div><div class="pi-desc" data-i18n="p11_plan3_desc">單元測驗與程度檢核，即測即評</div></div>
+        </div>
+        <div class="plan-item">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg>
+          <div><div class="pi-name"><span data-i18n="p11_plan4_name">Mandarin Lounge</span><span class="pending-tag" style="background:#E4F5F0;color:#0B6B52;" data-i18n="p11_plan4_tag">每月有預約額度</span></div><div class="pi-desc" data-i18n="p11_plan4_desc">每場 30 分鐘，由 TLI 老師帶領，6–10 人團體場次</div></div>
+        </div>
+      </div>
+      <div class="sponsor-row">
+        <span class="pp-label" data-i18n="p11_fee_label">費用</span>
+        <span class="sponsor-badge"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg><span data-i18n="p11_sponsor_badge">你的學費已繳給學校，TLI 不另向你收費</span></span>
+      </div>
+      <button class="btn btn-accent" id="uniCheckoutBtn" style="width:100%;" onclick="goCheckout()" disabled data-i18n="p11_checkout_btn">立即開通</button>
+      <div class="verify-hint" id="checkoutHint" style="margin-top:10px;text-align:center;">請先完成 Step 1 驗證，才能開通方案</div>
+    </div>
+  </section>
+</main>
+
+<div class="modal-overlay" id="uniTermsModalOverlay" onclick="if(event.target===this) closeUniTermsModal()">
+  <div class="modal-box">
+    <div class="modal-head">
+      <h3 data-i18n="p11_terms_modal_title">服務條款與個資蒐集告知</h3>
+      <button class="modal-close-btn" onclick="closeUniTermsModal()" aria-label="關閉" data-i18n-aria-label="p11_close_aria"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
+    </div>
+    <div class="modal-body" id="uniTermsModalBody"></div>
+    <div class="modal-foot">
+      <button type="button" class="btn btn-primary btn-sm" onclick="closeUniTermsModal()" data-i18n="p11_terms_close_btn">我已閱讀</button>
+    </div>
+  </div>
+</div>
+
+<footer class="site-footer">
+  <div class="footer-inner">
+    <div>
+      <h4 data-i18n="footer_brand_name">TLI 中華語文研習所</h4>
+      <li data-i18n="footer_brand_line1">1956 年創立於美國紐澤西，同年於台北建校</li>
+      <li data-i18n="footer_brand_line2">1976 年教育部核定校名為「中華語文研習所」</li>
+    </div>
+    <div>
+      <h4 data-i18n="footer_col_courses">課程</h4>
+      <ul>
+        <li><a href="p02_courses.html" data-i18n="footer_link_chinese">中文課程</a></li>
+        <li><a href="p02_courses.html" data-i18n="footer_link_foreign">外語課程</a></li>
+        <li><a href="p09_events.html" data-i18n="footer_link_events">線上活動</a></li>
+        <li><a href="p04_teachers.html" data-i18n="footer_link_teachers">師資介紹</a></li>
+      </ul>
+    </div>
+    <div>
+      <h4 data-i18n="footer_col_about">關於 TLI</h4>
+      <ul>
+        <li><a href="p05_about_locations.html" data-i18n="footer_link_history">品牌沿革</a></li>
+        <li><a href="p05_about_locations.html" data-i18n="footer_link_locations">四校地址</a></li>
+        <li><a href="p08_faq.html" data-i18n="footer_link_faq">常見問題</a></li>
+      </ul>
+    </div>
+    <div>
+      <h4 data-i18n="footer_col_start">開始學習</h4>
+      <ul>
+        <li><a href="p06_trial.html" data-i18n="footer_link_trial">免費試聽</a></li>
+        <li><a href="p07_login_register.html" data-i18n="footer_link_login">會員登入／註冊</a></li>
+      </ul>
+    </div>
+  </div>
+  <div class="footer-bottom"><img src="../assets/tli-logo.svg" alt="TLI"><span data-i18n="footer_copyright">© 2026 TLI 中華語文研習所．保留所有權利。</span></div>
+</footer>
+
+<div class="toast" id="toast"></div>
+
+<script>
+function showToast(msg){
+  var t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  clearTimeout(window._toastTimer);
+  window._toastTimer = setTimeout(function(){ t.classList.remove('show'); }, 2200);
+}
+/* ===================== Step 1 驗證表單：必填標示、即時驗證、Email 主鍵、條款 modal（與 p07 同套做法） ===================== */
+
+/* 國碼／時區／母語下拉選項（純前端 demo，依當前語系顯示對應名稱；國碼與時區清單與 p07 同套） */
+var TLI_COUNTRY_CODES = {
+'zh-TW':[['+886','台灣 +886'],['+86','中國 +86'],['+852','香港 +852'],['+853','澳門 +853'],['+81','日本 +81'],['+82','韓國 +82'],['+65','新加坡 +65'],['+60','馬來西亞 +60'],['+66','泰國 +66'],['+84','越南 +84'],['+62','印尼 +62'],['+63','菲律賓 +63'],['+1','美國／加拿大 +1'],['+44','英國 +44'],['+61','澳洲 +61'],['+49','德國 +49']],
+en:[['+886','Taiwan +886'],['+86','China +86'],['+852','Hong Kong +852'],['+853','Macau +853'],['+81','Japan +81'],['+82','South Korea +82'],['+65','Singapore +65'],['+60','Malaysia +60'],['+66','Thailand +66'],['+84','Vietnam +84'],['+62','Indonesia +62'],['+63','Philippines +63'],['+1','US / Canada +1'],['+44','UK +44'],['+61','Australia +61'],['+49','Germany +49']],
+ja:[['+886','台湾 +886'],['+86','中国 +86'],['+852','香港 +852'],['+853','マカオ +853'],['+81','日本 +81'],['+82','韓国 +82'],['+65','シンガポール +65'],['+60','マレーシア +60'],['+66','タイ +66'],['+84','ベトナム +84'],['+62','インドネシア +62'],['+63','フィリピン +63'],['+1','米国／カナダ +1'],['+44','英国 +44'],['+61','オーストラリア +61'],['+49','ドイツ +49']],
+de:[['+886','Taiwan +886'],['+86','China +86'],['+852','Hongkong +852'],['+853','Macau +853'],['+81','Japan +81'],['+82','Südkorea +82'],['+65','Singapur +65'],['+60','Malaysia +60'],['+66','Thailand +66'],['+84','Vietnam +84'],['+62','Indonesien +62'],['+63','Philippinen +63'],['+1','USA / Kanada +1'],['+44','Vereinigtes Königreich +44'],['+61','Australien +61'],['+49','Deutschland +49']]
+};
+var TLI_TIMEZONES = {
+'zh-TW':[['Asia/Taipei','台北（UTC+8）'],['Asia/Shanghai','上海（UTC+8）'],['Asia/Hong_Kong','香港（UTC+8）'],['Asia/Tokyo','東京（UTC+9）'],['Asia/Seoul','首爾（UTC+9）'],['Asia/Singapore','新加坡（UTC+8）'],['Asia/Kuala_Lumpur','吉隆坡（UTC+8）'],['Asia/Bangkok','曼谷（UTC+7）'],['Asia/Jakarta','雅加達（UTC+7）'],['Asia/Ho_Chi_Minh','胡志明市（UTC+7）'],['Asia/Manila','馬尼拉（UTC+8）'],['America/Los_Angeles','美國西岸（UTC-8）'],['America/New_York','美國東岸（UTC-5）'],['Europe/London','倫敦（UTC+0）'],['Europe/Berlin','柏林（UTC+1）'],['Australia/Sydney','雪梨（UTC+10）']],
+en:[['Asia/Taipei','Taipei (UTC+8)'],['Asia/Shanghai','Shanghai (UTC+8)'],['Asia/Hong_Kong','Hong Kong (UTC+8)'],['Asia/Tokyo','Tokyo (UTC+9)'],['Asia/Seoul','Seoul (UTC+9)'],['Asia/Singapore','Singapore (UTC+8)'],['Asia/Kuala_Lumpur','Kuala Lumpur (UTC+8)'],['Asia/Bangkok','Bangkok (UTC+7)'],['Asia/Jakarta','Jakarta (UTC+7)'],['Asia/Ho_Chi_Minh','Ho Chi Minh City (UTC+7)'],['Asia/Manila','Manila (UTC+8)'],['America/Los_Angeles','US Pacific (UTC-8)'],['America/New_York','US Eastern (UTC-5)'],['Europe/London','London (UTC+0)'],['Europe/Berlin','Berlin (UTC+1)'],['Australia/Sydney','Sydney (UTC+10)']],
+ja:[['Asia/Taipei','台北（UTC+8）'],['Asia/Shanghai','上海（UTC+8）'],['Asia/Hong_Kong','香港（UTC+8）'],['Asia/Tokyo','東京（UTC+9）'],['Asia/Seoul','ソウル（UTC+9）'],['Asia/Singapore','シンガポール（UTC+8）'],['Asia/Kuala_Lumpur','クアラルンプール（UTC+8）'],['Asia/Bangkok','バンコク（UTC+7）'],['Asia/Jakarta','ジャカルタ（UTC+7）'],['Asia/Ho_Chi_Minh','ホーチミン（UTC+7）'],['Asia/Manila','マニラ（UTC+8）'],['America/Los_Angeles','米国西海岸（UTC-8）'],['America/New_York','米国東海岸（UTC-5）'],['Europe/London','ロンドン（UTC+0）'],['Europe/Berlin','ベルリン（UTC+1）'],['Australia/Sydney','シドニー（UTC+10）']],
+de:[['Asia/Taipei','Taipeh (UTC+8)'],['Asia/Shanghai','Shanghai (UTC+8)'],['Asia/Hong_Kong','Hongkong (UTC+8)'],['Asia/Tokyo','Tokio (UTC+9)'],['Asia/Seoul','Seoul (UTC+9)'],['Asia/Singapore','Singapur (UTC+8)'],['Asia/Kuala_Lumpur','Kuala Lumpur (UTC+8)'],['Asia/Bangkok','Bangkok (UTC+7)'],['Asia/Jakarta','Jakarta (UTC+7)'],['Asia/Ho_Chi_Minh','Ho-Chi-Minh-Stadt (UTC+7)'],['Asia/Manila','Manila (UTC+8)'],['America/Los_Angeles','US-Westküste (UTC-8)'],['America/New_York','US-Ostküste (UTC-5)'],['Europe/London','London (UTC+0)'],['Europe/Berlin','Berlin (UTC+1)'],['Australia/Sydney','Sydney (UTC+10)']]
+};
+var TLI_NATIVE_LANGS = {
+'zh-TW':[['','請選擇母語'],['zh','中文'],['en','英文'],['ja','日文'],['ko','韓文'],['vi','越南文'],['th','泰文'],['id','印尼文'],['de','德文'],['other','其他']],
+en:[['','Select native language'],['zh','Chinese'],['en','English'],['ja','Japanese'],['ko','Korean'],['vi','Vietnamese'],['th','Thai'],['id','Indonesian'],['de','German'],['other','Other']],
+ja:[['','母語を選択してください'],['zh','中国語'],['en','英語'],['ja','日本語'],['ko','韓国語'],['vi','ベトナム語'],['th','タイ語'],['id','インドネシア語'],['de','ドイツ語'],['other','その他']],
+de:[['','Muttersprache auswählen'],['zh','Chinesisch'],['en','Englisch'],['ja','Japanisch'],['ko','Koreanisch'],['vi','Vietnamesisch'],['th','Thailändisch'],['id','Indonesisch'],['de','Deutsch'],['other','Andere']]
+};
+
+function buildSelectOptions(selectEl, list, fallbackValue){
+  if(!selectEl) return;
+  var prev = selectEl.value || fallbackValue || '';
+  selectEl.innerHTML = '';
+  list.forEach(function(pair){
+    var opt = document.createElement('option');
+    opt.value = pair[0];
+    opt.textContent = pair[1];
+    selectEl.appendChild(opt);
+  });
+  if(prev && list.some(function(p){ return p[0]===prev; })) selectEl.value = prev;
+}
+function detectTimezoneValue(){
+  try{
+    var tz = Intl.DateTimeFormat().resolvedOptions().timeZone;
+    if(TLI_TIMEZONES['zh-TW'].some(function(p){ return p[0]===tz; })) return tz;
+  }catch(e){}
+  return 'Asia/Taipei';
+}
+/* 呼叫時機延後到共用 i18n 引擎載入之後（見檔尾 onLangApplied），才能讀到目前語言 */
+function initUniDynamicSelects(){
+  var lang = (typeof TLI_I18N !== 'undefined') ? TLI_I18N.currentLang() : 'zh-TW';
+  var ccList = TLI_COUNTRY_CODES[lang] || TLI_COUNTRY_CODES['zh-TW'];
+  var tzList = TLI_TIMEZONES[lang] || TLI_TIMEZONES['zh-TW'];
+  var nlList = TLI_NATIVE_LANGS[lang] || TLI_NATIVE_LANGS['zh-TW'];
+  buildSelectOptions(document.getElementById('uniPhoneCc'), ccList, '+886');
+  buildSelectOptions(document.getElementById('uniTimezone'), tzList, detectTimezoneValue());
+  buildSelectOptions(document.getElementById('uniNativeLang'), nlList, '');
+}
+
+var EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+var DEMO_ACTIVATED_EMAIL = 'activated@example-state.edu';
+
+/* msgKey 指向 tliDict() 裡的翻譯字串（與 p07 同套做法），而非直接傳入固定文字，才能跟著語言切換 */
+function fieldSetError(errId, msgKey){
+  var el = document.getElementById(errId);
+  if(!el) return;
+  el.textContent = tliDict()[msgKey] || '';
+  el.classList.add('show');
+}
+function fieldClearError(errId){
+  var el = document.getElementById(errId);
+  if(!el) return;
+  el.textContent = '';
+  el.classList.remove('show');
+}
+function markInvalid(inputEl, invalid){
+  if(inputEl) inputEl.classList.toggle('invalid', !!invalid);
+}
+function validateUniName(){
+  var input = document.getElementById('uniName');
+  var v = input.value.trim();
+  if(!v){ fieldSetError('err_uniName','p11_err_required'); markInvalid(input,true); return false; }
+  fieldClearError('err_uniName'); markInvalid(input,false); return true;
+}
+/* 機構代碼或校內信箱擇一即可；填了信箱要檢查格式，並示範一組已開通信箱導引去登入 */
+function validateUniIdentity(){
+  var codeInput = document.getElementById('uniCode');
+  var emailInput = document.getElementById('uniEmail');
+  var code = codeInput.value.trim();
+  var email = emailInput.value.trim();
+  var dup = document.getElementById('uniEmailDupNote');
+  dup.classList.remove('show');
+  if(!code && !email){
+    fieldSetError('err_uniIdentity','p11_err_identity_empty');
+    markInvalid(codeInput,false); markInvalid(emailInput,true);
+    return false;
+  }
+  if(email){
+    if(!EMAIL_RE.test(email)){
+      fieldSetError('err_uniIdentity','p11_err_email_format');
+      markInvalid(emailInput,true); markInvalid(codeInput,false);
+      return false;
+    }
+    if(email.toLowerCase() === DEMO_ACTIVATED_EMAIL){
+      fieldClearError('err_uniIdentity');
+      markInvalid(emailInput,true); markInvalid(codeInput,false);
+      dup.classList.add('show');
+      return false;
+    }
+  }
+  fieldClearError('err_uniIdentity');
+  markInvalid(codeInput,false); markInvalid(emailInput,false);
+  return true;
+}
+function goToLoginWithUniEmail(){
+  window.location.href = 'p07_login_register.html';
+}
+function validateUniPhone(){
+  var input = document.getElementById('uniPhone');
+  var v = input.value.trim();
+  var digits = v.replace(/[^0-9]/g,'');
+  /* 手機選填（vicki 2026-09-17）：留白放行，有填才檢查格式 */
+  if(!v){ fieldClearError('err_uniPhone'); markInvalid(input,false); return true; }
+  if(digits.length < 6){ fieldSetError('err_uniPhone','p11_err_phone'); markInvalid(input,true); return false; }
+  fieldClearError('err_uniPhone'); markInvalid(input,false); return true;
+}
+function validateUniTimezone(){
+  var input = document.getElementById('uniTimezone');
+  if(!input.value){ fieldSetError('err_uniTimezone','p11_err_required'); markInvalid(input,true); return false; }
+  fieldClearError('err_uniTimezone'); markInvalid(input,false); return true;
+}
+function validateUniNativeLang(){
+  var input = document.getElementById('uniNativeLang');
+  if(!input.value){ fieldSetError('err_uniNativeLang','p11_err_required'); markInvalid(input,true); return false; }
+  fieldClearError('err_uniNativeLang'); markInvalid(input,false); return true;
+}
+function validateUniTerms(){
+  var input = document.getElementById('uniTerms');
+  if(!input.checked){ fieldSetError('err_uniTerms','p11_err_terms'); return false; }
+  fieldClearError('err_uniTerms'); return true;
+}
+/* ========================================================================
+   共用條款文字 2026-09-10，改一處要三處同步
+   （會員區/m13_checkout.html、公開網站/p07_login_register.html、公開網站/p11_university.html）
+   內容為草稿，正式版待 TLI 法務確認；本區塊為純資料與通用渲染函式，三檔逐字相同，
+   若需修改條款文字，三個檔案都要一併更新，避免內容不一致。
+   ======================================================================== */
+var TLI_SHARED_TERMS = {
+  draftNote: '草稿，正式版待 TLI 法務確認',
+  tos: {
+    title: '服務條款',
+    items: [
+      '帳號與識別：會員以註冊時填寫之 Email 作為帳號唯一識別（主鍵），同一 Email 僅能建立一個會員帳號，Email 變更須經身分驗證程序。',
+      '課程型態：本平台提供之課程分為一對一預約制、團體直播制、自學影音，以及透過企業或學校取得授權之專案合作課程，各型態之上課方式與規則詳見各課程頁面說明。',
+      '預約與取消（一對一）：一對一課程如需取消或改期，須於課程開始前 12 小時提出，逾時取消視同已上課，不予退還堂數或時數。',
+      '預約與取消（團體班）：團體直播班之取消與退班規則依各班別開課簡章（班規）辦理，開課簡章公告之規則與本條款不一致時，以開課簡章為準。',
+      'Mandarin Lounge 報名：透過線上客服／Mandarin Lounge 完成之課程報名，其成立時點與資料留存方式與網頁表單報名相同，報名資訊將併入會員帳號課程紀錄。',
+      '上課方式與錄影：課程得以實體、線上直播或錄影課程等形式進行；直播課程若提供課後錄影，僅供原報名學員於效期內回放，不得下載、轉錄或轉散。',
+      '智慧財產：教材依授權層級分為「公開通用教材」與「企業／機構專屬教材」；專屬教材僅供該企業或機構所屬學員於在學期間使用，離職或畢業後之使用權限依合約另行規範。',
+      '個人資料之提供對象：學員之學習紀錄（如出席、進度、測驗結果）於企業客戶方案下，得提供予付費企業之 HR 窗口；於專案合作方案下，得提供予合作學校之窗口；提供範圍以完成課程管理所需為限。',
+      '教師評語之揭露層級：教師針對學員之課堂評語分為「學員本人可見」與「提供予企業 HR 或學校窗口參考」兩層，評語內容涉及學習表現而非人身評價。',
+      '帳號停用與終止：會員得申請停用帳號；平台如發現會員有違反本條款、代他人上課、盜用帳號等情事，得逕行停權或終止服務，並保留相關紀錄。',
+      '準據法與爭議處理：本條款之解釋與適用另依 TLI 法務確認後之正式版本為準，本頁內容為草稿，尚未定案。'
+    ]
+  },
+  refund: {
+    title: '退費規則',
+    items: [
+      '一對一課程包－未開課：課程包購買後尚未使用任何堂數者，得依規定申請退費。',
+      '一對一課程包－部分使用（效期內）：已使用部分堂數但仍在課程效期內者，得就未使用堂數依比例申請退費。',
+      '一對一課程包－已逾效期：課程包超過效期未使用之堂數，原則上不予退費；因不可歸責於學員之事由（如天災）逾期者，得依賸餘課程比例辦理。',
+      '團體直播班－開課前：團體班尚未開課前申請退費者，依開課簡章公告之退費比例辦理。',
+      '團體直播班－開課後：團體班開課後申請退費者，依已上課堂數與開課簡章公告之比例計算，未上課部分依比例退還。',
+      '自學影音課程：自學影音課程一經開通觀看權限，即視為已提供服務內容，不予退費；未開通者得依規定申請退費。',
+      '體驗課：體驗課性質為試聽，原則不收費亦不涉及退費；如另有收費之體驗課方案，退費依該方案公告條件辦理。',
+      '專案合作與企業合約：透過專案合作或企業合約取得之課程權益，其退費條件另依平台與該機構或企業簽訂之合約辦理，不適用本規則之個人退費比例。',
+      '退費申請流程：會員得於會員區提出退費申請並填寫退費原因；平台審核後於工作天內（天數待 TLI 訂定公告）處理退款。',
+      '代辦費用：因代辦（如報名、行政作業）所生之費用，於符合退費條件時應全額退還，不受課程費用退費比例限制。',
+      '適用原則：本規則以短期補習班相關法規之退費精神為原則擬定，實際執行以主管機關現行規定為準；如平台名義或契約型態變更，退費規定得配合調整並另行公告。'
+    ]
+  }
+};
+function renderTliTermsBody(bodyEl, sectionKey){
+  if(!bodyEl) return;
+  var section = TLI_SHARED_TERMS[sectionKey];
+  if(!section) return;
+  var html = '<ol style="margin:0;padding-left:20px;">';
+  section.items.forEach(function(item){
+    html += '<li style="margin-bottom:10px;">'+item+'</li>';
+  });
+  html += '</ol>';
+  bodyEl.innerHTML = html;
+}
+
+function openUniTermsModal(){ renderTliTermsBody(document.getElementById('uniTermsModalBody'), 'tos'); document.getElementById('uniTermsModalOverlay').classList.add('show'); }
+function closeUniTermsModal(){ document.getElementById('uniTermsModalOverlay').classList.remove('show'); }
+
+/* 專案合作線：全部必填驗證通過即視為身分驗證成功，接著直接開通，不經過付款流程，費用由合作大學支付 */
+var studentVerified = false;
+function verifyStudent(){
+  var checks = [
+    {input:'uniName', fn:validateUniName},
+    {input:'identityGroup', fn:validateUniIdentity},
+    {input:'uniPhone', fn:validateUniPhone},
+    {input:'uniTimezone', fn:validateUniTimezone},
+    {input:'uniNativeLang', fn:validateUniNativeLang},
+    {input:'uniTerms', fn:validateUniTerms}
+  ];
+  var msg = document.getElementById('verifyMsg');
+  var firstInvalidEl = null;
+  var allOk = true;
+  checks.forEach(function(c){
+    var ok = c.fn();
+    if(!ok){
+      allOk = false;
+      if(!firstInvalidEl) firstInvalidEl = document.getElementById(c.input);
+    }
+  });
+  if(!allOk){
+    msg.className = 'verify-msg show err';
+    msg.textContent = tliDict().p11_verify_msg_err;
+    if(firstInvalidEl){
+      firstInvalidEl.scrollIntoView({behavior:'smooth', block:'center'});
+      setTimeout(function(){ try{ firstInvalidEl.focus(); }catch(err){} }, 250);
+    }
+    return;
+  }
+  studentVerified = true;
+  msg.className = 'verify-msg show ok';
+  msg.textContent = tliDict().p11_verify_msg_ok;
+  document.getElementById('uniCheckoutBtn').disabled = false;
+  document.getElementById('checkoutHint').textContent = tliDict().p11_checkout_hint_after;
+  showToast(tliDict().p11_toast_verify_ok);
+}
+function goCheckout(){
+  if(!studentVerified){ return; }
+  showToast(tliDict().p11_toast_checkout_ok);
+  setTimeout(function(){
+    window.location.href = '../會員區/m01_home.html?activated=university';
+  }, 900);
+}
+
+/* 使用者修正欄位內容時，先清掉舊的錯誤狀態，避免修正後仍顯示紅字 */
+['uniName','uniPhone'].forEach(function(id){
+  var el = document.getElementById(id);
+  if(!el) return;
+  el.addEventListener('input', function(){
+    fieldClearError('err_' + id);
+    markInvalid(el, false);
+  });
+});
+['uniCode','uniEmail'].forEach(function(id){
+  var el = document.getElementById(id);
+  if(!el) return;
+  el.addEventListener('input', function(){
+    fieldClearError('err_uniIdentity');
+    markInvalid(document.getElementById('uniCode'), false);
+    markInvalid(document.getElementById('uniEmail'), false);
+    document.getElementById('uniEmailDupNote').classList.remove('show');
+  });
+});
+
+/* initUniDynamicSelects() 改到檔尾 onLangApplied() 內呼叫（需等共用 i18n 引擎載入後才讀得到目前語言） */
+</script>
+
+<script>window.TLI_I18N_PAGE_LANGS=['zh-TW','zh-CN','en','ja','de'];</script>
+<script src="../assets/_i18n_dict.js"></script>
+<script src="../assets/_i18n_dict_ja.js"></script>
+<script src="../assets/_i18n_dict_de.js"></script>
+<script src="../assets/_i18n_dict_public.js"></script>
+<script src="../assets/_i18n_dict_public_ja.js"></script>
+<script src="../assets/_i18n_dict_public_de.js"></script>
+<script src="../assets/_i18n.js"></script>
+<script>
+function T(zh,obj){ return TLI_I18N.t(zh,obj); }
+
+/* ===================== i18n：本頁專屬字典（JS 動態訊息用，供 fieldSetError／verifyStudent／goCheckout 等呼叫） ===================== */
+function tliDict(){
+  return {
+    p11_err_required: T('此欄位為必填',{en:'This field is required',ja:'この項目は必須です',de:'Dieses Feld ist erforderlich'}),
+    p11_err_identity_empty: T('請輸入機構代碼或校內信箱，二者擇一即可',{en:'Enter either an institution code or your school email address',ja:'機関コードまたは大学のメールアドレスのいずれかを入力してください',de:'Bitte geben Sie entweder den Institutionscode oder Ihre Hochschul-E-Mail-Adresse ein'}),
+    p11_err_email_format: T('請輸入正確的 Email 格式',{en:'Please enter a valid email address',ja:'正しいメールアドレスの形式で入力してください',de:'Bitte geben Sie eine gültige E-Mail-Adresse ein'}),
+    p11_err_phone: T('請輸入有效的手機號碼',{en:'Please enter a valid phone number',ja:'有効な電話番号を入力してください',de:'Bitte geben Sie eine gültige Telefonnummer ein'}),
+    p11_err_terms: T('請詳閱並勾選同意服務條款與個資告知',{en:'Please read and agree to the Terms of Service and Privacy Notice',ja:'利用規約とプライバシー告知に同意してください',de:'Bitte lesen Sie die Nutzungsbedingungen und den Datenschutzhinweis und stimmen Sie zu'}),
+    p11_verify_msg_err: T('請完成上方必填欄位後再送出驗證。',{en:'Please complete the required fields above before submitting.',ja:'上記の必須項目をすべて入力してから認証を送信してください。',de:'Bitte füllen Sie die oben genannten Pflichtfelder aus, bevor Sie die Verifizierung absenden.'}),
+    p11_verify_msg_ok: T('驗證成功：確認為範例州立大學在學學生，你的學費已繳給學校，TLI 不另向你收費，可直接開通。',{en:'Verification successful: confirmed as a currently enrolled student at Example State University. Your tuition already covers this fee, so TLI will not charge you separately — you can activate the plan now.',ja:'認証成功：サンプル州立大学の在学生であることを確認しました。この費用はすでに学費として大学に納入済みのため、TLIから別途請求されることはありません。そのままプランを有効化できます。',de:'Verifizierung erfolgreich: als eingeschriebene(r) Student(in) der Beispiel-Staatsuniversität bestätigt. Diese Gebühr ist bereits in Ihren Studiengebühren enthalten, TLI berechnet Ihnen daher keine zusätzlichen Kosten — Sie können den Plan jetzt aktivieren.'}),
+    p11_checkout_hint_before: T('請先完成 Step 1 驗證，才能開通方案',{en:'Please complete Step 1 verification before activating the plan',ja:'プランを有効化するには、先にステップ1の認証を完了してください',de:'Bitte schließen Sie zuerst die Verifizierung in Schritt 1 ab, um den Plan zu aktivieren'}),
+    p11_checkout_hint_after: T('驗證通過，點擊即可直接開通；你的學費已含此費用，不需另外付款。',{en:'Verification passed — click to activate the plan directly. This fee is already included in your tuition, so no additional payment is required.',ja:'認証が完了しました。クリックするとそのままプランを有効化できます。この費用はすでに学費に含まれているため、追加のお支払いは不要です。',de:'Verifizierung erfolgreich — klicken Sie, um den Plan direkt zu aktivieren. Diese Gebühr ist bereits in Ihren Studiengebühren enthalten, eine zusätzliche Zahlung ist nicht erforderlich.'}),
+    p11_toast_verify_ok: T('身分驗證成功',{en:'Identity verified successfully',ja:'本人確認が完了しました',de:'Identität erfolgreich verifiziert'}),
+    p11_toast_checkout_ok: T('開通成功：本方案由範例州立大學支付，正在前往會員區',{en:'Activated successfully — this plan is covered by Example State University. Redirecting you to the member area.',ja:'有効化が完了しました。本プランはサンプル州立大学が費用を負担しています。会員エリアへ移動します。',de:'Aktivierung erfolgreich — dieser Plan wird von der Beispiel-Staatsuniversität übernommen. Sie werden zum Mitgliederbereich weitergeleitet.'})
+  };
+}
+
+function applyMetaDesc(){
+  /* <title> 在 <head> 裡，共用模組的 data-i18n 掃描只作用在 document.body，不會處理 <title>，需自行設定 */
+  document.title = T('TLI Connect｜大學合作方案', {en:'TLI Connect | University Partnership Plan', ja:'TLI Connect｜大学連携プラン', de:'TLI Connect | Hochschulpartnerschaft'});
+  var m = document.querySelector('meta[name="description"]');
+  if(m) m.setAttribute('content', T('TLI Connect 大學合作方案：由合作大學支付授權費用予 TLI，在學學生的學費已含在內，不另收費，即可使用華語學習資源，含影片、音檔、測驗；並可預約 Mandarin Lounge 會話場次。', {en:'TLI Connect University Partnership Plan: the partner university covers the licensing fee to TLI, already included in tuition at no extra cost, giving enrolled students access to Chinese learning resources including videos, audio, and quizzes; Mandarin Lounge speaking sessions can also be booked.', ja:'TLI Connect大学連携プランは、提携大学がTLIへのライセンス費用を負担するため学費に含まれ追加費用なしで、動画・音声・テストなどの中国語学習リソースをご利用いただけます。Mandarin Lounge の会話セッションも予約できます。', de:'TLI Connect Hochschulpartnerschaft: Die Partneruniversität übernimmt die Lizenzgebühr an TLI, bereits in den Studiengebühren enthalten und ohne Zusatzkosten – eingeschriebene Studierende erhalten Zugang zu Chinesisch-Lernressourcen mit Videos, Audiodateien und Tests; Mandarin Lounge-Sprechstunden können ebenfalls gebucht werden.'}));
+}
+
+/* 語言切換時：重建下拉選單語言、並依目前 studentVerified／verifyMsg 顯示狀態重新套用對應文案（與 p07 onLangApplied 同套做法） */
+function onLangApplied(){
+  initUniDynamicSelects();
+  var hint = document.getElementById('checkoutHint');
+  if(hint) hint.textContent = studentVerified ? tliDict().p11_checkout_hint_after : tliDict().p11_checkout_hint_before;
+  var msg = document.getElementById('verifyMsg');
+  if(msg && msg.classList.contains('show')){
+    msg.textContent = msg.classList.contains('ok') ? tliDict().p11_verify_msg_ok : tliDict().p11_verify_msg_err;
+  }
+}
+
+TLI_I18N.onRefresh(applyMetaDesc);
+applyMetaDesc();
+TLI_I18N.onRefresh(onLangApplied);
+onLangApplied();
+TLI_I18N.init();
+</script>
+
+</body>
+</html>

@@ -1,0 +1,993 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>TLI Hub 教師端－課表</title>
+<style>
+:root{
+  --c-primary:#1B4E8C;--c-primary-dark:#123A68;--c-accent:#E8792B;--c-accent-dark:#CF691F;--c-secondary:#0F9B79;
+  --c-bg:#F5F7FA;--c-border:#E4E7EC;--c-muted:#667085;--c-text:#101828;
+  --radius:12px;--radius-sm:8px;--shadow:0 1px 3px rgba(16,24,40,.08),0 1px 2px rgba(16,24,40,.04);--shadow-lg:0 8px 24px rgba(16,24,40,.16);
+  --topbar-h:52px;--bottomnav-h:64px;
+}
+*{box-sizing:border-box;}
+html,body{margin:0;padding:0;}
+body{font-family:"Noto Sans TC","Microsoft JhengHei",system-ui,-apple-system,"Segoe UI",sans-serif;background:var(--c-bg);color:var(--c-text);line-height:1.55;font-size:15px;-webkit-tap-highlight-color:transparent;}
+a{color:inherit;text-decoration:none;}
+img,svg{display:block;}
+button{font-family:inherit;}
+button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible{outline:2px solid var(--c-primary);outline-offset:2px;}
+.app{min-height:100vh;position:relative;}
+.topbar{position:sticky;top:0;z-index:60;height:var(--topbar-h);background:#fff;border-bottom:1px solid var(--c-border);display:flex;align-items:center;justify-content:space-between;padding:0 14px;gap:10px;}
+.topbar-left{display:flex;align-items:center;gap:8px;min-width:0;}
+.topbar-logo-wrap{width:26px;height:22px;overflow:hidden;position:relative;flex:none;}
+.topbar-logo-wrap img{position:absolute;left:0;top:0;height:22px;width:auto;max-width:none;}
+.topbar-title{font-size:16.5px;font-weight:700;color:var(--c-text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.topbar-actions{display:flex;align-items:center;gap:6px;position:relative;}
+.bell-btn{position:relative;width:32px;height:32px;border-radius:50%;border:1px solid var(--c-border);background:#fff;cursor:pointer;display:flex;align-items:center;justify-content:center;color:var(--c-muted);}
+.bell-btn svg{width:16px;height:16px;}
+.bell-btn .dot{position:absolute;top:5px;right:6px;width:7px;height:7px;border-radius:50%;background:var(--c-accent);border:1.5px solid #fff;}
+.bell-panel{display:none;position:absolute;right:0;top:40px;width:264px;background:#fff;border:1px solid var(--c-border);border-radius:var(--radius-sm);box-shadow:var(--shadow-lg);padding:6px 0;z-index:90;}
+.bell-panel.open{display:block;}
+.bell-panel h4{margin:0;padding:8px 14px 6px;font-size:12.5px;color:var(--c-muted);font-weight:700;}
+.bell-item{padding:9px 14px;font-size:12.5px;border-top:1px solid var(--c-border);display:flex;gap:8px;}
+.bell-item .b-dot{width:6px;height:6px;border-radius:50%;background:var(--c-accent);margin-top:5px;flex:none;}
+.bell-item p{margin:0;color:var(--c-text);}
+.bell-item span{color:var(--c-muted);font-size:11px;}
+.side-nav{display:none;}
+@media(min-width:1024px){
+  .side-nav{display:flex;flex-direction:column;position:fixed;left:0;top:0;bottom:0;width:310px;background:#fff;border-right:1px solid var(--c-border);padding:18px 12px;z-index:50;}
+  .side-role{padding:0 10px 14px;margin-bottom:10px;border-bottom:1px solid var(--c-border);}
+.side-role strong{display:block;font-size:14px;color:var(--c-primary);font-weight:700;}
+.side-role span{display:block;font-size:12px;color:var(--c-muted);margin-top:2px;}
+.side-brand{display:flex;align-items:center;padding:0 8px 18px;}
+  .side-brand img{height:28px;width:auto;}
+  .side-link{display:flex;align-items:center;gap:10px;padding:10px 10px;border-radius:8px;font-size:14px;font-weight:600;color:var(--c-muted);margin-bottom:2px;}
+  .side-link svg{width:19px;height:19px;flex:none;}
+  .side-link.active{background:#E6EEF8;color:var(--c-primary);}
+  .side-link:hover:not(.active){background:var(--c-bg);}
+  .app.has-side .topbar{margin-left:310px;}
+  .app.has-side .content{margin-left:310px;}
+}
+.bottom-nav{position:fixed;left:0;right:0;bottom:0;z-index:70;background:#fff;border-top:1px solid var(--c-border);display:flex;height:var(--bottomnav-h);padding-bottom:env(safe-area-inset-bottom,0);box-shadow:0 -2px 10px rgba(16,24,40,.06);}
+.bottom-nav a{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;font-size:11px;color:var(--c-muted);font-weight:600;min-height:44px;}
+.bottom-nav a svg{width:22px;height:22px;}
+.bottom-nav a.active{color:var(--c-primary);}
+@media(min-width:1024px){.bottom-nav{display:none;}}
+.content{max-width:960px;margin:0 auto;padding:18px 16px calc(var(--bottomnav-h) + 24px);}
+@media(min-width:1024px){.content{padding:26px 32px 40px;}}
+.page-h{font-size:19px;font-weight:700;margin:2px 0 4px;}
+.page-sub{color:var(--c-muted);font-size:13px;margin:0 0 18px;}
+.section-title{font-size:15px;font-weight:700;margin:24px 0 12px;}
+.card{background:#fff;border:1px solid var(--c-border);border-radius:var(--radius);box-shadow:var(--shadow);padding:16px;}
+.card + .card{margin-top:12px;}
+.flex-between{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;}
+.stack{display:flex;flex-direction:column;gap:10px;}
+.muted{color:var(--c-muted);}
+.small{font-size:12px;}
+.divider{border:none;border-top:1px solid var(--c-border);margin:14px 0;}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;border:none;border-radius:var(--radius-sm);padding:11px 18px;font-size:14px;font-weight:700;cursor:pointer;font-family:inherit;transition:background .15s;min-height:44px;}
+.btn-primary{background:var(--c-primary);color:#fff;}
+.btn-primary:hover{background:var(--c-primary-dark);}
+.btn-outline{background:#fff;border:1px solid var(--c-border);color:var(--c-text);}
+.btn-outline:hover{background:var(--c-bg);}
+.btn:disabled{background:var(--c-border)!important;color:#98A2B3!important;cursor:not-allowed;border-color:var(--c-border)!important;}
+.btn-block{width:100%;}
+.badge{display:inline-block;padding:2px 9px;border-radius:20px;font-size:11.5px;font-weight:700;white-space:nowrap;}
+.badge-info{background:#E6EEF8;color:var(--c-primary);}
+.badge-warn{background:#FCEBDC;color:var(--c-accent-dark);}
+.badge-ok{background:#E4F5F0;color:#0B6B52;}
+.badge-onetoone{background:#FCEBDC;color:var(--c-accent-dark);}
+.badge-flex{background:#F0E9FC;color:#6D28D9;}
+.banner{border-radius:var(--radius);padding:12px 14px;margin-bottom:14px;font-size:13px;display:flex;gap:9px;align-items:flex-start;}
+.banner-info{background:#E6EEF8;color:var(--c-primary-dark);border:1px solid #C7DAF0;}
+.banner-warn{background:#FCEBDC;color:#9A4A0F;border:1px solid #F3D3B0;}
+.lb-badge-warn{display:inline-block;padding:1px 7px;border-radius:20px;font-size:10px;font-weight:700;background:#FBEAEA;color:#912018;}
+.hidden{display:none!important;}
+.sheet-overlay{position:fixed;inset:0;background:rgba(16,24,40,.45);z-index:100;display:flex;align-items:flex-end;justify-content:center;}
+.sheet-overlay.hidden{display:none;}
+.sheet{background:#fff;width:100%;max-width:480px;border-radius:18px 18px 0 0;padding:18px 18px calc(18px + env(safe-area-inset-bottom,0));max-height:86vh;overflow-y:auto;animation:sheetUp .18s ease-out;}
+@keyframes sheetUp{from{transform:translateY(16px);opacity:.6;}to{transform:translateY(0);opacity:1;}}
+.sheet-handle{width:36px;height:4px;background:var(--c-border);border-radius:4px;margin:0 auto 14px;}
+.sheet h3{margin:0 0 4px;font-size:16px;}
+@media(min-width:640px){.sheet-overlay{align-items:center;}.sheet{border-radius:16px;}}
+/* ---------- 課表週視圖（教師端專用，沿用共用色票／圓角） ---------- */
+.week-switch{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;}
+.week-switch button{border:1px solid var(--c-border);background:#fff;border-radius:8px;width:32px;height:32px;font-size:16px;cursor:pointer;color:var(--c-muted);}
+.week-switch button:disabled{opacity:.35;cursor:not-allowed;}
+.week-switch .label{font-size:14px;font-weight:700;}
+.legend{display:flex;gap:12px;font-size:11.5px;color:var(--c-muted);margin-bottom:14px;flex-wrap:wrap;}
+.legend span{display:inline-flex;align-items:center;gap:5px;}
+.legend i{width:9px;height:9px;border-radius:3px;display:inline-block;}
+.legend .personal{background:var(--c-accent);}
+.legend .flexlive{background:#7C3AED;}
+.legend .chatroom{background:#BE185D;}
+.day-block{margin-bottom:14px;}
+.day-head{font-size:13px;font-weight:700;color:var(--c-text);padding:6px 0;border-bottom:1px solid var(--c-border);margin-bottom:6px;display:flex;justify-content:space-between;}
+.day-head .dow{color:var(--c-muted);font-weight:400;margin-left:6px;}
+.lesson-block{border-radius:var(--radius-sm);padding:10px 12px;margin-bottom:8px;cursor:pointer;border-left:4px solid transparent;}
+.lesson-block.personal{background:rgba(232,121,43,.12);border-left-color:var(--c-accent);}
+.lesson-block.flexlive{background:rgba(124,58,237,.10);border-left-color:#7C3AED;}
+.lesson-block.chatroom{background:rgba(190,24,93,.09);border-left-color:#BE185D;}
+.lesson-block .lb-time{font-size:12px;font-weight:700;color:var(--c-muted);}
+.lesson-block .lb-title{font-size:14px;font-weight:700;margin-top:2px;}
+.lesson-block .lb-sub{font-size:12px;color:var(--c-muted);margin-top:2px;}
+.tablewrap{overflow-x:auto;max-width:100%;-webkit-overflow-scrolling:touch;}
+@media(min-width:1024px){.week-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:10px;min-width:770px;}.day-block{margin-bottom:0;min-width:0;}}
+.lesson-block{min-width:0;}
+.lesson-block .lb-title,.lesson-block .lb-sub{overflow-wrap:break-word;word-break:break-all;}
+.roster{display:flex;flex-direction:column;gap:6px;}
+.roster .stu{display:flex;justify-content:space-between;font-size:13.5px;background:var(--c-bg);padding:8px 10px;border-radius:var(--radius-sm);cursor:pointer;}
+.roster .stu-detail{font-size:12px;color:var(--c-muted);background:#fff;border:1px solid var(--c-border);padding:8px 10px;border-radius:var(--radius-sm);margin-top:-2px;line-height:1.6;}
+.roster .stu-detail.hidden{display:none;}
+.sheet-note{font-size:13px;color:var(--c-text);background:var(--c-bg);padding:10px 12px;border-radius:var(--radius-sm);line-height:1.6;}
+.sheet-note.clickable{cursor:pointer;}
+.sheet-note-extra{font-size:12px;color:var(--c-muted);background:#fff;border:1px solid var(--c-border);padding:8px 10px;border-radius:var(--radius-sm);margin-top:6px;line-height:1.6;}
+.sheet-note-extra.hidden{display:none;}
+.sheet-sec{margin-bottom:16px;}
+.sheet-sec .lbl{font-size:12px;font-weight:700;color:var(--c-muted);margin-bottom:6px;}
+.toast{position:fixed;left:50%;bottom:calc(var(--bottomnav-h) + 18px);transform:translateX(-50%);background:#101828;color:#fff;padding:10px 20px;border-radius:20px;font-size:13px;font-weight:700;z-index:120;box-shadow:var(--shadow-lg);white-space:nowrap;}
+.toast.hidden{display:none;}
+@media(min-width:1024px){.toast{bottom:24px;}}
+/* ---------- 等候室放行 / 出席紀錄（教師端專用） ---------- */
+.wait-list{display:flex;flex-direction:column;gap:6px;}
+.wait-row{display:flex;justify-content:space-between;align-items:center;gap:10px;background:var(--c-bg);padding:8px 10px;border-radius:var(--radius-sm);font-size:13.5px;}
+.wait-row .w-btn{border:1px solid var(--c-primary);background:#fff;color:var(--c-primary);font-size:12px;font-weight:700;padding:6px 12px;border-radius:20px;cursor:pointer;font-family:inherit;min-height:32px;}
+.wait-row .w-btn.admitted{border-color:var(--c-secondary);color:#0B6B52;background:#E4F5F0;cursor:default;}
+.attend-list{display:flex;flex-direction:column;gap:4px;}
+.attend-row{display:flex;justify-content:space-between;font-size:12.5px;color:var(--c-text);}
+.attend-row span:last-child{color:#0B6B52;font-weight:700;}
+/* ---------- B2B 企業學員時區與跨日標示（v2 新增） ---------- */
+.demo-tag{font-size:10.5px;color:#98A2B3;font-weight:400;}
+.fchip-bar{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px;}
+.fchip{padding:7px 14px;border-radius:20px;border:1px solid var(--c-border);background:#fff;font-size:12.5px;font-weight:700;cursor:pointer;font-family:inherit;color:var(--c-muted);}
+.fchip.active{background:var(--c-primary);color:#fff;border-color:var(--c-primary);}
+.legend .enterprise{background:#0B6B52;}
+.lb-tz-line{font-size:11px;color:#0B6B52;margin-top:3px;}
+.lb-badges{display:flex;gap:4px;margin-top:4px;flex-wrap:wrap;}
+.lb-badge-ent{display:inline-block;padding:1px 7px;border-radius:20px;font-size:10px;font-weight:700;background:#E4F5F0;color:#0B6B52;}
+.lb-badge-cross{display:inline-block;padding:1px 7px;border-radius:20px;font-size:10px;font-weight:700;background:#FCEBDC;color:var(--c-accent-dark);}
+.lesson-block.lb-hidden{display:none;}
+/* ---------- 團體聊天室場次（改版：TLI 老師帶團體場次，非一對一自約，v2 新增） ---------- */
+.lb-badge-chat{display:inline-block;padding:1px 7px;border-radius:20px;font-size:10px;font-weight:700;background:#FCE7F3;color:#BE185D;}
+.chat-attend{display:flex;align-items:center;gap:6px;font-size:12.5px;font-weight:700;color:#BE185D;cursor:pointer;}
+.chat-attend input{width:16px;height:16px;accent-color:#BE185D;cursor:pointer;}
+.chat-attend.checked{color:#0B6B52;}
+.chat-attend.checked input{accent-color:#0F9B79;}
+.badge-chat{background:#FCE7F3;color:#BE185D;}
+.stu-chat{display:flex;justify-content:space-between;align-items:center;gap:10px;font-size:13.5px;background:var(--c-bg);padding:8px 10px;border-radius:var(--radius-sm);}
+.stu-chat .sc-name{font-weight:700;}
+.stu-chat .sc-uni{color:var(--c-muted);font-size:11.5px;font-weight:400;margin-top:1px;}
+/* ---------- 頁內次層分頁籤（segment，底線式） ---------- */
+.page-tabs{display:flex;gap:4px;border-bottom:1px solid var(--c-border);margin:0 0 16px;overflow-x:auto;}
+.page-tab{padding:9px 14px;font-size:13.5px;font-weight:700;color:var(--c-muted);border-bottom:2px solid transparent;white-space:nowrap;}
+.page-tab.active{color:var(--c-primary);border-color:var(--c-primary);}
+</style>
+</head>
+<body>
+<div class="app has-side">
+  <nav class="side-nav" aria-label="主導覽">
+    <div class="side-brand"><a href="../公開網站/p01_home.html" aria-label="回官網"><img src="../assets/tli-logo.svg" alt="TLI"></a></div>
+    <div class="side-role"><strong>林老師</strong><span><span data-i18n="today.profile.role">TLI 中心教師</span> · <span data-i18n="today.profile.city">台北</span></span></div>
+    <a class="side-link" href="t01_today.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11l9-8 9 8"/><path d="M5 10v10a1 1 0 001 1h3v-6h6v6h3a1 1 0 001-1V10"/></svg><span data-i18n="nav_t.today">今天</span></a>
+    <a class="side-link active" href="t02_schedule.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg><span data-i18n="nav_t.schedule">課表</span></a>
+    <a class="side-link" href="t03_lesson_record.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 4-7 8-7s8 3 8 7"/></svg><span data-i18n="nav_t.lessonRecord">課後紀錄與回饋</span></a>
+    <a class="side-link" href="t07_students.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg><span data-i18n="nav_t.students">學生</span></a>
+    <a class="side-link" href="t04_availability.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18M12 14v6M9 17h6"/></svg><span data-i18n="nav_t.availability">時段與薪資</span></a>
+    <a class="side-link" href="../公開網站/p01_home.html" style="margin-top:auto;"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg><span data-i18n="nav_t.backToWebsite">回官網</span></a>
+  </nav>
+
+  <header class="topbar">
+    <div class="topbar-left"><a class="topbar-logo-wrap" href="../公開網站/p01_home.html" aria-label="回官網"><img src="../assets/tli-logo.svg" alt="TLI"></a><div class="topbar-title" data-i18n="nav_t.schedule">課表</div></div>
+    <div class="topbar-actions">
+      <button class="bell-btn" onclick="toggleBell()" aria-label="通知">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8a6 6 0 10-12 0c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.7 21a2 2 0 01-3.4 0"/></svg>
+        <span class="dot"></span>
+      </button>
+      <div class="bell-panel" id="bellPanel">
+        <h4 data-i18n="common.notifications">通知</h4>
+        <div class="bell-item"><span class="b-dot"></span><div><p data-i18n="t02.notif.text">今日 15:00 學期班 Lv.5–8 首堂，請留意規則</p><span data-i18n="t02.notif.time">今天 08:00</span></div></div>
+      </div>
+    </div>
+  </header>
+
+  <main class="content">
+    <div class="page-tabs" role="tablist" aria-label="頁內切換">
+      <a class="page-tab active" href="t02_schedule.html"><span data-i18n="nav_t.schedule">課表</span></a>
+      <a class="page-tab" href="t05_leave_sub.html" data-i18n="section.leaveSub">請假與代課</a>
+    </div>
+    <p class="page-sub" style="margin:0 0 14px;" data-i18n="sched.desc.pageIntro">週視圖檢視本週課程，點課堂看詳情。一對一課程由顧問排定，如遇無法配合可在詳情內回報。</p>
+    <div class="card">
+      <div class="week-switch">
+        <button id="prevWeek" onclick="changeWeek(-1)" aria-label="上一週" data-i18n-aria-label="sched.aria.prevWeek">‹</button>
+        <div class="label" id="weekLabel">2026/08/24 – 08/30</div>
+        <button id="nextWeek" onclick="changeWeek(1)" aria-label="下一週" data-i18n-aria-label="sched.aria.nextWeek">›</button>
+      </div>
+      <div class="legend">
+        <span><i class="personal"></i><span data-i18n="sched.legend.oneToOne">一對一（顧問排定）</span></span>
+        <span><i class="flexlive"></i><span data-i18n="badge.flexGroup">彈性團體直播班（團體）</span></span>
+        <span><i class="chatroom"></i><span data-i18n="sched.legend.chatroom">團體聊天室（30 分鐘，TLI 老師帶）</span></span>
+        <span><i class="enterprise"></i><span data-i18n="sched.legend.enterprise">企業學員（雙時區顯示）</span></span>
+      </div>
+      <p class="small muted" style="margin:6px 0 0;" data-i18n="sched.desc.cancelRule">取消時限以學員所屬廠區時區（合約設定之判定基準）計算；課表以台北時間為主、廠區當地時間為輔並列顯示。</p>
+      <div class="fchip-bar" id="scheduleFilterBar">
+        <button class="fchip active" data-filter="all" onclick="setScheduleFilter('all')" data-i18n="common.all">全部</button>
+        <button class="fchip" data-filter="enterprise" onclick="setScheduleFilter('enterprise')" data-i18n="sched.filter.enterprise">企業學員</button>
+      </div>
+
+      <div class="tablewrap">
+      <div class="week-grid" id="weekGrid">
+        <!-- 週一 -->
+        <div class="day-block">
+          <div class="day-head">08/24<span class="dow" data-i18n="sched.dow.mon">週一</span></div>
+          <div class="lesson-block personal" id="lb-M1" data-enterprise="1" onclick="openSheet('M1')">
+            <div class="lb-time">09:00–09:50</div>
+            <div class="lb-title">王小明</div>
+            <div class="lb-sub">中級 2・士林 A203</div>
+            <div class="lb-tz-line"><span data-i18n="sched.tz.factorySitePrevDay">廠區當地（前一日）</span>18:00–18:50</div>
+            <div class="lb-badges"><span class="lb-badge-ent" data-i18n="sched.badge.enterprise">企業學員</span><span class="lb-badge-cross" data-i18n="sched.badge.crossDay">跨日</span></div>
+          </div>
+          <div class="lesson-block flexlive" onclick="openSheet('M2')">
+            <div class="lb-time">10:30–11:20</div>
+            <div class="lb-title">中級小組班（3 人）</div>
+            <div class="lb-sub">士林 A203</div>
+          </div>
+        </div>
+        <!-- 週二 -->
+        <div class="day-block">
+          <div class="day-head">08/25<span class="dow" data-i18n="sched.dow.tue">週二</span></div>
+          <div class="lesson-block personal" id="lb-T1" data-enterprise="1" onclick="openSheet('T1')">
+            <div class="lb-time">09:00–09:50</div>
+            <div class="lb-title">王小明</div>
+            <div class="lb-sub">中級 2・士林 A203</div>
+            <div class="lb-tz-line"><span data-i18n="sched.tz.factorySitePrevDay">廠區當地（前一日）</span>18:00–18:50</div>
+            <div class="lb-badges"><span class="lb-badge-ent" data-i18n="sched.badge.enterprise">企業學員</span><span class="lb-badge-cross" data-i18n="sched.badge.crossDay">跨日</span></div>
+          </div>
+          <div class="lesson-block flexlive" onclick="openSheet('T2')">
+            <div class="lb-time">15:00–15:50</div>
+            <div class="lb-title">學期班 Lv.5–8</div>
+            <div class="lb-sub">羅斯福校區・<span data-i18n="sched.badge.firstClassAbbr">首堂・資深教師任教</span></div>
+          </div>
+        </div>
+        <!-- 週三 -->
+        <div class="day-block">
+          <div class="day-head">08/26<span class="dow" data-i18n="sched.dow.wed">週三</span></div>
+          <div class="lesson-block flexlive" onclick="openSheet('W1')">
+            <div class="lb-time">14:00–14:50</div>
+            <div class="lb-title">初級小組班（4 人）</div>
+            <div class="lb-sub">士林 A106</div>
+          </div>
+          <div class="lesson-block chatroom" onclick="openSheet('C1')">
+            <div class="lb-time">15:30–16:00</div>
+            <div class="lb-title">日常對話練習</div>
+            <div class="lb-sub"><span data-i18n="sched.legend.chatroom">團體聊天室（30 分鐘，TLI 老師帶）</span>・<span data-i18n="sched.audience.institutionStudents">機構學生</span>・範例州立大學</div>
+            <div class="lb-badges"><span class="lb-badge-chat"><span data-i18n="sched.badge.registered">已報名</span> 4／<span data-i18n="sched.badge.capacityTbd">名額待定</span></span></div>
+          </div>
+        </div>
+        <!-- 週四 -->
+        <div class="day-block">
+          <div class="day-head">08/27<span class="dow" data-i18n="sched.dow.thu">週四</span></div>
+          <div class="lesson-block personal" id="lb-R1" data-enterprise="1" onclick="openSheet('R1')">
+            <div class="lb-time">09:00–09:50</div>
+            <div class="lb-title">王小明</div>
+            <div class="lb-sub">中級 2・士林 A203</div>
+            <div class="lb-tz-line"><span data-i18n="sched.tz.factorySitePrevDay">廠區當地（前一日）</span>18:00–18:50</div>
+            <div class="lb-badges"><span class="lb-badge-ent" data-i18n="sched.badge.enterprise">企業學員</span><span class="lb-badge-cross" data-i18n="sched.badge.crossDay">跨日</span></div>
+          </div>
+          <div class="lesson-block personal" id="lb-R2" data-enterprise="1" onclick="openSheet('R2')">
+            <div class="lb-time">16:00–17:30</div>
+            <div class="lb-title">陳雅婷（線上）</div>
+            <div class="lb-sub">高級 1・Zoom・<span data-i18n="sched.duration.90min">90 分鐘</span></div>
+            <div class="lb-tz-line"><span data-i18n="sched.tz.factorySite">廠區當地</span> 17:00–18:30</div>
+            <div class="lb-badges"><span class="lb-badge-ent" data-i18n="sched.badge.enterprise">企業學員</span></div>
+          </div>
+        </div>
+        <!-- 週五 -->
+        <div class="day-block">
+          <div class="day-head">08/28<span class="dow" data-i18n="sched.dow.fri">週五</span></div>
+          <div class="lesson-block chatroom" onclick="openSheet('C2')">
+            <div class="lb-time">09:00–09:30</div>
+            <div class="lb-title">時事話題討論</div>
+            <div class="lb-sub"><span data-i18n="sched.legend.chatroom">團體聊天室（30 分鐘，TLI 老師帶）</span>・<span data-i18n="sched.audience.allPlatformWide">全部（全平台開放）</span></div>
+            <div class="lb-badges"><span class="lb-badge-chat"><span data-i18n="sched.badge.registered">已報名</span> 2／<span data-i18n="sched.badge.capacityTbd">名額待定</span></span></div>
+          </div>
+        </div>
+        <!-- 週六 -->
+        <div class="day-block">
+          <div class="day-head">08/29<span class="dow" data-i18n="sched.dow.sat">週六</span></div>
+          <div class="lesson-block flexlive" onclick="openSheet('S1')">
+            <div class="lb-time">10:00–10:50</div>
+            <div class="lb-title">學期班 Lv.5–8</div>
+            <div class="lb-sub">羅斯福校區</div>
+          </div>
+        </div>
+        <!-- 週日 -->
+        <div class="day-block">
+          <div class="day-head">08/30<span class="dow" data-i18n="sched.dow.sun">週日</span></div>
+          <div class="small muted" style="padding:8px 0;" data-i18n="sched.status.noClass">本日無排課</div>
+        </div>
+      </div>
+      </div>
+    </div>
+  </main>
+
+  <nav class="bottom-nav">
+    <a href="t01_today.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11l9-8 9 8"/><path d="M5 10v10a1 1 0 001 1h3v-6h6v6h3a1 1 0 001-1V10"/></svg><span data-i18n="nav_t.today">今天</span></a>
+    <a href="t02_schedule.html" class="active"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg><span data-i18n="nav_t.schedule">課表</span></a>
+    <a href="t03_lesson_record.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 4-7 8-7s8 3 8 7"/></svg><span data-i18n="nav_t.lessonRecord">課後紀錄與回饋</span></a>
+    <a href="t07_students.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg><span data-i18n="nav_t.students">學生</span></a>
+    <a href="t04_availability.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18M12 14v6M9 17h6"/></svg><span data-i18n="nav_t.availability">時段與薪資</span></a>
+  </nav>
+</div>
+
+<div class="sheet-overlay hidden" id="sheetOverlay">
+  <div class="sheet">
+    <div class="sheet-handle"></div>
+    <h3 id="sheetTitle">課堂詳情</h3>
+    <span class="badge" id="sheetModeBadge" style="margin-top:6px;display:inline-block;">—</span>
+    <div class="sheet-sec" style="margin-top:12px;">
+      <div class="lbl" data-i18n="label.timeLocation">時間・地點</div>
+      <div class="sheet-note" id="sheetMeta">—</div>
+    </div>
+    <div class="sheet-sec hidden" id="sheetVideoSec">
+      <div class="lbl" data-i18n="sched.label.videoTool">視訊工具與連結</div>
+      <div class="sheet-note" id="sheetVideoLine">—</div>
+    </div>
+    <div class="sheet-sec hidden" id="sheetFlexSec">
+      <div class="lbl" data-i18n="label.flexGroupInfo">彈性團體直播班資訊</div>
+      <div class="sheet-note" id="sheetFlexInfo">—</div>
+    </div>
+    <div class="sheet-sec hidden" id="sheetEnterpriseSec">
+      <div class="lbl" data-i18n="sched.label.enterpriseInfo">企業學員時區資訊</div>
+      <div class="sheet-note" id="sheetEnterpriseLine">—</div>
+    </div>
+    <div class="sheet-sec">
+      <div class="lbl" id="sheetRosterLabel">學生名單</div>
+      <div class="roster" id="sheetRoster"></div>
+    </div>
+    <div class="sheet-sec" id="sheetMaterialSec">
+      <div class="lbl" data-i18n="sched.label.materialProgress">教材進度（點擊查看歷程）</div>
+      <div class="sheet-note clickable" id="sheetMaterial" onclick="toggleMaterialDetail()">—</div>
+      <div class="sheet-note-extra hidden" id="sheetMaterialExtra">—</div>
+    </div>
+    <div class="sheet-sec" id="sheetLastNoteSec">
+      <div class="lbl" data-i18n="sched.label.lastNoteSummary">上次紀錄摘要</div>
+      <div class="sheet-note" id="sheetLastNote">—</div>
+    </div>
+    <div class="sheet-sec hidden" id="sheetAttendSec">
+      <div class="lbl" data-i18n="label.attendanceRecord">出席紀錄（系統自動記錄）</div>
+      <div class="attend-list" id="sheetAttendList"></div>
+    </div>
+    <div class="banner banner-info hidden" id="sheetRuleBanner"></div>
+    <div class="banner banner-warn hidden" id="sheetCannotMakeItBanner"></div>
+    <div class="stack">
+      <div class="flex-between" id="sheetActions" style="gap:8px;"></div>
+      <div id="sheetCannotMakeItAction"></div>
+      <button class="btn btn-outline btn-block" onclick="closeSheet()" data-i18n="common.close">關閉</button>
+    </div>
+  </div>
+</div>
+
+<div class="sheet-overlay hidden" id="enterOverlay" onclick="if(event.target===this) this.classList.add('hidden')">
+  <div class="sheet">
+    <div class="sheet-handle"></div>
+    <h3 data-i18n="modal.enterClassroom">開啟線上教室</h3>
+    <div class="sheet-sec" style="margin-top:12px;">
+      <div class="lbl" data-i18n="label.roomStatus">教室狀態</div>
+      <div class="sheet-note" id="roomLockStatus">教室已建立（每堂唯一會議）</div>
+    </div>
+    <div class="sheet-sec hidden" id="enterVideoSec">
+      <div class="lbl" data-i18n="sched.label.videoTool">視訊工具與連結</div>
+      <div class="sheet-note" id="enterVideoLine">—</div>
+    </div>
+    <div class="sheet-sec">
+      <div class="flex-between" style="margin-bottom:6px;">
+        <div class="lbl" style="margin-bottom:0;"><span data-i18n="label.waitingRoom">等候室：名單</span> <span id="waitTotal">0</span>／<span data-i18n="label.waitCount">等候</span> <span id="waitCount">0</span></div>
+        <button class="w-btn" id="admitAllBtn" style="border-color:var(--c-border);color:var(--c-muted);" onclick="admitAll()" data-i18n="btn.admitAll">全部放行</button>
+      </div>
+      <div class="wait-list" id="waitList"></div>
+    </div>
+    <div class="sheet-sec" style="margin-bottom:0;">
+      <div class="sheet-note small" data-i18n="note.studentEntry">學生只能從會員區驗證後進入，連結不可轉傳。</div>
+    </div>
+    <div class="stack" style="margin-top:16px;">
+      <button class="btn btn-outline btn-block" id="lockMeetingBtn" onclick="lockMeeting()">鎖定會議</button>
+      <button class="btn btn-primary btn-block" onclick="confirmEnterClassroom()" data-i18n="btn.enterAsHost">進入教室（主持人）</button>
+      <button class="btn btn-outline btn-block" onclick="document.getElementById('enterOverlay').classList.add('hidden')" data-i18n="common.cancel">取消</button>
+    </div>
+    <p class="small muted" style="text-align:center;margin-top:10px;" data-i18n="note.attendanceAuto">出席將自動寫回系統</p>
+  </div>
+</div>
+
+<div class="sheet-overlay hidden" id="cannotMakeItOverlay" onclick="if(event.target===this) closeCannotMakeItModal()">
+  <div class="sheet">
+    <div class="sheet-handle"></div>
+    <h3 data-i18n="sched.modal.cannotMakeIt">回報無法配合</h3>
+    <p class="sheet-note" id="cannotMakeItMeta" style="margin:2px 0 12px;">—</p>
+    <div class="sheet-sec">
+      <div class="lbl" data-i18n="sched.label.reasonRequired">原因（必填，顧問會看到）</div>
+      <textarea id="cannotMakeItReason" rows="3" style="width:100%;border:1px solid var(--c-border);border-radius:var(--radius-sm);padding:10px 11px;font-size:14px;font-family:inherit;resize:vertical;" placeholder="例如：該時段臨時有事，無法授課" data-i18n-placeholder="sched.placeholder.reasonExample"></textarea>
+    </div>
+    <p class="small muted" style="margin:0 0 14px;" data-i18n="sched.desc.cannotMakeItNote">送出後這堂課會標記為「待顧問重排」，實際重排／代課處理方式待與顧問確認（規格書尚未定案細節）。</p>
+    <div class="stack">
+      <button class="btn btn-primary btn-block" onclick="submitCannotMakeIt()" data-i18n="common.submit">送出</button>
+      <button class="btn btn-outline btn-block" onclick="closeCannotMakeItModal()" data-i18n="common.cancel">取消</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast hidden" id="toast"></div>
+
+<script src="../assets/_shared_masters.js"></script>
+<script src="../assets/_i18n_dict.js"></script>
+<script src="../assets/_i18n_dict_teacher.js"></script>
+<script src="../assets/_i18n.js"></script>
+<script>
+function toggleBell(){document.getElementById('bellPanel').classList.toggle('open');}
+/* ===== 視訊工具名稱查詢（來源主檔 videoTools，來自 a17「視訊工具與授權」） ===== */
+function videoToolName(id){
+  var vt = (TLI_MASTERS.videoTools || []).filter(function(v){ return v.id===id; })[0];
+  return vt ? vt.name : id;
+}
+document.addEventListener('click',function(e){
+  if(!e.target.closest('.bell-btn')&&!e.target.closest('.bell-panel'))document.getElementById('bellPanel').classList.remove('open');
+});
+
+var weeks = [
+  '2026/08/10 – 08/16',
+  '2026/08/17 – 08/23',
+  '2026/08/24 – 08/30',
+  '2026/08/31 – 09/06',
+  '2026/09/07 – 09/13'
+];
+var weekIdx = 2; /* 索引 2＝原本寫死的「本週」課表，內容維持不變 */
+var CURRENT_WEEK_GRID_HTML = null; /* 首次載入時保留原始「本週」課表內容，切回本週時還原用 */
+function updateWeekNavButtons(){
+  document.getElementById('prevWeek').disabled = (weekIdx===0);
+  document.getElementById('nextWeek').disabled = (weekIdx===weeks.length-1);
+}
+function changeWeek(dir){
+  var next = weekIdx + dir;
+  if(next<0 || next>weeks.length-1) return;
+  weekIdx = next;
+  document.getElementById('weekLabel').textContent = weeks[weekIdx];
+  renderWeekGrid();
+  updateWeekNavButtons();
+  if (window.TLI_I18N) TLI_I18N.refresh();
+}
+function renderWeekGrid(){
+  var grid = document.getElementById('weekGrid');
+  if(weekIdx===2){
+    grid.innerHTML = CURRENT_WEEK_GRID_HTML;
+  }else{
+    grid.innerHTML = OTHER_WEEK_GRIDS[weekIdx];
+  }
+  /* 沿用目前的「僅顯示企業學員」篩選狀態 */
+  document.querySelectorAll('.lesson-block').forEach(function(el){
+    var isEnt = el.getAttribute('data-enterprise')==='1';
+    el.classList.toggle('lb-hidden', scheduleFilter==='enterprise' && !isEnt);
+  });
+  if (window.TLI_I18N) TLI_I18N.refresh();
+}
+
+/* ---------- 企業學員篩選（v2 新增） ---------- */
+var scheduleFilter='all';
+function setScheduleFilter(f){
+  scheduleFilter=f;
+  document.querySelectorAll('#scheduleFilterBar .fchip').forEach(function(c){c.classList.toggle('active', c.dataset.filter===f);});
+  document.querySelectorAll('.lesson-block').forEach(function(el){
+    var isEnt = el.getAttribute('data-enterprise')==='1';
+    el.classList.toggle('lb-hidden', f==='enterprise' && !isEnt);
+  });
+  showToast(f==='enterprise' ? TLI_I18N.t('僅顯示企業學員課堂','Showing enterprise students only') : TLI_I18N.t('顯示全部課堂','Showing all classes'));
+  if (window.TLI_I18N) TLI_I18N.refresh();
+}
+
+var lessons = {
+  M1:{title:'王小明・個人班', meta:'08/24（一）09:00–09:50・士林校區 A203', roster:[['王小明','中級 2']], material:'《NPC》第 5 冊 第 3 課（進度正常）', materialHistory:'已完成：第 1–2 課；本次：第 3 課；下堂預計：第 4 課。', note:'上次練習「把」字句造句，發音需加強聲調。', status:'past', recordId:'L1', mode:'onetoone', enterprise:'企業學員・和霖科技股份有限公司・美國廠區・廠區當地（前一日）18:00–18:50（跨日）',
+      attendance:[{name:'王小明', time:'09:00 進入・已出席'}]},
+  M2:{title:'中級小組班（3 人）', meta:'08/24（一）10:30–11:20・士林校區 A203', roster:[['陳雅婷','中級 2'],['周文正','中級 2'],['林詩涵','中級 1']], material:'《NPC》第 5 冊 第 2 課（進度正常）', materialHistory:'已完成：第 1 課；本次：第 2 課；下堂預計：第 3 課。', note:'整體口說進度良好，周文正需加強聽力練習。', status:'past', recordId:'L2', mode:'flex',
+      flexInfo:'入班名單：3 位・本期第 4／12 堂・教材單元：《NPC》第 5 冊 第 2 課',
+      attendance:[{name:'陳雅婷', time:'10:31 進入・已出席'},{name:'周文正', time:'10:29 進入・已出席'},{name:'林詩涵', time:'10:33 進入・已出席'}]},
+  T1:{title:'王小明・個人班', meta:'08/25（二）09:00–09:50・士林校區 A203', roster:[['王小明','中級 2']], material:'《NPC》第 5 冊 第 4 課', materialHistory:'已完成：第 1–3 課；本次：第 4 課；下堂預計：第 5 課。', note:'延續上次「把」字句練習，本次加入情境對話。', mode:'onetoone', enterprise:'企業學員・和霖科技股份有限公司・美國廠區・廠區當地（前一日）18:00–18:50（跨日）'},
+  T2:{title:'學期班 Lv.5–8（首堂）', meta:'08/25（二）15:00–15:50・羅斯福校區', roster:[['共 12 位學生','學期班名單於現場點名']], material:'《NICD》第 1 冊 第 1 課（開課）', materialHistory:'新開班，尚無歷史進度紀錄。', note:'新開班，尚無歷史紀錄。', rule:'首堂課由資深教師任教（規則：需累積 600 小時以上）。', mode:'flex',
+      flexInfo:'入班名單：12 位・本期第 1／12 堂・教材單元：《NICD》第 1 冊 第 1 課'},
+  W1:{title:'初級小組班（4 人）', meta:'08/26（三）14:00–14:50・士林校區 A106', roster:[['張家豪','初級 3'],['李佳融','初級 3'],['黃思穎','初級 2'],['吳冠廷','初級 3']], material:'《NPC》第 2 冊 第 8 課（進度正常）', materialHistory:'已完成：第 1–7 課；本次：第 8 課；下堂預計：第 9 課。', note:'黃思穎進度稍慢，已安排加強練習。', mode:'flex',
+      flexInfo:'入班名單：4 位・本期第 9／12 堂・教材單元：《NPC》第 2 冊 第 8 課'},
+  R1:{title:'王小明・個人班', meta:'08/27（四）09:00–09:50・士林校區 A203', roster:[['王小明','中級 2']], material:'《NPC》第 5 冊 第 4 課', materialHistory:'已完成：第 1–3 課；本次：第 4 課；下堂預計：第 5 課。', note:'同上次進度，持續練習情境對話。', mode:'onetoone', enterprise:'企業學員・和霖科技股份有限公司・美國廠區・廠區當地（前一日）18:00–18:50（跨日）'},
+  R2:{title:'陳雅婷（線上）・個人班', meta:'08/27（四）16:00–17:30・Zoom・90 分鐘', roster:[['陳雅婷','高級 1']], material:'《NICD》第 3 冊 第 6 課（進度警戒：已累計 12 堂，建議留意學習節奏）', materialHistory:'已完成：第 1–5 課；本次：第 6 課；已累計 12 堂，建議與顧問確認續約規劃。', note:'口語表達進步明顯，寫作待加強。', mode:'onetoone', enterprise:'企業學員・瑞新金融顧問股份有限公司・日本廠區・廠區當地 17:00–18:30', videoToolId:'zoom'},
+  S1:{title:'學期班 Lv.5–8', meta:'08/29（六）10:00–10:50・羅斯福校區', roster:[['共 12 位學生','學期班名單於現場點名']], material:'《NICD》第 1 冊 第 3 課（進度正常）', materialHistory:'已完成：第 1–2 課；本次：第 3 課；下堂預計：第 4 課。', note:'班級整體出席穩定。', mode:'flex',
+      flexInfo:'入班名單：12 位・本期第 2／12 堂・教材單元：《NICD》第 1 冊 第 3 課'}
+};
+
+/* ---------- 團體聊天室場次（改版：TLI 老師帶團體場次，資料為模擬數字） ---------- */
+// 學生一律以化名顯示（不揭露真實姓名），所屬大學統一以「範例州立大學」示範
+var CHAT_SESSIONS = {
+  C1:{title:'日常對話練習', meta:'08/26（三）15:30–16:00・線上聊天室', audience:'機構學生・範例州立大學',
+      roster:[{name:'學員A', uni:'範例州立大學'},{name:'學員B', uni:'範例州立大學'},{name:'學員C', uni:'範例州立大學'},{name:'學員D', uni:'範例州立大學'}]},
+  C2:{title:'時事話題討論', meta:'08/28（五）09:00–09:30・線上聊天室', audience:'全部（全平台開放）',
+      roster:[{name:'學員E', uni:'範例州立大學'},{name:'學員F', uni:'範例州立大學'}]}
+};
+
+var STUDENT_NOTES = {
+  '王小明':'上次出席：08/24・「把」字句練習進步，發音需加強聲調。',
+  '陳雅婷':'上次出席：08/24・口語表達進步明顯，寫作待加強。',
+  '周文正':'上次出席：08/24・整體進度良好，聽力需加強練習。',
+  '林詩涵':'上次出席：08/24・程度中級 1，跟班進度略慢，已安排加強練習。',
+  '張家豪':'上次出席：08/26・發音準確，可加快進度。',
+  '李佳融':'上次出席：08/26・口說活潑，寫作待加強。',
+  '黃思穎':'上次出席：08/26・進度稍慢，已安排加強練習。',
+  '吳冠廷':'上次出席：08/26・出席穩定，表現持平。'
+};
+
+var currentSheetId = null;
+var currentEnterId = null;
+/* 20260930en：課堂詳情裡混合「示範資料＋固定樣板字」的欄位（企業學員時區列／教材進度／教材歷程／
+   彈性班入班資訊／出席時間），示範資料（機構名、教材單元名、日期）維持原文，固定樣板字用 TLI_I18N.t()
+   逐段替換成英文；zh-TW／zh-CN 不受影響（t() 內建處理） */
+function trPhrases(str, pairs){
+  if(!str) return str;
+  pairs.forEach(function(p){ str = str.split(p[0]).join(TLI_I18N.t(p[0], p[1])); });
+  return str;
+}
+function trAudience(a){
+  return trPhrases(a, [
+    ['機構學生','Institution Students'],
+    ['全部（全平台開放）','All (Platform-wide)']
+  ]);
+}
+function trEnterpriseLine(s){
+  return trPhrases(s, [
+    ['企業學員・','Enterprise Student · '],
+    ['・廠區當地（前一日）','・Factory-site local time (previous day) '],
+    ['・廠區當地 ','・Factory-site local time '],
+    ['（跨日）',' (cross-day)']
+  ]);
+}
+function trMaterialLine(s){
+  return trPhrases(s, [
+    ['（進度警戒：已累計 12 堂，建議留意學習節奏）',' (Progress Alert: 12 lessons completed so far — recommend monitoring learning pace)'],
+    ['（進度正常）',' (Progress: Normal)']
+  ]);
+}
+function trMaterialHistory(s){
+  return trPhrases(s, [
+    ['；已累計 12 堂，建議與顧問確認續約規劃。','; 12 lessons completed so far — recommend confirming renewal plan with advisor.'],
+    ['已完成：','Completed: '],
+    ['；本次：','; This time: '],
+    ['；下堂預計：','; Next expected: ']
+  ]);
+}
+function trFlexInfo(s){
+  return trPhrases(s, [
+    ['入班名單：','Class Roster: '],
+    [' 位・本期第 ',' students · This term Lesson '],
+    ['／12 堂・教材單元：','/12 · Material Unit: ']
+  ]);
+}
+function trAttendTime(s){
+  return trPhrases(s, [
+    [' 進入・已出席',' Entered · Attended']
+  ]);
+}
+function openSheet(id){
+  if(CHAT_SESSIONS[id]){ openChatSheet(id); return; }
+  currentSheetId = id;
+  var l = lessons[id];
+  document.getElementById('sheetMaterialSec').classList.remove('hidden');
+  document.getElementById('sheetLastNoteSec').classList.remove('hidden');
+  document.getElementById('sheetRosterLabel').textContent = TLI_I18N.t('學生名單','Student Roster');
+  document.getElementById('sheetTitle').textContent = l.title;
+  var modeBadge = document.getElementById('sheetModeBadge');
+  if(l.mode === 'flex'){
+    modeBadge.textContent = TLI_I18N.t('彈性團體直播班（團體）','Flexible Group Livestream (Group)');
+    modeBadge.className = 'badge badge-flex';
+  }else{
+    modeBadge.textContent = TLI_I18N.t('一對一（顧問排定）','One-on-One (Advisor-Scheduled)');
+    modeBadge.className = 'badge badge-onetoone';
+  }
+  var flexSec = document.getElementById('sheetFlexSec');
+  if(l.flexInfo){
+    document.getElementById('sheetFlexInfo').textContent = trFlexInfo(l.flexInfo);
+    flexSec.classList.remove('hidden');
+  }else{
+    flexSec.classList.add('hidden');
+  }
+  document.getElementById('sheetMeta').textContent = l.meta;
+  var videoSec = document.getElementById('sheetVideoSec');
+  if(l.videoToolId){
+    document.getElementById('sheetVideoLine').textContent = TLI_I18N.t('視訊工具：','Video Tool: ')+videoToolName(l.videoToolId)+TLI_I18N.t('・會議連結由系統代管（每堂唯一會議），開課後由下方「開啟線上教室」直接進入','・Meeting link is managed by the system (unique meeting per class); enter directly via "Enter Online Classroom" below once class starts');
+    videoSec.classList.remove('hidden');
+  }else{
+    videoSec.classList.add('hidden');
+  }
+  var entSec = document.getElementById('sheetEnterpriseSec');
+  if(l.enterprise){
+    document.getElementById('sheetEnterpriseLine').textContent = trEnterpriseLine(l.enterprise);
+    entSec.classList.remove('hidden');
+  }else{
+    entSec.classList.add('hidden');
+  }
+  document.getElementById('sheetMaterial').textContent = trMaterialLine(l.material);
+  document.getElementById('sheetMaterialExtra').textContent = l.materialHistory ? trMaterialHistory(l.materialHistory) : TLI_I18N.t('暫無歷程紀錄。','No history record yet.');
+  document.getElementById('sheetMaterialExtra').classList.add('hidden');
+  document.getElementById('sheetLastNote').textContent = l.note;
+  var attendSec = document.getElementById('sheetAttendSec');
+  var attendList = document.getElementById('sheetAttendList');
+  if(l.attendance && l.attendance.length){
+    attendList.innerHTML = '';
+    l.attendance.forEach(function(a){
+      var row = document.createElement('div');
+      row.className = 'attend-row';
+      row.innerHTML = '<span>'+a.name+'</span><span>'+trAttendTime(a.time)+'</span>';
+      attendList.appendChild(row);
+    });
+    attendSec.classList.remove('hidden');
+  }else{
+    attendSec.classList.add('hidden');
+  }
+  var rosterEl = document.getElementById('sheetRoster');
+  rosterEl.innerHTML = '';
+  l.roster.forEach(function(r){
+    var div = document.createElement('div');
+    div.className='stu';
+    div.innerHTML = '<span>'+r[0]+'</span><span style="color:var(--c-muted)">'+r[1]+'</span>';
+    if(STUDENT_NOTES[r[0]]){
+      div.onclick = function(){
+        var detail = div.nextElementSibling;
+        if(detail && detail.classList.contains('stu-detail')){
+          detail.classList.toggle('hidden');
+        }
+      };
+      rosterEl.appendChild(div);
+      var detailDiv = document.createElement('div');
+      detailDiv.className = 'stu-detail hidden';
+      detailDiv.textContent = STUDENT_NOTES[r[0]];
+      rosterEl.appendChild(detailDiv);
+    }else{
+      rosterEl.appendChild(div);
+    }
+  });
+  var ruleEl = document.getElementById('sheetRuleBanner');
+  if(l.rule){ruleEl.textContent = TLI_I18N.t(l.rule, 'First class taught by a senior teacher (rule: teacher must have accumulated 600+ hours).'); ruleEl.classList.remove('hidden');}
+  else{ruleEl.classList.add('hidden');}
+
+  /* 一對一課程：顧問排定後，老師可回報「無法配合」（規格書只有流程圖沒有詳細規格，此為最簡版：回報後標記待顧問重排） */
+  var cmiBanner = document.getElementById('sheetCannotMakeItBanner');
+  var cmiActionWrap = document.getElementById('sheetCannotMakeItAction');
+  cmiActionWrap.innerHTML = '';
+  var cmiReason = l.mode==='onetoone' ? localStorage.getItem('tli_cannot_make_it_'+id) : null;
+  if(cmiReason){
+    cmiBanner.textContent = TLI_I18N.t('你已回報無法配合此堂課（原因：','You have reported that you cannot make this class (reason: ')+cmiReason+TLI_I18N.t('），狀態：待顧問重排。實際重排或代課安排由顧問處理，細節待與顧問確認。','). Status: pending advisor reschedule. The actual rescheduling or substitute arrangement will be handled by the advisor; details to be confirmed with the advisor.');
+    cmiBanner.classList.remove('hidden');
+  }else{
+    cmiBanner.classList.add('hidden');
+  }
+
+  var actionsEl = document.getElementById('sheetActions');
+  actionsEl.innerHTML = '';
+  if(l.status === 'past'){
+    var recordDone = localStorage.getItem('tli_teacher_record_'+l.recordId) === '1';
+    var recordBtn = document.createElement('button');
+    recordBtn.className = 'btn btn-block ' + (recordDone ? 'btn-outline' : 'btn-primary');
+    recordBtn.textContent = recordDone ? TLI_I18N.t('已完成回饋・查看','Feedback Completed · View') : TLI_I18N.t('寫回饋','Write Feedback');
+    recordBtn.onclick = function(){ location.href = 't03_lesson_record.html?lesson='+l.recordId; };
+    actionsEl.appendChild(recordBtn);
+  }else{
+    var leaveBtn = document.createElement('button');
+    leaveBtn.className = 'btn btn-outline btn-block';
+    leaveBtn.textContent = TLI_I18N.t('請假／申請代課','Leave / Apply for Substitute');
+    leaveBtn.onclick = function(){ location.href = 't05_leave_sub.html?course='+id; };
+    var enterBtn = document.createElement('button');
+    enterBtn.className = 'btn btn-primary btn-block';
+    enterBtn.textContent = TLI_I18N.t('開啟線上教室','Enter Online Classroom');
+    enterBtn.onclick = function(){ openEnterModal(id); };
+    actionsEl.appendChild(leaveBtn);
+    actionsEl.appendChild(enterBtn);
+    if(l.mode==='onetoone' && !cmiReason){
+      var cmiBtn = document.createElement('button');
+      cmiBtn.className = 'btn btn-outline btn-block';
+      cmiBtn.textContent = TLI_I18N.t('回報無法配合','Report Unable to Attend');
+      cmiBtn.onclick = function(){ openCannotMakeItModal(id, l.title+'・'+l.meta); };
+      cmiActionWrap.appendChild(cmiBtn);
+    }
+  }
+  document.getElementById('sheetOverlay').classList.remove('hidden');
+  if (window.TLI_I18N) TLI_I18N.refresh();
+}
+
+var cannotMakeItTargetId = null;
+function openCannotMakeItModal(id, metaText){
+  cannotMakeItTargetId = id;
+  document.getElementById('cannotMakeItMeta').textContent = metaText;
+  document.getElementById('cannotMakeItReason').value = '';
+  document.getElementById('cannotMakeItOverlay').classList.remove('hidden');
+}
+function closeCannotMakeItModal(){
+  document.getElementById('cannotMakeItOverlay').classList.add('hidden');
+  cannotMakeItTargetId = null;
+}
+function submitCannotMakeIt(){
+  if(!cannotMakeItTargetId) return;
+  var reason = document.getElementById('cannotMakeItReason').value.trim();
+  if(!reason){ showToast(TLI_I18N.t('請先填寫無法配合的原因','Please enter the reason you cannot attend first')); return; }
+  localStorage.setItem('tli_cannot_make_it_'+cannotMakeItTargetId, reason);
+  markCannotMakeItBadge(cannotMakeItTargetId);
+  closeCannotMakeItModal();
+  showToast(TLI_I18N.t('已回報無法配合，狀態標記為「待顧問重排」','Reported as unable to attend; status marked as "Pending Advisor Reschedule"'));
+  openSheet(cannotMakeItTargetId);
+}
+function markCannotMakeItBadge(id){
+  var block = document.getElementById('lb-'+id);
+  if(!block) return;
+  var badges = block.querySelector('.lb-badges');
+  if(!badges){
+    badges = document.createElement('div');
+    badges.className = 'lb-badges';
+    block.appendChild(badges);
+  }
+  if(!badges.querySelector('.lb-badge-warn')){
+    var span = document.createElement('span');
+    span.className = 'lb-badge-warn';
+    span.setAttribute('data-i18n', 'sched.badge.pendingReschedule');
+    span.textContent = '待顧問重排';
+    badges.appendChild(span);
+    if (window.TLI_I18N) TLI_I18N.refresh();
+  }
+}
+/* 初始載入：把先前已回報過無法配合的課堂補上標記 */
+['M1','T1','R1','R2'].forEach(function(lid){
+  if(localStorage.getItem('tli_cannot_make_it_'+lid)) markCannotMakeItBadge(lid);
+});
+function closeSheet(){
+  document.getElementById('sheetOverlay').classList.add('hidden');
+}
+
+/* ---------- 團體聊天室場次詳情：化名名單＋出席勾選＋開始（v2 改版） ---------- */
+function openChatSheet(id){
+  currentSheetId = id;
+  var c = CHAT_SESSIONS[id];
+  document.getElementById('sheetTitle').textContent = c.title;
+  var modeBadge = document.getElementById('sheetModeBadge');
+  modeBadge.textContent = TLI_I18N.t('團體聊天室（30 分鐘，TLI 老師帶）','Group Chat Room (30 min, led by TLI teacher)');
+  modeBadge.className = 'badge badge-chat';
+  document.getElementById('sheetFlexSec').classList.add('hidden');
+  document.getElementById('sheetMeta').textContent = c.meta+TLI_I18N.t('・面向：','・Audience: ')+trAudience(c.audience);
+  document.getElementById('sheetEnterpriseSec').classList.add('hidden');
+  document.getElementById('sheetMaterialSec').classList.add('hidden');
+  document.getElementById('sheetLastNoteSec').classList.add('hidden');
+  document.getElementById('sheetAttendSec').classList.add('hidden');
+  document.getElementById('sheetRuleBanner').classList.add('hidden');
+  document.getElementById('sheetRosterLabel').textContent = TLI_I18N.t('報名學生（化名）','Registered Students (Anonymized)');
+
+  var rosterEl = document.getElementById('sheetRoster');
+  rosterEl.innerHTML = '';
+  c.roster.forEach(function(s, idx){
+    var row = document.createElement('div');
+    row.className = 'stu-chat';
+    var cbId = 'chatAttend_'+id+'_'+idx;
+    row.innerHTML =
+      '<span><span class="sc-name">'+s.name+'</span><span class="sc-uni"> ・ '+s.uni+'</span></span>'+
+      '<label class="chat-attend" for="'+cbId+'"><input type="checkbox" id="'+cbId+'" onchange="toggleChatAttend(this)"><span>'+TLI_I18N.t('出席','Attend')+'</span></label>';
+    rosterEl.appendChild(row);
+  });
+
+  var actionsEl = document.getElementById('sheetActions');
+  actionsEl.innerHTML = '';
+  var startBtn = document.createElement('button');
+  startBtn.className = 'btn btn-primary btn-block';
+  startBtn.textContent = TLI_I18N.t('開始','Start');
+  startBtn.onclick = function(){ showToast(TLI_I18N.t('已進入教室・團體聊天室由 TLI 老師帶領，出席請於名單勾選','Entered the classroom · This is a TLI-teacher-led group chat room — mark attendance from the roster')); };
+  actionsEl.appendChild(startBtn);
+  document.getElementById('sheetOverlay').classList.remove('hidden');
+  if (window.TLI_I18N) TLI_I18N.refresh();
+}
+/* ESC 鍵關閉目前開啟中的 sheet-overlay */
+document.addEventListener('keydown', function(e){
+  if (e.key !== 'Escape') return;
+  document.querySelectorAll('.sheet-overlay').forEach(function(el){ el.classList.add('hidden'); });
+});
+document.getElementById('sheetOverlay').addEventListener('click', function(e){
+  if(e.target.id === 'sheetOverlay') closeSheet();
+});
+
+function toggleMaterialDetail(){
+  document.getElementById('sheetMaterialExtra').classList.toggle('hidden');
+}
+
+// 等候室名單：依課堂人數而定；超過 6 人的大班以「共 N 位」彙總顯示；另示範 1 位 Email 與訂課紀錄不符者，僅能拒絕
+var WAIT_ROSTER = [];
+var admitted = {};
+var rejected = {};
+var meetingLocked = false;
+function renderWaitList(){
+  var total = WAIT_ROSTER.length;
+  var waiting = WAIT_ROSTER.filter(function(s){return !admitted[s.name] && !rejected[s.name];}).length;
+  document.getElementById('waitTotal').textContent = total;
+  document.getElementById('waitCount').textContent = waiting;
+  var list = document.getElementById('waitList');
+  list.innerHTML = '';
+  WAIT_ROSTER.forEach(function(s){
+    var row = document.createElement('div');
+    row.className = 'wait-row';
+    var displayName = s.guest ? TLI_I18N.t('訪客帳號（Email 未登記）','Guest Account (Email not registered)')
+                     : s.numbered ? TLI_I18N.t('學生 ','Student ')+s.name
+                     : s.name;
+    var statusText = admitted[s.name] ? TLI_I18N.t('已放行','Admitted') : (rejected[s.name] ? TLI_I18N.t('已拒絕','Rejected') : TLI_I18N.t('等候中','Waiting'));
+    var badge = s.matched
+      ? '<span class="badge badge-ok" style="margin-left:6px;">'+TLI_I18N.t('Email 相符','Email Matched')+'</span>'
+      : '<span class="badge" style="margin-left:6px;background:#FBE5E1;color:#B42318;">'+TLI_I18N.t('非名單','Not on Roster')+'</span>';
+    row.innerHTML = '<span>'+displayName+'・'+statusText+badge+'</span>';
+    var btn = document.createElement('button');
+    if(s.matched){
+      var isIn = !!admitted[s.name];
+      btn.className = 'w-btn'+(isIn?' admitted':'');
+      btn.textContent = isIn ? TLI_I18N.t('已放行','Admitted') : TLI_I18N.t('放行','Admit');
+      btn.disabled = isIn || meetingLocked;
+      btn.onclick = function(){ admitted[s.name] = true; renderWaitList(); };
+    }else{
+      var isOut = !!rejected[s.name];
+      btn.className = 'w-btn'+(isOut?' admitted':'');
+      if(!isOut){ btn.style.borderColor='#F5B0A6'; btn.style.color='#B42318'; }
+      btn.textContent = isOut ? TLI_I18N.t('已拒絕','Rejected') : TLI_I18N.t('拒絕','Reject');
+      btn.disabled = isOut || meetingLocked;
+      btn.onclick = function(){ rejected[s.name] = true; renderWaitList(); };
+    }
+    row.appendChild(btn);
+    list.appendChild(row);
+  });
+  if (window.TLI_I18N) TLI_I18N.refresh();
+}
+function admitAll(){
+  if(meetingLocked) return;
+  WAIT_ROSTER.forEach(function(s){ if(s.matched) admitted[s.name] = true; });
+  renderWaitList();
+  showToast(TLI_I18N.t('已全部放行（名單相符者）','All admitted (matched roster only)'));
+}
+/* 依目前 meetingLocked 狀態，同步教室狀態文字／鎖定按鈕文字／放行按鈕 disabled（供 openEnterModal 與 refreshOpenPanels 共用，避免切語言時洗掉目前的放行/拒絕/鎖定進度） */
+function syncEnterModalTexts(){
+  document.getElementById('roomLockStatus').textContent = meetingLocked
+    ? TLI_I18N.t('已鎖定，課中無人可再進入','Locked — no one can enter during class')
+    : TLI_I18N.t('教室已建立（每堂唯一會議）','Room created (unique meeting per class)');
+  document.getElementById('lockMeetingBtn').disabled = meetingLocked;
+  document.getElementById('lockMeetingBtn').textContent = meetingLocked
+    ? TLI_I18N.t('已鎖定會議','Meeting Locked')
+    : TLI_I18N.t('鎖定會議','Lock Meeting');
+  document.getElementById('admitAllBtn').disabled = meetingLocked;
+}
+function lockMeeting(){
+  if(meetingLocked) return;
+  meetingLocked = true;
+  syncEnterModalTexts();
+  renderWaitList();
+  showToast(TLI_I18N.t('會議已鎖定，課中無人可再進入','Meeting locked — no one can enter during class'));
+}
+/* 重新產生 enterOverlay 內「視訊工具與連結」＋教室狀態／鎖定按鈕＋等候室名單，供 openEnterModal 開啟時、以及 refreshOpenPanels 語言切換時共用 */
+function renderEnterModal(l){
+  var videoSec = document.getElementById('enterVideoSec');
+  if(l.videoToolId){
+    document.getElementById('enterVideoLine').textContent = TLI_I18N.t('視訊工具：','Video Tool: ')+videoToolName(l.videoToolId)+TLI_I18N.t('・會議連結由系統代管，點下方「進入教室」即直接開啟','・Meeting link is managed by the system — click "Enter Classroom" below to join directly');
+    videoSec.classList.remove('hidden');
+  }else{
+    videoSec.classList.add('hidden');
+  }
+  syncEnterModalTexts();
+  renderWaitList();
+}
+function openEnterModal(id){
+  currentEnterId = id;
+  var l = lessons[id];
+  var names = l.roster.map(function(r){ return r[0]; });
+  if(names.length === 1 && /^共\s*\d+\s*位/.test(names[0])){
+    // 大班（學期班）：以彙總人數顯示，不逐一列名
+    var n = parseInt(names[0].replace(/\D/g,''), 10) || 12;
+    WAIT_ROSTER = [];
+    for(var i=1;i<=n;i++){ WAIT_ROSTER.push({name:i, matched:true, numbered:true}); }
+  }else{
+    WAIT_ROSTER = names.map(function(nm){ return {name:nm, matched:true}; });
+  }
+  WAIT_ROSTER.push({name:'訪客帳號（Email 未登記）', matched:false, guest:true});
+  admitted = {};
+  rejected = {};
+  meetingLocked = false;
+  renderEnterModal(l);
+  document.getElementById('enterOverlay').classList.remove('hidden');
+}
+function confirmEnterClassroom(){
+  document.getElementById('enterOverlay').classList.add('hidden');
+  showToast(TLI_I18N.t('已進入線上教室（主持人），出席將自動寫回系統','Entered the online classroom (host) — attendance will be recorded automatically'));
+}
+
+/* ---------- 團體聊天室場次：出席勾選（僅出席勾選，不含課後紀錄/回饋表單，v2 改版） ---------- */
+function toggleChatAttend(checkbox){
+  var label = checkbox.closest('.chat-attend');
+  label.classList.toggle('checked', checkbox.checked);
+  showToast(checkbox.checked ? TLI_I18N.t('已標記出席（團體聊天室）','Marked as attended (group chat room)') : TLI_I18N.t('已取消出席標記','Attendance mark removed'));
+}
+
+/* ---------- 已開啟浮層的語言即時切換：判斷目前哪個浮層開著，重新呼叫對應渲染邏輯 ---------- */
+function refreshOpenPanels(){
+  var sheetOv = document.getElementById('sheetOverlay');
+  var enterOv = document.getElementById('enterOverlay');
+  if(sheetOv && !sheetOv.classList.contains('hidden') && currentSheetId){
+    if(CHAT_SESSIONS[currentSheetId]) openChatSheet(currentSheetId);
+    else openSheet(currentSheetId);
+  }
+  if(enterOv && !enterOv.classList.contains('hidden') && currentEnterId && lessons[currentEnterId]){
+    renderEnterModal(lessons[currentEnterId]);
+  }
+}
+if (window.TLI_I18N) TLI_I18N.onRefresh(refreshOpenPanels);
+
+var toastTimer=null;
+function showToast(msg){
+  var t=document.getElementById('toast');
+  t.textContent=msg;
+  t.classList.remove('hidden');
+  clearTimeout(toastTimer);
+  toastTimer=setTimeout(function(){t.classList.add('hidden');},2400);
+}
+
+/* ---------- 上一週／下一週示範資料（按週位移產生，讓切週後課表卡片內容確實跟著換） ---------- */
+lessons.W0_1 = {title:'陳建宏・個人班', meta:'08/10（一）09:00–09:50・士林校區 A105', roster:[['陳建宏','初級 3']], material:'《NPC》第 2 冊 第 5 課（進度正常）', materialHistory:'已完成：第 1–4 課；本次：第 5 課；下堂預計：第 6 課。', note:'發音穩定，可加快進度。', mode:'onetoone'};
+lessons.W0_2 = {title:'學期班 Lv.1–4', meta:'08/12（三）14:00–14:50・羅斯福校區', roster:[['共 10 位學生','學期班名單於現場點名']], material:'《NICD》第 1 冊 第 1 課（開課）', materialHistory:'新開班，尚無歷史進度紀錄。', note:'新開班，尚無歷史紀錄。', mode:'flex', flexInfo:'入班名單：10 位・本期第 1／12 堂・教材單元：《NICD》第 1 冊 第 1 課'};
+CHAT_SESSIONS.W0_3 = {title:'生活情境會話', meta:'08/14（五）09:00–09:30・線上聊天室', audience:'機構學生・範例州立大學', roster:[{name:'學員A', uni:'範例州立大學'},{name:'學員B', uni:'範例州立大學'}]};
+
+lessons.W1_1 = {title:'林佳蓉・個人班', meta:'08/17（一）09:00–09:50・士林校區 A105', roster:[['林佳蓉','初級 3']], material:'《NPC》第 2 冊 第 6 課（進度正常）', materialHistory:'已完成：第 1–5 課；本次：第 6 課；下堂預計：第 7 課。', note:'聽力進步明顯。', mode:'onetoone'};
+lessons.W1_2 = {title:'學期班 Lv.1–4', meta:'08/19（三）14:00–14:50・羅斯福校區', roster:[['共 10 位學生','學期班名單於現場點名']], material:'《NICD》第 1 冊 第 2 課（進度正常）', materialHistory:'已完成：第 1 課；本次：第 2 課；下堂預計：第 3 課。', note:'班級整體出席穩定。', mode:'flex', flexInfo:'入班名單：10 位・本期第 2／12 堂・教材單元：《NICD》第 1 冊 第 2 課'};
+CHAT_SESSIONS.W1_3 = {title:'生活情境會話', meta:'08/21（五）09:00–09:30・線上聊天室', audience:'機構學生・範例州立大學', roster:[{name:'學員C', uni:'範例州立大學'},{name:'學員D', uni:'範例州立大學'}]};
+
+lessons.W3_1 = {title:'李明哲・個人班', meta:'08/31（一）09:00–09:50・士林校區 A203', roster:[['李明哲','中級 1']], material:'《NPC》第 4 冊 第 1 課（開課）', materialHistory:'新開課程，尚無歷史進度紀錄。', note:'首堂課，先確認程度分班是否合適。', mode:'onetoone'};
+lessons.W3_2 = {title:'初級小組班（4 人）', meta:'09/02（三）14:00–14:50・士林校區 A106', roster:[['張家豪','初級 3'],['李佳融','初級 3'],['黃思穎','初級 2'],['吳冠廷','初級 3']], material:'《NPC》第 2 冊 第 9 課（進度正常）', materialHistory:'已完成：第 1–8 課；本次：第 9 課；下堂預計：第 10 課。', note:'整體進度穩定。', mode:'flex', flexInfo:'入班名單：4 位・本期第 10／12 堂・教材單元：《NPC》第 2 冊 第 9 課'};
+CHAT_SESSIONS.W3_3 = {title:'時事話題討論', meta:'09/04（五）09:00–09:30・線上聊天室', audience:'全部（全平台開放）', roster:[{name:'學員E', uni:'範例州立大學'},{name:'學員F', uni:'範例州立大學'}]};
+
+lessons.W4_1 = {title:'張雅雯・個人班', meta:'09/07（一）09:00–09:50・士林校區 A203', roster:[['張雅雯','中級 1']], material:'《NPC》第 4 冊 第 2 課（進度正常）', materialHistory:'已完成：第 1 課；本次：第 2 課；下堂預計：第 3 課。', note:'口說表現穩定。', mode:'onetoone'};
+lessons.W4_2 = {title:'初級小組班（4 人）', meta:'09/09（三）14:00–14:50・士林校區 A106', roster:[['張家豪','初級 3'],['李佳融','初級 3'],['黃思穎','初級 2'],['吳冠廷','初級 3']], material:'《NPC》第 2 冊 第 10 課（進度正常）', materialHistory:'已完成：第 1–9 課；本次：第 10 課；下堂預計：第 11 課。', note:'整體進度穩定。', mode:'flex', flexInfo:'入班名單：4 位・本期第 11／12 堂・教材單元：《NPC》第 2 冊 第 10 課'};
+CHAT_SESSIONS.W4_3 = {title:'時事話題討論', meta:'09/11（五）09:00–09:30・線上聊天室', audience:'全部（全平台開放）', roster:[{name:'學員E', uni:'範例州立大學'},{name:'學員F', uni:'範例州立大學'}]};
+
+function otherWeekGrid(dateList, dowList, mon, wed, fri, satNote){
+  var noClass = '<div class="small muted" style="padding:8px 0;" data-i18n="sched.status.noClass">本日無排課</div>';
+  var days = [
+    {d:dateList[0], w:dowList[0], html:'<div class="lesson-block personal" onclick="openSheet(\''+mon.id+'\')"><div class="lb-time">'+mon.time+'</div><div class="lb-title">'+mon.title+'</div><div class="lb-sub">'+mon.sub+'</div></div>'},
+    {d:dateList[1], w:dowList[1], html:noClass},
+    {d:dateList[2], w:dowList[2], html:'<div class="lesson-block flexlive" onclick="openSheet(\''+wed.id+'\')"><div class="lb-time">'+wed.time+'</div><div class="lb-title">'+wed.title+'</div><div class="lb-sub">'+wed.sub+'</div></div>'},
+    {d:dateList[3], w:dowList[3], html:noClass},
+    {d:dateList[4], w:dowList[4], html:'<div class="lesson-block chatroom" onclick="openSheet(\''+fri.id+'\')"><div class="lb-time">'+fri.time+'</div><div class="lb-title">'+fri.title+'</div><div class="lb-sub">'+fri.sub+'</div></div>'},
+    {d:dateList[5], w:dowList[5], html:(satNote==='本日無排課' ? noClass : '<div class="small muted" style="padding:8px 0;">'+satNote+'</div>')},
+    {d:dateList[6], w:dowList[6], html:noClass}
+  ];
+  return days.map(function(dd, idx){
+    return '<div class="day-block"><div class="day-head">'+dd.d+'<span class="dow" data-i18n="'+DOW_KEYS[idx]+'">'+dd.w+'</span></div>'+dd.html+'</div>';
+  }).join('');
+}
+var DOW = ['週一','週二','週三','週四','週五','週六','週日'];
+var DOW_KEYS = ['sched.dow.mon','sched.dow.tue','sched.dow.wed','sched.dow.thu','sched.dow.fri','sched.dow.sat','sched.dow.sun'];
+var OTHER_WEEK_GRIDS = {};
+OTHER_WEEK_GRIDS[0] = otherWeekGrid(['08/10','08/11','08/12','08/13','08/14','08/15','08/16'], DOW,
+  {id:'W0_1', time:'09:00–09:50', title:'陳建宏', sub:'初級 3・士林 A105'},
+  {id:'W0_2', time:'14:00–14:50', title:'學期班 Lv.1–4', sub:'羅斯福校區'},
+  {id:'W0_3', time:'09:00–09:30', title:'生活情境會話', sub:'<span data-i18n="sched.legend.chatroom">團體聊天室（30 分鐘，TLI 老師帶）</span>・<span data-i18n="sched.audience.institutionStudents">機構學生</span>・範例州立大學'},
+  '本日無排課');
+OTHER_WEEK_GRIDS[1] = otherWeekGrid(['08/17','08/18','08/19','08/20','08/21','08/22','08/23'], DOW,
+  {id:'W1_1', time:'09:00–09:50', title:'林佳蓉', sub:'初級 3・士林 A105'},
+  {id:'W1_2', time:'14:00–14:50', title:'學期班 Lv.1–4', sub:'羅斯福校區'},
+  {id:'W1_3', time:'09:00–09:30', title:'生活情境會話', sub:'<span data-i18n="sched.legend.chatroom">團體聊天室（30 分鐘，TLI 老師帶）</span>・<span data-i18n="sched.audience.institutionStudents">機構學生</span>・範例州立大學'},
+  '本日無排課');
+OTHER_WEEK_GRIDS[3] = otherWeekGrid(['08/31','09/01','09/02','09/03','09/04','09/05','09/06'], DOW,
+  {id:'W3_1', time:'09:00–09:50', title:'李明哲', sub:'中級 1・士林 A203'},
+  {id:'W3_2', time:'14:00–14:50', title:'初級小組班（4 人）', sub:'士林 A106'},
+  {id:'W3_3', time:'09:00–09:30', title:'時事話題討論', sub:'<span data-i18n="sched.legend.chatroom">團體聊天室（30 分鐘，TLI 老師帶）</span>・<span data-i18n="sched.audience.allPlatformWide">全部（全平台開放）</span>'},
+  '本日無排課');
+OTHER_WEEK_GRIDS[4] = otherWeekGrid(['09/07','09/08','09/09','09/10','09/11','09/12','09/13'], DOW,
+  {id:'W4_1', time:'09:00–09:50', title:'張雅雯', sub:'中級 1・士林 A203'},
+  {id:'W4_2', time:'14:00–14:50', title:'初級小組班（4 人）', sub:'士林 A106'},
+  {id:'W4_3', time:'09:00–09:30', title:'時事話題討論', sub:'<span data-i18n="sched.legend.chatroom">團體聊天室（30 分鐘，TLI 老師帶）</span>・<span data-i18n="sched.audience.allPlatformWide">全部（全平台開放）</span>'},
+  '本日無排課');
+
+CURRENT_WEEK_GRID_HTML = document.getElementById('weekGrid').innerHTML;
+updateWeekNavButtons();
+if (window.TLI_I18N) TLI_I18N.init();
+</script>
+</body>
+</html>

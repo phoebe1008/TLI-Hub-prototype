@@ -1,0 +1,448 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<title>總覽｜TLI Hub</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+:root{--navy:#1B4E8C;--navy-dark:#123a68;--orange:#E8792B;--teal:#0F9B79;
+--g50:#F5F7FA;--g200:#E4E7EC;--g500:#667085;--g900:#101828;}
+*{box-sizing:border-box;}
+html,body{overflow-x:hidden;}
+body{margin:0;font-family:"Noto Sans TC","Microsoft JhengHei",system-ui,-apple-system,sans-serif;
+background:var(--g50);color:var(--g900);}
+a{color:var(--navy);}
+.app{display:flex;min-height:100vh;width:100%;background:#fff;}
+.sidebar{width:260px;flex-shrink:0;background:#fff;padding:0;display:flex;flex-direction:column;height:100vh;
+overflow:hidden;border-right:1px solid var(--g200);position:sticky;top:0;align-self:flex-start;transition:left .2s;}
+.sidebar .brand{padding:16px 20px 14px;font-size:14px;font-weight:700;display:flex;flex-direction:column;gap:4px;
+border-bottom:1px solid var(--g200);margin-bottom:6px;text-decoration:none;color:inherit;cursor:pointer;flex-shrink:0;}
+.sidebar .brand-logo{height:28px;width:auto;object-fit:contain;object-position:left center;display:block;}
+.sidebar .brand small{display:block;font-weight:400;font-size:12px;color:var(--g500);margin-top:12px;}
+.sidebar nav{flex:1 1 auto;overflow-y:auto;overflow-x:hidden;padding:8px 8px 8px;}
+.sidebar .sec-label{padding:0 12px;margin:12px 0 8px;font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:#98A2B3;font-weight:600;}
+.sidebar .sec-label:first-child{margin-top:4px;}
+.sidebar nav a{display:flex;align-items:center;gap:12px;height:40px;padding:0 14px;margin:2px 0;border-radius:8px;
+font-size:14px;color:var(--g900);text-decoration:none;}
+.sidebar nav a .navicon{flex-shrink:0;color:var(--g500);}
+.sidebar nav a:hover{background:var(--g50);}
+.sidebar nav a.active{background:#E6EEF8;color:var(--navy);font-weight:600;}
+.sidebar nav a.active .navicon{color:var(--navy);}
+.sidebar-user{display:block;border-top:1px solid var(--g200);padding:10px 12px;margin:0;flex-shrink:0;position:relative;}
+.su-row{display:flex;align-items:center;gap:10px;cursor:pointer;min-width:0;}
+.su-avatar{width:36px;height:36px;border-radius:50%;background:var(--navy);color:#fff;display:flex;
+align-items:center;justify-content:center;font-size:13px;font-weight:600;flex-shrink:0;}
+.su-info{flex:1;min-width:0;display:flex;flex-direction:row;align-items:center;gap:8px;line-height:1.2;}
+.su-name{font-size:14px;font-weight:600;color:var(--g900);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.su-roletag{font-size:12px;background:#E6EEF8;color:var(--navy);padding:1px 7px;border-radius:8px;white-space:nowrap;flex-shrink:0;}
+.su-chevron{color:var(--g500);flex-shrink:0;}
+.su-menu{top:auto;bottom:60px;left:10px;right:10px;width:auto;padding:8px;}
+.su-menu a{display:block;padding:8px 10px;font-size:13px;color:var(--g900);text-decoration:none;border-radius:6px;}
+.su-menu a:hover{background:var(--g50);}
+.main{flex:1;padding:26px 32px 60px;min-width:0;}
+.topbar{display:flex;align-items:center;justify-content:space-between;padding:0 32px;height:56px;
+border-bottom:1px solid var(--g200);position:sticky;top:0;background:#fff;z-index:40;margin:-26px -32px 22px;gap:14px;}
+.hamburger{display:none;background:none;border:none;font-size:19px;cursor:pointer;color:var(--g900);padding:4px 6px;margin-right:4px;}
+.topbar .tb-title{font-size:15px;font-weight:600;color:var(--g900);flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.topbar .tb-actions{display:flex;align-items:center;gap:14px;position:relative;flex-shrink:0;}
+.tb-bellbtn{position:relative;background:none;border:none;cursor:pointer;font-size:17px;padding:4px;line-height:1;}
+.tb-dot{position:absolute;top:0;right:0;width:7px;height:7px;background:#C0392B;border-radius:50%;display:none;}
+.tb-avatarbtn{width:30px;height:30px;border-radius:50%;background:var(--navy);color:#fff;border:none;
+cursor:pointer;font-size:13px;font-weight:600;flex-shrink:0;}
+.tb-panel{display:none;position:absolute;top:44px;right:0;background:#fff;border:1px solid var(--g200);
+border-radius:8px;box-shadow:0 8px 24px rgba(16,24,40,.16);z-index:50;}
+.tb-panel.open{display:block;}
+.tb-notifpanel{width:300px;padding:10px;}
+.tb-notifpanel .tn-head{display:flex;justify-content:space-between;align-items:center;font-size:12.5px;
+padding:4px 6px 8px;border-bottom:1px solid var(--g200);margin-bottom:6px;}
+.tb-notifpanel .tn-head a{font-size:11.5px;cursor:pointer;}
+.tb-notifitem{padding:8px 6px;border-radius:6px;font-size:12.5px;line-height:1.5;}
+.tb-notifitem:hover{background:var(--g50);}
+.tb-notifitem.unread{background:#EEF3FA;}
+.tb-notifitem .tn-t{color:var(--g500);font-size:11px;margin-top:2px;}
+.tb-avatarmenu{width:150px;padding:6px;}
+.tb-avatarmenu a{display:block;padding:8px 10px;font-size:13px;color:var(--g900);text-decoration:none;border-radius:6px;}
+.tb-avatarmenu a:hover{background:var(--g50);}
+.sidebar-backdrop{display:none;position:fixed;inset:0;background:rgba(16,24,40,.4);z-index:110;}
+.pagehead{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:16px;gap:16px;flex-wrap:wrap;}
+.pagehead h1{font-size:20px;margin:0;}
+.pagehead .desc{font-size:12.5px;color:var(--g500);margin-top:5px;line-height:1.6;max-width:720px;}
+.btn{display:inline-block;background:var(--navy);color:#fff;border:none;padding:8px 14px;
+border-radius:6px;font-size:13px;cursor:pointer;text-decoration:none;white-space:nowrap;font-family:inherit;}
+.btn.orange{background:var(--orange);}
+.btn.teal{background:var(--teal);}
+.btn.ghost{background:#fff;border:1px solid var(--g200);color:var(--g900);}
+.btn.sm{padding:5px 10px;font-size:12px;}
+.btn:disabled{background:var(--g200)!important;color:var(--g500)!important;cursor:not-allowed!important;}
+.card{background:#fff;border:1px solid var(--g200);border-radius:12px;padding:18px;margin-bottom:16px;box-shadow:0 1px 3px rgba(16,24,40,.06);}
+.card h2{font-size:15px;margin:0 0 12px;}
+.card .cardesc{font-size:12.5px;color:var(--g500);margin:-4px 0 12px;line-height:1.6;}
+.tablewrap{overflow-x:auto;max-width:100%;}
+table{width:100%;border-collapse:collapse;font-size:13px;}
+th{text-align:left;background:var(--g50);color:var(--g500);font-weight:600;padding:9px 12px;
+border-bottom:1px solid var(--g200);white-space:nowrap;}
+td{padding:9px 12px;border-bottom:1px solid var(--g200);white-space:nowrap;}
+td.num,th.num{text-align:right;}
+tr.rowlink{cursor:pointer;}
+tr.rowlink:hover{background:#F8FAFD;}
+.badge{display:inline-block;padding:2px 9px;border-radius:10px;font-size:11.5px;font-weight:600;white-space:nowrap;}
+.badge.blue{background:#E7EEF8;color:var(--navy);}
+.badge.green{background:#E4F5EE;color:var(--teal);}
+.badge.orange{background:#FCE9DA;color:var(--orange);}
+.badge.grey{background:var(--g200);color:var(--g500);}
+.badge.red{background:#FBE7E7;color:#C0392B;}
+.note{font-size:12px;color:#7a5b1f;background:#FFF8EE;border:1px solid #F3DFB8;padding:9px 11px;border-radius:6px;line-height:1.6;}
+.small{font-size:12px;color:var(--g500);}
+.hint{font-size:11.5px;color:var(--g500);margin-top:6px;line-height:1.6;}
+.toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(20px);
+background:#101828;color:#fff;padding:10px 20px;border-radius:8px;font-size:13px;
+opacity:0;pointer-events:none;transition:.2s;z-index:200;max-width:80vw;text-align:center;}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
+.statgrid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;}
+.statbox{border:1px solid var(--g200);border-radius:8px;padding:14px;}
+.statbox .num{font-size:21px;font-weight:700;color:var(--navy);}
+.statbox .lbl{font-size:11.5px;color:var(--g500);margin-top:4px;line-height:1.5;}
+.statbox .sub{font-size:11px;color:var(--g500);margin-top:5px;}
+.hidden{display:none!important;}
+.emptylist{padding:18px 4px;font-size:12.5px;color:var(--g500);text-align:center;}
+@media (max-width:1023px){
+.hamburger{display:inline-flex;}
+.sidebar{position:fixed;left:-260px;top:0;height:100vh;width:260px;z-index:120;}
+.sidebar.open{left:0;}
+.sidebar-backdrop.open{display:block;}
+.app{width:100%;}
+.main{padding:16px 16px 40px;}
+.topbar{padding:0 16px;margin:-16px -16px 18px;}
+.statgrid{grid-template-columns:1fr 1fr;}
+}
+@media (max-width:479px){
+.statgrid{grid-template-columns:1fr;}
+}
+
+.agenthead{display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:10px;margin-bottom:14px;}
+.agenthead .aname{font-size:17px;font-weight:700;}
+.agenthead .ameta{font-size:12.5px;color:var(--g500);margin-top:3px;}
+.todolist{display:flex;flex-direction:column;}
+.todoitem{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px 4px;border-bottom:1px dashed var(--g200);}
+.todoitem:last-child{border-bottom:none;}
+.todoitem .ti-main{min-width:0;}
+.todoitem .ti-t{font-size:13.5px;font-weight:600;}
+.todoitem .ti-s{font-size:12px;color:var(--g500);margin-top:3px;line-height:1.5;}
+.todoitem .ti-a{flex-shrink:0;}
+.sechead{display:flex;justify-content:space-between;align-items:baseline;gap:10px;flex-wrap:wrap;margin-bottom:12px;}
+.sechead h2{margin:0;}
+.sechead a{font-size:12.5px;text-decoration:none;white-space:nowrap;}
+.sechead a:hover{text-decoration:underline;}
+
+</style>
+</head>
+<body>
+<div class="app">
+<div class="sidebar" id="sidebar">
+<a class="brand" href="d01_dashboard.html"><img class="brand-logo" src="../assets/tli-logo.svg" alt="TLI"><small data-i18n="brand.dealerPortal">經銷商入口</small></a>
+<nav>
+<div class="sec-label" data-i18n="navgroup.dealer">經銷商</div>
+<a data-nav="d01" class="active" href="d01_dashboard.html"><svg class="navicon" width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="6" height="6" rx="1"/><rect x="11" y="3" width="6" height="6" rx="1"/><rect x="3" y="11" width="6" height="6" rx="1"/><rect x="11" y="11" width="6" height="6" rx="1"/></svg><span data-i18n="nav_d.overview">總覽</span></a>
+<a data-nav="d02" href="d02_orders.html"><svg class="navicon" width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 2.5h10v15l-2.5-1.6L10 17.5l-2.5-1.6L5 17.5v-15z"/><line x1="7.5" y1="6.5" x2="12.5" y2="6.5"/><line x1="7.5" y1="9.5" x2="12.5" y2="9.5"/></svg><span data-i18n="nav_d.orders">訂購單</span></a>
+<a data-nav="d03" href="d03_students.html"><svg class="navicon" width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="7" cy="6.5" r="2.3"/><path d="M2.5 16.5c0-2.8 2-4.7 4.5-4.7s4.5 1.9 4.5 4.7"/><circle cx="14" cy="7" r="1.8"/><path d="M12.7 11.8c2 .3 3.3 1.9 3.3 4.2"/></svg><span data-i18n="nav_d.students">學生名單</span></a>
+<a data-nav="d04" href="d04_performance.html"><svg class="navicon" width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><line x1="4" y1="16.5" x2="4" y2="10"/><line x1="10" y1="16.5" x2="10" y2="4.5"/><line x1="16" y1="16.5" x2="16" y2="12"/></svg><span data-i18n="nav_d.performance">業績與返佣</span></a>
+</nav>
+<div class="sidebar-user" id="sidebarUser">
+<div class="su-row" onclick="toggleSuMenu(event)"><span class="su-avatar">環</span><span class="su-info"><span class="su-name">環球遊學顧問（日本）</span><span class="su-roletag" data-i18n="role.dealer">經銷商</span></span>
+<svg class="su-chevron" width="14" height="14" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 8 10 12 14 8"/></svg></div>
+<div class="tb-panel su-menu" id="suMenu"><a href="javascript:void(0)" onclick="toast(T('個人設定功能建置中','Settings feature coming soon'))" data-i18n="common.settings">個人設定</a><a href="../公開網站/p01_home.html" data-i18n="common.gotoWebsite">回官網</a><a href="javascript:void(0)" onclick="doLogout()" data-i18n="common.logout">登出</a></div>
+</div>
+</div>
+
+<div class="main">
+<div class="topbar">
+<button class="hamburger" onclick="toggleSidebar()" aria-label="開啟選單" data-i18n-aria-label="common.openMenu"><svg width="18" height="18" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="5.5" x2="17" y2="5.5"/><line x1="3" y1="10" x2="17" y2="10"/><line x1="3" y1="14.5" x2="17" y2="14.5"/></svg></button>
+<div class="tb-title" data-i18n="nav_d.overview">總覽</div>
+<div class="tb-actions">
+<button class="tb-bellbtn" onclick="toggleNotif(event)" aria-label="通知" data-i18n-aria-label="common.notifications"><svg width="17" height="17" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M10 2.5c-2.2 0-4 1.8-4 4v2.3c0 .6-.2 1.2-.6 1.7L4 12.5h12l-1.4-2c-.4-.5-.6-1.1-.6-1.7V6.5c0-2.2-1.8-4-4-4z"/><path d="M8.2 15.5a1.8 1.8 0 0 0 3.6 0"/></svg><span class="tb-dot" id="tbDot"></span></button>
+<div class="tb-panel tb-notifpanel" id="notifPanel"></div>
+<button class="tb-avatarbtn" onclick="toggleAvatarMenu(event)" aria-label="使用者選單" data-i18n-aria-label="common.userMenu">環</button>
+<div class="tb-panel tb-avatarmenu" id="avatarMenu"><a href="javascript:void(0)" onclick="toast(T('個人設定功能建置中','Settings feature coming soon'))" data-i18n="common.settings">個人設定</a><a href="../公開網站/p01_home.html" data-i18n="common.gotoWebsite">回官網</a><a href="javascript:void(0)" onclick="doLogout()" data-i18n="common.logout">登出</a></div>
+</div>
+</div>
+<div class="sidebar-backdrop" id="sidebarBackdrop" onclick="closeSidebar()"></div>
+
+<div class="pagehead">
+<div><h1 data-i18n="nav_d.overview">總覽</h1><div class="desc" data-i18n="desc.d01Overview">本年度訂購與返佣摘要、待處理事項與最近的訂購單。訂金、尾款與返佣款項一律線下匯款，本頁僅供對帳查詢，無線上收付功能。</div></div>
+</div>
+
+<div class="card" id="frontUrlCard">
+<h2 data-i18n="h2.frontUrl">你的前台入口</h2>
+<div class="cardesc" data-i18n="desc.frontUrlPartner">學生與訪客透過以下網址進入貴機構專屬的 TLI Connect 學習平台；品牌露出、通知信署名與視訊授權等設定由 TLI 於後台維護，如需調整請洽 TLI 窗口。</div>
+<div id="frontUrlRows"></div>
+</div>
+
+<div class="card">
+<div class="agenthead">
+<div><div class="aname">環球遊學顧問（日本）</div><div class="ameta"><span data-i18n="label.dealerCode">經銷商代號：</span><strong id="ovCode">DIST-JP03</strong>｜<span data-i18n="label.coopStart">合作起始：</span>2025-11-01｜<span data-i18n="label.baseDate">本期基準日：</span><span id="ovToday"></span></div></div>
+</div>
+<div class="statgrid" id="kpiGrid"></div>
+</div>
+
+<div class="card">
+<div class="sechead"><h2 data-i18n="h2.todo">待辦</h2><span class="small" id="todoCount"></span></div>
+<div class="todolist" id="todoList"></div>
+<p class="emptylist hidden" id="todoEmpty" data-i18n="empty.todo">目前沒有待處理事項。</p>
+</div>
+
+<div class="card">
+<div class="sechead"><h2 data-i18n="h2.recentOrders">最近訂購單</h2><a href="d02_orders.html" data-i18n="common.viewAll">查看全部</a></div>
+<div class="tablewrap"><table id="recentTable"></table></div>
+<div class="hint" data-i18n="hint.recentOrdersRow">點任一列可在訂購單頁展開該筆的完整明細與掛入的學生名單。</div>
+</div>
+
+</div>
+</div>
+
+<script src="../assets/_shared_masters.js"></script>
+<script src="../assets/_i18n_dict.js"></script>
+<script src="../assets/_i18n_dict_partner.js"></script>
+<script src="../assets/_i18n.js"></script>
+<script>
+function T(zh,en){ return window.TLI_I18N ? TLI_I18N.t(zh,en) : zh; }
+/* 本頁登入身分為經銷商「環球遊學顧問」（partners.p11），語言切換器只列主檔 uiLocales 開放的語系（en／zh-TW，不含簡中） */
+function restrictPartnerLocales(){
+  if (!window.TLI_I18N) return;
+  var p = TLI_MASTERS.partners.find(function(x){ return x.name.indexOf('環球遊學顧問') >= 0; }) || {};
+  var allowed = (p.uiLocales && p.uiLocales.length) ? p.uiLocales : ['zh-TW','zh-CN','en'];
+  document.querySelectorAll('.tli-i18n-opt').forEach(function(btn){
+    if (allowed.indexOf(btn.getAttribute('data-lang')) === -1) btn.style.display = 'none';
+  });
+  if (allowed.indexOf(TLI_I18N.currentLang()) === -1) TLI_I18N.apply(allowed[0]);
+}
+/* 立刻依儲存的語言（含 en）初始化，確保初次載入時後續動態渲染的 T() 已讀到正確語言，不用等使用者手動切換 */
+if (window.TLI_I18N) TLI_I18N.init();
+restrictPartnerLocales();
+/* ===== 經銷商端共用資料（四頁一致，正式版改由後端 API 取得） ===== */
+var MY_DIST_NAME = '環球遊學顧問（日本）';
+var MY_DIST_CODE = 'DIST-JP03';
+var TODAY_STR = '2026-09-28';
+
+/* ===== 20260928u 新增：你的前台入口卡——資料一律讀 TLI_MASTERS.partners，網址樣板需與 a20「合作夥伴管理」的
+   詳情抽屜一致（同一 slug 與樣板）。主檔名稱為「環球遊學顧問」（不含地區括號），用 indexOf 比對即可命中。 ===== */
+var PARTNER_SLUG = {p01:'pudong', p02:'az', p03:'tsubasa', p04:'bridge', p05:'mytravel', p06:'vnstudy', p07:'krlang'};
+function ensureFrontUrls(p){
+  if (!p || p.frontUrls) return p;
+  var slug = p.slug || PARTNER_SLUG[p.id] || p.id;
+  p.frontUrls = {
+    home: 'https://' + slug + '.tliconnect.com/',
+    courses: 'https://' + slug + '.tliconnect.com/courses',
+    login: 'https://' + slug + '.tliconnect.com/login'
+  };
+  return p;
+}
+function frontPreviewHref(p, key){
+  if (key === 'home') return '../公開網站/f01_franchise_home.html';
+  if (key === 'courses') return '../公開網站/f02_franchise_apply.html';
+  if (p.type === 'franchise') return '../公開網站/f03_franchise_login.html';
+  var slug = p.slug || PARTNER_SLUG[p.id] || p.id;
+  return '../公開網站/p14_partner_login.html?tenant=' + encodeURIComponent(slug);
+}
+function copyFrontUrl(encoded){
+  var url = decodeURIComponent(encoded);
+  if (navigator.clipboard && navigator.clipboard.writeText){
+    navigator.clipboard.writeText(url).then(function(){ toast(T('已複製網址','URL copied')); }).catch(function(){ toast(T('複製失敗，請手動複製','Copy failed — please copy manually')); });
+  } else {
+    toast(T('複製失敗，請手動複製','Copy failed — please copy manually'));
+  }
+}
+function renderFrontUrlCard(){
+  var list = TLI_MASTERS.partners;
+  var p = list.find(function(x){ return x.name.indexOf('環球遊學顧問') >= 0; });
+  if (!p) p = list.find(function(x){ return x.type === 'distributor'; });
+  if (!p) return;
+  ensureFrontUrls(p);
+  var rows = [['home',T('品牌首頁','Brand Homepage')],['courses',T('課程頁','Course Page')],['login',T('學員登入','Student Login')]];
+  document.getElementById('frontUrlRows').innerHTML = rows.map(function(r){
+    var url = p.frontUrls[r[0]];
+    return '<div style="margin-bottom:10px">' +
+      '<div class="small" style="margin-bottom:3px">' + r[1] + '</div>' +
+      '<div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">' +
+      '<code style="flex:1;min-width:180px;font-size:12.5px;background:var(--g50);padding:6px 9px;border-radius:6px;border:1px solid var(--g200);word-break:break-all">' + url + '</code>' +
+      '<button type="button" class="btn ghost" style="padding:5px 10px;font-size:12px" onclick="copyFrontUrl(\'' + encodeURIComponent(url) + '\')">' + T('複製','Copy') + '</button>' +
+      '<a class="btn ghost" style="padding:5px 10px;font-size:12px" target="_blank" rel="noopener" href="' + frontPreviewHref(p, r[0]) + '">' + T('預覽','Preview') + '</a>' +
+      '</div></div>';
+  }).join('');
+}
+renderFrontUrlCard();
+if (window.TLI_I18N) TLI_I18N.onRefresh(renderFrontUrlCard);
+/* 訂購單：課程仍由 TLI 交付，經銷商向 TLI 一次訂購名額，包進自己的產品對外賣。
+   三階段金流：訂金（訂購時）→ 尾款（依實際開課量）→ 年度返佣（依業績級距），全部線下匯款，後台只記錄狀態。 */
+/* 訂購方案一律取自 TLI_MASTERS.packages（pk1–pk7 中的上架方案），單價＝方案 C 對象牌價 × 80%（示範專案折讓） */
+var ORDERS = [
+ {id:'PO-2026-001', orderDate:'2026-03-02', plan:'學期班 Lv.5–8 一期方案', qty:20, unitPrice:28800, totalAmount:576000,
+  periodFrom:'2026-04-06', periodTo:'2026-05-01', depositRate:0.3, depositAmount:172800, depositDate:'2026-03-08',
+  rosterFilled:20, rosterTotal:20, balanceAmount:403200, balanceStatus:'已付', balanceDueDate:'2026-05-01', balancePaidDate:'2026-05-06'},
+ {id:'PO-2026-002', orderDate:'2026-05-10', plan:'中文一對一線上課 20 堂方案', qty:12, unitPrice:16000, totalAmount:192000,
+  periodFrom:'2026-07-06', periodTo:'2026-07-24', depositRate:0.3, depositAmount:57600, depositDate:'2026-05-15',
+  rosterFilled:12, rosterTotal:12, balanceAmount:134400, balanceStatus:'已付', balanceDueDate:'2026-07-24', balancePaidDate:'2026-07-30'},
+ {id:'PO-2026-003', orderDate:'2026-06-20', plan:'中文彈性團體直播班 一期方案', qty:18, unitPrice:8640, totalAmount:155520,
+  periodFrom:'2026-09-01', periodTo:'2026-09-14', depositRate:0.3, depositAmount:46656, depositDate:'2026-06-25',
+  rosterFilled:18, rosterTotal:18, balanceAmount:108864, balanceStatus:'待付', balanceDueDate:'2026-09-21'},
+ {id:'PO-2026-004', orderDate:'2026-08-05', plan:'中文一對一 30 堂＋教材＋註冊費', qty:25, unitPrice:25600, totalAmount:640000,
+  periodFrom:'2026-10-05', periodTo:'2026-11-27', depositRate:0.3, depositAmount:192000, depositDate:'2026-08-12',
+  rosterFilled:14, rosterTotal:25, balanceAmount:448000, balanceStatus:'未到期', balanceDueDate:'2026-11-27'},
+ {id:'PO-2026-005', orderDate:'2026-09-10', plan:'學期班 Lv.5–8 一期方案', qty:30, unitPrice:28800, totalAmount:864000,
+  periodFrom:'2026-12-01', periodTo:'2027-01-09', depositRate:0.3, depositAmount:259200, depositDate:null,
+  rosterFilled:0, rosterTotal:30, balanceAmount:604800, balanceStatus:'未到期', balanceDueDate:'2027-01-09', pendingConfirm:true},
+ {id:'PO-2026-006', orderDate:'2026-09-22', plan:'中文一對一線上課 20 堂方案', qty:10, unitPrice:16000, totalAmount:160000,
+  periodFrom:'2027-02-01', periodTo:'2027-02-19', depositRate:0.3, depositAmount:48000, depositDate:null,
+  rosterFilled:0, rosterTotal:10, balanceAmount:112000, balanceStatus:'未到期', balanceDueDate:'2027-02-19', pendingConfirm:true},
+ {id:'PO-2025-012', orderDate:'2025-11-15', plan:'中文彈性團體直播班 一期方案', qty:15, unitPrice:8640, totalAmount:129600,
+  periodFrom:'2026-01-12', periodTo:'2026-01-25', depositRate:0.3, depositAmount:38880, depositDate:'2025-11-20',
+  rosterFilled:15, rosterTotal:15, balanceAmount:90720, balanceStatus:'已付', balanceDueDate:'2026-01-25', balancePaidDate:'2026-01-28'}
+];
+/* 返佣級距：一律讀 TLI_MASTERS.partners（a20 p11「環球遊學顧問」rebateTiers），不寫死數值 */
+function parseTierNum(s){ return Number(String(s).replace(/,/g,'')) || 0; }
+function buildRebateTiersFromMaster(){
+  var list = TLI_MASTERS.partners;
+  var p = list.find(function(x){ return x.name.indexOf('環球遊學顧問') >= 0; });
+  if (!p) p = list.find(function(x){ return x.type === 'distributor'; });
+  if (!p || !p.rebateTiers) return [{min:0, max:Infinity, rate:0}];
+  return p.rebateTiers.map(function(t){
+    return {
+      min: parseTierNum(t.min),
+      max: (t.max === '' || t.max === undefined || t.max === null) ? Infinity : parseTierNum(t.max),
+      rate: parseTierNum(t.rate) / 100
+    };
+  });
+}
+var REBATE_TIERS = buildRebateTiersFromMaster();
+function fmtNT(n){ return 'NT$' + Number(n||0).toLocaleString('zh-Hant-TW'); }
+function escHtml(s){ return String(s===undefined||s===null?'':s).replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+function balBadge(s){
+  if (s==='已付') return '<span class="badge green">'+T('已付','Paid')+'</span>';
+  if (s==='待付') return '<span class="badge orange">'+T('待付','Due')+'</span>';
+  return '<span class="badge grey">'+T('未到期','Not Yet Due')+'</span>';
+}
+function tierOf(amount){
+  for (var i=0;i<REBATE_TIERS.length;i++){ if (amount>=REBATE_TIERS[i].min && amount<=REBATE_TIERS[i].max) return {idx:i, tier:REBATE_TIERS[i]}; }
+  return {idx:0, tier:REBATE_TIERS[0]};
+}
+function yearOrders(y){ return ORDERS.filter(function(o){ return o.orderDate.slice(0,4) === String(y); }); }
+
+function toggleSidebar(){ document.getElementById('sidebar').classList.toggle('open'); document.getElementById('sidebarBackdrop').classList.toggle('open'); }
+function closeSidebar(){ document.getElementById('sidebar').classList.remove('open'); document.getElementById('sidebarBackdrop').classList.remove('open'); }
+function closePanel(id){ var el=document.getElementById(id); if (el) el.classList.remove('open'); }
+function toggleSuMenu(ev){ ev.stopPropagation(); closePanel('notifPanel'); closePanel('avatarMenu'); document.getElementById('suMenu').classList.toggle('open'); }
+function toggleNotif(ev){ ev.stopPropagation(); closePanel('avatarMenu'); closePanel('suMenu'); var p=document.getElementById('notifPanel'); p.classList.toggle('open'); if (p.classList.contains('open')) renderNotifPanel(); }
+function toggleAvatarMenu(ev){ ev.stopPropagation(); closePanel('notifPanel'); closePanel('suMenu'); document.getElementById('avatarMenu').classList.toggle('open'); }
+document.addEventListener('click', function(){ closePanel('suMenu'); closePanel('notifPanel'); closePanel('avatarMenu'); });
+function doLogout(){ location.href = '../公開網站/p07_login_register.html'; }
+function toast(msg){
+  var el = document.getElementById('toastEl');
+  if (!el){ el=document.createElement('div'); el.id='toastEl'; el.className='toast'; document.body.appendChild(el); }
+  el.textContent = msg; el.classList.add('show');
+  clearTimeout(window._toastTimer);
+  window._toastTimer = setTimeout(function(){ el.classList.remove('show'); }, 2400);
+}
+var NOTIFS = [
+  {t:['「PO-2026-004」名單尚缺 11 位，請於開課前補齊','"PO-2026-004" roster short 11 — please fill before the course starts'], time:['今天','Today'], unread:true},
+  {t:['「PO-2026-003」尾款已到期，請安排匯款','"PO-2026-003" balance is due — please arrange the transfer'], time:['3 天前','3 days ago'], unread:true},
+  {t:['「PO-2026-005」訂購單已送出，待 TLI 確認與訂金通知','"PO-2026-005" submitted — awaiting TLI confirmation and the deposit notice'], time:['1 週前','1 week ago'], unread:false}
+];
+function renderNotifPanel(){
+  var panel = document.getElementById('notifPanel'); if (!panel) return;
+  var unread = NOTIFS.filter(function(n){return n.unread;}).length;
+  var dot = document.getElementById('tbDot'); if (dot) dot.style.display = unread ? 'block' : 'none';
+  panel.innerHTML = '<div class="tn-head"><span>'+T('通知（'+unread+' 則未讀）','Notifications ('+unread+' unread)')+'</span><a href="javascript:void(0)" onclick="markAllRead(event)">'+T('全部標為已讀','Mark All as Read')+'</a></div>'+
+    NOTIFS.map(function(n){ return '<div class="tb-notifitem'+(n.unread?' unread':'')+'">'+T(n.t[0],n.t[1])+'<div class="tn-t">'+T(n.time[0],n.time[1])+'</div></div>'; }).join('');
+}
+function markAllRead(ev){ if (ev) ev.stopPropagation(); NOTIFS.forEach(function(n){n.unread=false;}); renderNotifPanel(); }
+renderNotifPanel();
+
+/* ================= 本年度 KPI ================= */
+function renderKpi(){
+  document.getElementById('ovCode').textContent = MY_DIST_CODE;
+  document.getElementById('ovToday').textContent = TODAY_STR;
+  var rows = yearOrders(2026);
+  var qty = 0, filled = 0, amount = 0;
+  rows.forEach(function(o){ qty += o.qty; filled += o.rosterFilled; amount += o.totalAmount; });
+  var t = tierOf(amount);
+  var estRebate = Math.round(amount * t.tier.rate);
+  var cards = [
+    {num:rows.length + T(' 筆',''), lbl:T('本年度訂購單數','Purchase Orders This Year'), sub:T('2026 年度累計','2026 cumulative')},
+    {num:qty + T(' 位',''), lbl:T('本年度總名額','Total Seats This Year'), sub:T('已用 ' + filled + '／剩 ' + (qty - filled), 'Used ' + filled + ' / Left ' + (qty - filled))},
+    {num:fmtNT(amount), lbl:T('累積業績（採購金額）','Cumulative Performance (Purchase Amount)'), sub:T('決定返佣級距的計算基礎','Basis for determining the rebate tier')},
+    {num:T('第 ' + (t.idx + 1) + ' 級・' + (t.tier.rate * 100) + '%', 'Tier ' + (t.idx + 1) + ' · ' + (t.tier.rate * 100) + '%'), lbl:T('目前返佣級距','Current Rebate Tier'), sub:T('預估返佣 ' + fmtNT(estRebate), 'Estimated rebate ' + fmtNT(estRebate))}
+  ];
+  document.getElementById('kpiGrid').innerHTML = cards.map(function(c){
+    return '<div class="statbox"><div class="num">' + c.num + '</div><div class="lbl">' + c.lbl + '</div><div class="sub">' + c.sub + '</div></div>';
+  }).join('');
+}
+
+/* ================= 待辦 ================= */
+function renderTodo(){
+  var list = document.getElementById('todoList');
+  var items = [];
+  ORDERS.forEach(function(o){
+    if (o.rosterTotal > o.rosterFilled && !o.pendingConfirm){
+      items.push({
+        t: o.id + T('　名單尚缺 ' + (o.rosterTotal - o.rosterFilled) + ' 位', ' — Roster short ' + (o.rosterTotal - o.rosterFilled)),
+        s: escHtml(o.plan) + T('｜已補 ' + o.rosterFilled + '／' + o.rosterTotal + ' 位，開課日 ' + o.periodFrom, ' | Filled ' + o.rosterFilled + '/' + o.rosterTotal + ', start date ' + o.periodFrom),
+        btn: '<a class="btn sm" href="d03_students.html?order=' + encodeURIComponent(o.id) + '">' + T('前往補入名單','Go Add Students') + '</a>'
+      });
+    }
+    if (o.balanceStatus === '待付'){
+      items.push({
+        t: o.id + T('　尾款待付 ' + fmtNT(o.balanceAmount), ' — Balance due ' + fmtNT(o.balanceAmount)),
+        s: escHtml(o.plan) + T('｜到期日 ' + o.balanceDueDate + '，請安排匯款並回報付款日期', ' | Due ' + o.balanceDueDate + ' — please arrange the transfer and report the payment date'),
+        btn: '<a class="btn sm" href="d02_orders.html?id=' + encodeURIComponent(o.id) + '">' + T('前往訂購單','Go to Order') + '</a>'
+      });
+    }
+    if (o.pendingConfirm){
+      items.push({
+        t: o.id + T('　訂金尚待 TLI 通知付款',' — Deposit pending TLI payment notice'),
+        s: escHtml(o.plan) + T('｜訂購單已送出，待總部確認訂單並發出訂金繳款通知', ' | Order submitted — awaiting HQ confirmation and the deposit payment notice'),
+        btn: '<a class="btn ghost sm" href="d02_orders.html?id=' + encodeURIComponent(o.id) + '">' + T('查看狀態','View Status') + '</a>'
+      });
+    }
+    var days = Math.round((new Date(o.periodFrom) - new Date(TODAY_STR)) / 86400000);
+    if (days >= 0 && days <= 10 && o.rosterFilled > 0){
+      items.push({
+        t: o.id + T('　一批學生即將開課（' + days + ' 天後）', ' — A batch of students starts soon (in ' + days + ' days)'),
+        s: escHtml(o.plan) + T('｜開課日 ' + o.periodFrom + '，請確認名單與到校安排', ' | Start date ' + o.periodFrom + ' — please confirm the roster and arrival arrangements'),
+        btn: '<a class="btn ghost sm" href="d03_students.html?order=' + encodeURIComponent(o.id) + '">' + T('查看名單','View Roster') + '</a>'
+      });
+    }
+  });
+  list.innerHTML = items.map(function(it){
+    return '<div class="todoitem"><div class="ti-main"><div class="ti-t">' + it.t + '</div><div class="ti-s">' + it.s + '</div></div><div class="ti-a">' + it.btn + '</div></div>';
+  }).join('');
+  document.getElementById('todoEmpty').classList.toggle('hidden', items.length > 0);
+  document.getElementById('todoCount').textContent = items.length ? T('共 ' + items.length + ' 件待處理', items.length + ' item(s) pending') : '';
+}
+
+/* ================= 最近訂購單（前 3 筆） ================= */
+function renderRecent(){
+  var rows = ORDERS.slice().sort(function(a,b){ return a.orderDate < b.orderDate ? 1 : -1; }).slice(0, 3);
+  var t = document.getElementById('recentTable');
+  t.innerHTML = '<tr><th>'+T('訂購日期','Order Date')+'</th><th>'+T('訂購方案','Plan Ordered')+'</th><th class="num">'+T('數量','Qty')+'</th><th>'+T('預計使用期間','Expected Period')+'</th><th class="num">'+T('訂單總額','Order Total')+'</th><th>'+T('尾款狀態','Balance Status')+'</th></tr>';
+  rows.forEach(function(o){
+    var tr = document.createElement('tr');
+    tr.className = 'rowlink';
+    tr.setAttribute('onclick', "location.href='d02_orders.html?id=" + encodeURIComponent(o.id) + "'");
+    tr.innerHTML = '<td>' + o.orderDate + '</td><td>' + escHtml(o.plan) + '</td><td class="num">' + o.qty + '</td>' +
+      '<td>' + o.periodFrom + ' ～ ' + o.periodTo + '</td><td class="num">' + fmtNT(o.totalAmount) + '</td><td>' + balBadge(o.balanceStatus) + '</td>';
+    t.appendChild(tr);
+  });
+}
+
+renderKpi();
+renderTodo();
+renderRecent();
+if (window.TLI_I18N){
+  TLI_I18N.onRefresh(renderKpi);
+  TLI_I18N.onRefresh(renderTodo);
+  TLI_I18N.onRefresh(renderRecent);
+  TLI_I18N.onRefresh(renderNotifPanel);
+}
+
+</script>
+</body>
+</html>

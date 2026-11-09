@@ -1,0 +1,361 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>TLI Hub 教師端－我的班級</title>
+<style>
+:root{
+  --c-primary:#1B4E8C;--c-primary-dark:#123A68;--c-accent:#E8792B;--c-accent-dark:#CF691F;--c-secondary:#0F9B79;
+  --c-bg:#F5F7FA;--c-border:#E4E7EC;--c-muted:#667085;--c-text:#101828;
+  --radius:12px;--radius-sm:8px;--shadow:0 1px 3px rgba(16,24,40,.08),0 1px 2px rgba(16,24,40,.04);--shadow-lg:0 8px 24px rgba(16,24,40,.16);
+  --topbar-h:52px;--bottomnav-h:64px;
+}
+*{box-sizing:border-box;}
+html,body{margin:0;padding:0;}
+body{font-family:"Noto Sans TC","Microsoft JhengHei",system-ui,-apple-system,"Segoe UI",sans-serif;background:var(--c-bg);color:var(--c-text);line-height:1.55;font-size:15px;-webkit-tap-highlight-color:transparent;}
+a{color:inherit;text-decoration:none;}
+img,svg{display:block;}
+button{font-family:inherit;}
+button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible{outline:2px solid var(--c-primary);outline-offset:2px;}
+.app{min-height:100vh;position:relative;}
+.topbar{position:sticky;top:0;z-index:60;height:var(--topbar-h);background:#fff;border-bottom:1px solid var(--c-border);display:flex;align-items:center;justify-content:space-between;padding:0 14px;gap:10px;}
+.topbar-left{display:flex;align-items:center;gap:8px;min-width:0;}
+.topbar-logo-wrap{width:26px;height:22px;overflow:hidden;position:relative;flex:none;}
+.topbar-logo-wrap img{position:absolute;left:0;top:0;height:22px;width:auto;max-width:none;}
+.topbar-title{font-size:16.5px;font-weight:700;color:var(--c-text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.topbar-actions{display:flex;align-items:center;gap:6px;position:relative;}
+.bell-btn{position:relative;width:32px;height:32px;border-radius:50%;border:1px solid var(--c-border);background:#fff;cursor:pointer;display:flex;align-items:center;justify-content:center;color:var(--c-muted);}
+.bell-btn svg{width:16px;height:16px;}
+.bell-btn .dot{position:absolute;top:5px;right:6px;width:7px;height:7px;border-radius:50%;background:var(--c-accent);border:1.5px solid #fff;}
+.bell-panel{display:none;position:absolute;right:0;top:40px;width:264px;background:#fff;border:1px solid var(--c-border);border-radius:var(--radius-sm);box-shadow:var(--shadow-lg);padding:6px 0;z-index:90;}
+.bell-panel.open{display:block;}
+.bell-panel h4{margin:0;padding:8px 14px 6px;font-size:12.5px;color:var(--c-muted);font-weight:700;}
+.bell-item{padding:9px 14px;font-size:12.5px;border-top:1px solid var(--c-border);display:flex;gap:8px;}
+.bell-item .b-dot{width:6px;height:6px;border-radius:50%;background:var(--c-accent);margin-top:5px;flex:none;}
+.bell-item p{margin:0;color:var(--c-text);}
+.bell-item span{color:var(--c-muted);font-size:11px;}
+.side-nav{display:none;}
+@media(min-width:1024px){
+  .side-nav{display:flex;flex-direction:column;position:fixed;left:0;top:0;bottom:0;width:310px;background:#fff;border-right:1px solid var(--c-border);padding:18px 12px;z-index:50;}
+  .side-role{padding:0 10px 14px;margin-bottom:10px;border-bottom:1px solid var(--c-border);}
+.side-role strong{display:block;font-size:14px;color:var(--c-primary);font-weight:700;}
+.side-role span{display:block;font-size:12px;color:var(--c-muted);margin-top:2px;}
+.side-brand{display:flex;align-items:center;padding:0 8px 18px;}
+  .side-brand img{height:28px;width:auto;}
+  .side-link{display:flex;align-items:center;gap:10px;padding:10px 10px;border-radius:8px;font-size:14px;font-weight:600;color:var(--c-muted);margin-bottom:2px;}
+  .side-link svg{width:19px;height:19px;flex:none;}
+  .side-link.active{background:#E6EEF8;color:var(--c-primary);}
+  .side-link:hover:not(.active){background:var(--c-bg);}
+  .app.has-side .topbar{margin-left:310px;}
+  .app.has-side .content{margin-left:310px;}
+}
+.bottom-nav{position:fixed;left:0;right:0;bottom:0;z-index:70;background:#fff;border-top:1px solid var(--c-border);display:flex;height:var(--bottomnav-h);padding-bottom:env(safe-area-inset-bottom,0);box-shadow:0 -2px 10px rgba(16,24,40,.06);}
+.bottom-nav a{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;font-size:10.5px;color:var(--c-muted);font-weight:600;min-height:44px;}
+.bottom-nav a svg{width:20px;height:20px;}
+.bottom-nav a.active{color:var(--c-primary);}
+@media(min-width:1024px){.bottom-nav{display:none;}}
+.content{max-width:960px;margin:0 auto;padding:18px 16px calc(var(--bottomnav-h) + 24px);}
+@media(min-width:1024px){.content{padding:26px 32px 40px;}}
+.page-sub{color:var(--c-muted);font-size:13px;margin:0 0 14px;}
+.card{background:#fff;border:1px solid var(--c-border);border-radius:var(--radius);box-shadow:var(--shadow);padding:16px;}
+.card + .card{margin-top:12px;}
+.muted{color:var(--c-muted);}
+.small{font-size:12px;}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;border:none;border-radius:var(--radius-sm);padding:11px 18px;font-size:14px;font-weight:700;cursor:pointer;font-family:inherit;transition:background .15s;min-height:44px;}
+.btn-primary{background:var(--c-primary);color:#fff;}
+.btn-primary:hover{background:var(--c-primary-dark);}
+.btn-outline{background:#fff;border:1px solid var(--c-border);color:var(--c-text);}
+.btn-outline:hover{background:var(--c-bg);}
+.btn-block{width:100%;}
+.btn-sm{padding:7px 12px;font-size:12.5px;min-height:36px;}
+.btn:disabled{background:var(--c-border)!important;color:#98A2B3!important;cursor:not-allowed;border-color:var(--c-border)!important;}
+.badge{display:inline-block;padding:2px 9px;border-radius:20px;font-size:11.5px;font-weight:700;white-space:nowrap;}
+.badge-info{background:#E6EEF8;color:var(--c-primary);}
+.badge-warn{background:#FCEBDC;color:var(--c-accent-dark);}
+.badge-ok{background:#E4F5F0;color:#0B6B52;}
+.badge-muted{background:var(--c-border);color:var(--c-muted);}
+.hidden{display:none!important;}
+.fchip-bar{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px;}
+.fchip{padding:7px 14px;border-radius:20px;border:1px solid var(--c-border);background:#fff;font-size:12.5px;font-weight:700;cursor:pointer;font-family:inherit;color:var(--c-muted);}
+.fchip.active{background:var(--c-primary);color:#fff;border-color:var(--c-primary);}
+/* ---------- 班級卡片 ---------- */
+.cls-card{border:1.5px solid var(--c-border);border-radius:var(--radius);padding:15px 16px;background:#fff;}
+.cls-card + .cls-card{margin-top:12px;}
+.cls-head{display:flex;justify-content:space-between;align-items:flex-start;gap:10px;cursor:pointer;}
+.cls-head h4{margin:0;font-size:15.5px;}
+.cls-meta{font-size:12.5px;color:var(--c-muted);margin-top:4px;}
+.cls-schedule{font-size:12.5px;color:var(--c-muted);margin-top:2px;}
+.skill-bar-track{flex:1;height:8px;border-radius:4px;background:var(--c-border);overflow:hidden;}
+.skill-bar-fill{height:100%;background:var(--c-primary);border-radius:4px;}
+.skill-bar-fill.warn{background:var(--c-accent);}
+.cls-progress-row{display:flex;align-items:center;gap:10px;margin-top:12px;}
+.cls-progress-row .plabel{font-size:12px;color:var(--c-muted);white-space:nowrap;flex:none;}
+.cls-stats{display:flex;gap:18px;margin-top:10px;flex-wrap:wrap;}
+.cls-stats .cstat{font-size:12.5px;color:var(--c-muted);}
+.cls-stats .cstat b{color:var(--c-text);}
+.cls-overdue{font-size:12px;color:var(--c-accent-dark);background:#FCEBDC;border-radius:var(--radius-sm);padding:7px 10px;margin-top:10px;line-height:1.6;}
+.cls-foot{display:flex;gap:10px;margin-top:14px;}
+.cls-foot .btn{flex:1;}
+.cls-chevron{color:#98A2B3;flex:none;transition:transform .15s;}
+.cls-card.open .cls-chevron{transform:rotate(90deg);}
+.cls-recent{display:none;margin-top:12px;border-top:1px dashed var(--c-border);padding-top:12px;}
+.cls-card.open .cls-recent{display:block;}
+.recent-row{display:flex;justify-content:space-between;font-size:12.5px;padding:6px 0;border-top:1px solid var(--c-border);}
+.recent-row:first-child{border-top:none;}
+.recent-row .rr-date{color:var(--c-muted);flex:none;width:96px;}
+.recent-row .rr-unit{flex:1;}
+.recent-row .rr-attend{color:var(--c-muted);flex:none;text-align:right;}
+.cls-empty{text-align:center;padding:34px 16px;color:var(--c-muted);font-size:13px;}
+.toast{position:fixed;left:50%;bottom:calc(var(--bottomnav-h) + 18px);transform:translateX(-50%);background:#101828;color:#fff;padding:10px 20px;border-radius:20px;font-size:13px;font-weight:700;z-index:120;box-shadow:var(--shadow-lg);white-space:nowrap;}
+.toast.hidden{display:none;}
+@media(min-width:1024px){.toast{bottom:24px;}}
+</style>
+</head>
+<body>
+<div class="app has-side">
+  <nav class="side-nav" aria-label="主導覽">
+    <div class="side-brand"><a href="../公開網站/p01_home.html" aria-label="回官網" data-i18n-aria-label="nav_t.backToWebsite"><img src="../assets/tli-logo.svg" alt="TLI"></a></div>
+    <div class="side-role"><strong>王建國 老師</strong><span><span data-i18n="profile.role.franchiseLocal">加盟機構在地教師</span> · 範例大學</span></div>
+    <a class="side-link active" href="t08_my_classes.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="14" rx="2"/><line x1="3" y1="9" x2="21" y2="9"/><circle cx="8" cy="14" r="1.2"/><circle cx="12" cy="14" r="1.2"/><circle cx="16" cy="14" r="1.2"/></svg><span data-i18n="myclasses.nav.myClasses">我的班級</span></a>
+    <a class="side-link" href="t10_my_students.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/></svg><span data-i18n="myclasses.nav.myStudents">我的學生</span></a>
+    <a class="side-link" href="../公開網站/p01_home.html" style="margin-top:auto;"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg><span data-i18n="nav_t.backToWebsite">回官網</span></a>
+  </nav>
+
+  <header class="topbar">
+    <div class="topbar-left"><a class="topbar-logo-wrap" href="../公開網站/p01_home.html" aria-label="回官網" data-i18n-aria-label="nav_t.backToWebsite"><img src="../assets/tli-logo.svg" alt="TLI"></a><div class="topbar-title" data-i18n="myclasses.nav.myClasses">我的班級</div></div>
+    <div class="topbar-actions">
+      <button class="bell-btn" onclick="toggleBell()" aria-label="通知" data-i18n-aria-label="common.notifications">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8a6 6 0 10-12 0c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.7 21a2 2 0 01-3.4 0"/></svg>
+        <span class="dot" id="bellDot"></span>
+      </button>
+      <div class="bell-panel" id="bellPanel">
+        <h4 data-i18n="common.notifications">通知</h4>
+        <div id="bellItems"></div>
+      </div>
+    </div>
+  </header>
+
+  <main class="content">
+    <p class="page-sub" data-i18n="myclasses.pageSub">加盟班級不需要排課，上完課回來補一筆課堂紀錄即可累積進度與出席數據；每班約 30 秒即可完成記錄。</p>
+
+    <div class="card" id="certInfoCard" style="margin-bottom:12px;">
+      <div class="small muted" data-i18n="myclasses.cert.statusLabel">認證狀態（由總部認證，本人僅供查看）</div>
+      <div style="display:flex;gap:20px;flex-wrap:wrap;margin-top:6px;">
+        <span class="small"><span data-i18n="myclasses.cert.certDate">認證日期：</span><b id="certDateVal">—</b></span>
+        <span class="small"><span data-i18n="myclasses.cert.retrainDue">回訓到期日：</span><b id="certDueVal">—</b></span>
+      </div>
+    </div>
+
+    <div class="fchip-bar" id="fchipBar">
+      <button class="fchip active" data-filter="all" onclick="setFilter('all')" data-i18n="common.all">全部</button>
+      <button class="fchip" data-filter="ongoing" onclick="setFilter('ongoing')" data-i18n="myclasses.filter.ongoing">上課中</button>
+      <button class="fchip" data-filter="pending" onclick="setFilter('pending')" data-i18n="myclasses.filter.pending">尚未開課</button>
+      <button class="fchip" data-filter="done" onclick="setFilter('done')" data-i18n="myclasses.filter.done">已結束</button>
+    </div>
+
+    <div id="classList"></div>
+    <div class="cls-empty hidden" id="emptyState" data-i18n="myclasses.emptyState">找不到符合條件的班級。</div>
+  </main>
+
+  <nav class="bottom-nav">
+    <a href="t08_my_classes.html" class="active"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="14" rx="2"/><line x1="3" y1="9" x2="21" y2="9"/><circle cx="8" cy="14" r="1.2"/><circle cx="12" cy="14" r="1.2"/><circle cx="16" cy="14" r="1.2"/></svg><span data-i18n="myclasses.nav.myClasses">我的班級</span></a>
+    <a href="t10_my_students.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/></svg><span data-i18n="myclasses.nav.myStudents">我的學生</span></a>
+  </nav>
+  <div class="toast hidden" id="toast"></div>
+</div>
+
+<script src="../assets/_shared_masters.js"></script>
+<script src="../assets/_i18n_dict.js"></script>
+<script src="../assets/_i18n_dict_teacher.js"></script>
+<script src="../assets/_i18n.js"></script>
+<script>
+function toggleBell(){document.getElementById('bellPanel').classList.toggle('open');}
+/* ===== 認證日／回訓到期日：唯讀顯示，資料來自主檔 teachers（tl1＝王建國），本人不可編輯 ===== */
+(function(){
+  var me = TLI_MASTERS.teachers.filter(function(t){ return t.id==='tl1'; })[0];
+  document.getElementById('certDateVal').textContent = (me && me.certDate) ? me.certDate : '—';
+  document.getElementById('certDueVal').textContent = (me && me.nextRetrainDue) ? me.nextRetrainDue : '—';
+})();
+document.addEventListener('click',function(e){
+  if(!e.target.closest('.bell-btn')&&!e.target.closest('.bell-panel'))document.getElementById('bellPanel').classList.remove('open');
+});
+function addDays(baseStr, days){ var d=new Date(baseStr+'T00:00:00'); d.setDate(d.getDate()+days); return d.toISOString().slice(0,10); }
+function todayStr(){ return new Date().toISOString().slice(0,10); }
+function daysBetween(a,b){ return Math.round((new Date(b+'T00:00:00') - new Date(a+'T00:00:00'))/86400000); }
+var WD_SHORT_ZH = ['日','一','二','三','四','五','六'];
+var WD_SHORT_EN = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+function fmtDate(d){ if(!d) return '－'; var dt=new Date(d+'T00:00:00'); return d+'（'+TLI_I18N.t(WD_SHORT_ZH[dt.getDay()], WD_SHORT_EN[dt.getDay()])+'）'; }
+
+/* ===== 我的班級（示範資料：加盟方教師「王建國」視角，班級 id／名稱／教材與組織端
+   u05_classes.html 的 CLASSES 完全一致；u05 已改為 cl1、cl2、cl3、cl4 四班的
+   teacherName 都對得上「王建國（加盟方特聘）」，本頁同步列出這四班，不再列 u05
+   查無此班的 cl9／clx1。供課堂紀錄頁寫入 localStorage 後本頁即時反映最新進度，
+   示範「老師記一筆、總部看得到」的資料流 ===== */
+var TEACHER_CLASSES = [
+  {id:'cl1', name:'企業管理學系 範例交換班 A', materialName:'中文彈性團體直播班 一期（8 堂）',
+    materialUnits:['第 1 課','第 2 課','第 3 課','第 4 課','第 5 課','第 6 課','第 7 課','第 8 課'],
+    startDate:'2026-09-08', endDate:'2027-01-16', plannedTotal:16, recordedBase:9, attendanceRate:96, status:'ongoing',
+    lastLessonDate:'2026-09-24',
+    /* 20260928 新增：每週時段／教室，資料與組織端 u05_classes.html 該班 schedule 一致 */
+    schedule:[{weekday:1, start:'09:00', end:'11:00', room:'語言中心 201 教室'},
+              {weekday:4, start:'09:00', end:'11:00', room:'語言中心 201 教室'}],
+    students:['Rachel Kim','Sophia Garcia','Laura Chen','David Park','Kevin Lee','Michael Brown'],
+    recent:[{date:'2026-09-24', unit:'第 8 課', present:5, total:6},{date:'2026-09-21', unit:'第 7 課', present:6, total:6},{date:'2026-09-17', unit:'第 6 課', present:6, total:6}]},
+  {id:'cl2', name:'企業管理學系 範例交換班 B', materialName:'中文彈性團體直播班 一期（8 堂）',
+    materialUnits:['第 1 課','第 2 課','第 3 課','第 4 課','第 5 課','第 6 課','第 7 課'],
+    startDate:'2026-09-08', endDate:'2027-01-16', plannedTotal:16, recordedBase:5, attendanceRate:91, status:'ongoing',
+    lastLessonDate:'2026-09-24',
+    schedule:[{weekday:3, start:'09:00', end:'11:00', room:'語言中心 202 教室'}],
+    students:['Emily Tran','Rachel Kim','Sophia Garcia','Laura Chen','Olivia Martinez','Natalie Scott','Grace Liu','Amanda Lopez','Chris Nguyen','Jason Kim','Brian Wu','David Park'],
+    recent:[{date:'2026-09-24', unit:'第 5 課', present:11, total:12},{date:'2026-09-17', unit:'第 4 課', present:12, total:12},{date:'2026-09-10', unit:'第 3 課', present:10, total:12}]},
+  {id:'cl3', name:'外語學院 範例進階會話班', materialName:'企業華語線上培訓（團體班）',
+    materialUnits:['第 1 課','第 2 課','第 3 課','第 4 課','第 5 課','第 6 課','第 7 課'],
+    startDate:'2026-09-15', endDate:'2027-01-23', plannedTotal:14, recordedBase:7, attendanceRate:98, status:'ongoing',
+    lastLessonDate:'2026-09-22',
+    schedule:[{weekday:2, start:'14:00', end:'16:00', room:'外語學院 305 教室'}],
+    students:['Ethan Walker','Chloe Adams','Ryan Cooper'],
+    recent:[{date:'2026-09-22', unit:'第 7 課', present:2, total:3},{date:'2026-09-15', unit:'第 1 課', present:3, total:3}]},
+  {id:'cl4', name:'商學院 範例短期密集班', materialName:'學期班 Lv.5–8 一期',
+    materialUnits:['單元 1：開場問候','單元 2：會議安排','單元 3：商務簡報','單元 4：郵件往來'],
+    startDate:'2026-10-05', endDate:'2026-12-14', plannedTotal:10, recordedBase:0, attendanceRate:0, status:'pending',
+    lastLessonDate:null,
+    schedule:[{weekday:5, start:'13:00', end:'15:00', room:'商學院 102 教室'}],
+    students:['Kevin Lee','Daniel Wright','Michael Brown','John Miller'],
+    recent:[]}
+];
+
+/* ===== 讀取 t09 課堂紀錄頁寫入的示範資料，同瀏覽器操作後本頁進度即時更新 ===== */
+function loadLessonLogs(){
+  try{ var raw = localStorage.getItem('tliDemoLessonLogs'); if(raw){ var arr = JSON.parse(raw); if(Array.isArray(arr)) return arr; } }catch(err){}
+  return [];
+}
+function logsOfClass(cls){ return loadLessonLogs().filter(function(l){ return l.classId === cls.id; }); }
+function recordedCount(cls){ return Math.min(cls.plannedTotal, cls.recordedBase + logsOfClass(cls).length); }
+function lastLessonDateOf(cls){
+  var logs = logsOfClass(cls);
+  if(!logs.length) return cls.lastLessonDate;
+  var latest = logs.reduce(function(a,b){ return a.date > b.date ? a : b; });
+  return (cls.lastLessonDate && cls.lastLessonDate > latest.date) ? cls.lastLessonDate : latest.date;
+}
+function recentListOf(cls){
+  var logs = logsOfClass(cls).map(function(l){ return {date:l.date, unit:l.unit, present:l.presentCount, total:(l.presentCount+l.absentCount), lateBooked:l.lateBooked}; });
+  return logs.concat(cls.recent).sort(function(a,b){ return b.date < a.date ? -1 : 1; }).slice(0,5);
+}
+function attendTextOf(r){
+  return r.present+'／'+r.total+TLI_I18N.t(' 出席',' present')+(r.lateBooked ? TLI_I18N.t('（補登）',' (late entry)') : '');
+}
+
+/* ===== 20260928 新增：每週時段／教室文字，資料照組織端 u05 該班 schedule 組出，同時段同教室的多個星期合併顯示 ===== */
+var WEEKDAY_NAMES_ZH = ['週日','週一','週二','週三','週四','週五','週六'];
+var WEEKDAY_NAMES_EN = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+function weekdayName(d){ return TLI_I18N.t(WEEKDAY_NAMES_ZH[d], WEEKDAY_NAMES_EN[d]); }
+function scheduleLineOf(cls){
+  if(!cls.schedule || !cls.schedule.length) return TLI_I18N.t('尚未安排時段','No schedule arranged yet');
+  var groups = [];
+  cls.schedule.forEach(function(s){
+    var g = groups.filter(function(gr){ return gr.start===s.start && gr.end===s.end && gr.room===s.room; })[0];
+    if(!g){ g = {start:s.start, end:s.end, room:s.room, days:[]}; groups.push(g); }
+    g.days.push(s.weekday);
+  });
+  return groups.map(function(g){
+    var days = g.days.slice().sort(function(a,b){return a-b;}).map(function(d){ return weekdayName(d); }).join('、');
+    return days+' '+g.start+'–'+g.end+'・'+g.room;
+  }).join('；');
+}
+
+var currentFilter = 'all';
+function setFilter(f){
+  currentFilter = f;
+  document.querySelectorAll('.fchip').forEach(function(c){c.classList.toggle('active', c.dataset.filter===f);});
+  renderList();
+}
+function statusLabel(s){ return s==='ongoing' ? TLI_I18N.t('上課中','Ongoing') : (s==='pending' ? TLI_I18N.t('尚未開課','Not Started') : TLI_I18N.t('已結束','Completed')); }
+function statusBadgeClass(s){ return s==='ongoing' ? 'badge-ok' : (s==='pending' ? 'badge-info' : 'badge-muted'); }
+
+var openCard = {};
+function toggleCard(id){
+  openCard[id] = !openCard[id];
+  renderList();
+}
+function renderList(){
+  var listEl = document.getElementById('classList');
+  var shown = 0;
+  var html = '';
+  var pendingRecordCount = 0;
+  TEACHER_CLASSES.forEach(function(c){
+    if(currentFilter!=='all' && c.status!==currentFilter) return;
+    shown++;
+    var rec = recordedCount(c);
+    var pct = c.plannedTotal>0 ? Math.round(rec/c.plannedTotal*100) : 0;
+    var lastDate = lastLessonDateOf(c);
+    var overdueHtml = '';
+    if(c.status==='ongoing' && lastDate){
+      var gap = daysBetween(lastDate, todayStr());
+      if(gap >= 7){
+        pendingRecordCount++;
+        overdueHtml = '<div class="cls-overdue">'+TLI_I18N.t('距上次記錄已 '+gap+' 天，記得補登課堂紀錄（超過 7 天的補登會標記供管理者查看）。','It has been '+gap+' days since the last record — remember to log the lesson (entries logged more than 7 days late are flagged for admin review).')+'</div>';
+      }
+    }
+    var recentRows = recentListOf(c).map(function(r){
+      return '<div class="recent-row"><span class="rr-date">'+r.date+'</span><span class="rr-unit">'+r.unit+'</span><span class="rr-attend">'+attendTextOf(r)+'</span></div>';
+    }).join('') || '<div class="small muted">'+TLI_I18N.t('尚無課堂紀錄。','No lesson records yet.')+'</div>';
+    html += '<div class="cls-card'+(openCard[c.id]?' open':'')+'">'+
+      '<div class="cls-head" onclick="toggleCard(\''+c.id+'\')">'+
+        '<div><h4>'+c.name+' <span class="badge '+statusBadgeClass(c.status)+'" style="margin-left:4px;">'+statusLabel(c.status)+'</span></h4>'+
+        '<div class="cls-meta">'+c.materialName+'・'+c.startDate+' ～ '+c.endDate+'</div>'+
+        '<div class="cls-schedule">'+TLI_I18N.t('每週時段／教室：','Weekly Schedule / Room: ')+scheduleLineOf(c)+'</div></div>'+
+        '<svg class="cls-chevron" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 6 15 12 9 18"/></svg>'+
+      '</div>'+
+      '<div class="cls-progress-row"><span class="plabel">'+TLI_I18N.t('已記 '+rec+'／'+c.plannedTotal+' 堂','Recorded '+rec+'/'+c.plannedTotal+' lessons')+'</span><div class="skill-bar-track"><div class="skill-bar-fill'+(pct<40&&c.status==='ongoing'?' warn':'')+'" style="width:'+pct+'%"></div></div></div>'+
+      '<div class="cls-stats">'+
+        '<span class="cstat">'+TLI_I18N.t('出席率 ','Attendance Rate ')+'<b>'+(c.status==='pending' ? '－' : c.attendanceRate+'%')+'</b></span>'+
+        '<span class="cstat">'+TLI_I18N.t('學生人數 ','Students ')+'<b>'+c.students.length+'</b></span>'+
+        '<span class="cstat">'+TLI_I18N.t('最近上課 ','Last Class ')+'<b>'+(lastDate ? fmtDate(lastDate) : TLI_I18N.t('尚未開課','Not Started'))+'</b></span>'+
+      '</div>'+
+      overdueHtml+
+      '<div class="cls-recent">'+recentRows+'</div>'+
+      '<div class="cls-foot">'+
+        (c.status==='pending'
+          ? '<button class="btn btn-outline btn-block" disabled>'+TLI_I18N.t('尚未開課，暫無法新增紀錄','Not started yet — cannot add records')+'</button>'
+          : (c.status==='done'
+            ? '<button class="btn btn-outline btn-block" disabled>'+TLI_I18N.t('班級已結束，無法再新增紀錄','Class has ended — cannot add more records')+'</button>'
+            : '<a class="btn btn-primary btn-block" href="t09_lesson_log.html?class='+c.id+'">'+TLI_I18N.t('＋ 新增課堂紀錄','+ Add Lesson Record')+'</a>'))+
+      '</div>'+
+    '</div>';
+  });
+  listEl.innerHTML = html;
+  document.getElementById('emptyState').classList.toggle('hidden', shown>0);
+
+  var dot = document.getElementById('bellDot');
+  var items = document.getElementById('bellItems');
+  if(pendingRecordCount>0){
+    dot.style.display = 'block';
+    items.innerHTML = '<div class="bell-item"><span class="b-dot"></span><div><p>'+TLI_I18N.t('有 '+pendingRecordCount+' 班超過 7 天未記錄課堂，記得回頭補登','There are '+pendingRecordCount+' classes with lessons unrecorded for over 7 days — remember to log them.')+'</p><span>'+TLI_I18N.t('今天','Today')+'</span></div></div>';
+  }else{
+    dot.style.display = 'none';
+    items.innerHTML = '<div class="bell-item"><span class="b-dot" style="background:var(--c-secondary)"></span><div><p>'+TLI_I18N.t('目前沒有待補登的課堂紀錄','No pending lesson records right now.')+'</p><span>'+TLI_I18N.t('今天','Today')+'</span></div></div>';
+  }
+  if (window.TLI_I18N) TLI_I18N.refresh();
+}
+if (window.TLI_I18N) TLI_I18N.onRefresh(renderList);
+/* i18n 必須先 init（讀取已儲存的語言）再組動態列表，
+   否則 renderList() 會先用預設繁體中文組字串，init() 只會轉換有 data-i18n 標記的骨架，
+   動態列表反而換不到已儲存的語言 */
+if (window.TLI_I18N) TLI_I18N.init();
+renderList();
+
+var toastTimer=null;
+function showToast(msg){
+  var t=document.getElementById('toast');
+  t.textContent=msg;
+  t.classList.remove('hidden');
+  clearTimeout(toastTimer);
+  toastTimer=setTimeout(function(){t.classList.add('hidden');},2400);
+}
+if(new URLSearchParams(location.search).get('done')==='1'){
+  showToast(TLI_I18N.t('課堂紀錄已送出，進度已更新','Lesson record submitted — progress updated.'));
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,1142 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>TLI Connect 會員區－結帳</title>
+<style>
+:root{
+  --c-primary:#1B4E8C;--c-primary-dark:#123A68;--c-accent:#E8792B;--c-accent-dark:#CF691F;--c-secondary:#0F9B79;
+  --c-bg:#F5F7FA;--c-border:#E4E7EC;--c-muted:#667085;--c-text:#101828;
+  --radius:12px;--radius-sm:8px;--shadow:0 1px 3px rgba(16,24,40,.08),0 1px 2px rgba(16,24,40,.04);--shadow-lg:0 8px 24px rgba(16,24,40,.16);
+  --topbar-h:52px;--bottomnav-h:64px;
+}
+*{box-sizing:border-box;}
+html,body{margin:0;padding:0;overflow-x:hidden;}
+body{font-family:"Noto Sans TC","Microsoft JhengHei",system-ui,-apple-system,"Segoe UI",sans-serif;background:var(--c-bg);color:var(--c-text);line-height:1.55;font-size:15px;-webkit-tap-highlight-color:transparent;}
+a{color:inherit;text-decoration:none;}
+img,svg{display:block;}
+button{font-family:inherit;}
+button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible{outline:2px solid var(--c-primary);outline-offset:2px;}
+.app{min-height:100vh;position:relative;}
+.topbar{position:sticky;top:0;z-index:60;height:var(--topbar-h);background:#fff;border-bottom:1px solid var(--c-border);display:flex;align-items:center;justify-content:space-between;padding:0 14px;gap:10px;}
+.topbar-left{display:flex;align-items:center;gap:8px;min-width:0;}
+.topbar-logo-wrap{width:26px;height:22px;overflow:hidden;position:relative;flex:none;}
+.topbar-logo-wrap img{position:absolute;left:0;top:0;height:22px;width:auto;max-width:none;}
+.topbar-title{font-size:16.5px;font-weight:700;color:var(--c-text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.topbar-actions{display:flex;align-items:center;gap:6px;position:relative;}
+.bell-btn{position:relative;width:32px;height:32px;border-radius:50%;border:1px solid var(--c-border);background:#fff;cursor:pointer;display:flex;align-items:center;justify-content:center;color:var(--c-muted);}
+.bell-btn svg{width:16px;height:16px;}
+.bell-btn .dot{position:absolute;top:5px;right:6px;width:7px;height:7px;border-radius:50%;background:var(--c-accent);border:1.5px solid #fff;}
+.bell-panel{display:none;position:absolute;right:0;top:40px;width:264px;background:#fff;border:1px solid var(--c-border);border-radius:var(--radius-sm);box-shadow:var(--shadow-lg);padding:6px 0;z-index:90;}
+.bell-panel.open{display:block;}
+.bell-panel h4{margin:0;padding:8px 14px 6px;font-size:12.5px;color:var(--c-muted);font-weight:700;}
+.bell-item{padding:9px 14px;font-size:12.5px;border-top:1px solid var(--c-border);display:flex;gap:8px;}
+.bell-item .b-dot{width:6px;height:6px;border-radius:50%;background:var(--c-accent);margin-top:5px;flex:none;}
+.bell-item p{margin:0;color:var(--c-text);}
+.bell-item span{color:var(--c-muted);font-size:11px;}
+.side-nav{display:none;}
+@media(min-width:1024px){
+  .side-nav{display:flex;flex-direction:column;position:fixed;left:0;top:0;bottom:0;width:310px;background:#fff;border-right:1px solid var(--c-border);padding:18px 12px;z-index:50;overflow-y:auto;}
+  .side-brand{display:flex;align-items:center;padding:0 8px 18px;}
+  .side-brand img{height:28px;width:auto;}
+  .side-identity{padding:0 8px 14px;margin-bottom:6px;font-size:12.5px;font-weight:700;color:var(--c-text);border-bottom:1px solid var(--c-border);}
+  .side-link{display:flex;align-items:center;gap:10px;padding:10px 10px;border-radius:8px;font-size:14px;font-weight:600;color:var(--c-muted);margin-bottom:2px;}
+  .side-link svg{width:19px;height:19px;flex:none;}
+  .side-link.active{background:#E6EEF8;color:var(--c-primary);}
+  .side-link:hover:not(.active){background:var(--c-bg);}
+  .app.has-side .topbar{margin-left:310px;}
+  .app.has-side .content{margin-left:310px;}
+}
+.bottom-nav{position:fixed;left:0;right:0;bottom:0;z-index:70;background:#fff;border-top:1px solid var(--c-border);display:flex;height:var(--bottomnav-h);padding-bottom:env(safe-area-inset-bottom,0);box-shadow:0 -2px 10px rgba(16,24,40,.06);}
+.bottom-nav a{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;font-size:10.5px;color:var(--c-muted);font-weight:600;min-height:44px;}
+.bottom-nav a svg{width:20px;height:20px;}
+.bottom-nav a.active{color:var(--c-primary);}
+@media(min-width:1024px){.bottom-nav{display:none;}}
+.content{max-width:760px;margin:0 auto;padding:18px 16px calc(var(--bottomnav-h) + 24px);}
+@media(min-width:1024px){.content{padding:26px 32px 40px;}}
+.page-h{font-size:19px;font-weight:700;margin:2px 0 4px;}
+.page-sub{color:var(--c-muted);font-size:13px;margin:0 0 18px;}
+.section-title{font-size:15px;font-weight:700;margin:22px 0 12px;}
+.section-title.first{margin-top:4px;}
+.card{background:#fff;border:1px solid var(--c-border);border-radius:var(--radius);box-shadow:var(--shadow);padding:16px;}
+.card + .card{margin-top:12px;}
+.muted{color:var(--c-muted);}
+.small{font-size:12px;}
+.divider{border:none;border-top:1px solid var(--c-border);margin:14px 0;}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;border:none;border-radius:var(--radius-sm);padding:11px 18px;font-size:14px;font-weight:700;cursor:pointer;font-family:inherit;transition:background .15s;min-height:44px;}
+.btn-primary{background:var(--c-primary);color:#fff;}
+.btn-primary:hover{background:var(--c-primary-dark);}
+.btn-accent{background:var(--c-accent);color:#fff;}
+.btn-accent:hover{background:var(--c-accent-dark);}
+.btn-outline{background:#fff;border:1px solid var(--c-border);color:var(--c-text);}
+.btn-outline:hover{background:var(--c-bg);}
+.btn:disabled{background:var(--c-border)!important;color:#98A2B3!important;cursor:not-allowed;}
+.btn-block{width:100%;}
+.badge{display:inline-block;padding:2px 9px;border-radius:20px;font-size:11.5px;font-weight:700;white-space:nowrap;}
+.badge-info{background:#E6EEF8;color:var(--c-primary);}
+.badge-warn{background:#FCEBDC;color:var(--c-accent-dark);}
+.badge-ok{background:#E4F5F0;color:#0B6B52;}
+.hidden{display:none!important;}
+.field{display:flex;flex-direction:column;gap:5px;margin-bottom:14px;}
+.field label{font-size:13px;font-weight:700;}
+.field input,.field select,.field textarea{border:1px solid var(--c-border);border-radius:var(--radius-sm);padding:10px 11px;font-size:14px;font-family:inherit;color:var(--c-text);background:#fff;min-height:44px;}
+.field .hint{font-size:11.5px;color:var(--c-muted);font-weight:400;}
+.radio-line,.check-line{display:flex;align-items:center;gap:10px;padding:11px 0;border-top:1px solid var(--c-border);font-size:13.5px;cursor:pointer;flex-wrap:wrap;}
+.radio-line:first-child,.check-line:first-child{border-top:none;}
+.order-row{display:flex;justify-content:space-between;align-items:baseline;padding:8px 0;font-size:13.5px;}
+.order-row.total{border-top:1px solid var(--c-border);margin-top:6px;padding-top:14px;font-size:16px;font-weight:800;}
+.order-row .muted{font-size:12.5px;}
+.plan-pick{border:1.5px solid var(--c-border);border-radius:var(--radius);padding:14px;margin-bottom:10px;cursor:pointer;}
+.plan-pick.selected{border-color:var(--c-primary);background:#F7FAFF;}
+.plan-pick h4{margin:0 0 4px;font-size:14px;}
+.plan-pick p{margin:0;font-size:12.5px;color:var(--c-muted);}
+.demo-note{font-size:12px;color:#9A4A0F;background:#FFF8EE;border:1px solid #F3DFB8;border-radius:8px;padding:8px 12px;margin-bottom:14px;}
+.banner{border-radius:var(--radius);padding:12px 14px;margin-bottom:14px;font-size:13px;display:flex;gap:9px;align-items:flex-start;}
+.banner-info{background:#E6EEF8;color:var(--c-primary-dark);border:1px solid #C7DAF0;font-weight:700;}
+.ref-tag{background:#E4F5F0;color:#0B6B52;border-radius:8px;padding:8px 12px;font-size:12.5px;font-weight:700;margin-top:8px;display:none;}
+.ref-tag.show{display:block;}
+.success-wrap{text-align:center;padding:40px 16px;}
+.success-wrap .s-icon{width:64px;height:64px;margin:0 auto 18px;color:#0B6B52;}
+.success-wrap h2{font-size:20px;margin-bottom:8px;}
+.success-wrap p{color:var(--c-muted);font-size:13.5px;margin-bottom:4px;}
+.order-no{font-size:15px;font-weight:800;color:var(--c-primary);background:var(--c-bg);border-radius:8px;padding:10px 14px;display:inline-block;margin:16px 0;}
+.toast{position:fixed;left:50%;bottom:calc(var(--bottomnav-h) + 18px);transform:translateX(-50%);background:#101828;color:#fff;padding:10px 20px;border-radius:20px;font-size:13px;font-weight:700;z-index:120;box-shadow:var(--shadow-lg);white-space:nowrap;max-width:88vw;overflow:hidden;text-overflow:ellipsis;}
+.toast.hidden{display:none;}
+@media(min-width:1024px){.toast{bottom:24px;}}
+
+/* 必填標示與欄位驗證（與 p07/p11 同套） */
+.req-mark{color:#D92D20;margin-left:2px;}
+.field-required-note{font-size:12px;color:var(--c-muted);margin-bottom:14px;}
+.field-error{display:none;font-size:12px;color:#D92D20;margin-top:5px;line-height:1.5;}
+.field-error.show{display:block;}
+.field input.invalid,.field select.invalid{border-color:#D92D20;}
+
+/* 條款示範 modal（與 p07/p11 同套） */
+.modal-overlay{position:fixed;inset:0;background:rgba(16,24,40,.45);display:none;align-items:center;justify-content:center;z-index:300;padding:20px;}
+.modal-overlay.show{display:flex;}
+.modal-box{background:#fff;border-radius:12px;max-width:520px;width:100%;max-height:80vh;display:flex;flex-direction:column;box-shadow:var(--shadow-lg);}
+.modal-head{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:16px 20px;border-bottom:1px solid var(--c-border);}
+.modal-head h3{font-size:15px;font-weight:800;}
+.modal-close-btn{background:none;border:none;cursor:pointer;color:var(--c-muted);padding:6px;flex:none;}
+.modal-close-btn:hover{color:var(--c-text);}
+.modal-body{padding:18px 20px;overflow-y:auto;font-size:13px;color:var(--c-muted);line-height:1.8;}
+.modal-foot{padding:14px 20px;border-top:1px solid var(--c-border);text-align:right;}
+
+/* 發票載具與跨境付款提示 */
+.carrier-sub{margin-top:10px;padding-top:10px;border-top:1px dashed var(--c-border);}
+.cross-border-note{font-size:12.5px;color:var(--c-muted);background:var(--c-bg);border:1px solid var(--c-border);border-radius:8px;padding:10px 12px;}
+
+/* 匯款待確認面板 */
+.transfer-card{text-align:left;}
+.transfer-account{font-size:16px;font-weight:800;color:var(--c-primary);background:var(--c-bg);border-radius:8px;padding:10px 14px;display:inline-block;margin:8px 0;}
+</style>
+</head>
+<body>
+<div class="app has-side">
+  <nav class="side-nav" data-i18n-aria-label="member.nav.aria" aria-label="主導覽">
+    <div class="side-brand"><a href="../公開網站/p01_home.html" data-i18n-aria-label="member.logoAria" aria-label="TLI 官網"><img src="../assets/tli-logo.svg" alt="TLI"></a></div>
+    <div class="side-identity">Emma Johnson｜<span data-i18n="member.role.student">學員</span></div>
+    <a class="side-link" href="m01_home.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11l9-8 9 8"/><path d="M5 10v10a1 1 0 001 1h3v-6h6v6h3a1 1 0 001-1V10"/></svg><span data-i18n="member.nav.home">首頁</span></a>
+    <a class="side-link" href="m02_booking.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18M12 14v6M9 17h6"/></svg><span data-i18n="member.nav.booking">預約與報名</span></a>
+    <a class="side-link" href="m03_schedule.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg><span data-i18n="member.nav.schedule">課表</span></a>
+    <a class="side-link" href="m08_self_paced.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 3h6a4 4 0 014 4v14a3 3 0 00-3-3H2z"/><path d="M22 3h-6a4 4 0 00-4 4v14a3 3 0 013-3h7z"/></svg><span data-i18n="member.nav.learning">學習</span></a>
+    <a class="side-link" href="m18_learning_dashboard.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="4" y1="20" x2="20" y2="20"/><rect x="5" y="11" width="3" height="7" rx="1"/><rect x="10.5" y="6" width="3" height="12" rx="1"/><rect x="16" y="9" width="3" height="9" rx="1"/></svg><span data-en="Learning Dashboard">學習儀表板</span></a>
+    <a class="side-link" href="m20_transcripts.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 3H7a2 2 0 00-2 2v14a2 2 0 002 2h10a2 2 0 002-2V8z"/><path d="M14 3v5h5"/><path d="M9 13h6M9 17h6"/></svg><span data-en="Transcripts">成績單</span></a>
+    <a class="side-link" href="m19_certificates.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="9" r="6"/><path d="M8.5 14.5L7 22l5-3 5 3-1.5-7.5"/></svg><span data-en="Certificates">結業證書</span></a>
+    <a class="side-link active" href="m04_course_detail.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="5" width="20" height="14" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/><line x1="6" y1="15" x2="10" y2="15"/></svg><span data-i18n="member.nav.myPlan">我的方案</span></a>
+    <a class="side-link" href="m07_profile.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 4-7 8-7s8 3 8 7"/></svg><span data-i18n="member.nav.me">我的</span></a>
+    <a class="side-link" href="../公開網站/p01_home.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg><span data-i18n="member.nav.backToSite">回官網</span></a>
+  </nav>
+
+  <header class="topbar">
+    <div class="topbar-left"><a class="topbar-logo-wrap" href="../公開網站/p01_home.html" data-i18n-aria-label="member.logoAria" aria-label="TLI 官網"><img src="../assets/tli-logo.svg" alt="TLI"></a><div class="topbar-title" data-i18n="m13.title">結帳</div></div>
+    <div class="topbar-actions">
+      <button class="bell-btn" onclick="toggleBell()" data-i18n-aria-label="member.notifications" aria-label="通知">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8a6 6 0 10-12 0c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.7 21a2 2 0 01-3.4 0"/></svg>
+        <span class="dot"></span>
+      </button>
+      <div class="bell-panel" id="bellPanel">
+        <h4 data-i18n="member.notifications">通知</h4>
+        <div class="bell-item"><span class="b-dot"></span><div><p data-i18n="m13.notif.paymentNote">完成付款後，方案將於系統確認後立即開通</p><span data-i18n="member.tip">提示</span></div></div>
+      </div>
+    </div>
+  </header>
+
+  <main class="content">
+    <div id="universityNotice" class="hidden">
+      <div class="card" style="text-align:center;padding:36px 20px;">
+        <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" style="margin:0 auto 16px;color:var(--c-primary);"><path d="M22 10L12 5 2 10l10 5 10-5z"/><path d="M6 12v5c0 1.5 2.7 3 6 3s6-1.5 6-3v-5"/></svg>
+        <div class="page-h" style="margin-bottom:8px;" data-i18n="m13.uni.title">本方案由機構支付</div>
+        <p class="muted" style="font-size:13.5px;max-width:420px;margin:0 auto 4px;" data-i18n="m13.uni.desc">在學期間資源方案（範例州立大學）由合作大學支付授權費用予 TLI，你的學費已含此費用，TLI 不另向你收費，也無法在此頁面購買。請由大學入口驗證在學身分後直接開通。</p>
+                <div style="margin-top:22px;">
+          <a class="btn btn-primary" href="../公開網站/p11_university.html" data-i18n="m13.uni.cta">前往大學入口開通</a>
+        </div>
+      </div>
+    </div>
+
+    <div id="checkoutForm">
+      <div class="page-h" data-i18n="m13.title">結帳</div>
+      <p class="page-sub" data-i18n="m13.subtitle">確認方案內容，填寫付款與發票資訊後送出訂單。</p>
+      <div class="banner banner-info hidden" id="existingOrderBanner"></div>
+      <div class="field-required-note"><span class="req-mark">*</span> <span data-i18n="m13.requiredNote">為必填欄位</span></div>
+
+      <div id="buyerInfoBlock" class="hidden">
+        <div class="section-title first" data-i18n="m13.buyer.title">購買人資訊</div>
+        <div class="card">
+          <div class="field">
+            <label for="buyerName"><span data-i18n="m13.buyer.name">購買人姓名</span><span class="req-mark">*</span></label>
+            <input type="text" id="buyerName" data-i18n-placeholder="m13.buyer.namePh" placeholder="請輸入購買人姓名" onblur="validateBuyerName()">
+            <div class="field-error" id="err_buyerName"></div>
+          </div>
+          <div class="field" style="margin-bottom:0;">
+            <label for="buyerEmail"><span data-i18n="m13.buyer.email">購買人 Email</span><span class="req-mark">*</span></label>
+            <input type="email" id="buyerEmail" data-i18n-placeholder="m13.buyer.emailPh" placeholder="請輸入 Email" onblur="validateBuyerEmail()">
+            <div class="field-error" id="err_buyerEmail"></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="section-title first" id="planSectionTitle" data-i18n="m13.plan.title">選擇方案</div>
+      <div id="planPickList"></div>
+
+      <div class="section-title" id="eventSectionTitle" style="display:none;" data-i18n="m13.event.title">活動報名</div>
+      <div class="card" id="eventCard" style="display:none;">
+        <div class="order-row"><span data-i18n="m13.event.name">活動名稱</span><span id="eventNameDisplay">－</span></div>
+        <div class="order-row"><span data-i18n="m13.event.time">時間</span><span id="eventTimeDisplay">－</span></div>
+              </div>
+
+      <div class="section-title" id="trialSlotSectionTitle" style="display:none;" data-i18n="m13.trial.title">已提交的時段偏好</div>
+      <div class="card" id="trialSlotCard" style="display:none;">
+        <div class="order-row"><span data-i18n="m13.trial.date">日期</span><span id="trialDateDisplay">－</span></div>
+        <div class="order-row"><span data-i18n="m13.trial.slot">時段偏好</span><span id="trialSlotDisplay">－</span></div>
+        <div class="order-row" id="trialGoalRow" style="display:none;"><span data-i18n="m13.trial.goal">想學的目標</span><span id="trialGoalDisplay">－</span></div>
+        <div class="order-row" id="trialNoteRow" style="display:none;"><span data-i18n="m13.trial.note">備註</span><span id="trialNoteDisplayField">－</span></div>
+        <div class="small muted" data-i18n="m13.trial.desc">顧問會依你提出的時段安排老師並通知，正式時段以會員區課表為準。</div>
+      </div>
+
+      <div class="section-title" id="qtySectionTitle" data-i18n="m13.qty.title">數量／期間</div>
+      <div class="card" id="qtyCard">
+        <div class="field">
+          <label for="qtySelect" id="qtyLabel"></label>
+          <select id="qtySelect" onchange="renderOrder()"></select>
+          <div class="hint" id="qtyHint"></div>
+        </div>
+      </div>
+
+      <div class="section-title" data-i18n="m13.ref.title">折扣碼／轉介碼</div>
+      <div class="card">
+        <div class="field" style="margin-bottom:0;">
+          <label for="refCode" data-i18n="m13.ref.label">折扣碼或轉介碼（選填）</label>
+          <input type="text" id="refCode" data-i18n-placeholder="m13.ref.placeholder" placeholder="例如：AGENT2026" oninput="checkRefCode()">
+          <div class="hint" data-i18n="m13.ref.hint">由合作夥伴招募連結進入時會自動帶入轉介碼，也可手動輸入</div>
+          <div class="hint" id="refAutoHint" style="display:none;color:var(--c-primary);font-weight:700;" data-i18n="m13.ref.autoHint">代碼由推薦連結自動帶入</div>
+        </div>
+        <div class="ref-tag" id="refTag"><span data-i18n="m13.ref.tagPrefix">歸屬代理商：</span><span>環宇教育顧問（東南亞地區）</span></div>
+      </div>
+
+      <div class="section-title"><span data-i18n="m13.pay.title">付款方式</span><span class="req-mark">*</span></div>
+      <div class="card">
+        <label class="radio-line"><input type="radio" name="payMethod" value="creditcard_newebpay" checked onchange="onPayMethodChange()"><span data-i18n="m13.pay.newebpay">信用卡（藍新金流）</span></label>
+        <label class="radio-line"><input type="radio" name="payMethod" value="creditcard_stripe" onchange="onPayMethodChange()"><span data-i18n="m13.pay.stripe">信用卡（Stripe，海外卡適用）</span></label>
+        <label class="radio-line"><input type="radio" name="payMethod" value="transfer" onchange="onPayMethodChange()"><span data-i18n="m13.pay.transfer">銀行匯款</span></label>
+        <div id="installmentBox" class="field" style="margin:10px 0 0;">
+          <label for="installmentSelect" data-i18n="m13.installment.label">分期選項</label>
+          <select id="installmentSelect">
+            <option value="0" data-i18n="m13.installment.opt0">不分期</option>
+            <option value="3" data-i18n="m13.installment.opt3">3 期零利率</option>
+            <option value="6" data-i18n="m13.installment.opt6">6 期零利率</option>
+            <option value="12" data-i18n="m13.installment.opt12">12 期（年利率 5.88%）</option>
+          </select>
+        </div>
+        <div id="transferHint" class="hint hidden" style="margin-top:10px;" data-i18n="m13.transfer.hint">送出訂單後將顯示匯款帳號與繳款期限，本頁不產生實際帳號。</div>
+      </div>
+
+      <div class="section-title"><span data-i18n="m13.invoice.title">發票資訊</span><span class="req-mark">*</span></div>
+      <div class="card">
+        <div id="crossBorderInvoiceNote" class="cross-border-note hidden" data-i18n="m13.invoice.crossBorderNote">跨境付款開立收據／commercial invoice，不開統一發票（待會計師確認）。</div>
+        <div id="invoiceNormalBlock">
+          <label class="radio-line"><input type="radio" name="invoiceType" value="personal" checked onchange="onInvoiceTypeChange()"><span data-i18n="m13.invoice.personal">個人發票</span></label>
+          <div class="carrier-sub" id="personalCarrierBlock">
+            <label class="radio-line" style="border-top:none;padding-top:0;"><input type="radio" name="invoiceCarrier" value="cloud" checked onchange="onCarrierChange()"><span data-i18n="m13.carrier.cloud">雲端發票（存入會員載具）</span></label>
+            <label class="radio-line"><input type="radio" name="invoiceCarrier" value="mobile" onchange="onCarrierChange()"><span data-i18n="m13.carrier.mobile">手機條碼</span></label>
+            <div class="field" id="carrierMobileField" style="margin:0 0 10px;display:none;">
+              <input type="text" id="carrierMobile" data-i18n-placeholder="m13.carrier.mobilePh" placeholder="格式：/ 開頭共 8 碼，例如 /AB12345" maxlength="8" onblur="validateCarrierMobile()" oninput="onCarrierMobileInput()">
+              <div class="field-error" id="err_carrierMobile"></div>
+            </div>
+            <label class="radio-line"><input type="radio" name="invoiceCarrier" value="citizen" onchange="onCarrierChange()"><span data-i18n="m13.carrier.citizen">自然人憑證</span></label>
+            <div class="field" id="carrierCitizenField" style="margin:0 0 10px;display:none;">
+              <input type="text" id="carrierCitizen" data-i18n-placeholder="m13.carrier.citizenPh" placeholder="格式：2 碼英文＋14 碼數字" maxlength="16" onblur="validateCarrierCitizen()">
+              <div class="field-error" id="err_carrierCitizen"></div>
+            </div>
+            <label class="radio-line"><input type="radio" name="invoiceCarrier" value="donate" onchange="onCarrierChange()"><span data-i18n="m13.carrier.donate">捐贈</span></label>
+            <div class="field" id="carrierDonateField" style="margin:0 0 10px;display:none;">
+              <input type="text" id="carrierDonate" data-i18n-placeholder="m13.carrier.donatePh" placeholder="愛心碼，3－7 碼數字" maxlength="7" onblur="validateCarrierDonate()">
+              <div class="field-error" id="err_carrierDonate"></div>
+            </div>
+          </div>
+          <label class="radio-line"><input type="radio" name="invoiceType" value="company" onchange="onInvoiceTypeChange()"><span data-i18n="m13.invoice.company">公司發票（統一編號）</span></label>
+          <div id="companyInvoiceBlock" class="carrier-sub" style="display:none;">
+            <div class="field">
+              <label for="companyTitle" data-i18n="m13.company.title">公司抬頭</label>
+              <input type="text" id="companyTitle" data-i18n-placeholder="m13.company.titlePh" placeholder="請輸入公司抬頭" onblur="validateCompanyTitle()">
+              <div class="field-error" id="err_companyTitle"></div>
+            </div>
+            <div class="field" id="taxIdField" style="margin-bottom:0;">
+              <label for="taxId" data-i18n="m13.company.taxId">統一編號</label>
+              <input type="text" id="taxId" data-i18n-placeholder="m13.company.taxIdPh" placeholder="例如：12345678" maxlength="8" onblur="validateTaxId()">
+              <div class="field-error" id="err_taxId"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="section-title"><span data-i18n="m13.terms.title">確認條款</span><span class="req-mark">*</span></div>
+      <div class="card">
+        <label class="check-line"><input type="checkbox" id="agreeTerms" onchange="validateAgreeTerms()"><span data-i18n="m13.terms.agreePrefix">我已閱讀並同意</span><a href="#" onclick="openTermsModal();return false;"><span data-i18n="m13.terms.tos">《服務條款》</span></a><span data-i18n="m13.terms.and">與</span><a href="#" onclick="openRefundModal();return false;"><span data-i18n="m13.terms.refund">《退費規則》</span></a></label>
+        <div class="field-error" id="err_agreeTerms"></div>
+      </div>
+
+      <div class="section-title" data-i18n="m13.order.title">訂單明細</div>
+      <div class="card" id="orderSummary"></div>
+
+      <div style="margin-top:18px;">
+        <button class="btn btn-accent btn-block" id="submitOrderBtn" onclick="submitOrder()" data-i18n="m13.submit">送出訂單並付款</button>
+      </div>
+    </div>
+
+    <div id="transferPendingPanel" class="hidden">
+      <div class="card transfer-card">
+        <div class="page-h" style="margin-bottom:4px;" data-i18n="m13.transfer.title">訂單已成立，請完成匯款</div>
+        <p class="muted small" data-i18n="m13.transfer.desc">請於期限內完成匯款，系統確認入帳後將自動開通方案；本頁不產生實際帳號。</p>
+        <div class="order-no" id="transferOrderNoDisplay">－</div>
+        <div class="field" style="margin-bottom:6px;">
+          <label data-i18n="m13.transfer.accountLabel">匯款虛擬帳號</label>
+          <div class="transfer-account" id="transferAccountDisplay">－</div>
+        </div>
+        <div class="small muted" id="transferDeadlineDisplay" data-i18n="m13.transfer.deadline">繳款期限：3 天（天數待定）</div>
+        <div style="margin-top:18px;">
+          <button type="button" class="btn btn-accent btn-block" onclick="confirmTransferDone()" data-i18n="m13.transfer.doneBtn">已完成匯款</button>
+        </div>
+      </div>
+    </div>
+
+    <div id="successPanel" class="hidden">
+      <div class="card success-wrap">
+        <svg class="s-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="8 12.5 11 15.5 16 9"/></svg>
+        <h2 id="successTitle"></h2>
+        <p id="successLead"></p>
+        <div class="order-no" id="orderNoDisplay">－</div>
+        <p id="trialConfirmedNote" class="small" style="display:none;font-weight:700;color:#0B6B52;"></p>
+        <p id="successAmount" class="small"></p>
+        <p id="successPayMethod" class="small"></p>
+        <p id="successInvoiceSummary" class="small"></p>
+        <p id="successNote" class="small"></p>
+        <div style="margin-top:20px;display:flex;gap:10px;justify-content:center;flex-wrap:wrap;">
+          <button type="button" class="btn btn-outline" id="addToCalendarBtn" style="display:none;" onclick="addToCalendar()" data-i18n="m13.addToCalendar">加入行事曆</button>
+          <a class="btn btn-outline" href="m01_home.html" data-i18n="m13.backHome">回會員區首頁</a>
+          <a class="btn btn-primary" id="selfPacedBtn" href="m08_self_paced.html" data-i18n="m13.goSelfPaced">前往自學課程</a>
+          <a class="btn btn-primary" id="viewMyEventBtn" href="m10_events.html" style="display:none;" data-i18n="m13.viewMyEvent">查看我的活動</a>
+        </div>
+      </div>
+    </div>
+  </main>
+
+<div class="modal-overlay" id="termsModalOverlay" onclick="if(event.target===this) closeTermsModal()">
+  <div class="modal-box">
+    <div class="modal-head">
+      <h3 data-i18n="m13.modal.tosTitle">服務條款</h3>
+      <button class="modal-close-btn" onclick="closeTermsModal()" data-i18n-aria-label="member.close" aria-label="關閉"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
+    </div>
+    <div class="modal-body" id="termsModalBody"></div>
+    <div class="modal-foot">
+      <button type="button" class="btn btn-primary btn-sm" onclick="closeTermsModal()" data-i18n="m13.modal.gotIt">我已閱讀</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="refundModalOverlay" onclick="if(event.target===this) closeRefundModal()">
+  <div class="modal-box">
+    <div class="modal-head">
+      <h3 data-i18n="m13.modal.refundTitle">退費規則</h3>
+      <button class="modal-close-btn" onclick="closeRefundModal()" data-i18n-aria-label="member.close" aria-label="關閉"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
+    </div>
+    <div class="modal-body" id="refundModalBody"></div>
+    <div class="modal-foot">
+      <button type="button" class="btn btn-primary btn-sm" onclick="closeRefundModal()" data-i18n="m13.modal.gotIt">我已閱讀</button>
+    </div>
+  </div>
+</div>
+
+  <nav class="bottom-nav">
+    <a href="m01_home.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11l9-8 9 8"/><path d="M5 10v10a1 1 0 001 1h3v-6h6v6h3a1 1 0 001-1V10"/></svg><span data-i18n="member.nav.home">首頁</span></a>
+    <a href="m02_booking.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18M12 14v6M9 17h6"/></svg><span data-i18n="member.nav.booking">預約與報名</span></a>
+    <a href="m03_schedule.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg><span data-i18n="member.nav.schedule">課表</span></a>
+    <a href="m08_self_paced.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 3h6a4 4 0 014 4v14a3 3 0 00-3-3H2z"/><path d="M22 3h-6a4 4 0 00-4 4v14a3 3 0 013-3h7z"/></svg><span data-i18n="member.nav.learning">學習</span></a>
+    <a href="m07_profile.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 4-7 8-7s8 3 8 7"/></svg><span data-i18n="member.nav.me">我的</span></a>
+  </nav>
+</div>
+
+<div class="toast hidden" id="toast" data-i18n="m13.toastDefault">已完成</div>
+
+<script>window.TLI_I18N_PAGE_LANGS=['zh-TW','zh-CN','en','ja','de'];</script>
+<script src="../assets/_i18n_dict.js"></script>
+<script src="../assets/_i18n_dict_member.js"></script>
+<script src="../assets/_i18n_dict_ja.js"></script>
+<script src="../assets/_i18n_dict_de.js"></script>
+<script src="../assets/_shared_masters.js"></script>
+<script src="_project_learning.js"></script>
+<script src="../assets/_i18n.js"></script>
+
+<script>
+function showToast(msg){
+  var t=document.getElementById('toast');
+  if(!t)return;
+  t.textContent=msg;
+  t.classList.remove('hidden');
+  clearTimeout(window._toastTimer);
+  window._toastTimer=setTimeout(function(){t.classList.add('hidden');},2200);
+}
+function toggleBell(){document.getElementById('bellPanel').classList.toggle('open');}
+document.addEventListener('click',function(e){
+  if(!e.target.closest('.bell-btn')&&!e.target.closest('.bell-panel'))document.getElementById('bellPanel').classList.remove('open');
+});
+
+/* ============ 方案資料（示範金額，非實際定價） ============ */
+var PLANS = {
+  'trial': {
+    key:'trial', name:'體驗課（單堂）', desc:'30 分鐘線上一對一體驗課，你提出有空的時段，顧問依此安排老師，付款完成即確認時段。',
+    unitLabel:'堂數', options:[
+      {value:'1', label:'1 堂（NT$390）', price:390}
+    ]
+  },
+  '1on1': {
+    key:'1on1', name:'一對一課程包', desc:'華語一對一線上課程，購買後於會員區「課表」提出有空時間，由顧問安排老師與時段。',
+    unitLabel:'課程堂數', options:[
+      {value:'10', label:'10 堂（NT$12,000）', price:12000},
+      {value:'30', label:'30 堂（NT$33,000）', price:33000},
+      {value:'60', label:'60 堂（NT$60,000）', price:60000}
+    ]
+  },
+  'selfpaced': {
+    key:'selfpaced', name:'自學影音方案', desc:'自學影片、音檔與測驗，不限時段自行安排進度。',
+    unitLabel:'訂閱期間', options:[
+      {value:'1m', label:'1 個月（NT$490）', price:490},
+      {value:'6m', label:'6 個月（NT$2,400）', price:2400},
+      {value:'12m', label:'12 個月（NT$4,200）', price:4200}
+    ]
+  },
+  'flex_group': {
+    key:'flex_group', name:'彈性團體直播班課程包', desc:'固定時段團體直播課程，報名即可入班。',
+    unitLabel:'課程期數', options:[
+      {value:'1term', label:'1 期 12 堂（NT$9,600）', price:9600},
+      {value:'2term', label:'2 期 24 堂（NT$18,000）', price:18000}
+    ]
+  }
+};
+var PLAN_ORDER = ['trial','1on1','selfpaced','flex_group'];
+
+/* 五語：PLANS 是內部資料（含價格，NT$ 計價不換算），骨架文字另存 PLAN_I18N 供 t() 對照 */
+var PLAN_I18N = {
+  trial: {
+    name:{en:'Trial Class (Single Session)',ja:'体験レッスン（1回）',de:'Probestunde (Einzeltermin)'},
+    desc:{en:'A 30-minute 1-on-1 online trial class. Submit your available times and the advisor arranges a teacher; the slot is confirmed once payment is complete.',ja:'30分のオンライン個別体験レッスンです。空いている時間帯を提出するとアドバイザーが講師を手配し、決済完了と同時に時間が確定します。',de:'Eine 30-minütige Online-Einzel-Probestunde. Geben Sie Ihre verfügbaren Zeiten an, der Berater organisiert eine Lehrkraft; der Termin wird nach Zahlungseingang bestätigt.'},
+    unitLabel:{en:'Sessions',ja:'回数',de:'Einheiten'},
+    options:{ '1':{en:'1 session (NT$390)',ja:'1回（NT$390）',de:'1 Einheit (NT$390)'} }
+  },
+  '1on1': {
+    name:{en:'1-on-1 Course Package',ja:'個別レッスンパッケージ',de:'Einzelunterricht-Paket'},
+    desc:{en:'1-on-1 online Mandarin course. After purchase, submit your available times on the "Schedule" page in the member area; the advisor arranges the teacher and time slot.',ja:'オンライン中国語個別レッスンです。購入後、会員エリアの「時間割」で空いている時間を提出するとアドバイザーが講師と時間を手配します。',de:'Online-Einzelunterricht in Mandarin. Geben Sie nach dem Kauf im Mitgliederbereich unter „Stundenplan" Ihre verfügbaren Zeiten an; der Berater organisiert Lehrkraft und Termin.'},
+    unitLabel:{en:'Course Sessions',ja:'レッスン回数',de:'Kurseinheiten'},
+    options:{
+      '10':{en:'10 sessions (NT$12,000)',ja:'10回（NT$12,000）',de:'10 Einheiten (NT$12.000)'},
+      '30':{en:'30 sessions (NT$33,000)',ja:'30回（NT$33,000）',de:'30 Einheiten (NT$33.000)'},
+      '60':{en:'60 sessions (NT$60,000)',ja:'60回（NT$60,000）',de:'60 Einheiten (NT$60.000)'}
+    }
+  },
+  selfpaced: {
+    name:{en:'Self-Paced Video Plan',ja:'自習動画プラン',de:'Selbstlern-Videoplan'},
+    desc:{en:'Self-paced videos, audio and quizzes. Study at your own pace with no fixed schedule.',ja:'自習用の動画、音声、テストが利用できます。時間帯の制約なく自分のペースで進められます。',de:'Selbstlernvideos, Audiodateien und Tests. Lernen Sie in Ihrem eigenen Tempo ohne feste Termine.'},
+    unitLabel:{en:'Subscription Period',ja:'購読期間',de:'Abonnementzeitraum'},
+    options:{
+      '1m':{en:'1 month (NT$490)',ja:'1ヶ月（NT$490）',de:'1 Monat (NT$490)'},
+      '6m':{en:'6 months (NT$2,400)',ja:'6ヶ月（NT$2,400）',de:'6 Monate (NT$2.400)'},
+      '12m':{en:'12 months (NT$4,200)',ja:'12ヶ月（NT$4,200）',de:'12 Monate (NT$4.200)'}
+    }
+  },
+  flex_group: {
+    name:{en:'Flexible Group Livestream Package',ja:'フレキシブルグループライブ配信パッケージ',de:'Flexibles Gruppen-Livestream-Paket'},
+    desc:{en:'Group livestream classes at fixed times. Enroll to join the class directly.',ja:'決まった時間帯のグループライブ配信レッスンです。申込むとそのままクラスに参加できます。',de:'Gruppen-Livestream-Unterricht zu festen Zeiten. Nach der Anmeldung nehmen Sie direkt am Kurs teil.'},
+    unitLabel:{en:'Course Terms',ja:'コース期数',de:'Kursperioden'},
+    options:{
+      '1term':{en:'1 term / 12 sessions (NT$9,600)',ja:'1期・12回（NT$9,600）',de:'1 Periode / 12 Einheiten (NT$9.600)'},
+      '2term':{en:'2 terms / 24 sessions (NT$18,000)',ja:'2期・24回（NT$18,000）',de:'2 Perioden / 24 Einheiten (NT$18.000)'}
+    }
+  }
+};
+function planName(k){ return TLI_I18N.t(PLANS[k].name, PLAN_I18N[k].name); }
+function planDesc(k){ return TLI_I18N.t(PLANS[k].desc, PLAN_I18N[k].desc); }
+function planUnitLabel(k){ return TLI_I18N.t(PLANS[k].unitLabel, PLAN_I18N[k].unitLabel); }
+function planOptLabel(k, value, fallbackLabel){
+  var m = PLAN_I18N[k] && PLAN_I18N[k].options && PLAN_I18N[k].options[value];
+  return m ? TLI_I18N.t(fallbackLabel, m) : fallbackLabel;
+}
+
+/* ============ 付費活動報名（示範資料，非實際定價） ============ */
+var EVENTS = {
+  'ev01': {id:'ev01', name:'中文文化直播－茶道與詩詞', time:'2026-10-12 19:30', price:680},
+  'ev02': {id:'ev02', name:'華語討論沙龍－職場溝通實戰', time:'2026-10-19 20:00', price:580}
+};
+
+function getParam(name){
+  var m = new RegExp('[?&]'+name+'=([^&]*)').exec(window.location.search);
+  return m ? decodeURIComponent(m[1].replace(/\+/g,' ')) : '';
+}
+/* ============ 從首頁待辦「前往繳費」深連結帶入：?order=<id>，預帶該筆訂單金額與期別 ============
+   示範資料對應會員區/m01_home.html 待辦清單裡的欠款項目；正式版應由訂單 API 依 id 查詢。 */
+var ORDER_DEMO = {
+  'order-reg-tail': {name:'註冊費尾款', amount:1500, note:'原到期日 2026-08-22，已逾期',
+    i18n:{name:{en:'Registration Fee Balance',ja:'登録料残額',de:'Restbetrag Anmeldegebühr'}, note:{en:'Originally due 2026-08-22, overdue',ja:'本来の期限：2026-08-22（延滞中）',de:'Ursprüngliche Frist 2026-08-22, überfällig'}}},
+  'order-installment-01': {name:'分期尾款（第 2 期）', amount:3000, note:'繳費期限 2026-08-31',
+    i18n:{name:{en:'Installment Balance (2nd)',ja:'分割残額（第2回）',de:'Ratenrestbetrag (2. Rate)'}, note:{en:'Payment due 2026-08-31',ja:'支払期限：2026-08-31',de:'Zahlungsfrist 2026-08-31'}}}
+};
+function renderExistingOrderBanner(){
+  var banner = document.getElementById('existingOrderBanner');
+  if(!banner) return;
+  var o = ORDER_DEMO[getParam('order')];
+  if(o){
+    var name = TLI_I18N.t(o.name, o.i18n.name);
+    var note = TLI_I18N.t(o.note, o.i18n.note);
+    banner.textContent = TLI_I18N.t('繳納：',{en:'Due: ',ja:'お支払い：',de:'Fällig: '})+name+' NT$'+o.amount.toLocaleString('zh-Hant')+'（'+note+'）';
+    banner.classList.remove('hidden');
+  } else {
+    banner.classList.add('hidden');
+  }
+}
+/* 專案合作方案改由大學支付，不可在此結帳；?plan=university 一律導向說明頁 */
+var isUniversityPlan = getParam('plan') === 'university';
+/* 付費活動報名結帳；?plan=event&event=<id>，活動 id 由外部頁面（如 p09）決定，
+   不限於本檔示範字典 EVENTS 裡的 ev01／ev02。優先顯示網址帶入的 name／time／price，
+   找不到對應字典資料時「直接用網址參數」，不得靜默改顯示成字典裡的其他活動。 */
+var isEventOrder = getParam('plan') === 'event';
+var currentEventId = getParam('event') || '';
+function resolveEventInfo(){
+  var dictMatch = EVENTS[currentEventId];
+  var nameParam = getParam('name');
+  var timeParam = getParam('time');
+  var priceParam = getParam('price');
+  var priceNum = priceParam !== '' ? parseInt(priceParam, 10) : NaN;
+  return {
+    id: currentEventId,
+    name: nameParam || (dictMatch ? dictMatch.name : TLI_I18N.t('活動報名',{en:'Event Registration',ja:'イベント申込',de:'Veranstaltungsanmeldung'})),
+    time: timeParam || (dictMatch ? dictMatch.time : TLI_I18N.t('時間待定',{en:'Time to be announced',ja:'日時未定',de:'Termin noch offen'})),
+    price: !isNaN(priceNum) ? priceNum : (dictMatch ? dictMatch.price : null)
+  };
+}
+var currentPlanKey = PLANS[getParam('plan')] ? getParam('plan') : '1on1';
+
+/* ============ 體驗課自助購買：讀取 p06 帶入的 prefs／goal／note 參數並顯示 ============
+   契約：prefs=YYYY-MM-DD|HH:mm,HH:mm（日期＋多個時段偏好，不含老師——一對一不自選老師，
+   由顧問依提出的時段安排）。 */
+var GOAL_LABEL_MAP = {work:'職場溝通', travel:'旅遊會話', exam:'考試準備（如 TOCFL）', life:'日常生活會話', other:'其他'};
+var GOAL_LABEL_I18N = {
+  work:{en:'Workplace Communication',ja:'職場コミュニケーション',de:'Kommunikation am Arbeitsplatz'},
+  travel:{en:'Travel Conversation',ja:'旅行会話',de:'Reisekonversation'},
+  exam:{en:'Exam Preparation (e.g. TOCFL)',ja:'試験対策（TOCFL等）',de:'Prüfungsvorbereitung (z. B. TOCFL)'},
+  life:{en:'Daily Life Conversation',ja:'日常生活会話',de:'Alltagskonversation'},
+  other:{en:'Other',ja:'その他',de:'Sonstiges'}
+};
+function goalLabel(g){ return GOAL_LABEL_MAP[g] ? TLI_I18N.t(GOAL_LABEL_MAP[g], GOAL_LABEL_I18N[g]) : g; }
+function formatTrialPrefs(raw){
+  /* raw 格式為 p06 帶入的「YYYY-MM-DD|HH:mm,HH:mm」，回傳 {date, times} */
+  var parts = (raw||'').split('|');
+  var datePart = parts[0] || '';
+  var timesPart = parts[1] || '';
+  var dm = /^(\d{4})-(\d{2})-(\d{2})$/.exec(datePart);
+  var date = dm ? (dm[1]+'/'+dm[2]+'/'+dm[3]) : datePart;
+  var times = timesPart ? timesPart.split(',').join('、') : '－';
+  return {date: date, times: times};
+}
+function renderTrialSlotCard(){
+  var prefsRaw = getParam('prefs');
+  var goal = getParam('goal');
+  var note = getParam('note');
+  var show = currentPlanKey === 'trial' && !!prefsRaw;
+  document.getElementById('trialSlotSectionTitle').style.display = show ? 'block' : 'none';
+  document.getElementById('trialSlotCard').style.display = show ? 'block' : 'none';
+  if(show){
+    var f = formatTrialPrefs(prefsRaw);
+    document.getElementById('trialDateDisplay').textContent = f.date;
+    document.getElementById('trialSlotDisplay').textContent = f.times;
+    var goalRow = document.getElementById('trialGoalRow');
+    if(goal){
+      goalRow.style.display = 'flex';
+      document.getElementById('trialGoalDisplay').textContent = goalLabel(goal);
+    } else {
+      goalRow.style.display = 'none';
+    }
+    var noteRow = document.getElementById('trialNoteRow');
+    if(note){
+      noteRow.style.display = 'flex';
+      document.getElementById('trialNoteDisplayField').textContent = note;
+    } else {
+      noteRow.style.display = 'none';
+    }
+  }
+}
+function addToCalendar(){
+  showToast(TLI_I18N.t('已加入行事曆（正式版將產生 .ics 檔）',{en:'Added to calendar (the production version will generate an .ics file)',ja:'カレンダーに追加しました（正式版では .ics ファイルを生成します）',de:'Zum Kalender hinzugefügt (die finale Version erzeugt eine .ics-Datei)'}));
+}
+
+function renderPlanPickList(){
+  var wrap = document.getElementById('planPickList');
+  wrap.innerHTML = PLAN_ORDER.map(function(k){
+    return '<div class="plan-pick'+(k===currentPlanKey?' selected':'')+'" onclick="selectPlan(\''+k+'\')">'+
+      '<h4>'+planName(k)+'</h4><p>'+planDesc(k)+'</p></div>';
+  }).join('');
+}
+function selectPlan(k){
+  currentPlanKey = k;
+  renderPlanPickList();
+  renderQtyOptions();
+  renderTrialSlotCard();
+  renderOrder();
+}
+function renderQtyOptions(){
+  var p = PLANS[currentPlanKey];
+  document.getElementById('qtyLabel').textContent = planUnitLabel(currentPlanKey);
+  var sel = document.getElementById('qtySelect');
+  sel.innerHTML = p.options.map(function(o){ return '<option value="'+o.value+'">'+planOptLabel(currentPlanKey,o.value,o.label)+'</option>'; }).join('');
+  document.getElementById('qtyHint').textContent = '';
+}
+var referrerApplied = false;
+function checkRefCode(){
+  var v = document.getElementById('refCode').value.trim().toUpperCase();
+  var tag = document.getElementById('refTag');
+  /* 沿用既有 5% 轉介折扣機制：手動示範碼 AGENT2026，或由推薦連結帶入的示範碼 REF-SEA07 皆適用 */
+  if(v === 'AGENT2026' || v === 'REF-SEA07'){
+    referrerApplied = true;
+    tag.classList.add('show');
+  } else {
+    referrerApplied = false;
+    tag.classList.remove('show');
+  }
+  renderOrder();
+}
+/* 讀取網址 ?ref= 參數，若有值自動帶入折扣碼欄位並套用既有轉介折扣邏輯 */
+function applyRefFromUrl(){
+  var refFromUrl = getParam('ref');
+  if(refFromUrl){
+    document.getElementById('refCode').value = refFromUrl;
+    document.getElementById('refAutoHint').style.display = 'block';
+    checkRefCode();
+  }
+}
+/* ============ 必填驗證共用工具（沿用 p07/p11 同套邏輯，五語：錯誤訊息一律用 t() 組字串） ============ */
+function fieldSetError(errId, msg){
+  var el = document.getElementById(errId);
+  if(!el) return;
+  el.textContent = msg;
+  el.classList.add('show');
+}
+function fieldClearError(errId){
+  var el = document.getElementById(errId);
+  if(!el) return;
+  el.textContent = '';
+  el.classList.remove('show');
+}
+function markInvalid(inputEl, invalid){
+  if(inputEl) inputEl.classList.toggle('invalid', !!invalid);
+}
+function requiredMsg(){ return TLI_I18N.t('此欄位為必填',{en:'This field is required',ja:'この項目は必須です',de:'Dieses Feld ist erforderlich'}); }
+function validateRequiredText(inputId, errId, msg){
+  var input = document.getElementById(inputId);
+  var v = input.value.trim();
+  if(!v){ fieldSetError(errId, msg || requiredMsg()); markInvalid(input,true); return false; }
+  fieldClearError(errId); markInvalid(input,false); return true;
+}
+
+/* ============ 購買人資訊：僅未登入時需要，示範以 ?guest=1 模擬未登入情境 ============ */
+var isLoggedIn = getParam('guest') !== '1';
+function initBuyerInfoBlock(){
+  document.getElementById('buyerInfoBlock').classList.toggle('hidden', isLoggedIn);
+}
+function validateBuyerName(){ return validateRequiredText('buyerName','err_buyerName'); }
+function validateBuyerEmail(){
+  var input = document.getElementById('buyerEmail');
+  var v = input.value.trim();
+  var EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  if(!v){ fieldSetError('err_buyerEmail',requiredMsg()); markInvalid(input,true); return false; }
+  if(!EMAIL_RE.test(v)){ fieldSetError('err_buyerEmail',TLI_I18N.t('請輸入正確的 Email 格式',{en:'Please enter a valid email address',ja:'正しいメールアドレスの形式で入力してください',de:'Bitte geben Sie eine gültige E-Mail-Adresse ein'})); markInvalid(input,true); return false; }
+  fieldClearError('err_buyerEmail'); markInvalid(input,false); return true;
+}
+
+/* ============ 付款方式：切換分期／匯款提示／跨境發票提示 ============ */
+function onPayMethodChange(){
+  var method = document.querySelector('input[name="payMethod"]:checked').value;
+  document.getElementById('installmentBox').classList.toggle('hidden', method === 'transfer');
+  document.getElementById('transferHint').classList.toggle('hidden', method !== 'transfer');
+  var isStripe = method === 'creditcard_stripe';
+  document.getElementById('crossBorderInvoiceNote').classList.toggle('hidden', !isStripe);
+  document.getElementById('invoiceNormalBlock').classList.toggle('hidden', isStripe);
+}
+
+/* ============ 發票資訊：個人／公司切換、載具切換與各格式驗證 ============ */
+function onInvoiceTypeChange(){
+  var type = document.querySelector('input[name="invoiceType"]:checked').value;
+  document.getElementById('personalCarrierBlock').style.display = (type === 'personal') ? 'block' : 'none';
+  document.getElementById('companyInvoiceBlock').style.display = (type === 'company') ? 'block' : 'none';
+}
+function onCarrierChange(){
+  var carrier = document.querySelector('input[name="invoiceCarrier"]:checked').value;
+  document.getElementById('carrierMobileField').style.display = (carrier === 'mobile') ? 'block' : 'none';
+  document.getElementById('carrierCitizenField').style.display = (carrier === 'citizen') ? 'block' : 'none';
+  document.getElementById('carrierDonateField').style.display = (carrier === 'donate') ? 'block' : 'none';
+}
+function onCarrierMobileInput(){
+  var input = document.getElementById('carrierMobile');
+  if(input.value && input.value[0] !== '/'){ input.value = '/' + input.value.replace(/\//g,''); }
+}
+function validateCarrierMobile(){
+  var input = document.getElementById('carrierMobile');
+  var v = input.value.trim();
+  if(!/^\/[A-Za-z0-9.+-]{7}$/.test(v)){ fieldSetError('err_carrierMobile',TLI_I18N.t('格式錯誤，須為「/」開頭共 8 碼（例如 /AB12345）',{en:'Invalid format: must start with "/" followed by 7 characters (e.g. /AB12345)',ja:'形式が正しくありません。「/」で始まる8桁で入力してください（例：/AB12345）',de:'Ungültiges Format: muss mit „/" beginnen, gefolgt von 7 Zeichen (z. B. /AB12345)'})); markInvalid(input,true); return false; }
+  fieldClearError('err_carrierMobile'); markInvalid(input,false); return true;
+}
+function validateCarrierCitizen(){
+  var input = document.getElementById('carrierCitizen');
+  var v = input.value.trim();
+  if(!/^[A-Za-z]{2}\d{14}$/.test(v)){ fieldSetError('err_carrierCitizen',TLI_I18N.t('格式錯誤，須為 2 碼英文加 14 碼數字',{en:'Invalid format: must be 2 letters followed by 14 digits',ja:'形式が正しくありません。英字2桁＋数字14桁で入力してください',de:'Ungültiges Format: 2 Buchstaben gefolgt von 14 Ziffern'})); markInvalid(input,true); return false; }
+  fieldClearError('err_carrierCitizen'); markInvalid(input,false); return true;
+}
+function validateCarrierDonate(){
+  var input = document.getElementById('carrierDonate');
+  var v = input.value.trim();
+  if(!/^\d{3,7}$/.test(v)){ fieldSetError('err_carrierDonate',TLI_I18N.t('格式錯誤，愛心碼須為 3－7 碼數字',{en:'Invalid format: the donation code must be 3–7 digits',ja:'形式が正しくありません。寄付コードは3～7桁の数字で入力してください',de:'Ungültiges Format: der Spendencode muss 3–7 Ziffern haben'})); markInvalid(input,true); return false; }
+  fieldClearError('err_carrierDonate'); markInvalid(input,false); return true;
+}
+function validateCompanyTitle(){ return validateRequiredText('companyTitle','err_companyTitle'); }
+function validateTaxId(){
+  var input = document.getElementById('taxId');
+  var v = input.value.trim();
+  if(!/^\d{8}$/.test(v)){ fieldSetError('err_taxId',TLI_I18N.t('請輸入 8 碼數字統一編號',{en:'Please enter an 8-digit tax ID number',ja:'8桁の統一番号（法人番号）を入力してください',de:'Bitte geben Sie eine 8-stellige Steuernummer ein'})); markInvalid(input,true); return false; }
+  fieldClearError('err_taxId'); markInvalid(input,false); return true;
+}
+function validateAgreeTerms(){
+  var input = document.getElementById('agreeTerms');
+  if(!input.checked){ fieldSetError('err_agreeTerms',TLI_I18N.t('請詳閱並勾選同意服務條款與退費規則',{en:'Please read and check that you agree to the Terms of Service and Refund Policy',ja:'内容をご確認のうえ、サービス利用規約と返金規定への同意にチェックを入れてください',de:'Bitte lesen Sie die Nutzungsbedingungen und die Rückerstattungsrichtlinie und bestätigen Sie Ihr Einverständnis'})); return false; }
+  fieldClearError('err_agreeTerms'); return true;
+}
+
+/* 使用者修正欄位內容時，先清掉舊的錯誤狀態與紅框，避免錯誤訊息因稍後才 blur 才消失，
+   導致附近元件（例如下方的確認條款勾選框）在使用者點擊當下發生版面偏移而點擊落空 */
+document.querySelectorAll('#buyerName,#buyerEmail,#companyTitle,#taxId,#carrierMobile,#carrierCitizen,#carrierDonate').forEach(function(el){
+  el.addEventListener('input', function(){
+    fieldClearError('err_' + el.id);
+    markInvalid(el, false);
+  });
+});
+
+/* ========================================================================
+   共用條款文字 2026-09-10，改一處要三處同步
+   （會員區/m13_checkout.html、公開網站/p07_login_register.html、公開網站/p11_university.html）
+   內容為草稿，正式版待 TLI 法務確認；本區塊為純資料與通用渲染函式，三檔逐字相同，
+   若需修改條款文字，三個檔案都要一併更新，避免內容不一致。
+   ======================================================================== */
+var TLI_SHARED_TERMS = {
+  draftNote: '草稿，正式版待 TLI 法務確認',
+  tos: {
+    title: '服務條款',
+    items: [
+      '帳號與識別：會員以註冊時填寫之 Email 作為帳號唯一識別（主鍵），同一 Email 僅能建立一個會員帳號，Email 變更須經身分驗證程序。',
+      '課程型態：本平台提供之課程分為一對一預約制、團體直播制、自學影音，以及透過企業或學校取得授權之專案合作課程，各型態之上課方式與規則詳見各課程頁面說明。',
+      '預約與取消（一對一）：一對一課程如需取消或改期，須於課程開始前 12 小時提出，逾時取消視同已上課，不予退還堂數或時數。',
+      '預約與取消（團體班）：團體直播班之取消與退班規則依各班別開課簡章（班規）辦理，開課簡章公告之規則與本條款不一致時，以開課簡章為準。',
+      'Mandarin Lounge 報名：透過線上客服／Mandarin Lounge 完成之課程報名，其成立時點與資料留存方式與網頁表單報名相同，報名資訊將併入會員帳號課程紀錄。',
+      '上課方式與錄影：課程得以實體、線上直播或錄影課程等形式進行；直播課程若提供課後錄影，僅供原報名學員於效期內回放，不得下載、轉錄或轉散。',
+      '智慧財產：教材依授權層級分為「公開通用教材」與「企業／機構專屬教材」；專屬教材僅供該企業或機構所屬學員於在學期間使用，離職或畢業後之使用權限依合約另行規範。',
+      '個人資料之提供對象：學員之學習紀錄（如出席、進度、測驗結果）於企業客戶方案下，得提供予付費企業之 HR 窗口；於專案合作方案下，得提供予合作學校之窗口；提供範圍以完成課程管理所需為限。',
+      '教師評語之揭露層級：教師針對學員之課堂評語分為「學員本人可見」與「提供予企業 HR 或學校窗口參考」兩層，評語內容涉及學習表現而非人身評價。',
+      '帳號停用與終止：會員得申請停用帳號；平台如發現會員有違反本條款、代他人上課、盜用帳號等情事，得逕行停權或終止服務，並保留相關紀錄。',
+      '準據法與爭議處理：本條款之解釋與適用另依 TLI 法務確認後之正式版本為準，本頁內容為草稿，尚未定案。'
+    ]
+  },
+  refund: {
+    title: '退費規則',
+    items: [
+      '一對一課程包－未開課：課程包購買後尚未使用任何堂數者，得依規定申請退費。',
+      '一對一課程包－部分使用（效期內）：已使用部分堂數但仍在課程效期內者，得就未使用堂數依比例申請退費。',
+      '一對一課程包－已逾效期：課程包超過效期未使用之堂數，原則上不予退費；因不可歸責於學員之事由（如天災）逾期者，得依賸餘課程比例辦理。',
+      '團體直播班－開課前：團體班尚未開課前申請退費者，依開課簡章公告之退費比例辦理。',
+      '團體直播班－開課後：團體班開課後申請退費者，依已上課堂數與開課簡章公告之比例計算，未上課部分依比例退還。',
+      '自學影音課程：自學影音課程一經開通觀看權限，即視為已提供服務內容，不予退費；未開通者得依規定申請退費。',
+      '體驗課：體驗課性質為試聽，原則不收費亦不涉及退費；如另有收費之體驗課方案，退費依該方案公告條件辦理。',
+      '專案合作與企業合約：透過專案合作或企業合約取得之課程權益，其退費條件另依平台與該機構或企業簽訂之合約辦理，不適用本規則之個人退費比例。',
+      '退費申請流程：會員得於會員區提出退費申請並填寫退費原因；平台審核後於工作天內（天數待 TLI 訂定公告）處理退款。',
+      '代辦費用：因代辦（如報名、行政作業）所生之費用，於符合退費條件時應全額退還，不受課程費用退費比例限制。',
+      '適用原則：本規則以短期補習班相關法規之退費精神為原則擬定，實際執行以主管機關現行規定為準；如平台名義或契約型態變更，退費規定得配合調整並另行公告。'
+    ]
+  }
+};
+function renderTliTermsBody(bodyEl, sectionKey){
+  if(!bodyEl) return;
+  var section = TLI_SHARED_TERMS[sectionKey];
+  if(!section) return;
+  var html = '<ol style="margin:0;padding-left:20px;">';
+  section.items.forEach(function(item){
+    html += '<li style="margin-bottom:10px;">'+item+'</li>';
+  });
+  html += '</ol>';
+  bodyEl.innerHTML = html;
+}
+
+function openTermsModal(){ renderTliTermsBody(document.getElementById('termsModalBody'), 'tos'); document.getElementById('termsModalOverlay').classList.add('show'); }
+function closeTermsModal(){ document.getElementById('termsModalOverlay').classList.remove('show'); }
+function openRefundModal(){ renderTliTermsBody(document.getElementById('refundModalBody'), 'refund'); document.getElementById('refundModalOverlay').classList.add('show'); }
+function closeRefundModal(){ document.getElementById('refundModalOverlay').classList.remove('show'); }
+
+/* ============ 付費活動報名：隱藏一般方案選擇與數量／期間，改顯示單一活動卡片 ============ */
+function initEventCard(){
+  document.getElementById('planSectionTitle').style.display = 'none';
+  document.getElementById('planPickList').style.display = 'none';
+  document.getElementById('qtySectionTitle').style.display = 'none';
+  document.getElementById('qtyCard').style.display = 'none';
+  document.getElementById('eventSectionTitle').style.display = 'block';
+  document.getElementById('eventCard').style.display = 'block';
+  var ev = resolveEventInfo();
+  document.getElementById('eventNameDisplay').textContent = ev.name;
+  document.getElementById('eventTimeDisplay').textContent = ev.time;
+}
+function priceUnavailableLabel(){ return TLI_I18N.t('價格未定',{en:'Price to be announced',ja:'価格未定',de:'Preis noch offen'}); }
+function priceTbdLabel(){ return TLI_I18N.t('待定',{en:'TBD',ja:'未定',de:'TBD'}); }
+function renderOrder(){
+  var referralLabel = TLI_I18N.t('轉介折扣（5%）',{en:'Referral Discount (5%)',ja:'紹介割引（5%）',de:'Empfehlungsrabatt (5 %)'});
+  var payableLabel = TLI_I18N.t('應付金額',{en:'Amount Due',ja:'お支払い金額',de:'Zu zahlender Betrag'});
+  var estimateNote = TLI_I18N.t('此金額僅供試算，不代表實際應付金額。',{en:'This amount is an estimate only and may not reflect the final amount due.',ja:'この金額は試算であり、実際のお支払い金額とは異なる場合があります。',de:'Dieser Betrag ist nur eine Schätzung und entspricht möglicherweise nicht dem tatsächlich fälligen Betrag.'});
+  if(isEventOrder){
+    var ev = resolveEventInfo();
+    var hasPrice = typeof ev.price === 'number' && !isNaN(ev.price);
+    var basePrice = hasPrice ? ev.price : 0;
+    var evDiscount = (referrerApplied && hasPrice) ? Math.round(basePrice*0.05) : 0;
+    var evTotal = basePrice - evDiscount;
+    var evRows = [{label: ev.name, value: hasPrice ? ('NT$'+basePrice.toLocaleString('zh-Hant')) : priceUnavailableLabel()}];
+    if(evDiscount>0) evRows.push({label:referralLabel, value:'－NT$'+evDiscount.toLocaleString('zh-Hant')});
+    var evHtml = evRows.map(function(r){ return '<div class="order-row"><span>'+r.label+'</span><span>'+r.value+'</span></div>'; }).join('');
+    evHtml += '<div class="order-row total"><span>'+payableLabel+'</span><span>'+(hasPrice ? ('NT$'+evTotal.toLocaleString('zh-Hant')) : priceUnavailableLabel())+'</span></div>';
+    evHtml += '<div class="small muted" style="margin-top:6px;">'+estimateNote+'</div>';
+    document.getElementById('orderSummary').innerHTML = evHtml;
+    window._orderTotal = hasPrice ? evTotal : 0;
+    window._orderHasAmount = hasPrice;
+    window._orderPlan = ev;
+    window._orderOpt = null;
+    return;
+  }
+  var p = PLANS[currentPlanKey];
+  var opt = p.options.find(function(o){ return o.value === document.getElementById('qtySelect').value; }) || p.options[0];
+  var price = opt.price;
+  var discount = referrerApplied ? Math.round(price*0.05) : 0;
+  var total = price - discount;
+  var optLabelNoPrice = planOptLabel(currentPlanKey, opt.value, opt.label).replace(/[（(].*?[）)]/,'').trim();
+  var isCJK = TLI_I18N.currentLang()==='zh-TW' || TLI_I18N.currentLang()==='zh-CN' || TLI_I18N.currentLang()==='ja';
+  var lp = isCJK ? '（' : ' (', rp = isCJK ? '）' : ')';
+  var rows = [];
+  rows.push({label: planName(currentPlanKey)+lp+optLabelNoPrice+rp, value: price ? ('NT$'+price.toLocaleString('zh-Hant')) : priceTbdLabel()});
+  if(discount>0) rows.push({label:referralLabel, value:'－NT$'+discount.toLocaleString('zh-Hant')});
+  var html = rows.map(function(r){ return '<div class="order-row"><span>'+r.label+'</span><span>'+r.value+'</span></div>'; }).join('');
+  html += '<div class="order-row total"><span>'+payableLabel+'</span><span>'+(price ? ('NT$'+total.toLocaleString('zh-Hant')) : priceTbdLabel()) + '</span></div>';
+  html += '<div class="small muted" style="margin-top:6px;">'+estimateNote+'</div>';
+  document.getElementById('orderSummary').innerHTML = html;
+  window._orderTotal = total;
+  window._orderHasAmount = true;
+  window._orderPlan = p;
+  window._orderOpt = opt;
+}
+/* ============ 付款方式標籤與發票摘要（給成功頁與匯款待確認頁顯示） ============ */
+function payMethodLabel(v){
+  if(v==='creditcard_newebpay') return TLI_I18N.t('信用卡（藍新金流）',{en:'Credit Card (NewebPay)',ja:'クレジットカード（藍新金流）',de:'Kreditkarte (NewebPay)'});
+  if(v==='creditcard_stripe') return TLI_I18N.t('信用卡（Stripe）',{en:'Credit Card (Stripe)',ja:'クレジットカード（Stripe）',de:'Kreditkarte (Stripe)'});
+  if(v==='transfer') return TLI_I18N.t('銀行匯款',{en:'Bank Transfer',ja:'銀行振込',de:'Banküberweisung'});
+  return v;
+}
+function buildInvoiceSummary(){
+  var invoicePrefix = TLI_I18N.t('發票：',{en:'Invoice: ',ja:'領収書：',de:'Rechnung: '});
+  var payMethod = document.querySelector('input[name="payMethod"]:checked').value;
+  if(payMethod === 'creditcard_stripe'){
+    return invoicePrefix+TLI_I18N.t('跨境付款開立收據／commercial invoice，不開統一發票（待會計師確認）',{en:'Cross-border payments receive a receipt / commercial invoice, not a Taiwan unified invoice (pending accountant confirmation)',ja:'越境決済は領収書／commercial invoice を発行し、台湾統一発票は発行しません（会計士確認待ち）',de:'Grenzüberschreitende Zahlungen erhalten eine Quittung / Commercial Invoice, keine taiwanesische Unified Invoice (vorbehaltlich Bestätigung durch den Buchhalter)'});
+  }
+  var invoiceType = document.querySelector('input[name="invoiceType"]:checked').value;
+  if(invoiceType === 'company'){
+    return invoicePrefix+TLI_I18N.t('公司發票（統編 ',{en:'Company invoice (Tax ID ',ja:'法人領収書（統一番号 ',de:'Firmenrechnung (Steuernummer '})+document.getElementById('taxId').value.trim()+
+      TLI_I18N.t('，抬頭 ',{en:', Company Name ',ja:'、名称 ',de:', Firmenname '})+document.getElementById('companyTitle').value.trim()+'）';
+  }
+  var carrier = document.querySelector('input[name="invoiceCarrier"]:checked').value;
+  var carrierLabelMap = {
+    cloud: TLI_I18N.t('雲端發票（存入會員載具）',{en:'Cloud invoice (stored in member carrier)',ja:'クラウド領収書（会員キャリアに保存）',de:'Cloud-Rechnung (im Mitgliederträger gespeichert)'}),
+    mobile: TLI_I18N.t('手機條碼 ',{en:'Mobile barcode ',ja:'モバイルバーコード ',de:'Mobiler Barcode '})+document.getElementById('carrierMobile').value.trim(),
+    citizen: TLI_I18N.t('自然人憑證 ',{en:'Citizen Digital Certificate ',ja:'自然人証明書 ',de:'Bürgerzertifikat '})+document.getElementById('carrierCitizen').value.trim(),
+    donate: TLI_I18N.t('捐贈（愛心碼 ',{en:'Donation (code ',ja:'寄付（コード ',de:'Spende (Code '})+document.getElementById('carrierDonate').value.trim()+'）'
+  };
+  return invoicePrefix+TLI_I18N.t('個人發票，',{en:'Personal invoice, ',ja:'個人領収書、',de:'Persönliche Rechnung, '})+carrierLabelMap[carrier];
+}
+
+/* ============ 送出訂單：先跑必填驗證，通過後依付款方式導轉金流頁或顯示匯款待確認 ============ */
+function submitOrder(){
+  var checks = [];
+  if(!isLoggedIn){
+    checks.push({input:'buyerName', fn:validateBuyerName});
+    checks.push({input:'buyerEmail', fn:validateBuyerEmail});
+  }
+  var payMethod = document.querySelector('input[name="payMethod"]:checked').value;
+  if(payMethod !== 'creditcard_stripe'){
+    var invoiceType = document.querySelector('input[name="invoiceType"]:checked').value;
+    if(invoiceType === 'company'){
+      checks.push({input:'companyTitle', fn:validateCompanyTitle});
+      checks.push({input:'taxId', fn:validateTaxId});
+    } else {
+      var carrier = document.querySelector('input[name="invoiceCarrier"]:checked').value;
+      if(carrier === 'mobile') checks.push({input:'carrierMobile', fn:validateCarrierMobile});
+      if(carrier === 'citizen') checks.push({input:'carrierCitizen', fn:validateCarrierCitizen});
+      if(carrier === 'donate') checks.push({input:'carrierDonate', fn:validateCarrierDonate});
+    }
+  }
+  checks.push({input:'agreeTerms', fn:validateAgreeTerms});
+
+  var firstInvalidEl = null;
+  var allOk = true;
+  checks.forEach(function(c){
+    var ok = c.fn();
+    if(!ok){
+      allOk = false;
+      if(!firstInvalidEl) firstInvalidEl = document.getElementById(c.input);
+    }
+  });
+  if(!allOk){
+    if(firstInvalidEl){
+      firstInvalidEl.scrollIntoView({behavior:'smooth', block:'center'});
+      setTimeout(function(){ try{ firstInvalidEl.focus(); }catch(err){} }, 250);
+    }
+    return;
+  }
+
+  var orderNo = 'TLI'+(new Date().getFullYear())+'-'+String(Math.floor(Math.random()*900000+100000));
+  var isTrialOrder = currentPlanKey === 'trial' && !!getParam('prefs');
+  /* 活動報名的名稱／時間在送出當下就寫進 orderData，成功頁直接讀這裡，
+     不再回頭查 EVENTS 字典，避免字典查無資料時被靜默替換成別的活動 */
+  var eventInfoAtSubmit = isEventOrder ? resolveEventInfo() : null;
+  var orderData = {
+    orderNo: orderNo,
+    payMethod: payMethod,
+    invoiceSummary: buildInvoiceSummary(),
+    isTrialOrder: isTrialOrder,
+    trialSlot: getParam('prefs') || '',
+    isEventOrder: isEventOrder,
+    eventId: isEventOrder ? currentEventId : '',
+    eventName: eventInfoAtSubmit ? eventInfoAtSubmit.name : '',
+    eventTime: eventInfoAtSubmit ? eventInfoAtSubmit.time : '',
+    total: window._orderTotal,
+    hasAmount: window._orderHasAmount !== false
+  };
+  /* 示範用暫存：導轉金流頁或匯款待確認流程時，靠這筆資料回填成功頁內容 */
+  try{ localStorage.setItem('tli_pending_order_'+orderNo, JSON.stringify(orderData)); }catch(e){}
+
+  if(payMethod === 'transfer'){
+    showTransferPending(orderData);
+    return;
+  }
+  var gw = (payMethod === 'creditcard_stripe') ? 'stripe' : 'newebpay';
+  saveFormStateForReturn();
+  window.location.href = 'm15_payment_gateway.html?gw='+gw+'&order='+encodeURIComponent(orderNo)+'&amount='+encodeURIComponent(window._orderTotal || 0);
+}
+
+/* ============ 導轉金流頁前：暫存目前網址參數與已填表單狀態，供「取消返回」還原 ============ */
+function saveFormStateForReturn(){
+  var carrierInput = document.querySelector('input[name="invoiceCarrier"]:checked');
+  var state = {
+    payMethod: document.querySelector('input[name="payMethod"]:checked').value,
+    invoiceType: document.querySelector('input[name="invoiceType"]:checked').value,
+    invoiceCarrier: carrierInput ? carrierInput.value : 'cloud',
+    carrierMobile: document.getElementById('carrierMobile').value,
+    carrierCitizen: document.getElementById('carrierCitizen').value,
+    carrierDonate: document.getElementById('carrierDonate').value,
+    companyTitle: document.getElementById('companyTitle').value,
+    taxId: document.getElementById('taxId').value,
+    refCode: document.getElementById('refCode').value,
+    agreeTerms: document.getElementById('agreeTerms').checked
+  };
+  try{ sessionStorage.setItem('tli_m13_form_state', JSON.stringify(state)); }catch(e){}
+  try{ sessionStorage.setItem('tli_m13_return_qs', window.location.search); }catch(e){}
+}
+/* 從金流頁「取消返回」回來時還原表單狀態；還原一次後即清除，避免之後正常結帳也被覆蓋 */
+function restoreFormStateIfAny(){
+  var raw = null;
+  try{ raw = sessionStorage.getItem('tli_m13_form_state'); }catch(e){}
+  if(!raw) return;
+  var state;
+  try{ state = JSON.parse(raw); }catch(e){ return; }
+  var payRadio = document.querySelector('input[name="payMethod"][value="'+state.payMethod+'"]');
+  if(payRadio) payRadio.checked = true;
+  var invRadio = document.querySelector('input[name="invoiceType"][value="'+state.invoiceType+'"]');
+  if(invRadio) invRadio.checked = true;
+  var carrierRadio = document.querySelector('input[name="invoiceCarrier"][value="'+state.invoiceCarrier+'"]');
+  if(carrierRadio) carrierRadio.checked = true;
+  document.getElementById('carrierMobile').value = state.carrierMobile || '';
+  document.getElementById('carrierCitizen').value = state.carrierCitizen || '';
+  document.getElementById('carrierDonate').value = state.carrierDonate || '';
+  document.getElementById('companyTitle').value = state.companyTitle || '';
+  document.getElementById('taxId').value = state.taxId || '';
+  document.getElementById('refCode').value = state.refCode || '';
+  document.getElementById('agreeTerms').checked = !!state.agreeTerms;
+  onPayMethodChange();
+  onInvoiceTypeChange();
+  onCarrierChange();
+  checkRefCode();
+  try{ sessionStorage.removeItem('tli_m13_form_state'); }catch(e){}
+}
+
+/* ============ 銀行匯款：顯示示範虛擬帳號與繳款期限，按「已完成匯款」後進入成功頁 ============ */
+function showTransferPending(orderData){
+  document.getElementById('transferOrderNoDisplay').textContent = orderData.orderNo;
+  var acct = orderData._acct || ('808-'+String(Math.floor(Math.random()*900000+100000))+'-'+String(Math.floor(Math.random()*9+1)));
+  orderData._acct = acct;
+  document.getElementById('transferAccountDisplay').textContent = acct;
+  document.getElementById('checkoutForm').classList.add('hidden');
+  document.getElementById('transferPendingPanel').classList.remove('hidden');
+  window.scrollTo(0,0);
+  window._pendingTransferOrder = orderData;
+}
+function confirmTransferDone(){
+  showToast(TLI_I18N.t('已收到您的匯款通知，確認入帳後將自動開通方案',{en:'Your transfer notice has been received. The plan will activate automatically once payment is confirmed.',ja:'お振込みのご連絡を受け付けました。入金確認後、プランは自動的に開通します。',de:'Ihre Überweisungsmeldung wurde empfangen. Der Plan wird nach Zahlungsbestätigung automatisch aktiviert.'}));
+  var orderData = window._pendingTransferOrder;
+  setTimeout(function(){
+    document.getElementById('transferPendingPanel').classList.add('hidden');
+    showSuccessPanel(orderData);
+  }, 900);
+}
+
+/* ============ 成功頁：一對一體驗課／一般訂單共用，並顯示付款方式與發票摘要 ============ */
+function showSuccessPanel(orderData){
+  window._lastOrderData = orderData;
+  document.getElementById('orderNoDisplay').textContent = orderData.orderNo;
+  var addToCalBtn = document.getElementById('addToCalendarBtn');
+  var trialNote = document.getElementById('trialConfirmedNote');
+  var selfPacedBtn = document.getElementById('selfPacedBtn');
+  var viewEventBtn = document.getElementById('viewMyEventBtn');
+  if(orderData.isEventOrder){
+    document.getElementById('successTitle').textContent = TLI_I18N.t('已完成報名',{en:'Registration Complete',ja:'申込完了',de:'Anmeldung abgeschlossen'});
+    document.getElementById('successLead').textContent = TLI_I18N.t('活動報名已完成，開始前將另以 Email 通知提醒。',{en:'Your event registration is complete. A reminder will be sent by email before the event starts.',ja:'イベントの申込が完了しました。開始前に別途メールでお知らせします。',de:'Ihre Veranstaltungsanmeldung ist abgeschlossen. Vor Beginn erhalten Sie eine Erinnerung per E-Mail.'});
+    trialNote.style.display = 'none';
+    document.getElementById('successNote').textContent = TLI_I18N.t('活動：',{en:'Event: ',ja:'イベント：',de:'Veranstaltung: '})+orderData.eventName+'（'+orderData.eventTime+'）';
+    addToCalBtn.style.display = 'none';
+    selfPacedBtn.style.display = 'none';
+    /* 帶回送出當下的活動 id，不查字典、不 fallback 成其他活動 */
+    viewEventBtn.href = 'm10_events.html?registered='+encodeURIComponent(orderData.eventId);
+    viewEventBtn.style.display = 'inline-flex';
+  } else if(orderData.isTrialOrder){
+    document.getElementById('successTitle').textContent = TLI_I18N.t('試聽時段已確認',{en:'Trial Session Confirmed',ja:'体験レッスンの日時が確定しました',de:'Probestunde bestätigt'});
+    document.getElementById('successLead').textContent = TLI_I18N.t('付款完成即確認時段，顧問會在試聽後聯繫你。',{en:'Your time slot is confirmed once payment is complete. The advisor will contact you after the trial.',ja:'決済完了と同時に時間が確定します。体験後、アドバイザーよりご連絡します。',de:'Ihr Termin wird nach Zahlungseingang bestätigt. Der Berater meldet sich nach der Probestunde bei Ihnen.'});
+    var pf = formatTrialPrefs(orderData.trialSlot);
+    trialNote.textContent = TLI_I18N.t('已提交時段偏好：',{en:'Submitted time preference: ',ja:'提出済みの希望時間帯：',de:'Übermittelte Zeitpräferenz: '})+pf.date+' '+pf.times+
+      TLI_I18N.t('，顧問將依此安排老師並通知你',{en:'. The advisor will arrange a teacher accordingly and notify you.',ja:'。アドバイザーがこれに基づき講師を手配し、ご連絡します。',de:'. Der Berater organisiert entsprechend eine Lehrkraft und benachrichtigt Sie.'});
+    trialNote.style.display = 'block';
+    document.getElementById('successNote').textContent = TLI_I18N.t('開課前 15 分鐘可從會員區「進入教室」按鈕進入線上教室。',{en:'You can enter the online classroom via the "Enter Classroom" button in the member area 15 minutes before class starts.',ja:'開始15分前より、会員エリアの「教室に入る」ボタンからオンライン教室に入室できます。',de:'Sie können den Online-Klassenraum 15 Minuten vor Unterrichtsbeginn über die Schaltfläche „Klassenraum betreten" im Mitgliederbereich betreten.'});
+    addToCalBtn.style.display = 'inline-flex';
+    selfPacedBtn.style.display = 'inline-flex';
+    viewEventBtn.style.display = 'none';
+  } else {
+    document.getElementById('successTitle').textContent = TLI_I18N.t('訂單已送出',{en:'Order Submitted',ja:'注文を送信しました',de:'Bestellung übermittelt'});
+    document.getElementById('successLead').textContent = TLI_I18N.t('系統確認付款後，方案將自動開通，開通結果將另以 Email 通知。',{en:'Once payment is confirmed, the plan will activate automatically. You will be notified of the result by email.',ja:'決済確認後、プランは自動的に開通します。結果は別途メールでお知らせします。',de:'Nach Zahlungsbestätigung wird der Plan automatisch aktiviert. Das Ergebnis wird Ihnen per E-Mail mitgeteilt.'});
+    trialNote.style.display = 'none';
+    document.getElementById('successNote').textContent = TLI_I18N.t('付款確認後，方案將於 10 分鐘內自動開通，可至會員區查看使用權益。',{en:'After payment is confirmed, the plan will activate automatically within 10 minutes. You can check your entitlements in the member area.',ja:'決済確認後、10分以内にプランが自動的に開通します。会員エリアでご利用状況をご確認いただけます。',de:'Nach Zahlungsbestätigung wird der Plan innerhalb von 10 Minuten automatisch aktiviert. Sie können Ihre Leistungen im Mitgliederbereich einsehen.'});
+    addToCalBtn.style.display = 'none';
+    selfPacedBtn.style.display = 'inline-flex';
+    viewEventBtn.style.display = 'none';
+  }
+  var amountText = (orderData.hasAmount !== false && typeof orderData.total === 'number')
+    ? ('NT$'+orderData.total.toLocaleString('zh-Hant'))
+    : priceUnavailableLabel();
+  document.getElementById('successAmount').textContent = TLI_I18N.t('應付金額：',{en:'Amount Due: ',ja:'お支払い金額：',de:'Zu zahlender Betrag: '})+amountText;
+  document.getElementById('successPayMethod').textContent = TLI_I18N.t('付款方式：',{en:'Payment Method: ',ja:'お支払い方法：',de:'Zahlungsmethode: '})+payMethodLabel(orderData.payMethod);
+  document.getElementById('successInvoiceSummary').textContent = orderData.invoiceSummary;
+  document.getElementById('checkoutForm').classList.add('hidden');
+  document.getElementById('transferPendingPanel').classList.add('hidden');
+  document.getElementById('successPanel').classList.remove('hidden');
+  window.scrollTo(0,0);
+  showToast(orderData.isEventOrder ? TLI_I18N.t('已完成報名',{en:'Registration Complete',ja:'申込完了',de:'Anmeldung abgeschlossen'}) : TLI_I18N.t('訂單已送出',{en:'Order Submitted',ja:'注文を送信しました',de:'Bestellung übermittelt'}));
+}
+
+/* ============ 從 m15 金流頁付款完成返回：?paid=1&order=xxx，讀回暫存訂單資料顯示成功頁 ============ */
+function checkPaidReturn(){
+  if(getParam('paid') !== '1') return false;
+  var orderNo = getParam('order');
+  if(!orderNo) return false;
+  var raw = null;
+  try{ raw = localStorage.getItem('tli_pending_order_'+orderNo); }catch(e){}
+  if(!raw) return false;
+  var orderData;
+  try{ orderData = JSON.parse(raw); }catch(e){ return false; }
+  showSuccessPanel(orderData);
+  try{ localStorage.removeItem('tli_pending_order_'+orderNo); }catch(e){}
+  return true;
+}
+
+renderExistingOrderBanner();
+if(isUniversityPlan){
+  document.getElementById('checkoutForm').classList.add('hidden');
+  document.getElementById('universityNotice').classList.remove('hidden');
+  document.querySelector('.topbar-title').textContent = TLI_I18N.t('無法結帳',{en:'Checkout Unavailable',ja:'決済不可',de:'Zahlung nicht möglich'});
+} else if(isEventOrder){
+  initEventCard();
+  initBuyerInfoBlock();
+  onPayMethodChange();
+  onInvoiceTypeChange();
+  onCarrierChange();
+  applyRefFromUrl();
+  restoreFormStateIfAny();
+  renderOrder();
+  checkPaidReturn();
+} else {
+  renderPlanPickList();
+  renderQtyOptions();
+  renderTrialSlotCard();
+  initBuyerInfoBlock();
+  onPayMethodChange();
+  onInvoiceTypeChange();
+  onCarrierChange();
+  applyRefFromUrl();
+  restoreFormStateIfAny();
+  renderOrder();
+  checkPaidReturn();
+}
+
+/* ================= 五語切換：動態渲染內容登記重繪 ================= */
+function refreshAllDynamic(){
+  renderExistingOrderBanner();
+  if(isUniversityPlan){
+    document.querySelector('.topbar-title').textContent = TLI_I18N.t('無法結帳',{en:'Checkout Unavailable',ja:'決済不可',de:'Zahlung nicht möglich'});
+    return;
+  }
+  if(!document.getElementById('checkoutForm').classList.contains('hidden')){
+    if(isEventOrder){ initEventCard(); } else { renderPlanPickList(); renderQtyOptions(); renderTrialSlotCard(); }
+    renderOrder();
+  }
+  if(!document.getElementById('transferPendingPanel').classList.contains('hidden') && window._pendingTransferOrder){
+    showTransferPending(window._pendingTransferOrder);
+  }
+  if(!document.getElementById('successPanel').classList.contains('hidden') && window._lastOrderData){
+    window._lastOrderData.invoiceSummary = buildInvoiceSummary();
+    showSuccessPanel(window._lastOrderData);
+  }
+}
+TLI_I18N.onRefresh(refreshAllDynamic);
+TLI_I18N.init();
+
+// 全域 ESC 關閉：關閉目前開啟中的 modal-overlay
+document.addEventListener('keydown', function(e){
+  if(e.key !== 'Escape') return;
+  document.querySelectorAll('.modal-overlay.show').forEach(function(el){
+    el.classList.remove('show');
+  });
+});
+</script>
+</body>
+</html>

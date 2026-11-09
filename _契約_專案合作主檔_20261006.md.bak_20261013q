@@ -1,0 +1,117 @@
+# 專案合作主檔契約（原型2，2026-10-06）
+
+來源檔：`assets/_shared_masters.js`，全域物件 `window.TLI_MASTERS`。其他頁面只准讀這份主檔，不要自己另寫夥伴、班級、名單資料。
+
+## 1. 合作夥伴型態（partners.type）
+只有三種：`agent` 代理、`distributor` 經銷、`project` 專案合作（顯示名稱「專案合作」）。只收這三種。
+專案合作不經手任何金流：沒有分潤、佣金、返傭、費率、結算、發票欄位，金流全走線下。
+
+## 2. partners（專案合作型態的欄位）
+| 欄位 | 型別／值 | 說明 |
+|---|---|---|
+| id | 'p02' | 範例州立大學；保留 id 以免斷參照 |
+| name | '範例州立大學' | |
+| country | '美國' | |
+| contact | 'Dr. Chen' | 聯絡人 |
+| type | 'project' | |
+| tenant | 'TENANT-US-AZU' | 帳號綁定用，畫面不顯示 |
+| status | '啟用' / '停用' | |
+| from / to | '2027-02-01' / '2027-05-31' | 合作期間 |
+| loungeQuota | {perStudentPerMonth:4, groupCap:8} | Mandarin Lounge 額度：每位學生每月可報名的團體場次次數；開設場次時的預設名額（6–10）。Lounge 只有團體場次，沒有 1 對 1 |
+| videoTool | 'teams' / 'zoom' | 對應 videoTools 主檔的 id；僅作開設場次時的預設，實際視訊工具由各場次設定 |
+| langs / uiLocales | 陣列 | 沿用既有欄位 |
+
+- 綁定專案不存在夥伴上，由 projects 帶出：`projects` 中 `channels.project===true` 且 `partners` 含夥伴 name 者。
+- 夥伴上沒有教師欄位。學校老師（顯示名稱「班級老師」）是 projectRoster 裡 role 為「老師」的名單成員，不屬於 teachers。
+- 其餘 partners（代理 p08、p09、p10、p12；經銷 p05、p06、p07、p11）欄位不變。已刪除 p01、p03、p04。
+
+### partners.code（識別碼，2026-10-06 補）
+代理沿用夥伴端轉介碼，經銷為新編識別碼；a05、a07 一律讀 `partner.code`，不在頁內寫死。
+| id | code |
+|---|---|
+| p08 | REF-MEA08 |
+| p09 | REF-HKB09 |
+| p10 | REF-EUR10 |
+| p12 | REF-SEA07 |
+| p05 | DST-MY05 |
+| p06 | DST-VN06 |
+| p07 | DST-KR07 |
+| p11 | DST-JP11 |
+專案合作夥伴 p02 無 code。經銷識別碼為原型暫編，待確認正式編碼規則。
+
+### partners id 清單
+p02（project）、p05、p06、p07、p11（distributor）、p08、p09、p10、p12（agent）。
+
+## 3. teachers（只有 TLI 中心教師）
+`type` 一律 'center'。2026-10-06f 起移除 type:'local' 的 tl1、tl6、tl7、tl8；沒有 partnerId、certStatus、org（原學校教師專用）欄位。老師管理（a10）不再區分教師類型。
+海外學校的老師改放 projectRoster（見第 7 節），開通後用教師端的班級進度頁 t08、t09、t10，並帶 Mandarin Lounge 團體場次（t11?view=1a&rid=）。
+
+## 4. projects
+channels 鍵：`direct`、`project`、`distributor`、`agent`。
+PRJ-EDU-AZU：name「Gateway 專案合作．美國 範例州立大學」、status '草稿'、from 2027-02-01、to 2027-05-31、
+channels.project=true、partners:['範例州立大學']、sell:{categories:[], items:[], productIds:['skuC05','skuC10']}、
+brandExposure '整個掛TLI'、domain 'gateway.tli.com.tw'、sender 'TLI Gateway'；規則文字為一般規則（標準線上／標準實體）。
+products 新增 `skuC10`「Mandarin Lounge 團體會話」（categoryId c_chat）；自學課程用既有 `skuC05`。
+
+## 5. orgCustomers
+已移除 ent5「範例州立大學」、ent9「範例州立大學 分校A」；只剩企業（type 一律 'general'）。學校改走 a20 專案合作。
+id 不重排（現存：ent0–ent4、ent6–ent8、ent10–ent12）。
+
+## 6. projectClasses（班級）
+欄位：`id, partnerId, projectCode, name, from, to, teacherRid`（teacherRid 對應 projectRoster 中 role 為「老師」成員的 id；舊欄位 teacherId 已停用，載入舊存檔時自動轉換）。
+初始值：
+| id | name | 期間 | teacherId |
+|---|---|---|---|
+| pcl1 | Chinese 101 Section A | 2027-02-01～2027-05-31 | pr07 |
+| pcl2 | Chinese 101 Section B | 同上 | pr18 |
+| pcl3 | Chinese 201 Conversation | 同上 | pr27 |
+partnerId 皆 'p02'，projectCode 皆 'PRJ-EDU-AZU'。
+
+## 7. projectRoster（名單）
+欄位：`id, classId, name, email, role, status`。
+- role：'學生' / '老師'（畫面顯示「學生／班級老師」）
+- status：'未寄送' / '已寄開通信' / '已啟用'
+初始 22 筆：每班 6–7 位學生＋1 位老師，共 3 位班級老師（pr07 Sarah Whitfield 授 pcl1；pr18 王建國 授 pcl2；pr27 陳嘉玲 授 pcl3），三種開通狀態都有。
+同一班 Email 不可重複。學生數／啟用率一律只算 role='學生'。
+
+開通機制（寫在畫面說明）：系統寄送開通連結，點連結設定密碼後帳號自動綁定此夥伴、專案與班級；Email 已是 TLI 會員者不另開帳號，直接加綁。
+
+開通連結規則（2026-10-07g 更正）：
+- 連結 14 天內有效（expiresAt = sentAt + 14 天），不是一次性連結。
+- 開通前，同一連結可重複打開，直到設好密碼為止。
+- 開通後再點同一連結，p13 直接導到登入頁 p07 並以 `?email=` 預填 Email，不顯示錯誤。
+- 過期（或被新信取代）：p13 顯示「這個開通連結已過期」＋「重新寄送開通信」，寄到名單原 Email、不需輸入，按後顯示已寄出並換發新連結。
+- 被 TLI 在 a20 作廢（status '連結已作廢'）或尚未寄送：才顯示「請聯絡 TLI」。
+- p07 登入頁有「還沒開通？重新寄送開通信」，輸入 Email 後一律顯示「若此 Email 在名單內，我們會重新寄送開通信」；p11「沒收到開通信？」文字對齊。
+- 範例資料：pr04 的連結為已過期狀態（sentAt 2027-02-20、expiresAt 2027-03-06），其餘已寄者 sentAt 2027-03-12、expiresAt 2027-03-26。
+
+## 8. localStorage
+| key | 內容 |
+|---|---|
+| `tliProjectClasses_v1` | projectClasses 整個陣列（JSON） |
+| `tliProjectRoster_v1` | projectRoster 整個陣列（JSON） |
+
+兩個 key 同時存在才生效。`_shared_masters.js` 載入時就地覆蓋初始值，所以任何載入主檔的頁面讀 `TLI_MASTERS.projectClasses`／`projectRoster` 就是最新資料，不必自己讀 localStorage。
+寫入一律呼叫 `TLI_MASTERS.saveProjectData()`（修改完陣列後呼叫）。清掉 localStorage 即回到初始值；`TLI_MASTERS.reloadProjectData()` 可重新載入。
+
+## 9. 哪些頁讀它
+| 頁面 | 用法 |
+|---|---|
+| 管理後台/a20_agents.html | 寫入：新增／編輯班級、匯入名單 CSV、新增成員、寄／重寄開通信；夥伴詳情「班級與名單」分頁；學員統計 |
+| 管理後台/a21_projects.html | 讀 projects；PRJ-EDU-AZU 的可售產品走 sell.productIds |
+| 管理後台/a24_partner_settlement.html | 只讀 partners 的 agent／distributor，不出現專案合作 |
+| 管理後台/a19_b2b_enterprise.html | 只讀 orgCustomers（企業） |
+| 教師端 t08–t11 | 身分用 `?rid=名單老師 id`（舊 `?tid=` 仍相容，無對應就忽略；預設 pr18）；依 teacherRid 列自己的班與學生；側欄顯示「班級老師｜範例州立大學」，有我的班級、學生自學進度、我的學生、Mandarin Lounge 場次（t11?view=1a&rid=，只列自己帶的場次，可看名單、進入教室，不能開設；無 rid 的 view=1a 導向直營中心教師版） |
+| 會員區 m01、m07、m18 | 依 Email 對應 roster 判斷所屬班級；授課老師名稱由班級 teacherRid 取名單成員姓名 |
+| 公開網站 p13、p07 | 老師開通後 `signInTeacher(名單 id)`，導到 `t08?rid=名單 id`；開通連結規則見第 7 節；p07 讀 `?email=` 預填、提供重寄開通信 |
+| a20 建班 | 授課老師從夥伴名單的老師挑選，或直接輸入姓名與 Email：存成名單成員（role 老師、狀態已寄開通信）並設為該班 teacherRid |
+
+## 10. Mandarin Lounge 團體場次（2026-10-06g 更正：只有團體）
+- 每場 30 分鐘、6–10 人、視訊工具由場次設定；共用同一套場次機制與額度機制；專案合作場次由學校班級老師帶領，直營場次由 TLI 中心教師帶領（兩者不是同一批場次）。
+- 場次來源：
+  - 專案合作場次（audience `project`）：系統預設排程，依班級各自產生（含 `classId`），`teacherId`／`teacher` 為該班班級老師（projectRoster 角色老師，12 月受 TLI 師培）；只給該班學生報名；1A 場次由新達於資料庫設定，班級老師不能開設，只能看名單、進入教室。
+  - 直營場次（audience `direct`）：系統預設排程（TLI 中心教師）＋中心教師在 t11（Mandarin Lounge 場次，一階段 B）開設的場次（localStorage `tliLoungeOpened_v1`，場次 id 以 `LS-OP-tc1-` 開頭，一律視為 direct；t11 自身存檔 `tliT04ChatSessions_v1`）。
+- 學生端 m14／m16／m18 顯示的帶領老師：專案合作學生＝其班級老師，直營學員＝中心教師。
+- `TLI_PL.teacherSessions(id)`：傳班級老師名單 id 回傳其班場次；傳 `tc1` 回傳中心教師場次。m16 用 `?lesson=lounge&tsid=場次id` 讓教師端進入教室。
+- 預約存 `tliLoungeBookings_v1`，一律 type 'group'；`TLI_PL.teacherSessions(teacherId)` 供教師端讀報名人數與名單。
+- `products.skuC10`「Mandarin Lounge 團體會話」、`p_chat02` 皆為團體場次；一般「一對一課程」為付費正課，不屬 Lounge。

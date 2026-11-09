@@ -1,0 +1,328 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<title>帳號開通｜TLI Connect</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+:root{--navy:#1B4E8C;--navy-dark:#123a68;--orange:#E8792B;--teal:#0F9B79;
+--g50:#F5F7FA;--g200:#E4E7EC;--g500:#667085;--g900:#101828;}
+*{box-sizing:border-box;}
+html,body{overflow-x:hidden;}
+body{margin:0;font-family:"Noto Sans TC","Microsoft JhengHei",system-ui,-apple-system,sans-serif;
+background:var(--g50);color:var(--g900);min-height:100vh;}
+a{color:var(--navy);}
+.wrap{max-width:600px;margin:0 auto;padding:32px 20px 60px;}
+.topmark{display:flex;align-items:center;gap:10px;justify-content:center;margin-bottom:22px;}
+.topmark img{height:30px;}
+.topmark span{font-size:13px;color:var(--g500);border-left:1px solid var(--g200);padding-left:10px;}
+.card{background:#fff;border:1px solid var(--g200);border-radius:14px;padding:30px;box-shadow:0 1px 3px rgba(16,24,40,.06);}
+.intro-line{font-size:12.5px;color:#667085;margin-bottom:18px;}
+.steps{display:flex;align-items:center;justify-content:center;gap:0;margin-bottom:26px;}
+.stepitem{display:flex;flex-direction:column;align-items:center;gap:6px;flex:1;position:relative;}
+.stepitem .dot{width:28px;height:28px;border-radius:50%;background:var(--g200);color:var(--g500);
+display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;z-index:1;}
+.stepitem.done .dot{background:var(--teal);color:#fff;}
+.stepitem.current .dot{background:var(--navy);color:#fff;}
+.stepitem .stlbl{font-size:11.5px;color:var(--g500);white-space:nowrap;}
+.stepitem.current .stlbl{color:var(--navy);font-weight:600;}
+.stepline{position:absolute;top:14px;left:calc(-50% + 14px);right:calc(50% + 14px);height:2px;background:var(--g200);z-index:0;}
+.stepitem.done .stepline,.stepitem.current .stepline{background:var(--teal);}
+.stepitem:first-child .stepline{display:none;}
+h1.sth{font-size:17px;margin:0 0 4px;}
+.stdesc{font-size:12.5px;color:var(--g500);margin-bottom:18px;line-height:1.6;}
+.formrow{margin-bottom:15px;}
+.formrow label{display:block;font-size:12.5px;color:var(--g500);margin-bottom:4px;}
+.formrow input,.formrow select{width:100%;padding:9px 11px;border:1px solid var(--g200);
+border-radius:6px;font-size:13.5px;box-sizing:border-box;font-family:inherit;}
+.formrow input[readonly]{background:var(--g50);color:var(--g500);}
+.formrow input.invalid,.formrow select.invalid{border-color:#C0392B;}
+.phone-row{display:flex;gap:8px;}
+.phone-row select{flex:0 0 128px;}
+.phone-row input{flex:1;min-width:0;}
+.hint{font-size:11.5px;color:var(--g500);margin-top:4px;}
+.opt-mark{color:#6B7280;font-weight:400;margin-left:4px;}
+.req-mark{color:#C0392B;margin-left:2px;}
+.field-required-note{font-size:12px;color:var(--g500);margin-bottom:16px;}
+.pwmeter{height:5px;border-radius:3px;background:var(--g200);margin-top:8px;overflow:hidden;}
+.pwmeter i{display:block;height:100%;width:0%;background:#C0392B;transition:.2s;}
+.pwmeter.weak i{width:33%;background:#C0392B;}
+.pwmeter.medium i{width:66%;background:var(--orange);}
+.pwmeter.strong i{width:100%;background:var(--teal);}
+.pwmeterlbl{font-size:11.5px;margin-top:4px;color:var(--g500);}
+.errmsg{font-size:12px;color:#C0392B;margin-top:5px;display:none;}
+.errmsg.show{display:block;}
+.btnrow{display:flex;justify-content:space-between;gap:10px;margin-top:24px;}
+.btn{display:inline-block;background:var(--navy);color:#fff;border:none;padding:10px 20px;
+border-radius:6px;font-size:13.5px;cursor:pointer;text-decoration:none;white-space:nowrap;font-family:inherit;}
+.btn.orange{background:var(--orange);}
+.btn.teal{background:var(--teal);}
+.btn.ghost{background:#fff;border:1px solid var(--g200);color:var(--g900);}
+.checkbox-label{display:flex;align-items:flex-start;gap:8px;font-size:12.5px;color:var(--g900);cursor:pointer;line-height:1.6;}
+.checkbox-label input{margin-top:3px;flex:none;width:16px;height:16px;}
+.checkbox-label a{color:var(--navy);font-weight:600;}
+.checkbox-label a:hover{text-decoration:underline;}
+.donewrap{text-align:center;padding:6px 0 4px;}
+.doneicon{width:56px;height:56px;border-radius:50%;background:#E4F5EE;display:flex;align-items:center;justify-content:center;margin:0 auto 14px;}
+.donetitle{font-size:17px;font-weight:700;margin-bottom:6px;}
+.donedesc{font-size:12.5px;color:var(--g500);margin-bottom:8px;line-height:1.6;}
+.donenote{font-size:12px;color:var(--g500);margin-bottom:22px;line-height:1.6;background:var(--g50);border-radius:8px;padding:10px 12px;}
+.expiredwrap{text-align:center;padding:20px 4px 4px;}
+.expiredicon{width:56px;height:56px;border-radius:50%;background:#FBE7E7;display:flex;align-items:center;justify-content:center;margin:0 auto 16px;}
+.expiredtitle{font-size:17px;font-weight:700;margin-bottom:8px;}
+.expireddesc{font-size:13px;color:var(--g500);margin-bottom:20px;line-height:1.7;}
+.resendrow{display:flex;gap:8px;margin-bottom:14px;justify-content:center;flex-wrap:wrap;}
+.resendrow input{flex:1;min-width:180px;max-width:260px;padding:9px 11px;border:1px solid var(--g200);border-radius:6px;font-size:13.5px;font-family:inherit;}
+.expiredactions{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-top:6px;}
+.donewrap .doneicon.info{background:#E6EEF8;}
+.modal-overlay{position:fixed;inset:0;background:rgba(16,24,40,.45);display:none;align-items:center;justify-content:center;z-index:300;padding:20px;}
+.modal-overlay.show{display:flex;}
+.modal-box{background:#fff;border-radius:12px;max-width:520px;width:100%;max-height:80vh;display:flex;flex-direction:column;box-shadow:0 8px 24px rgba(16,24,40,.14);}
+.modal-head{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:16px 20px;border-bottom:1px solid var(--g200);}
+.modal-head h3{font-size:15px;font-weight:800;margin:0;}
+.modal-close-btn{background:none;border:none;cursor:pointer;color:var(--g500);padding:6px;flex:none;}
+.modal-close-btn:hover{color:var(--g900);}
+.modal-body{padding:18px 20px;overflow-y:auto;font-size:13px;color:var(--g500);line-height:1.8;}
+.modal-body h4{font-size:13.5px;color:var(--g900);margin:14px 0 6px;}
+.modal-body h4:first-child{margin-top:0;}
+.modal-body p{margin:0 0 8px;}
+.modal-foot{padding:14px 20px;border-top:1px solid var(--g200);text-align:right;}
+.toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(20px);
+background:#101828;color:#fff;padding:10px 20px;border-radius:8px;font-size:13px;
+opacity:0;pointer-events:none;transition:.2s;z-index:200;max-width:80vw;text-align:center;}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
+@media (max-width:480px){
+.card{padding:22px 18px;}
+.stepitem .stlbl{display:none;}
+.phone-row{flex-direction:column;}
+.phone-row select{flex:none;width:100%;}
+}
+</style>
+<style>
+.ctx{background:var(--g50);border:1px solid var(--g200);border-radius:10px;padding:4px 14px;margin-bottom:18px;}
+.ctx-row{display:flex;justify-content:space-between;gap:14px;padding:9px 0;border-top:1px solid var(--g200);font-size:13px;}
+.ctx-row:first-child{border-top:none;}
+.ctx-row span:first-child{color:var(--g500);flex:none;}
+.ctx-row span:last-child{font-weight:600;text-align:right;min-width:0;overflow-wrap:anywhere;}
+.pwwrap{position:relative;}
+.pwwrap input{padding-right:64px;}
+.pwtoggle{position:absolute;right:6px;top:50%;transform:translateY(-50%);background:none;border:none;color:var(--navy);font-size:12.5px;cursor:pointer;padding:6px 8px;font-family:inherit;}
+.callout{display:flex;gap:10px;background:#E6EEF8;border-radius:10px;padding:12px 14px;font-size:12.5px;line-height:1.7;color:#123a68;margin-bottom:16px;}
+.callout svg{flex:none;margin-top:2px;}
+.bindlist{margin:0 0 6px;padding:0;list-style:none;}
+.bindlist li{display:flex;gap:8px;font-size:13px;padding:5px 0;}
+.bindlist svg{flex:none;margin-top:3px;color:var(--teal);}
+.pane{display:none;}
+.pane.on{display:block;}
+</style>
+</head>
+<body>
+
+<div class="wrap">
+<div class="topmark"><img src="../assets/tli-logo.svg" alt="TLI"><span data-en="Account activation">帳號開通</span></div>
+
+<div class="card">
+
+<!-- A：新帳號開通 -->
+<div class="pane" id="paneNew">
+  <h1 class="sth" data-en="Activate your account">開通你的帳號</h1>
+  <div class="stdesc" data-en="Your school has registered you for the program below. Set a password to finish. Your account is linked to the school, project and class automatically.">學校已將你登記在下列專案，設定密碼即可完成開通，帳號會自動綁定所屬單位、專案與班級。</div>
+  <div class="ctx" id="ctxNew"></div>
+  <div class="formrow"><label for="fEmail" data-en="Email (your login ID)">Email（登入帳號）</label><input id="fEmail" type="email" readonly></div>
+  <div class="formrow">
+    <label for="fPw"><span data-en="Password">設定密碼</span><span class="req-mark">*</span></label>
+    <div class="pwwrap"><input id="fPw" type="password" autocomplete="new-password" data-en-ph="At least 8 characters, letters and numbers" placeholder="至少 8 碼，含英文字母與數字"><button type="button" class="pwtoggle" id="tg1" data-en="Show">顯示</button></div>
+    <div class="pwmeter" id="pwMeter"><i></i></div>
+    <div class="pwmeterlbl" id="pwLbl"></div>
+    <div class="errmsg" id="errPw"></div>
+  </div>
+  <div class="formrow">
+    <label for="fPw2"><span data-en="Confirm password">確認密碼</span><span class="req-mark">*</span></label>
+    <div class="pwwrap"><input id="fPw2" type="password" autocomplete="new-password"><button type="button" class="pwtoggle" id="tg2" data-en="Show">顯示</button></div>
+    <div class="errmsg" id="errPw2"></div>
+  </div>
+  <label class="checkbox-label"><input type="checkbox" id="fAgree"><span><span data-en="I have read and agree to the">我已閱讀並同意</span><a href="#" onclick="openTerms();return false;" data-en="Terms of Service and Privacy Policy">服務條款與隱私權政策</a></span></label>
+  <div class="errmsg" id="errAgree" data-en="Please agree to the terms to continue.">請先同意服務條款與隱私權政策。</div>
+  <div class="btnrow" style="justify-content:flex-end;"><button class="btn orange" id="btnActivate" data-en="Activate account">開通帳號</button></div>
+</div>
+
+<!-- B：此 Email 已是 TLI 會員，登入後加綁 -->
+<div class="pane" id="paneMember">
+  <h1 class="sth" data-en="This email is already a TLI member">此 Email 已是 TLI 會員</h1>
+  <div class="stdesc" data-en="You do not need a new account. Sign in with your existing password, then confirm the link below.">不需要另開帳號，請用原本的密碼登入，再確認加綁下列單位。</div>
+  <div class="ctx" id="ctxMember"></div>
+  <div id="memStep1">
+    <div class="formrow"><label for="mEmail" data-en="Email">Email</label><input id="mEmail" type="email" readonly></div>
+    <div class="formrow"><label for="mPw"><span data-en="Your current TLI password">原本的 TLI 密碼</span><span class="req-mark">*</span></label><input id="mPw" type="password" autocomplete="current-password"><div class="errmsg" id="errMPw"></div></div>
+    <div class="hint"><a href="#" id="forgot" data-en="Forgot password?">忘記密碼？</a></div>
+    <div class="btnrow" style="justify-content:flex-end;"><button class="btn" id="btnMemLogin" data-en="Sign in">登入</button></div>
+  </div>
+  <div id="memStep2" style="display:none;">
+    <div class="callout"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg><span data-en="Signed in. Confirm to add the school, project and class below to your existing account. Your plans and records stay as they are.">已登入。確認後，下列單位、專案與班級會加綁到你現有的帳號，原本的方案與紀錄不受影響。</span></div>
+    <ul class="bindlist" id="bindList"></ul>
+    <div class="btnrow" style="justify-content:flex-end;"><button class="btn orange" id="btnBind" data-en="Confirm and link">確認加綁</button></div>
+  </div>
+</div>
+
+<!-- C：帳號已開通過，直接登入 -->
+<div class="pane" id="paneDone">
+  <h1 class="sth" data-en="This account is already active">此帳號已開通</h1>
+  <div class="stdesc" data-en="This activation link has been used. Sign in with your password.">這封開通信的連結已使用過，請直接用密碼登入。</div>
+  <div class="ctx" id="ctxDone"></div>
+  <div class="formrow"><label for="dEmail" data-en="Email">Email</label><input id="dEmail" type="email" readonly></div>
+  <div class="formrow"><label for="dPw"><span data-en="Password">密碼</span><span class="req-mark">*</span></label><input id="dPw" type="password" autocomplete="current-password"><div class="errmsg" id="errDPw"></div></div>
+  <div class="btnrow" style="justify-content:flex-end;"><button class="btn" id="btnDone" data-en="Sign in">登入</button></div>
+</div>
+
+<!-- D：連結無效 -->
+<div class="pane" id="paneBad">
+  <div class="expiredwrap">
+    <div class="expiredicon"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#C0392B" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg></div>
+    <div class="expiredtitle" data-en="This link is not valid">這個開通連結無法使用</div>
+    <div class="expireddesc" data-en="The link may have expired or been replaced by a newer email. Enter your school email and we will send a new activation email.">連結可能已過期，或已被較新的開通信取代。輸入學校 Email，我們會重新寄送開通信。</div>
+    <div class="resendrow"><input type="email" id="rsEmail" placeholder="name@school.edu"><button class="btn" id="btnResend" data-en="Resend email">重寄開通信</button></div>
+  </div>
+</div>
+
+<!-- E：完成 -->
+<div class="pane" id="paneFin">
+  <div class="donewrap">
+    <div class="doneicon"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#0F9B79" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></div>
+    <div class="donetitle" id="finTitle"></div>
+    <div class="donedesc" id="finDesc"></div>
+    <div class="donenote" id="finNote"></div>
+    <a class="btn teal" id="finGo" href="#"></a>
+  </div>
+</div>
+
+</div>
+</div>
+
+<div class="modal-overlay" id="termsModal">
+  <div class="modal-box">
+    <div class="modal-head"><h3 data-en="Terms of Service and Privacy Policy">服務條款與隱私權政策</h3>
+      <button class="modal-close-btn" onclick="closeTerms()" aria-label="Close"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button></div>
+    <div class="modal-body">
+      <h4 data-en="Terms of Service">服務條款</h4>
+      <p data-en="This service is provided by TLI. The account is for the named student or teacher only. Learning content and Mandarin Lounge sessions are offered under the project arrangement between your school and TLI.">本服務由 TLI 中華語文研習所提供，帳號僅供登記之學生或教師本人使用。學習內容與 Mandarin Lounge 會話場次，依學校與 TLI 的專案合作安排提供。</p>
+      <h4 data-en="Privacy Policy">隱私權政策</h4>
+      <p data-en="We collect your name, email, class and learning records only to run your courses, verify your account and send necessary notices. Your teacher can see your study time and progress in the classes they teach.">我們蒐集姓名、Email、班級與學習紀錄，僅用於課程營運、帳號驗證與必要通知。你的老師可以看到所授班級的學習時數與進度。</p>
+    </div>
+    <div class="modal-foot"><button type="button" class="btn teal" onclick="closeTerms()" data-en="I have read it">我已閱讀</button></div>
+  </div>
+</div>
+<div class="toast" id="toastEl"></div>
+
+<script>window.TLI_I18N_PAGE_LANGS=['zh-TW','zh-CN','en'];</script>
+<script src="../assets/_shared_masters.js"></script>
+<script src="../assets/_i18n_dict.js"></script>
+<script src="../會員區/_project_learning.js"></script>
+<script src="../assets/_i18n.js"></script>
+<script>
+var PL = TLI_PL, T = PL.T;
+function $(i){ return document.getElementById(i); }
+function toast(msg){ var el=$('toastEl'); el.textContent=msg; el.classList.add('show'); clearTimeout(window._tt); window._tt=setTimeout(function(){ el.classList.remove('show'); },2600); }
+function openTerms(){ $('termsModal').classList.add('show'); }
+function closeTerms(){ $('termsModal').classList.remove('show'); }
+
+/* ---- 解析開通信連結：?rid=名單 id（缺省時取第一位已寄開通信、尚非會員的學生）---- */
+var rid = PL.qs('rid');
+var R = rid ? PL.rosterById(rid) : TLI_MASTERS.projectRoster.filter(function(r){ return r.role==='學生' && r.status==='已寄開通信' && !PL.isExistingMember(r.email); })[0];
+var CLS = R ? PL.classById(R.classId) : null;
+var TEA = CLS ? PL.teacherOfClass(CLS.id) : null;
+var P = PL.partner();
+
+function ctxHtml(){
+  if(!R||!CLS) return '';
+  var role = R.role==='老師' ? T('班級老師','Class teacher') : T('學生','Student');
+  var rows = [
+    [T('所屬單位','Institution'), P.name],
+    [T('專案','Project'), PL.projectName()],
+    [T('班級','Class'), CLS.name],
+    [T('角色','Role'), role],
+    [T('姓名','Name'), R.name]
+  ];
+  if(R.role==='學生' && TEA) rows.splice(4,0,[T('授課老師','Teacher'), TEA.name]);
+  return rows.map(function(r){ return '<div class="ctx-row"><span>'+PL.esc(r[0])+'</span><span>'+PL.esc(r[1])+'</span></div>'; }).join('');
+}
+function showPane(id){ document.querySelectorAll('.pane').forEach(function(p){ p.classList.toggle('on', p.id===id); }); }
+function renderCtx(){ ['ctxNew','ctxMember','ctxDone'].forEach(function(i){ $(i).innerHTML = ctxHtml(); }); renderBind(); }
+function renderBind(){
+  if(!R||!CLS) return;
+  var chk = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>';
+  $('bindList').innerHTML = [
+    T('單位：','Institution: ')+P.name, T('專案：','Project: ')+PL.projectName(), T('班級：','Class: ')+CLS.name, (R.role==='老師' ? T('角色：班級老師','Role: Class teacher') : T('角色：學生','Role: Student'))
+  ].map(function(t){ return '<li>'+chk+'<span>'+PL.esc(t)+'</span></li>'; }).join('');
+}
+
+/* ---- 密碼強度 ---- */
+function pwLevel(v){ var s=0; if(v.length>=8) s++; if(/[A-Za-z]/.test(v)&&/\d/.test(v)) s++; if(v.length>=12||/[^A-Za-z0-9]/.test(v)) s++; return v.length<8?0:s; }
+function renderMeter(){
+  var v=$('fPw').value, l=pwLevel(v), m=$('pwMeter'), lbl=$('pwLbl');
+  m.className='pwmeter'+(v?(l<=1?' weak':(l===2?' medium':' strong')):'');
+  lbl.textContent = !v ? '' : (l<=1 ? T('強度：弱','Strength: weak') : (l===2 ? T('強度：中','Strength: medium') : T('強度：強','Strength: strong')));
+}
+function wireToggle(btn, input){ btn.addEventListener('click', function(){ var show=input.type==='password'; input.type=show?'text':'password'; btn.textContent=show?T('隱藏','Hide'):T('顯示','Show'); btn.dataset.zh=show?'隱藏':'顯示'; btn.setAttribute('data-en', show?'Hide':'Show'); }); }
+function setErr(id,msg){ var e=$(id); if(msg){ e.textContent=msg; e.classList.add('show'); } else { e.classList.remove('show'); } }
+
+/* ---- 完成後導向：學生 → 會員區首頁；老師 → 教師端我的班級 ---- */
+function finish(kind){
+  var isTeacher = R.role==='老師';
+  if(isTeacher){ PL.signInTeacher(R.id); } else { PL.signInStudent(R.id); }
+  var dest = isTeacher ? '../教師端/t08_my_classes.html?rid='+R.id : '../會員區/m01_home.html?activated=project';
+  $('finTitle').textContent = kind==='bind' ? T('已加綁完成','Linked to your account') : T('帳號已開通','Your account is active');
+  $('finDesc').textContent = (isTeacher ? T('你可以在教師端查看班級學生的自學時數與進度。','You can now see your students’ study time and progress in the teacher portal.')
+                                       : T('你已加入 ','You have joined ')+CLS.name+T('，可以開始自學課程並預約 Mandarin Lounge。',' and can start the self-paced course and book Mandarin Lounge.'));
+  $('finNote').textContent = P.name+'・'+PL.projectName()+'・'+CLS.name;
+  var go=$('finGo'); go.href=dest; go.textContent = isTeacher ? T('前往我的班級','Go to My Classes') : T('前往首頁','Go to Home');
+  showPane('paneFin');
+  setTimeout(function(){ location.href=dest; }, 2600);
+}
+
+function init(){
+  if(!R||!CLS){ showPane('paneBad'); return; }
+  $('fEmail').value=R.email; $('mEmail').value=R.email; $('dEmail').value=R.email;
+  renderCtx();
+  var existing = PL.qs('member')==='1' || (R.role==='學生' && PL.isExistingMember(R.email));
+  if(R.status==='已啟用' && !PL.isFresh(R.id)){ showPane('paneDone'); }
+  else if(R.status==='未寄送'){ showPane('paneBad'); }
+  else if(existing){ showPane('paneMember'); }
+  else { showPane('paneNew'); }
+  renderMeter();
+}
+
+$('fPw').addEventListener('input', renderMeter);
+wireToggle($('tg1'),$('fPw')); wireToggle($('tg2'),$('fPw2'));
+$('btnActivate').addEventListener('click', function(){
+  var pw=$('fPw').value, pw2=$('fPw2').value, ok=true;
+  setErr('errPw', (pwLevel(pw)<2) ? T('密碼至少 8 碼，需同時包含英文字母與數字。','Use at least 8 characters with both letters and numbers.') : '');
+  if(pwLevel(pw)<2) ok=false;
+  var mism = pw2!==pw || !pw2; setErr('errPw2', mism ? T('兩次輸入的密碼不一致。','The two passwords do not match.') : ''); if(mism) ok=false;
+  var ag=$('fAgree').checked; $('errAgree').classList.toggle('show', !ag); if(!ag) ok=false;
+  if(!ok) return;
+  PL.activate(R.id); finish('new');
+});
+$('btnMemLogin').addEventListener('click', function(){
+  var v=$('mPw').value; if(!v){ setErr('errMPw', T('請輸入密碼。','Enter your password.')); return; }
+  setErr('errMPw',''); $('memStep1').style.display='none'; $('memStep2').style.display='block';
+});
+$('forgot').addEventListener('click', function(e){ e.preventDefault(); toast(T('已寄出重設密碼信到 ','A reset email was sent to ')+R.email); });
+$('btnBind').addEventListener('click', function(){ PL.activate(R.id); finish('bind'); });
+$('btnDone').addEventListener('click', function(){
+  if(!$('dPw').value){ setErr('errDPw', T('請輸入密碼。','Enter your password.')); return; }
+  setErr('errDPw',''); finish('login');
+});
+$('btnResend').addEventListener('click', function(){
+  var v=$('rsEmail').value.trim(); if(!/^\S+@\S+\.\S+$/.test(v)){ toast(T('請輸入正確的 Email。','Enter a valid email.')); return; }
+  var hit = PL.rosterByEmail(v);
+  if(hit){ if(hit.status==='未寄送'){ hit.status='已寄開通信'; TLI_MASTERS.saveProjectData(); } toast(T('已重新寄送開通信到 ','A new activation email was sent to ')+v); }
+  else { toast(T('找不到這個 Email，請洽學校窗口確認名單。','We could not find this email. Please check with your school contact.')); }
+});
+document.addEventListener('keydown', function(e){ if(e.key==='Escape') closeTerms(); });
+
+if (window.TLI_I18N){ TLI_I18N.onRefresh(function(){ renderCtx(); renderMeter(); }); TLI_I18N.init(); }
+init();
+PL.xl(document);
+</script>
+</body>
+</html>

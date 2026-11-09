@@ -1,0 +1,390 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<title>學生名單｜TLI Hub</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+:root{--navy:#1B4E8C;--navy-dark:#123a68;--orange:#E8792B;--teal:#0F9B79;
+--g50:#F5F7FA;--g200:#E4E7EC;--g500:#667085;--g900:#101828;}
+*{box-sizing:border-box;}
+html,body{overflow-x:hidden;}
+body{margin:0;font-family:"Noto Sans TC","Microsoft JhengHei",system-ui,-apple-system,sans-serif;
+background:var(--g50);color:var(--g900);}
+a{color:var(--navy);}
+.app{display:flex;min-height:100vh;width:100%;background:#fff;}
+.sidebar{width:260px;flex-shrink:0;background:#fff;padding:0;display:flex;flex-direction:column;height:100vh;
+overflow:hidden;border-right:1px solid var(--g200);position:sticky;top:0;align-self:flex-start;transition:left .2s;}
+.sidebar .brand{padding:16px 20px 14px;font-size:14px;font-weight:700;display:flex;flex-direction:column;gap:4px;
+border-bottom:1px solid var(--g200);margin-bottom:6px;text-decoration:none;color:inherit;cursor:pointer;flex-shrink:0;}
+.sidebar .brand-logo{height:28px;width:auto;object-fit:contain;object-position:left center;display:block;}
+.sidebar .brand small{display:block;font-weight:400;font-size:12px;color:var(--g500);margin-top:12px;}
+.sidebar nav{flex:1 1 auto;overflow-y:auto;overflow-x:hidden;padding:8px 8px 8px;}
+.sidebar .sec-label{padding:0 12px;margin:12px 0 8px;font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:#98A2B3;font-weight:600;}
+.sidebar .sec-label:first-child{margin-top:4px;}
+.sidebar nav a{display:flex;align-items:center;gap:12px;height:40px;padding:0 14px;margin:2px 0;border-radius:8px;
+font-size:14px;color:var(--g900);text-decoration:none;}
+.sidebar nav a .navicon{flex-shrink:0;color:var(--g500);}
+.sidebar nav a:hover{background:var(--g50);}
+.sidebar nav a.active{background:#E6EEF8;color:var(--navy);font-weight:600;}
+.sidebar nav a.active .navicon{color:var(--navy);}
+.sidebar-user{display:block;border-top:1px solid var(--g200);padding:10px 12px;margin:0;flex-shrink:0;position:relative;}
+.su-row{display:flex;align-items:center;gap:10px;cursor:pointer;min-width:0;}
+.su-avatar{width:36px;height:36px;border-radius:50%;background:var(--navy);color:#fff;display:flex;
+align-items:center;justify-content:center;font-size:13px;font-weight:600;flex-shrink:0;}
+.su-info{flex:1;min-width:0;display:flex;flex-direction:row;align-items:center;gap:8px;line-height:1.2;}
+.su-name{font-size:14px;font-weight:600;color:var(--g900);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.su-roletag{font-size:12px;background:#E6EEF8;color:var(--navy);padding:1px 7px;border-radius:8px;white-space:nowrap;flex-shrink:0;}
+.su-chevron{color:var(--g500);flex-shrink:0;}
+.su-menu{top:auto;bottom:60px;left:10px;right:10px;width:auto;padding:8px;}
+.su-menu a{display:block;padding:8px 10px;font-size:13px;color:var(--g900);text-decoration:none;border-radius:6px;}
+.su-menu a:hover{background:var(--g50);}
+.main{flex:1;padding:26px 32px 60px;min-width:0;}
+.topbar{display:flex;align-items:center;justify-content:space-between;padding:0 32px;height:56px;
+border-bottom:1px solid var(--g200);position:sticky;top:0;background:#fff;z-index:40;margin:-26px -32px 22px;gap:14px;}
+.hamburger{display:none;background:none;border:none;font-size:19px;cursor:pointer;color:var(--g900);padding:4px 6px;margin-right:4px;}
+.topbar .tb-title{font-size:15px;font-weight:600;color:var(--g900);flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.topbar .tb-actions{display:flex;align-items:center;gap:14px;position:relative;flex-shrink:0;}
+.tb-bellbtn{position:relative;background:none;border:none;cursor:pointer;font-size:17px;padding:4px;line-height:1;}
+.tb-dot{position:absolute;top:0;right:0;width:7px;height:7px;background:#C0392B;border-radius:50%;display:none;}
+.tb-avatarbtn{width:30px;height:30px;border-radius:50%;background:var(--navy);color:#fff;border:none;
+cursor:pointer;font-size:13px;font-weight:600;flex-shrink:0;}
+.tb-panel{display:none;position:absolute;top:44px;right:0;background:#fff;border:1px solid var(--g200);
+border-radius:8px;box-shadow:0 8px 24px rgba(16,24,40,.16);z-index:50;}
+.tb-panel.open{display:block;}
+.tb-notifpanel{width:300px;padding:10px;}
+.tb-notifpanel .tn-head{display:flex;justify-content:space-between;align-items:center;font-size:12.5px;
+padding:4px 6px 8px;border-bottom:1px solid var(--g200);margin-bottom:6px;}
+.tb-notifpanel .tn-head a{font-size:11.5px;cursor:pointer;}
+.tb-notifitem{padding:8px 6px;border-radius:6px;font-size:12.5px;line-height:1.5;}
+.tb-notifitem:hover{background:var(--g50);}
+.tb-notifitem.unread{background:#EEF3FA;}
+.tb-notifitem .tn-t{color:var(--g500);font-size:11px;margin-top:2px;}
+.tb-avatarmenu{width:150px;padding:6px;}
+.tb-avatarmenu a{display:block;padding:8px 10px;font-size:13px;color:var(--g900);text-decoration:none;border-radius:6px;}
+.tb-avatarmenu a:hover{background:var(--g50);}
+.sidebar-backdrop{display:none;position:fixed;inset:0;background:rgba(16,24,40,.4);z-index:110;}
+.pagehead{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:16px;gap:16px;flex-wrap:wrap;}
+.pagehead h1{font-size:20px;margin:0;}
+.pagehead .desc{font-size:12.5px;color:var(--g500);margin-top:5px;line-height:1.6;max-width:720px;}
+.btn{display:inline-block;background:var(--navy);color:#fff;border:none;padding:8px 14px;
+border-radius:6px;font-size:13px;cursor:pointer;text-decoration:none;white-space:nowrap;font-family:inherit;}
+.btn.ghost{background:#fff;border:1px solid var(--g200);color:var(--g900);}
+.btn.sm{padding:5px 10px;font-size:12px;}
+.card{background:#fff;border:1px solid var(--g200);border-radius:12px;padding:18px;margin-bottom:16px;box-shadow:0 1px 3px rgba(16,24,40,.06);}
+.tablewrap{overflow-x:auto;max-width:100%;}
+table{width:100%;border-collapse:collapse;font-size:13px;}
+th{text-align:left;background:var(--g50);color:var(--g500);font-weight:600;padding:9px 12px;
+border-bottom:1px solid var(--g200);white-space:nowrap;}
+td{padding:9px 12px;border-bottom:1px solid var(--g200);white-space:nowrap;}
+.badge{display:inline-block;padding:2px 9px;border-radius:10px;font-size:11.5px;font-weight:600;white-space:nowrap;}
+.badge.blue{background:#E7EEF8;color:var(--navy);}
+.badge.green{background:#E4F5EE;color:var(--teal);}
+.badge.grey{background:var(--g200);color:var(--g500);}
+.note{font-size:12px;color:#7a5b1f;background:#FFF8EE;border:1px solid #F3DFB8;padding:9px 11px;border-radius:6px;line-height:1.6;}
+.formrow{margin-bottom:13px;}
+.formrow label{display:block;font-size:12.5px;color:var(--g500);margin-bottom:4px;}
+.formrow input,.formrow select{width:100%;padding:7px 10px;border:1px solid var(--g200);
+border-radius:6px;font-size:13px;box-sizing:border-box;font-family:inherit;}
+.formrow .err{display:none;font-size:12px;color:#C0392B;margin-top:4px;}
+.formrow.invalid .err{display:block;}
+.formrow.invalid select,.formrow.invalid input{border-color:#E3A1A1;}
+.small{font-size:12px;color:var(--g500);}
+.hint{font-size:11.5px;color:var(--g500);margin-top:6px;line-height:1.6;}
+.modal-mask{display:none;position:fixed;inset:0;background:rgba(16,24,40,.42);z-index:160;align-items:center;justify-content:center;padding:16px;}
+.modal-mask.open{display:flex;}
+.modal{background:#fff;border-radius:10px;width:480px;max-width:100%;max-height:85vh;overflow:auto;padding:22px;}
+.modal h3{margin-top:0;font-size:16px;}
+.modal-actions{text-align:right;display:flex;gap:8px;justify-content:flex-end;flex-wrap:wrap;}
+.toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(20px);
+background:#101828;color:#fff;padding:10px 20px;border-radius:8px;font-size:13px;
+opacity:0;pointer-events:none;transition:.2s;z-index:200;max-width:80vw;text-align:center;}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
+.filterbar{display:flex;gap:10px;flex-wrap:wrap;align-items:flex-end;margin-bottom:12px;}
+.filterbar .ff{min-width:180px;}
+.filterbar .ff label{display:block;font-size:11.5px;color:var(--g500);margin-bottom:4px;}
+.filterbar select,.filterbar input{padding:7px 10px;border:1px solid var(--g200);border-radius:6px;
+font-size:13px;font-family:inherit;background:#fff;color:var(--g900);width:100%;}
+.searchbox{display:flex;align-items:center;gap:6px;border:1px solid var(--g200);border-radius:6px;
+padding:0 10px;background:#fff;min-width:220px;flex:1;}
+.searchbox .sicon{color:var(--g500);display:flex;}
+.searchbox input{border:none;outline:none;padding:8px 0;font-size:13px;font-family:inherit;width:100%;background:none;color:var(--g900);}
+.clearlink{background:none;border:none;color:var(--navy);font-size:12.5px;cursor:pointer;text-decoration:underline;font-family:inherit;padding:8px 2px;}
+.emptylist{padding:18px 4px;font-size:12.5px;color:var(--g500);text-align:center;}
+.hidden{display:none!important;}
+.avatarcell{display:flex;align-items:center;gap:8px;}
+.av{width:26px;height:26px;border-radius:50%;background:var(--navy);color:#fff;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:600;flex-shrink:0;}
+.av.off{background:var(--g500);}
+@media (max-width:1023px){
+.hamburger{display:inline-flex;}
+.sidebar{position:fixed;left:-260px;top:0;height:100vh;width:260px;z-index:120;}
+.sidebar.open{left:0;}
+.sidebar-backdrop.open{display:block;}
+.app{width:100%;}
+.main{padding:16px 16px 40px;}
+.topbar{padding:0 16px;margin:-16px -16px 18px;}
+}
+</style>
+</head>
+<body>
+<div class="app">
+<div class="sidebar" id="sidebar">
+<a class="brand" href="d01_dashboard.html"><img class="brand-logo" src="../assets/tli-logo.svg" alt="TLI"><small data-i18n="brand.dealerPortal">經銷商入口</small></a>
+<nav>
+<div class="sec-label" data-i18n="navgroup.dealer">經銷商</div>
+<a data-nav="d01" href="d01_dashboard.html"><svg class="navicon" width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="6" height="6" rx="1"/><rect x="11" y="3" width="6" height="6" rx="1"/><rect x="3" y="11" width="6" height="6" rx="1"/><rect x="11" y="11" width="6" height="6" rx="1"/></svg><span data-i18n="nav_d.overview">總覽</span></a>
+<a data-nav="d02" href="d02_orders.html"><svg class="navicon" width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 2.5h10v15l-2.5-1.6L10 17.5l-2.5-1.6L5 17.5v-15z"/><line x1="7.5" y1="6.5" x2="12.5" y2="6.5"/><line x1="7.5" y1="9.5" x2="12.5" y2="9.5"/></svg><span data-i18n="nav_d.orders">訂購單</span></a>
+<a data-nav="d03" class="active" href="d03_students.html"><svg class="navicon" width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="7" cy="6.5" r="2.3"/><path d="M2.5 16.5c0-2.8 2-4.7 4.5-4.7s4.5 1.9 4.5 4.7"/><circle cx="14" cy="7" r="1.8"/><path d="M12.7 11.8c2 .3 3.3 1.9 3.3 4.2"/></svg><span data-i18n="nav_d.students">學生名單</span></a>
+<a data-nav="d04" href="d04_performance.html"><svg class="navicon" width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><line x1="4" y1="16.5" x2="4" y2="10"/><line x1="10" y1="16.5" x2="10" y2="4.5"/><line x1="16" y1="16.5" x2="16" y2="12"/></svg><span data-i18n="nav_d.performance">業績與返佣</span></a>
+</nav>
+<div class="sidebar-user" id="sidebarUser">
+<div class="su-row" onclick="toggleSuMenu(event)"><span class="su-avatar">環</span><span class="su-info"><span class="su-name">環球遊學顧問（日本）</span><span class="su-roletag" data-i18n="role.dealer">經銷商</span></span>
+<svg class="su-chevron" width="14" height="14" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 8 10 12 14 8"/></svg></div>
+<div class="tb-panel su-menu" id="suMenu"><a href="javascript:void(0)" onclick="toast(T('個人設定功能建置中','Settings feature coming soon'))" data-i18n="common.settings">個人設定</a><a href="../公開網站/p01_home.html" data-i18n="common.gotoWebsite">回官網</a><a href="javascript:void(0)" onclick="doLogout()" data-i18n="common.logout">登出</a></div>
+</div>
+</div>
+
+<div class="main">
+<div class="topbar">
+<button class="hamburger" onclick="toggleSidebar()" aria-label="開啟選單" data-i18n-aria-label="common.openMenu"><svg width="18" height="18" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="5.5" x2="17" y2="5.5"/><line x1="3" y1="10" x2="17" y2="10"/><line x1="3" y1="14.5" x2="17" y2="14.5"/></svg></button>
+<div class="tb-title" data-i18n="nav_d.students">學生名單</div>
+<div class="tb-actions">
+<button class="tb-bellbtn" onclick="toggleNotif(event)" aria-label="通知" data-i18n-aria-label="common.notifications"><svg width="17" height="17" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M10 2.5c-2.2 0-4 1.8-4 4v2.3c0 .6-.2 1.2-.6 1.7L4 12.5h12l-1.4-2c-.4-.5-.6-1.1-.6-1.7V6.5c0-2.2-1.8-4-4-4z"/><path d="M8.2 15.5a1.8 1.8 0 0 0 3.6 0"/></svg><span class="tb-dot" id="tbDot"></span></button>
+<div class="tb-panel tb-notifpanel" id="notifPanel"></div>
+<button class="tb-avatarbtn" onclick="toggleAvatarMenu(event)" aria-label="使用者選單" data-i18n-aria-label="common.userMenu">環</button>
+<div class="tb-panel tb-avatarmenu" id="avatarMenu"><a href="javascript:void(0)" onclick="toast(T('個人設定功能建置中','Settings feature coming soon'))" data-i18n="common.settings">個人設定</a><a href="../公開網站/p01_home.html" data-i18n="common.gotoWebsite">回官網</a><a href="javascript:void(0)" onclick="doLogout()" data-i18n="common.logout">登出</a></div>
+</div>
+</div>
+<div class="sidebar-backdrop" id="sidebarBackdrop" onclick="closeSidebar()"></div>
+
+<div class="pagehead">
+<div><h1 data-i18n="nav_d.students">學生名單</h1><div class="desc" data-i18n="desc.d03Students">各訂購單已補入的學生，售價由經銷商自訂，本頁不顯示金額。</div></div>
+<button class="btn" onclick="openAddStudent()" data-i18n="btn.addToRoster">補入名單</button>
+</div>
+
+<div class="filterbar">
+<div class="ff" style="flex:1;min-width:220px"><label for="q" data-i18n="label.searchName">搜尋姓名</label>
+<div class="searchbox"><span class="sicon"><svg width="14" height="14" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="8.5" cy="8.5" r="5.5"/><line x1="16.5" y1="16.5" x2="12.6" y2="12.6"/></svg></span>
+<input type="text" id="q" placeholder="輸入學生姓名" data-i18n-placeholder="placeholder.studentName" oninput="onFilterChange()"></div></div>
+<div class="ff"><label for="f_order" data-i18n="label.order">所屬訂購單</label><select id="f_order" onchange="onFilterChange()"><option value="" data-i18n="opt.allOrders">全部訂購單</option></select></div>
+<div class="ff"><label for="f_act" data-i18n="label.activationStatus">帳號啟用狀態</label><select id="f_act" onchange="onFilterChange()"><option value="" data-i18n="common.all">全部狀態</option><option value="on" data-i18n="status.activated">已啟用</option><option value="off" data-i18n="status.notActivated">未啟用</option></select></div>
+<button type="button" class="clearlink" onclick="clearFilters()" data-i18n="btn.clearAllFilters">清除篩選</button>
+</div>
+
+<div class="card">
+<div class="small" id="resultCount" style="margin-bottom:8px"></div>
+<div class="tablewrap"><table id="studentTable"></table></div>
+<p class="emptylist hidden" id="studentEmpty" data-i18n="empty.studentNoMatch">找不到符合條件的學生。</p>
+<div class="hint" data-i18n="hint.d03Dates">預計開課日由訂購單帶入，實際開課日由 TLI 顧問回填。</div>
+</div>
+
+<div class="modal-mask" id="addStudentModal" onclick="if(event.target===this) closeModal('addStudentModal')"><div class="modal">
+<h3 data-i18n="btn.addToRoster">補入名單</h3>
+<div class="formrow" id="asOrderRow"><label for="asOrder" data-i18n="label.order">所屬訂購單</label><select id="asOrder"></select><div class="err" data-i18n="err.selectOrder">請選擇所屬訂購單。</div></div>
+<div class="formrow" id="asNameRow"><label for="asName" data-i18n="label.name">姓名</label><input type="text" id="asName" placeholder="例如：田中 陽菜" data-i18n-placeholder="placeholder.exampleStudentName"><div class="err" data-i18n="err.fillStudentName">請填寫學生姓名。</div></div>
+<div class="formrow" id="asEmailRow"><label for="asEmail">Email</label><input type="email" id="asEmail" placeholder="student@example.com"><div class="err" data-i18n="err.validEmail">請填寫有效的 Email，學生需要 Email 才能啟用帳號。</div></div>
+<div class="formrow"><label for="asPassport" data-i18n="label.passportNo">護照號</label><input type="text" id="asPassport" placeholder="例如：TR1234567" data-i18n-placeholder="placeholder.examplePassport"></div>
+<div class="formrow" id="asDateRow"><label for="asDate" data-i18n="label.expectedStartDate">預計開課日</label><input type="date" id="asDate"><div class="err" data-i18n="err.fillExpectedDate">請填寫預計開課日。</div></div>
+<div class="note" data-i18n="note.addStudent">補入後帳號預設為未啟用，待 TLI 開通並寄送啟用通知給學生本人。</div>
+<div class="modal-actions" style="margin-top:16px"><button class="btn ghost" onclick="closeModal('addStudentModal')" data-i18n="common.cancel">取消</button><button class="btn" onclick="submitAddStudent()" data-i18n="common.submit">送出</button></div>
+</div></div>
+
+</div>
+</div>
+
+<script src="../assets/_shared_masters.js"></script>
+<script src="../assets/_i18n_dict.js"></script>
+<script src="../assets/_i18n_dict_partner.js"></script>
+<script src="../assets/_i18n.js"></script>
+<script>
+function T(zh,en){ return window.TLI_I18N ? TLI_I18N.t(zh,en) : zh; }
+/* 本頁登入身分為經銷商「環球遊學顧問」（partners.p11），語言切換器只列主檔 uiLocales 開放的語系（en／zh-TW，不含簡中） */
+function restrictPartnerLocales(){
+  if (!window.TLI_I18N) return;
+  var p = TLI_MASTERS.partners.find(function(x){ return x.name.indexOf('環球遊學顧問') >= 0; }) || {};
+  var allowed = (p.uiLocales && p.uiLocales.length) ? p.uiLocales : ['zh-TW','zh-CN','en'];
+  document.querySelectorAll('.tli-i18n-opt').forEach(function(btn){
+    if (allowed.indexOf(btn.getAttribute('data-lang')) === -1) btn.style.display = 'none';
+  });
+  if (allowed.indexOf(TLI_I18N.currentLang()) === -1) TLI_I18N.apply(allowed[0]);
+}
+/* 立刻依儲存的語言（含 en）初始化，確保初次載入時後續動態渲染的 T() 已讀到正確語言，不用等使用者手動切換 */
+if (window.TLI_I18N) TLI_I18N.init();
+restrictPartnerLocales();
+/* ===== 經銷商端共用資料 ===== */
+var MY_DIST_NAME = '環球遊學顧問（日本）';
+var MY_DIST_CODE = 'DIST-JP03';
+var TODAY_STR = '2026-09-28';
+/* 本頁涉及的訂購單，僅供標示所屬訂購單與預計開課日使用，刻意不含任何金額欄位 */
+/* 方案名稱與 d01/d02/d04 同款訂購單一致，皆取自 TLI_MASTERS.packages（pk1–pk7） */
+var ORDER_LABELS = {
+  'PO-2026-002': {plan:'中文一對一線上課 20 堂方案', periodFrom:'2026-07-06', periodTo:'2026-07-24', lessonsTotal:45},
+  'PO-2026-003': {plan:'中文彈性團體直播班 一期方案', periodFrom:'2026-09-01', periodTo:'2026-09-14', lessonsTotal:20},
+  'PO-2026-004': {plan:'中文一對一 30 堂＋教材＋註冊費', periodFrom:'2026-10-05', periodTo:'2026-11-27', lessonsTotal:64}
+};
+/* 學生名單：跨 3 筆訂購單，示範 20 位（≥14），含 2 位未啟用；一律不放任何計價相關欄位 */
+var STUDENTS = [
+ {name:'田中 大輔', orderId:'PO-2026-002', expected:'2026-07-06', actual:'2026-07-06', activated:true, lessonsUsed:45},
+ {name:'佐藤 由紀', orderId:'PO-2026-002', expected:'2026-07-06', actual:'2026-07-06', activated:true, lessonsUsed:45},
+ {name:'鈴木 健太', orderId:'PO-2026-002', expected:'2026-07-06', actual:'2026-07-06', activated:true, lessonsUsed:45},
+ {name:'高橋 美咲', orderId:'PO-2026-002', expected:'2026-07-06', actual:'2026-07-06', activated:true, lessonsUsed:45},
+ {name:'伊藤 直樹', orderId:'PO-2026-002', expected:'2026-07-06', actual:'2026-07-06', activated:true, lessonsUsed:42},
+ {name:'渡辺 早紀', orderId:'PO-2026-002', expected:'2026-07-06', actual:'2026-07-06', activated:true, lessonsUsed:45},
+ {name:'山本 涼',  orderId:'PO-2026-003', expected:'2026-09-01', actual:'2026-09-01', activated:true, lessonsUsed:20},
+ {name:'中村 葵',  orderId:'PO-2026-003', expected:'2026-09-01', actual:'2026-09-01', activated:true, lessonsUsed:20},
+ {name:'小林 颯太', orderId:'PO-2026-003', expected:'2026-09-01', actual:'2026-09-01', activated:true, lessonsUsed:18},
+ {name:'加藤 结衣', orderId:'PO-2026-003', expected:'2026-09-01', actual:'2026-09-01', activated:true, lessonsUsed:20},
+ {name:'吉田 大和', orderId:'PO-2026-003', expected:'2026-09-01', actual:'2026-09-01', activated:true, lessonsUsed:20},
+ {name:'松本 遥',  orderId:'PO-2026-004', expected:'2026-10-05', actual:'-', activated:true, lessonsUsed:0},
+ {name:'井上 悠真', orderId:'PO-2026-004', expected:'2026-10-05', actual:'-', activated:false, lessonsUsed:0},
+ {name:'木村 澪',  orderId:'PO-2026-004', expected:'2026-10-05', actual:'-', activated:false, lessonsUsed:0},
+ {name:'林 蒼太',  orderId:'PO-2026-004', expected:'2026-10-05', actual:'-', activated:true, lessonsUsed:0},
+ {name:'清水 美月', orderId:'PO-2026-004', expected:'2026-10-05', actual:'-', activated:true, lessonsUsed:0},
+ {name:'斎藤 大輔', orderId:'PO-2026-004', expected:'2026-10-05', actual:'-', activated:true, lessonsUsed:0},
+ {name:'山田 由紀', orderId:'PO-2026-004', expected:'2026-10-05', actual:'-', activated:true, lessonsUsed:0},
+ {name:'佐々木 健太', orderId:'PO-2026-004', expected:'2026-10-05', actual:'-', activated:true, lessonsUsed:0},
+ {name:'石川 美咲', orderId:'PO-2026-004', expected:'2026-10-05', actual:'-', activated:true, lessonsUsed:0}
+];
+function escHtml(s){ return String(s===undefined||s===null?'':s).replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+function actBadge(on){ return on ? '<span class="badge green">'+T('已啟用','Activated')+'</span>' : '<span class="badge grey">'+T('未啟用','Not Activated')+'</span>'; }
+
+function toggleSidebar(){ document.getElementById('sidebar').classList.toggle('open'); document.getElementById('sidebarBackdrop').classList.toggle('open'); }
+function closeSidebar(){ document.getElementById('sidebar').classList.remove('open'); document.getElementById('sidebarBackdrop').classList.remove('open'); }
+function closePanel(id){ var el=document.getElementById(id); if (el) el.classList.remove('open'); }
+function toggleSuMenu(ev){ ev.stopPropagation(); closePanel('notifPanel'); closePanel('avatarMenu'); document.getElementById('suMenu').classList.toggle('open'); }
+function toggleNotif(ev){ ev.stopPropagation(); closePanel('avatarMenu'); closePanel('suMenu'); var p=document.getElementById('notifPanel'); p.classList.toggle('open'); if (p.classList.contains('open')) renderNotifPanel(); }
+function toggleAvatarMenu(ev){ ev.stopPropagation(); closePanel('notifPanel'); closePanel('suMenu'); document.getElementById('avatarMenu').classList.toggle('open'); }
+document.addEventListener('click', function(){ closePanel('suMenu'); closePanel('notifPanel'); closePanel('avatarMenu'); });
+function doLogout(){ location.href = '../公開網站/p07_login_register.html'; }
+function toast(msg){
+  var el = document.getElementById('toastEl');
+  if (!el){ el=document.createElement('div'); el.id='toastEl'; el.className='toast'; document.body.appendChild(el); }
+  el.textContent = msg; el.classList.add('show');
+  clearTimeout(window._toastTimer);
+  window._toastTimer = setTimeout(function(){ el.classList.remove('show'); }, 2400);
+}
+function openModal(id){ document.getElementById(id).classList.add('open'); }
+function closeModal(id){ document.getElementById(id).classList.remove('open'); }
+/* ESC 鍵關閉目前開啟中的 modal */
+document.addEventListener('keydown', function(e){
+  if (e.key !== 'Escape') return;
+  document.querySelectorAll('.modal-mask.open').forEach(function(el){ el.classList.remove('open'); });
+});
+var NOTIFS = [
+  {t:['「PO-2026-004」還有 2 位學生尚未啟用帳號','"PO-2026-004" still has 2 students with unactivated accounts'], time:['今天','Today'], unread:true},
+  {t:['「PO-2026-003」全數學生已完課','"PO-2026-003" — all students have completed the course'], time:['2 週前','2 weeks ago'], unread:false}
+];
+function renderNotifPanel(){
+  var panel = document.getElementById('notifPanel'); if (!panel) return;
+  var unread = NOTIFS.filter(function(n){return n.unread;}).length;
+  var dot = document.getElementById('tbDot'); if (dot) dot.style.display = unread ? 'block' : 'none';
+  panel.innerHTML = '<div class="tn-head"><span>'+T('通知（'+unread+' 則未讀）','Notifications ('+unread+' unread)')+'</span><a href="javascript:void(0)" onclick="markAllRead(event)">'+T('全部標為已讀','Mark All as Read')+'</a></div>'+
+    NOTIFS.map(function(n){ return '<div class="tb-notifitem'+(n.unread?' unread':'')+'">'+T(n.t[0],n.t[1])+'<div class="tn-t">'+T(n.time[0],n.time[1])+'</div></div>'; }).join('');
+}
+function markAllRead(ev){ if (ev) ev.stopPropagation(); NOTIFS.forEach(function(n){n.unread=false;}); renderNotifPanel(); }
+renderNotifPanel();
+
+/* ================= 訂購單下拉選單 ================= */
+function fillOrderSelects(){
+  var fOrderEl = document.getElementById('f_order'), asOrderEl = document.getElementById('asOrder');
+  var keepF = fOrderEl.value, keepAs = asOrderEl.value;
+  var opts = Object.keys(ORDER_LABELS).map(function(id){
+    return '<option value="' + id + '">' + id + '　' + escHtml(ORDER_LABELS[id].plan) + '</option>';
+  }).join('');
+  fOrderEl.innerHTML = '<option value="">'+T('全部訂購單','All Orders')+'</option>' + opts;
+  asOrderEl.innerHTML = opts;
+  fOrderEl.value = keepF; asOrderEl.value = keepAs;
+}
+
+/* ================= 篩選 ================= */
+function onFilterChange(){ render(); }
+function clearFilters(){
+  document.getElementById('q').value = '';
+  document.getElementById('f_order').value = '';
+  document.getElementById('f_act').value = '';
+  render();
+  toast(T('已清除所有篩選條件','All filters cleared'));
+}
+function filtered(){
+  var term = (document.getElementById('q').value || '').trim().toLowerCase();
+  var order = document.getElementById('f_order').value;
+  var act = document.getElementById('f_act').value;
+  return STUDENTS.filter(function(s){
+    if (order && s.orderId !== order) return false;
+    if (act === 'on' && !s.activated) return false;
+    if (act === 'off' && s.activated) return false;
+    if (term && s.name.toLowerCase().indexOf(term) < 0) return false;
+    return true;
+  });
+}
+function render(){
+  var rows = filtered();
+  var t = document.getElementById('studentTable');
+  t.innerHTML = '<tr><th>'+T('姓名','Name')+'</th><th>'+T('所屬訂購單','Order')+'</th><th>'+T('預計開課日','Expected Start')+'</th><th>'+T('實際開課日','Actual Start')+'</th><th>'+T('帳號啟用狀態','Activation Status')+'</th><th>'+T('實際使用課程量','Lessons Used')+'</th></tr>';
+  rows.forEach(function(s){
+    var ol = ORDER_LABELS[s.orderId] || {plan:s.orderId, lessonsTotal:0};
+    var tr = document.createElement('tr');
+    tr.innerHTML = '<td><div class="avatarcell"><span class="av' + (s.activated ? '' : ' off') + '">' + escHtml(s.name.slice(0,1)) + '</span>' + escHtml(s.name) + '</div></td>' +
+      '<td>' + s.orderId + '　' + escHtml(ol.plan) + '</td>' +
+      '<td>' + s.expected + '</td>' +
+      '<td>' + s.actual + '</td>' +
+      '<td>' + actBadge(s.activated) + '</td>' +
+      '<td>' + s.lessonsUsed + ' ／ ' + ol.lessonsTotal + T(' 堂',' lessons') + '</td>';
+    t.appendChild(tr);
+  });
+  document.getElementById('studentEmpty').classList.toggle('hidden', rows.length > 0);
+  document.getElementById('resultCount').textContent = T('符合條件 ' + rows.length + ' 位，共 ' + STUDENTS.length + ' 位', rows.length + ' matching of ' + STUDENTS.length + ' total');
+}
+
+/* ================= 補入名單 ================= */
+function openAddStudent(){
+  ['asOrderRow','asNameRow','asEmailRow','asDateRow'].forEach(function(id){ document.getElementById(id).classList.remove('invalid'); });
+  document.getElementById('asName').value = '';
+  document.getElementById('asEmail').value = '';
+  document.getElementById('asPassport').value = '';
+  document.getElementById('asDate').value = '';
+  var pre = document.getElementById('f_order').value;
+  if (pre) document.getElementById('asOrder').value = pre;
+  openModal('addStudentModal');
+}
+function submitAddStudent(){
+  var orderRow = document.getElementById('asOrderRow');
+  var nameRow = document.getElementById('asNameRow');
+  var emailRow = document.getElementById('asEmailRow');
+  var dateRow = document.getElementById('asDateRow');
+  var order = document.getElementById('asOrder').value;
+  var name = document.getElementById('asName').value.trim();
+  var email = document.getElementById('asEmail').value.trim();
+  var date = document.getElementById('asDate').value;
+  var emailOk = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+  var ok = true;
+  orderRow.classList.toggle('invalid', !order); if (!order) ok = false;
+  nameRow.classList.toggle('invalid', !name); if (!name) ok = false;
+  emailRow.classList.toggle('invalid', !emailOk); if (!emailOk) ok = false;
+  dateRow.classList.toggle('invalid', !date); if (!date) ok = false;
+  if (!ok) return;
+  STUDENTS.push({name:name, orderId:order, expected:date, actual:'-', activated:false, lessonsUsed:0});
+  closeModal('addStudentModal');
+  document.getElementById('f_order').value = order;
+  render();
+  toast(T('已補入「' + name + '」，帳號待 TLI 開通後啟用', 'Added "' + name + '" — account activation pending TLI'));
+}
+
+/* ================= 深連結：?order= 預帶篩選 ================= */
+fillOrderSelects();
+(function initDeepLink(){
+  var m = /[?&]order=([^&]+)/.exec(location.search);
+  if (!m) return;
+  var id = decodeURIComponent(m[1]);
+  if (ORDER_LABELS[id]) document.getElementById('f_order').value = id;
+})();
+render();
+if (window.TLI_I18N){
+  TLI_I18N.onRefresh(fillOrderSelects);
+  TLI_I18N.onRefresh(render);
+  TLI_I18N.onRefresh(renderNotifPanel);
+}
+
+</script>
+</body>
+</html>

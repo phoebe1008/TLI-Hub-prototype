@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>TLI Hub 原型導覽</title>
+<style>
+  :root{--navy:#1B4E8C;--orange:#E8792B;--teal:#0F9B79;--g50:#F5F7FA;--g100:#F0F2F5;--g200:#E4E7EC;--g500:#667085;--g900:#101828}
+  *{box-sizing:border-box}
+  body{margin:0;font-family:"Noto Sans TC","Microsoft JhengHei",system-ui,sans-serif;background:var(--g50);color:var(--g900);line-height:1.6}
+  .wrap{max-width:1180px;margin:0 auto;padding:40px 24px 80px}
+  h1{font-size:28px;margin:0 0 6px}
+  .sub{color:var(--g500);margin:0 0 32px;font-size:15px}
+  .tier{margin:36px 0 4px;font-size:13px;letter-spacing:.08em;color:var(--g500);text-transform:uppercase}
+  .tier-desc{font-size:13px;color:var(--g500);margin:0 0 14px}
+  .tier-desc b{color:var(--g900);font-weight:600}
+
+  /* 頂部主入口 */
+  .hero-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:16px;margin-bottom:8px}
+  .hero-card{display:block;background:#fff;border:1px solid var(--g200);border-radius:12px;padding:24px 22px;text-decoration:none;color:inherit;box-shadow:0 1px 2px rgba(16,24,40,.04);transition:.12s}
+  .hero-card:hover{border-color:var(--navy);box-shadow:0 4px 12px rgba(16,24,40,.08)}
+  .hero-card h2{font-size:18px;margin:0 0 8px;color:var(--navy)}
+  .hero-card p{font-size:13.5px;color:var(--g500);margin:0}
+  .hero-single{grid-template-columns:minmax(0,720px)}
+
+  /* 一般卡片 */
+  .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:16px}
+  .card{background:#fff;border:1px solid var(--g200);border-radius:10px;padding:18px 20px 20px;box-shadow:0 1px 2px rgba(16,24,40,.04)}
+  .card ol{margin:0;padding-left:20px;font-size:14px;columns:2;column-gap:24px}
+  .card li{margin:3px 0;break-inside:avoid}
+  .card a{color:var(--g900);text-decoration:none;border-bottom:1px dotted var(--g200)}
+  .card a:hover{color:var(--navy);border-color:var(--navy)}
+
+  /* 二月上線標籤 */
+  .badge-feb{display:inline-block;font-size:11px;font-weight:600;padding:2px 9px;border-radius:999px;background:rgba(15,155,121,.12);color:var(--teal);margin-left:8px;vertical-align:middle}
+.grid-5{grid-template-columns:repeat(auto-fill,minmax(220px,1fr))}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>TLI Hub 原型導覽</h1>
+  <p class="sub">Hub 是管理平台，Connect 是學生看到的線上學習品牌。以下依角色分組，每一組就是該角色登入後看到的畫面。</p>
+
+  <div class="hero-grid hero-single">
+    <a class="hero-card" href="../平台架構心智圖.html">
+      <h2>平台架構心智圖</h2>
+      <p>從整體架構看這個平台：Hub 是管理平台、Connect 是對外的線上學習品牌；中心持有什麼、四種合作型態誰來賣、一個專案怎麼設定。</p>
+    </a>
+  </div>
+
+  <div class="tier">1・公開網站（TLI Connect）</div>
+  <div class="tier-desc"><b>訪客</b>｜學生與合作夥伴進來的第一站</div>
+  <div class="grid">
+    <div class="card">
+      <ol>
+        <li><a href="公開網站/p01_home.html">首頁</a></li>
+        <li><a href="公開網站/p02_courses.html">線上課程</a></li>
+        <li><a href="公開網站/p03_course_detail.html">課程詳情</a></li>
+        <li><a href="公開網站/p04_teachers.html">師資</a></li>
+        <li><a href="公開網站/p05_about_locations.html">品牌與校區</a></li>
+        <li><a href="公開網站/p06_trial.html">預約試聽</a></li>
+        <li><a href="公開網站/p07_login_register.html">登入／註冊</a></li>
+        <li><a href="公開網站/p08_faq.html">常見問題</a></li>
+        <li><a href="公開網站/p09_events.html">活動</a></li>
+        <li><a href="公開網站/p10_enterprise.html">企業培訓</a></li>
+        <li><a href="公開網站/p11_university.html">大學合作</a></li>
+        <li><a href="公開網站/p12_referral.html">成為合作夥伴</a></li>
+        <li><a href="公開網站/p13_activate.html">帳號開通</a></li>
+      </ol>
+    </div>
+  </div>
+
+  <div class="tier">1b・加盟商對外前台 <span class="badge-feb">二月上線</span></div>
+<div class="tier-desc"><b>範例大學華語中心 × TLI</b>｜加盟商掛雙品牌在當地招生的網站：只介紹課程與預約諮詢，不露價、不線上購買；學員繳費給加盟商後由加盟商後台建單、學生收 TLI Connect 開通信</div>
+<div class="grid"><div class="card"><ol>
+<li><a href="公開網站/f01_franchise_home.html">首頁（雙品牌）</a></li>
+<li><a href="公開網站/f02_franchise_apply.html">課程與諮詢</a></li>
+<li><a href="公開網站/f03_franchise_login.html">學員登入（範例品牌、只列開放語系）</a></li>
+</ol></div></div>
+<div class="tier">2・學員（自費）</div>
+  <div class="tier-desc"><b>Emma Johnson</b>｜自己買課、自己預約、自己續費</div>
+  <div class="grid">
+    <div class="card">
+      <ol>
+        <li><a href="會員區/m01_home.html">首頁</a></li>
+        <li><a href="會員區/m02_booking.html">預約與報名（團體班／活動；一對一由顧問代排）</a></li>
+        <li><a href="會員區/m03_schedule.html">課表</a></li>
+        <li><a href="會員區/m04_course_detail.html">我的方案</a></li>
+        <li><a href="會員區/m05_leave.html">請假改期</a></li>
+        <li><a href="會員區/m06_renew.html">續費加購</a></li>
+        <li><a href="會員區/m07_profile.html">我的</a></li>
+        <li><a href="會員區/m08_self_paced.html">自學課程</a></li>
+        <li><a href="會員區/m10_events.html">我的活動</a></li>
+        <li><a href="會員區/m11_quiz.html">線上測驗</a></li>
+        <li><a href="會員區/m13_checkout.html?plan=1on1">結帳</a></li>
+        <li><a href="會員區/m14_chat_booking.html">團體聊天室</a></li>
+        <li><a href="會員區/m15_payment_gateway.html?gw=newebpay&amp;order=DEMO&amp;amount=0">付款</a></li>
+        <li><a href="會員區/m16_classroom.html?lesson=l1&amp;type=1on1&amp;state=open">進入教室</a></li>
+        <li><a href="會員區/m17_feedback.html">課堂回饋</a></li>
+      </ol>
+    </div>
+  </div>
+
+  <div class="tier">3・學員（加盟學校學生）<span class="badge-feb">二月上線</span></div>
+  <div class="tier-desc"><b>王小明・範例大學</b>｜實體課由學校安排，這裡只做線上自學與練習；不能自己加購</div>
+  <div class="grid">
+    <div class="card">
+      <ol>
+        <li><a href="會員區/m01b_home_franchise.html">首頁</a></li>
+        <li><a href="會員區/m04b_course_detail_franchise.html">我的方案</a></li>
+        <li><a href="會員區/m08b_self_paced_franchise.html">線上學習</a></li>
+        <li><a href="會員區/m14b_chat_booking_franchise.html">聊天室與會話預約</a></li>
+      </ol>
+    </div>
+  </div>
+
+  <div class="tier">3b・學員（經銷商遊學團學生）</div>
+<div class="tier-desc"><b>李美玲・環球遊學顧問學員</b>｜買的是經銷商的遊學套裝，課由 TLI 排、TLI 教師教；能看課表、用線上資源，不能自己改期或加購</div>
+<div class="grid"><div class="card"><ol>
+<li><a href="公開網站/p14_partner_login.html?tenant=global-study">機構學員登入（專屬連結）</a></li>
+<li><a href="會員區/m01c_home_reseller.html">首頁</a></li>
+<li><a href="會員區/m03c_schedule_reseller.html">課表</a></li>
+<li><a href="會員區/m08c_self_paced_reseller.html">線上學習</a></li>
+</ol></div></div>
+<div class="tier">4・TLI 中心教師</div>
+  <div class="tier-desc"><b>林老師・台北</b>｜TLI 自己的教師，服務全球會員</div>
+  <div class="grid">
+    <div class="card">
+      <ol>
+        <li><a href="教師端/t01_today.html">今日</a></li>
+        <li><a href="教師端/t02_schedule.html">課表</a></li>
+        <li><a href="教師端/t03_lesson_record.html">課後紀錄與回饋</a></li>
+        <li><a href="教師端/t04_availability.html">可授課時段</a></li>
+        <li><a href="教師端/t05_leave_sub.html">請假代課</a></li>
+        <li><a href="教師端/t06_hours_pay.html">時數與薪資</a></li>
+        <li><a href="教師端/t07_students.html">我的學生</a></li>
+      </ol>
+    </div>
+  </div>
+
+  <div class="tier">5・加盟機構在地教師<span class="badge-feb">二月上線</span></div>
+  <div class="tier-desc"><b>王建國老師・範例大學</b>｜學校自己的老師，在 Hub 只做兩件事：記錄上課、看學生數據</div>
+  <div class="grid">
+    <div class="card">
+      <ol>
+        <li><a href="教師端/t08_my_classes.html">我的班級</a></li>
+        <li><a href="教師端/t09_lesson_log.html">課堂紀錄</a></li>
+        <li><a href="教師端/t10_my_students.html">我的學生</a></li>
+      </ol>
+    </div>
+  </div>
+
+  <div class="tier">6・企業管理者</div>
+  <div class="tier-desc"><b>陳雅婷</b>｜企業買時數池給員工上課，HR 看報告</div>
+  <div class="grid">
+    <div class="card">
+      <ol>
+        <li><a href="組織端/h00_activate.html">組織帳號開通</a></li>
+        <li><a href="組織端/h01_dashboard.html">儀表板</a></li>
+        <li><a href="組織端/h02_employees.html">員工管理</a></li>
+        <li><a href="組織端/h03_reports.html">學習報告</a></li>
+        <li><a href="組織端/h05_contract.html">合約與時數池</a></li>
+        <li><a href="組織端/h06_appeals.html">請假與申訴審核</a></li>
+        <li><a href="組織端/h07_teacher_comments.html">老師評語</a></li>
+        <li><a href="組織端/h04_api.html">資料串接</a></li>
+      </ol>
+    </div>
+  </div>
+
+  <div class="tier">7・加盟機構管理者<span class="badge-feb">二月上線</span></div>
+  <div class="tier-desc"><b>王小華・範例大學</b>｜學校用自己的老師與學生經營，付 TLI 授權費與權利金；學員報名後在後台人工建單，學費自己收</div>
+  <div class="grid">
+    <div class="card">
+      <ol>
+        <li><a href="組織端/u01_overview.html">概況</a></li>
+        <li><a href="組織端/u05_classes.html">班級管理（含課表：加盟主自己排課）</a></li>
+<li><a href="組織端/u08_teachers.html">教師管理（建在地教師、送 TLI 認證）</a></li>
+<li><a href="組織端/u09_plans_terms.html">方案與期別（自訂售價、期別）</a></li>
+        <li><a href="組織端/u02_students.html">學生名單</a></li>
+<li><a href="組織端/u07_orders.html">訂單管理（後台人工建單）</a></li>
+        <li><a href="組織端/u03_usage.html">使用報表</a></li>
+        <li><a href="組織端/u04_program.html">期程與課表</a></li>
+        <li><a href="組織端/u06_billing.html">合約與計費</a></li>
+      </ol>
+    </div>
+  </div>
+
+  <div class="tier">8・代理商</div>
+  <div class="tier-desc"><b>環宇教育顧問</b>｜介紹客戶給 TLI，依成交學費抽佣金</div>
+  <div class="grid">
+    <div class="card">
+      <ol>
+        <li><a href="夥伴端/r01_dashboard.html">總覽</a></li>
+        <li><a href="夥伴端/r02_orders.html">訂單歸屬</a></li>
+        <li><a href="夥伴端/r03_performance.html">業績與佣金</a></li>
+      </ol>
+    </div>
+  </div>
+
+  <div class="tier">9・經銷商</div>
+  <div class="tier-desc"><b>環球遊學顧問（日本）</b>｜向 TLI 採購課程打包成自己的產品賣</div>
+  <div class="grid">
+    <div class="card">
+      <ol>
+        <li><a href="夥伴端/d01_dashboard.html">總覽</a></li>
+        <li><a href="夥伴端/d02_orders.html">訂購單</a></li>
+        <li><a href="夥伴端/d03_students.html">學生名單</a></li>
+        <li><a href="夥伴端/d04_performance.html">業績與返佣</a></li>
+      </ol>
+    </div>
+  </div>
+
+  <div class="tier">10・顧問</div>
+  <div class="tier-desc"><b>王大明</b>｜試聽跟進、排課、建單、續約追蹤</div>
+  <div class="grid">
+    <div class="card">
+      <ol>
+        <li><a href="顧問工作台/c01_today.html">今日待辦</a></li>
+        <li><a href="顧問工作台/c02_students.html">學生列表</a></li>
+        <li><a href="顧問工作台/c03_student_detail.html">學生詳情</a></li>
+        <li><a href="顧問工作台/c04_new_order.html">建訂單</a></li>
+        <li><a href="顧問工作台/c05_order_detail.html">訂單詳情</a></li>
+        <li><a href="顧問工作台/c06_renewal.html">續約與到期提醒</a></li>
+        <li><a href="顧問工作台/c07_scheduling.html">排課（一對一顧問代排主場：待排課清單→選老師→選時段→衝堂檢查→預排→發布）</a></li>
+        <li><a href="顧問工作台/c08_inquiries.html">諮詢與試聽預約</a></li>
+        <li><a href="顧問工作台/c09_appeals.html">申訴覆核</a></li>
+      </ol>
+    </div>
+  </div>
+
+  <div class="tier">11・總部管理後台</div>
+  <div class="tier-desc"><b>王大明・總公司管理者</b>｜規則與數字只有這裡能改。側欄分銷售／教學／客戶／財務／系統五群，平時只展開要用的那群</div>
+  <div class="grid grid-5"><div class="card"><h3 style="margin:0 0 4px;font-size:15px">銷售</h3><div style="font-size:12px;color:#6b7280;margin-bottom:8px">專案怎麼開、方案怎麼賣、誰來賣</div><ol><li><a href="管理後台/a21_projects.html">專案設定</a></li><li><a href="管理後台/a04_packages.html">銷售方案</a></li><li><a href="管理後台/a05_orders.html">訂單</a></li><li><a href="管理後台/a20_agents.html">合作夥伴</a></li></ol></div><div class="card"><h3 style="margin:0 0 4px;font-size:15px">客戶</h3><div style="font-size:12px;color:#6b7280;margin-bottom:8px">會員、組織客戶與回饋</div><ol><li><a href="管理後台/a01_member_rules.html">會員管理（含會員分類）</a></li><li><a href="管理後台/a19_b2b_enterprise.html">組織客戶</a></li><li><a href="管理後台/a14_feedback.html">學員回饋</a></li></ol></div><div class="card"><h3 style="margin:0 0 4px;font-size:15px">教學</h3><div style="font-size:12px;color:#6b7280;margin-bottom:8px">賣的東西本身：產品、老師、教材、測驗</div><ol><li><a href="管理後台/a02_products.html">產品管理</a></li><li><a href="管理後台/a10_teachers.html">老師管理</a></li><li><a href="管理後台/a18_resource_library.html">資源庫</a></li><li><a href="管理後台/a16_events.html">活動管理</a></li><li><a href="管理後台/a22_quizzes.html">測驗管理</a></li></ol></div><div class="card"><h3 style="margin:0 0 4px;font-size:15px">財務</h3><div style="font-size:12px;color:#6b7280;margin-bottom:8px">收款與發票、結算與對帳、報表</div><ol><li><a href="管理後台/a23_payment_gateways.html">收款與發票</a></li><li><a href="管理後台/a24_partner_settlement.html">結算與對帳</a></li><li><a href="管理後台/a07_reports.html">營運報表</a></li></ol></div><div class="card"><h3 style="margin:0 0 4px;font-size:15px">系統</h3><div style="font-size:12px;color:#6b7280;margin-bottom:8px">參數、權限、通知、官網內容</div><ol><li><a href="管理後台/a17_master_data.html">基礎資料設定</a></li><li><a href="管理後台/a09_permissions_notify.html">權限管理</a></li><li><a href="管理後台/a15_notifications.html">通知管理</a></li><li><a href="管理後台/a08_content_cms.html">內容管理</a></li></ol></div></div>
+</div>
+</body>
+</html>

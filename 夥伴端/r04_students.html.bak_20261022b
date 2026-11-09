@@ -1,0 +1,493 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<title>學生列表｜TLI Hub</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+:root{--navy:#1B4E8C;--navy-dark:#123a68;--orange:#E8792B;--teal:#0F9B79;
+--g50:#F5F7FA;--g200:#E4E7EC;--g500:#667085;--g900:#101828;}
+*{box-sizing:border-box;}
+html,body{overflow-x:hidden;}
+body{margin:0;font-family:"Noto Sans TC","Microsoft JhengHei",system-ui,-apple-system,sans-serif;
+background:var(--g50);color:var(--g900);}
+a{color:var(--navy);}
+.app{display:flex;min-height:100vh;width:100%;background:#fff;}
+.sidebar{width:260px;flex-shrink:0;background:#fff;padding:0;display:flex;flex-direction:column;height:100vh;
+overflow:hidden;border-right:1px solid var(--g200);position:sticky;top:0;align-self:flex-start;transition:left .2s;}
+.sidebar .brand{padding:16px 20px 14px;font-size:14px;font-weight:700;display:flex;flex-direction:column;gap:4px;
+border-bottom:1px solid var(--g200);margin-bottom:6px;text-decoration:none;color:inherit;cursor:pointer;flex-shrink:0;}
+.sidebar .brand-logo{height:28px;width:auto;object-fit:contain;object-position:left center;display:block;}
+.sidebar .brand small{display:block;font-weight:400;font-size:12px;color:var(--g500);margin-top:12px;}
+.sidebar nav{flex:1 1 auto;overflow-y:auto;overflow-x:hidden;padding:8px 8px 8px;}
+.sidebar .sec-label{padding:0 12px;margin:12px 0 8px;font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:#98A2B3;font-weight:600;}
+.sidebar .sec-label:first-child{margin-top:4px;}
+.sidebar nav a{display:flex;align-items:center;gap:12px;height:40px;padding:0 14px;margin:2px 0;border-radius:8px;
+font-size:14px;color:var(--g900);text-decoration:none;}
+.sidebar nav a .navicon{flex-shrink:0;color:var(--g500);}
+.sidebar nav a:hover{background:var(--g50);}
+.sidebar nav a.active{background:#E6EEF8;color:var(--navy);font-weight:600;}
+.sidebar nav a.active .navicon{color:var(--navy);}
+.sidebar-user{display:block;border-top:1px solid var(--g200);padding:10px 12px;margin:0;flex-shrink:0;position:relative;}
+.su-row{display:flex;align-items:center;gap:10px;cursor:pointer;min-width:0;}
+.su-avatar{width:36px;height:36px;border-radius:50%;background:var(--navy);color:#fff;display:flex;
+align-items:center;justify-content:center;font-size:13px;font-weight:600;flex-shrink:0;}
+.su-info{flex:1;min-width:0;display:flex;flex-direction:row;align-items:center;gap:8px;line-height:1.2;}
+.su-name{font-size:14px;font-weight:600;color:var(--g900);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.su-roletag{font-size:12px;background:#E6EEF8;color:var(--navy);padding:1px 7px;border-radius:8px;white-space:nowrap;flex-shrink:0;}
+.su-chevron{color:var(--g500);flex-shrink:0;}
+.su-menu{top:auto;bottom:60px;left:10px;right:10px;width:auto;padding:8px;}
+.su-menu a{display:block;padding:8px 10px;font-size:13px;color:var(--g900);text-decoration:none;border-radius:6px;}
+.su-menu a:hover{background:var(--g50);}
+.main{flex:1;padding:26px 32px 60px;min-width:0;}
+.topbar{display:flex;align-items:center;justify-content:space-between;padding:0 32px;height:56px;
+border-bottom:1px solid var(--g200);position:sticky;top:0;background:#fff;z-index:40;margin:-26px -32px 22px;gap:14px;}
+.hamburger{display:none;background:none;border:none;font-size:19px;cursor:pointer;color:var(--g900);padding:4px 6px;margin-right:4px;}
+.topbar .tb-title{font-size:15px;font-weight:600;color:var(--g900);flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.topbar .tb-actions{display:flex;align-items:center;gap:14px;position:relative;flex-shrink:0;}
+.tb-bellbtn{position:relative;background:none;border:none;cursor:pointer;font-size:17px;padding:4px;line-height:1;}
+.tb-dot{position:absolute;top:0;right:0;width:7px;height:7px;background:#C0392B;border-radius:50%;display:none;}
+.tb-avatarbtn{width:30px;height:30px;border-radius:50%;background:var(--navy);color:#fff;border:none;
+cursor:pointer;font-size:13px;font-weight:600;flex-shrink:0;}
+.tb-panel{display:none;position:absolute;top:44px;right:0;background:#fff;border:1px solid var(--g200);
+border-radius:8px;box-shadow:0 8px 24px rgba(16,24,40,.16);z-index:50;}
+.tb-panel.open{display:block;}
+.tb-notifpanel{width:300px;padding:10px;}
+.tb-notifpanel .tn-head{display:flex;justify-content:space-between;align-items:center;font-size:12.5px;
+padding:4px 6px 8px;border-bottom:1px solid var(--g200);margin-bottom:6px;}
+.tb-notifpanel .tn-head a{font-size:11.5px;cursor:pointer;}
+.tb-notifitem{padding:8px 6px;border-radius:6px;font-size:12.5px;line-height:1.5;}
+.tb-notifitem:hover{background:var(--g50);}
+.tb-notifitem.unread{background:#EEF3FA;}
+.tb-notifitem .tn-t{color:var(--g500);font-size:11px;margin-top:2px;}
+.tb-avatarmenu{width:150px;padding:6px;}
+.tb-avatarmenu a{display:block;padding:8px 10px;font-size:13px;color:var(--g900);text-decoration:none;border-radius:6px;}
+.tb-avatarmenu a:hover{background:var(--g50);}
+.sidebar-backdrop{display:none;position:fixed;inset:0;background:rgba(16,24,40,.4);z-index:110;}
+.pagehead{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:16px;gap:16px;flex-wrap:wrap;}
+.pagehead h1{font-size:20px;margin:0;}
+.pagehead .desc{font-size:12.5px;color:var(--g500);margin-top:5px;line-height:1.6;max-width:720px;}
+.btn{display:inline-block;background:var(--navy);color:#fff;border:none;padding:8px 14px;
+border-radius:6px;font-size:13px;cursor:pointer;text-decoration:none;white-space:nowrap;font-family:inherit;}
+.btn.orange{background:var(--orange);}
+.btn.teal{background:var(--teal);}
+.btn.ghost{background:#fff;border:1px solid var(--g200);color:var(--g900);}
+.btn.sm{padding:5px 10px;font-size:12px;}
+.btn:disabled{background:var(--g200)!important;color:var(--g500)!important;cursor:not-allowed!important;}
+.card{background:#fff;border:1px solid var(--g200);border-radius:12px;padding:18px;margin-bottom:16px;box-shadow:0 1px 3px rgba(16,24,40,.06);}
+.card h2{font-size:15px;margin:0 0 12px;}
+.card .cardesc{font-size:12.5px;color:var(--g500);margin:-4px 0 12px;line-height:1.6;}
+.tablewrap{overflow-x:auto;max-width:100%;}
+table{width:100%;border-collapse:collapse;font-size:13px;}
+th{text-align:left;background:var(--g50);color:var(--g500);font-weight:600;padding:9px 12px;
+border-bottom:1px solid var(--g200);white-space:nowrap;}
+td{padding:9px 12px;border-bottom:1px solid var(--g200);white-space:nowrap;}
+td.num,th.num{text-align:right;}
+tr.rowlink{cursor:pointer;}
+tr.rowlink:hover{background:#F8FAFD;}
+tr.rowlink.opened{background:#F1F5FB;}
+tr.detailrow td{white-space:normal;background:#FBFCFE;padding:0;}
+.badge{display:inline-block;padding:2px 9px;border-radius:10px;font-size:11.5px;font-weight:600;white-space:nowrap;}
+.badge.blue{background:#E7EEF8;color:var(--navy);}
+.badge.green{background:#E4F5EE;color:var(--teal);}
+.badge.orange{background:#FCE9DA;color:var(--orange);}
+.badge.grey{background:var(--g200);color:var(--g500);}
+.badge.red{background:#FBE7E7;color:#C0392B;}
+.note{font-size:12px;color:#7a5b1f;background:#FFF8EE;border:1px solid #F3DFB8;padding:9px 11px;border-radius:6px;line-height:1.6;}
+.formrow{margin-bottom:13px;}
+.formrow label{display:block;font-size:12.5px;color:var(--g500);margin-bottom:4px;}
+.formrow input,.formrow select,.formrow textarea{width:100%;padding:7px 10px;border:1px solid var(--g200);
+border-radius:6px;font-size:13px;box-sizing:border-box;font-family:inherit;}
+.formrow textarea{min-height:92px;resize:vertical;}
+.formrow .err{display:none;font-size:12px;color:#C0392B;margin-top:4px;}
+.formrow.invalid .err{display:block;}
+.formrow.invalid textarea,.formrow.invalid input{border-color:#E3A1A1;}
+.small{font-size:12px;color:var(--g500);}
+.hint{font-size:11.5px;color:var(--g500);margin-top:6px;line-height:1.6;}
+.modal-mask{display:none;position:fixed;inset:0;background:rgba(16,24,40,.42);z-index:160;align-items:center;justify-content:center;padding:16px;}
+.modal-mask.open{display:flex;}
+.modal{background:#fff;border-radius:10px;width:480px;max-width:100%;max-height:85vh;overflow:auto;padding:22px;}
+.modal h3{margin-top:0;font-size:16px;}
+.modal-actions{text-align:right;display:flex;gap:8px;justify-content:flex-end;flex-wrap:wrap;}
+.toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(20px);
+background:#101828;color:#fff;padding:10px 20px;border-radius:8px;font-size:13px;
+opacity:0;pointer-events:none;transition:.2s;z-index:200;max-width:80vw;text-align:center;}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
+.statgrid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;}
+.statbox{border:1px solid var(--g200);border-radius:8px;padding:14px;}
+.statbox .num{font-size:21px;font-weight:700;color:var(--navy);}
+.statbox .lbl{font-size:11.5px;color:var(--g500);margin-top:4px;line-height:1.5;}
+.statbox .sub{font-size:11px;color:var(--g500);margin-top:5px;}
+.filterbar{display:flex;gap:10px;flex-wrap:wrap;align-items:flex-end;margin-bottom:12px;}
+.filterbar .ff{min-width:140px;}
+.filterbar .ff label{display:block;font-size:11.5px;color:var(--g500);margin-bottom:4px;}
+.filterbar select,.filterbar input{padding:7px 10px;border:1px solid var(--g200);border-radius:6px;
+font-size:13px;font-family:inherit;background:#fff;color:var(--g900);width:100%;}
+.searchbox{display:flex;align-items:center;gap:6px;border:1px solid var(--g200);border-radius:6px;
+padding:0 10px;background:#fff;min-width:220px;flex:1;}
+.searchbox .sicon{color:var(--g500);display:flex;}
+.searchbox input{border:none;outline:none;padding:8px 0;font-size:13px;font-family:inherit;width:100%;background:none;color:var(--g900);}
+.clearlink{background:none;border:none;color:var(--navy);font-size:12.5px;cursor:pointer;text-decoration:underline;font-family:inherit;padding:8px 2px;}
+.emptylist{padding:18px 4px;font-size:12.5px;color:var(--g500);text-align:center;}
+.hidden{display:none!important;}
+.loadmore-row{text-align:center;margin-top:14px;}
+.dl{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px 24px;padding:16px 18px;}
+.dl .dl-item{min-width:0;}
+.dl .dl-k{font-size:11.5px;color:var(--g500);margin-bottom:3px;}
+.dl .dl-v{font-size:13px;line-height:1.5;word-break:break-word;}
+.detail-actions{display:flex;gap:8px;flex-wrap:wrap;padding:0 18px 16px;align-items:center;}
+.tabbar{display:flex;gap:4px;border-bottom:1px solid var(--g200);margin-bottom:16px;flex-wrap:wrap;}
+.tabbar button{background:none;border:none;padding:10px 16px;font-size:13.5px;color:var(--g500);cursor:pointer;font-family:inherit;border-bottom:2px solid transparent;margin-bottom:-1px;}
+.tabbar button.active{color:var(--navy);font-weight:600;border-bottom-color:var(--navy);}
+.tabbar button:hover{color:var(--navy);}
+@media (max-width:1023px){
+.hamburger{display:inline-flex;}
+.sidebar{position:fixed;left:-260px;top:0;height:100vh;width:260px;z-index:120;}
+.sidebar.open{left:0;}
+.sidebar-backdrop.open{display:block;}
+.app{width:100%;}
+.main{padding:16px 16px 40px;}
+.topbar{padding:0 16px;margin:-16px -16px 18px;}
+.statgrid{grid-template-columns:1fr 1fr;}
+.dl{grid-template-columns:1fr;}
+}
+@media (max-width:479px){
+.statgrid{grid-template-columns:1fr;}
+}
+
+.agenthead{display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:10px;margin-bottom:14px;}
+.agenthead .aname{font-size:17px;font-weight:700;}
+.agenthead .ameta{font-size:12.5px;color:var(--g500);margin-top:3px;}
+.todolist{display:flex;flex-direction:column;}
+.todoitem{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px 4px;border-bottom:1px dashed var(--g200);}
+.todoitem:last-child{border-bottom:none;}
+.todoitem .ti-main{min-width:0;}
+.todoitem .ti-t{font-size:13.5px;font-weight:600;}
+.todoitem .ti-s{font-size:12px;color:var(--g500);margin-top:3px;line-height:1.5;}
+.todoitem .ti-a{flex-shrink:0;}
+.sechead{display:flex;justify-content:space-between;align-items:baseline;gap:10px;flex-wrap:wrap;margin-bottom:12px;}
+.sechead h2{margin:0;}
+.sechead a{font-size:12.5px;text-decoration:none;white-space:nowrap;}
+.sechead a:hover{text-decoration:underline;}
+.copyrow{display:flex;gap:8px;flex-wrap:wrap;}
+.copyrow input{flex:1;min-width:200px;background:var(--g50);}
+
+.phase2-pill{display:inline-block;background:#FFF4E0;border:1px solid #E8A23D;color:#8A5A00;border-radius:999px;padding:2px 8px;font-size:11px;font-weight:700;margin-left:8px;vertical-align:middle;white-space:nowrap;}
+
+.chips{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px;}
+.chip{background:#fff;border:1px solid var(--g200);color:var(--g900);border-radius:999px;padding:6px 14px;font-size:12.5px;cursor:pointer;font-family:inherit;}
+.chip.active{background:#E6EEF8;border-color:var(--navy);color:var(--navy);font-weight:600;}
+th.sortable{cursor:pointer;user-select:none;}
+th.sortable:hover{color:var(--navy);}
+th.sortable .arr{display:inline-block;width:10px;margin-left:4px;color:var(--navy);}
+.pager{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;margin-top:14px;}
+.pager .pg-btns{display:flex;gap:6px;flex-wrap:wrap;}
+.pager button{min-width:34px;padding:6px 10px;border:1px solid var(--g200);background:#fff;border-radius:6px;font-size:12.5px;cursor:pointer;font-family:inherit;color:var(--g900);}
+.pager button.active{background:var(--navy);border-color:var(--navy);color:#fff;}
+.pager button:disabled{color:var(--g500);background:var(--g50);cursor:not-allowed;}
+.leftbar{display:inline-block;width:64px;height:6px;border-radius:3px;background:var(--g200);vertical-align:middle;margin-right:8px;overflow:hidden;}
+.leftbar i{display:block;height:100%;background:var(--teal);}
+.leftbar.low i{background:var(--orange);}
+.drawer-mask{display:none;position:fixed;inset:0;background:rgba(16,24,40,.42);z-index:150;}
+.drawer-mask.open{display:block;}
+.drawer{position:fixed;top:0;right:-460px;width:440px;max-width:100%;height:100vh;background:#fff;z-index:160;box-shadow:-8px 0 24px rgba(16,24,40,.16);transition:right .2s;display:flex;flex-direction:column;}
+.drawer.open{right:0;}
+.drawer-head{display:flex;justify-content:space-between;align-items:center;padding:16px 20px;border-bottom:1px solid var(--g200);}
+.drawer-head h3{margin:0;font-size:16px;}
+.drawer-body{padding:18px 20px;overflow-y:auto;flex:1;}
+.drawer-foot{padding:14px 20px;border-top:1px solid var(--g200);display:flex;justify-content:flex-end;gap:8px;}
+.iconbtn{background:none;border:none;cursor:pointer;color:var(--g500);padding:4px;display:flex;}
+.drawer .dl{padding:0;grid-template-columns:1fr 1fr;}
+@media (max-width:479px){.drawer .dl{grid-template-columns:1fr;}}
+</style>
+</head>
+<body>
+<div class="app">
+<div class="sidebar" id="sidebar">
+<a class="brand" href="r01_dashboard.html"><img class="brand-logo" src="../assets/tli-logo.svg" alt="TLI"><small data-i18n="brand.agentPortal">代理商入口</small></a>
+<nav>
+<div class="sec-label" data-i18n="navgroup.agent">代理商</div>
+<a data-nav="r01" href="r01_dashboard.html"><svg class="navicon" width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="6" height="6" rx="1"/><rect x="11" y="3" width="6" height="6" rx="1"/><rect x="3" y="11" width="6" height="6" rx="1"/><rect x="11" y="11" width="6" height="6" rx="1"/></svg><span data-i18n="nav_r.overview">總覽</span></a>
+<a data-nav="r04" class="active" href="r04_students.html"><svg class="navicon" width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="7" cy="6.5" r="2.3"/><path d="M2.5 16.5c0-2.8 2-4.7 4.5-4.7s4.5 1.9 4.5 4.7"/><circle cx="14" cy="7" r="1.8"/><path d="M12.7 11.8c2 .3 3.3 1.9 3.3 4.2"/></svg><span data-i18n="nav_r.students">學生列表</span></a>
+<a data-nav="r02" href="r02_orders.html"><svg class="navicon" width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 2.5h10v15l-2.5-1.6L10 17.5l-2.5-1.6L5 17.5v-15z"/><line x1="7.5" y1="6.5" x2="12.5" y2="6.5"/><line x1="7.5" y1="9.5" x2="12.5" y2="9.5"/></svg><span data-i18n="nav_r.orders">訂單歸屬</span></a>
+<a data-nav="r03" href="r03_performance.html"><svg class="navicon" width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><line x1="4" y1="16.5" x2="4" y2="10"/><line x1="10" y1="16.5" x2="10" y2="4.5"/><line x1="16" y1="16.5" x2="16" y2="12"/></svg><span data-i18n="nav_r.performance">業績與佣金</span></a>
+</nav>
+<div class="sidebar-user" id="sidebarUser">
+<div class="su-row" onclick="toggleSuMenu(event)"><span class="su-avatar">環</span><span class="su-info"><span class="su-name">環宇教育顧問</span><span class="su-roletag" data-i18n="role.agent">代理商</span></span>
+<svg class="su-chevron" width="14" height="14" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 8 10 12 14 8"/></svg></div>
+<div class="tb-panel su-menu" id="suMenu"><a href="javascript:void(0)" onclick="toast(T('個人設定功能建置中','Settings feature coming soon'))" data-i18n="common.settings">個人設定</a><a href="../公開網站/p01_home.html" data-i18n="common.gotoWebsite">前往官網</a><a href="javascript:void(0)" onclick="doLogout()" data-i18n="common.logout">登出</a></div>
+</div>
+</div>
+
+<div class="main">
+<div class="topbar">
+<button class="hamburger" onclick="toggleSidebar()" aria-label="開啟選單" data-i18n-aria-label="common.openMenu"><svg width="18" height="18" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="5.5" x2="17" y2="5.5"/><line x1="3" y1="10" x2="17" y2="10"/><line x1="3" y1="14.5" x2="17" y2="14.5"/></svg></button>
+<div class="tb-title" data-i18n="nav_r.students">學生列表</div>
+<div class="tb-actions">
+<button class="tb-bellbtn" onclick="toggleNotif(event)" aria-label="通知" data-i18n-aria-label="common.notifications"><svg width="17" height="17" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M10 2.5c-2.2 0-4 1.8-4 4v2.3c0 .6-.2 1.2-.6 1.7L4 12.5h12l-1.4-2c-.4-.5-.6-1.1-.6-1.7V6.5c0-2.2-1.8-4-4-4z"/><path d="M8.2 15.5a1.8 1.8 0 0 0 3.6 0"/></svg><span class="tb-dot" id="tbDot"></span></button>
+<div class="tb-panel tb-notifpanel" id="notifPanel"></div>
+<button class="tb-avatarbtn" onclick="toggleAvatarMenu(event)" aria-label="使用者選單" data-i18n-aria-label="common.userMenu">環</button>
+<div class="tb-panel tb-avatarmenu" id="avatarMenu"><a href="javascript:void(0)" onclick="toast(T('個人設定功能建置中','Settings feature coming soon'))" data-i18n="common.settings">個人設定</a><a href="../公開網站/p01_home.html" data-i18n="common.gotoWebsite">前往官網</a><a href="javascript:void(0)" onclick="doLogout()" data-i18n="common.logout">登出</a></div>
+</div>
+</div>
+<div class="sidebar-backdrop" id="sidebarBackdrop" onclick="closeSidebar()"></div>
+
+<div class="pagehead">
+<div><h1 style="display:inline-block" data-i18n="nav_r.students">學生列表</h1><span class="phase2-pill" data-i18n="badge.phase2">第二階段</span><div class="desc" data-i18n="desc.r04Students">本代理商轉介學生的課時與到期狀況。課時快用完時由 TLI 顧問通知代理商，再由代理商督促學生續課。本頁僅供查看，課時調整與續課由顧問或學生本人辦理。</div></div>
+</div>
+
+<div class="card">
+<div class="chips" id="chips">
+<button class="chip active" data-f="all" onclick="setFilter('all')"></button>
+<button class="chip" data-f="expiring" onclick="setFilter('expiring')"></button>
+<button class="chip" data-f="normal" onclick="setFilter('normal')"></button>
+<button class="chip" data-f="expired" onclick="setFilter('expired')"></button>
+</div>
+<div class="filterbar">
+<div class="searchbox"><span class="sicon"><svg width="15" height="15" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="8.5" cy="8.5" r="5.5"/><line x1="16.5" y1="16.5" x2="12.5" y2="12.5"/></svg></span><input type="text" id="qInput" placeholder="搜尋學生姓名" data-i18n-placeholder="ph.searchStudent" oninput="onSearch()"></div>
+<div class="ff"><label for="planSel" data-i18n="label.planCourse">所屬方案／課程</label><select id="planSel" onchange="onFilter()"></select></div>
+<div class="ff"><label for="sortSel" data-i18n="label.sortBy">排序</label><select id="sortSel" onchange="onSortSel()"></select></div>
+<button class="clearlink" onclick="clearAll()" data-i18n="btn.clearFilters">清除篩選</button>
+</div>
+<div class="small" id="resultCount" style="margin-bottom:8px"></div>
+<div class="tablewrap"><table id="stuTable"></table></div>
+<p class="emptylist hidden" id="stuEmpty" data-i18n="empty.students">沒有符合條件的學生。</p>
+<div class="pager" id="pager"></div>
+<div class="hint" data-i18n="hint.r04Expiring">快到期條件：剩餘課時 3 堂以內，或 30 天內到期。點任一列可在右側查看該位學生的明細。</div>
+</div>
+
+</div>
+</div>
+
+<div class="drawer-mask" id="drawerMask" onclick="closeDrawer()"></div>
+<div class="drawer" id="drawer" aria-hidden="true">
+<div class="drawer-head"><h3 id="drawerTitle"></h3><button class="iconbtn" onclick="closeDrawer()" aria-label="關閉" data-i18n-aria-label="common.close"><svg width="18" height="18" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="5" x2="15" y2="15"/><line x1="15" y1="5" x2="5" y2="15"/></svg></button></div>
+<div class="drawer-body" id="drawerBody"></div>
+<div class="drawer-foot"><button class="btn ghost" onclick="closeDrawer()" data-i18n="common.close">關閉</button></div>
+</div>
+
+<script src="../assets/_shared_masters.js"></script>
+<script src="../assets/_i18n_dict.js"></script>
+<script src="../assets/_i18n_dict_partner.js"></script>
+<script src="../assets/_i18n.js"></script>
+<script>
+function T(zh,en){ return window.TLI_I18N ? TLI_I18N.t(zh,en) : zh; }
+if (window.TLI_I18N) TLI_I18N.init();
+var TODAY_STR = '2026-09-14';
+var P = {}; (TLI_MASTERS.packages || []).forEach(function(p){ P[p.id] = p; });
+/* 方案取自主檔 TLI_MASTERS.packages（pk1／pk2／pk5／pk6），總課時取 creditRule.totalQty；學生為示範用匿名代號 */
+function plan(id){ var p = P[id] || {}; return {id:id, name:p.name || id, total:(p.creditRule && p.creditRule.totalQty) || 0}; }
+var RAW = [
+ ['學生 A12','pk1',18,'2026-10-02','2026-09-12','2026-09-10'],
+ ['學生 A09','pk1',19,'2026-12-15','2026-09-11','2026-09-09'],
+ ['學生 D06','pk2',14,'2026-10-08','2026-09-10','2026-09-09'],
+ ['學生 B04','pk5',27,'2026-11-30','2026-09-13',''],
+ ['學生 C03','pk6',18,'2026-09-30','2026-09-08',''],
+ ['學生 A18','pk1',4,'2027-03-15','2026-09-13',''],
+ ['學生 A16','pk2',5,'2027-01-20','2026-09-12',''],
+ ['學生 B07','pk6',10,'2027-02-28','2026-09-09',''],
+ ['學生 B11','pk1',0,'2027-04-10','','' ],
+ ['學生 C08','pk5',12,'2027-01-31','2026-09-11',''],
+ ['學生 D02','pk1',7,'2027-02-14','2026-09-07',''],
+ ['學生 A05','pk2',9,'2026-12-31','2026-09-12',''],
+ ['學生 C11','pk6',20,'2026-11-15','2026-09-13',''],
+ ['學生 A21','pk2',3,'2027-01-10','2026-09-06',''],
+ ['學生 B15','pk5',22,'2026-09-20','2026-09-02',''],
+ ['學生 D09','pk1',20,'2026-09-05','2026-08-28','2026-08-30']
+];
+var STUDENTS = RAW.map(function(r, i){
+  var pl = plan(r[1]);
+  return {id:'STU-' + (1001 + i), name:r[0], planId:r[1], plan:pl.name, total:pl.total, used:r[2], left:Math.max(pl.total - r[2], 0), exp:r[3], last:r[4], notified:r[5]};
+});
+function daysTo(d){ return Math.round((new Date(d) - new Date(TODAY_STR)) / 86400000); }
+/* 提醒狀態：已到期＝到期日已過；快到期＝剩餘課時 ≤3 堂或 30 天內到期；其餘為正常 */
+function statusOf(s){
+  var d = daysTo(s.exp);
+  if (d < 0 || s.left === 0) return 'expired';
+  if (s.left <= 3 || d <= 30) return 'expiring';
+  return 'normal';
+}
+STUDENTS.forEach(function(s){ s.status = statusOf(s); });
+var ST_LABEL = {expiring:['快到期','Expiring Soon','orange'], normal:['正常','Normal','green'], expired:['已到期／已用完','Expired / Used Up','grey']};
+function stBadge(k){ var l = ST_LABEL[k]; return '<span class="badge ' + l[2] + '">' + T(l[0], l[1]) + '</span>'; }
+function escHtml(s){ return String(s===undefined||s===null?'':s).replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+function toggleSidebar(){ document.getElementById('sidebar').classList.toggle('open'); document.getElementById('sidebarBackdrop').classList.toggle('open'); }
+function closeSidebar(){ document.getElementById('sidebar').classList.remove('open'); document.getElementById('sidebarBackdrop').classList.remove('open'); }
+function closePanel(id){ var el=document.getElementById(id); if (el) el.classList.remove('open'); }
+function toggleSuMenu(ev){ ev.stopPropagation(); closePanel('notifPanel'); closePanel('avatarMenu'); document.getElementById('suMenu').classList.toggle('open'); }
+function toggleNotif(ev){ ev.stopPropagation(); closePanel('avatarMenu'); closePanel('suMenu'); var p=document.getElementById('notifPanel'); p.classList.toggle('open'); if (p.classList.contains('open')) renderNotifPanel(); }
+function toggleAvatarMenu(ev){ ev.stopPropagation(); closePanel('notifPanel'); closePanel('suMenu'); document.getElementById('avatarMenu').classList.toggle('open'); }
+document.addEventListener('click', function(){ closePanel('suMenu'); closePanel('notifPanel'); closePanel('avatarMenu'); });
+function doLogout(){ location.href = '../公開網站/p07_login_register.html'; }
+function toast(msg){
+  var el = document.getElementById('toastEl');
+  if (!el){ el=document.createElement('div'); el.id='toastEl'; el.className='toast'; document.body.appendChild(el); }
+  el.textContent = msg; el.classList.add('show');
+  clearTimeout(window._toastTimer);
+  window._toastTimer = setTimeout(function(){ el.classList.remove('show'); }, 2400);
+}
+function openModal(id){ document.getElementById(id).classList.add('open'); }
+function closeModal(id){ document.getElementById(id).classList.remove('open'); }
+var NOTIFS = [
+  {t:['「學生 A18」的一對一課程包訂單已成立，平台尚未收款','"Student A18" 1-on-1 course package order created — payment not yet received by the platform'], time:['2 小時前','2 hours ago'], unread:true},
+  {t:['2026-08 期佣金已由總部標記為已結算','The 2026-08 commission has been marked as settled by HQ'], time:['昨天','Yesterday'], unread:true},
+  {t:['「學生 B07」訂單歸屬進入爭議中，請補件說明','"Student B07" order attribution is now disputed — please provide supporting documents'], time:['3 天前','3 days ago'], unread:false}
+];
+function renderNotifPanel(){
+  var panel = document.getElementById('notifPanel'); if (!panel) return;
+  var unread = NOTIFS.filter(function(n){return n.unread;}).length;
+  var dot = document.getElementById('tbDot'); if (dot) dot.style.display = unread ? 'block' : 'none';
+  panel.innerHTML = '<div class="tn-head"><span>'+T('通知（'+unread+' 則未讀）','Notifications ('+unread+' unread)')+'</span><a href="javascript:void(0)" onclick="markAllRead(event)">'+T('全部標為已讀','Mark All as Read')+'</a></div>'+
+    NOTIFS.map(function(n){ return '<div class="tb-notifitem'+(n.unread?' unread':'')+'">'+T(n.t[0],n.t[1])+'<div class="tn-t">'+T(n.time[0],n.time[1])+'</div></div>'; }).join('');
+}
+function markAllRead(ev){ if (ev) ev.stopPropagation(); NOTIFS.forEach(function(n){n.unread=false;}); renderNotifPanel(); }
+renderNotifPanel();
+
+function doLogout(){ location.href = '../公開網站/p07_login_register.html'; }
+
+/* ================= 列表狀態 ================= */
+var PAGE_SIZE = 10;
+var state = {filter:'all', q:'', plan:'', sortKey:'exp', sortDir:1, page:1};
+var COLS = [
+ {k:'name', zh:'學生', en:'Student'},
+ {k:'plan', zh:'所屬方案／課程', en:'Plan / Course'},
+ {k:'left', zh:'剩餘課時', en:'Hours Left', num:true},
+ {k:'exp', zh:'到期日', en:'Expiry'},
+ {k:'last', zh:'最近上課日', en:'Last Class'},
+ {k:'status', zh:'提醒狀態', en:'Reminder'}
+];
+var SORT_OPTS = [['exp',1,'到期日（近到遠）','Expiry (soonest)'],['left',1,'剩餘課時（少到多）','Hours left (low to high)'],['last',-1,'最近上課日（新到舊）','Last class (newest)'],['name',1,'學生（A→Z）','Student (A–Z)']];
+function filtered(){
+  var q = state.q.trim().toLowerCase();
+  var rows = STUDENTS.filter(function(s){
+    if (state.filter !== 'all' && s.status !== state.filter) return false;
+    if (state.plan && s.planId !== state.plan) return false;
+    if (q && (s.name + ' ' + s.plan + ' ' + s.id).toLowerCase().indexOf(q) < 0) return false;
+    return true;
+  });
+  var k = state.sortKey, dir = state.sortDir;
+  rows.sort(function(a, b){
+    var x = a[k], y = b[k];
+    if (k === 'status'){ var o = {expiring:0, expired:1, normal:2}; x = o[x]; y = o[y]; }
+    if (x === y) return 0;
+    if (x === '' ) return 1;
+    if (y === '' ) return -1;
+    return (x < y ? -1 : 1) * dir;
+  });
+  return rows;
+}
+function renderChips(){
+  var counts = {all:STUDENTS.length, expiring:0, normal:0, expired:0};
+  STUDENTS.forEach(function(s){ counts[s.status]++; });
+  var labels = {all:T('全部','All'), expiring:T('快到期','Expiring Soon'), normal:T('正常','Normal'), expired:T('已到期／已用完','Expired / Used Up')};
+  document.querySelectorAll('#chips .chip').forEach(function(b){
+    var f = b.getAttribute('data-f');
+    b.textContent = labels[f] + '（' + counts[f] + '）';
+    b.classList.toggle('active', state.filter === f);
+  });
+}
+function renderControls(){
+  var ps = document.getElementById('planSel');
+  var seen = {}, opts = '<option value="">' + T('全部方案','All Plans') + '</option>';
+  STUDENTS.forEach(function(s){ if (!seen[s.planId]){ seen[s.planId] = 1; opts += '<option value="' + s.planId + '">' + escHtml(s.plan) + '</option>'; } });
+  ps.innerHTML = opts; ps.value = state.plan;
+  var ss = document.getElementById('sortSel');
+  ss.innerHTML = SORT_OPTS.map(function(o, i){ return '<option value="' + i + '">' + T(o[2], o[3]) + '</option>'; }).join('');
+  var cur = SORT_OPTS.findIndex(function(o){ return o[0] === state.sortKey && o[1] === state.sortDir; });
+  ss.value = cur >= 0 ? cur : '';
+  var qi = document.getElementById('qInput'); if (qi && qi.value !== state.q) qi.value = state.q;
+}
+function renderTable(){
+  var rows = filtered();
+  var pages = Math.max(1, Math.ceil(rows.length / PAGE_SIZE));
+  if (state.page > pages) state.page = pages;
+  var slice = rows.slice((state.page - 1) * PAGE_SIZE, state.page * PAGE_SIZE);
+  var t = document.getElementById('stuTable');
+  t.innerHTML = '<tr>' + COLS.map(function(c){
+    var arr = state.sortKey === c.k ? (state.sortDir === 1 ? '▲' : '▼') : '';
+    return '<th class="sortable' + (c.num ? ' num' : '') + '" onclick="sortBy(\'' + c.k + '\')">' + T(c.zh, c.en) + '<span class="arr">' + arr + '</span></th>';
+  }).join('') + '</tr>';
+  slice.forEach(function(s){
+    var pct = s.total ? Math.round(s.left / s.total * 100) : 0;
+    var tr = document.createElement('tr');
+    tr.className = 'rowlink';
+    tr.setAttribute('onclick', "openDrawer('" + s.id + "')");
+    tr.innerHTML = '<td>' + escHtml(s.name) + '</td><td>' + escHtml(s.plan) + '</td>' +
+      '<td class="num"><span class="leftbar' + (s.status === 'expiring' ? ' low' : '') + '"><i style="width:' + pct + '%"></i></span>' + s.left + ' / ' + s.total + T(' 堂',' lessons') + '</td>' +
+      '<td>' + s.exp + '</td><td>' + (s.last || '－') + '</td><td>' + stBadge(s.status) + '</td>';
+    t.appendChild(tr);
+  });
+  document.getElementById('stuEmpty').classList.toggle('hidden', rows.length > 0);
+  t.style.display = rows.length ? '' : 'none';
+  document.getElementById('resultCount').textContent = T('共 ' + rows.length + ' 位學生', rows.length + ' student(s)');
+  renderPager(pages);
+}
+function renderPager(pages){
+  var el = document.getElementById('pager');
+  if (pages <= 1){ el.innerHTML = ''; return; }
+  var h = '<span class="small">' + T('第 ' + state.page + ' / ' + pages + ' 頁', 'Page ' + state.page + ' of ' + pages) + '</span><div class="pg-btns">';
+  h += '<button ' + (state.page === 1 ? 'disabled' : '') + ' onclick="goPage(' + (state.page - 1) + ')">' + T('上一頁','Prev') + '</button>';
+  for (var i = 1; i <= pages; i++) h += '<button class="' + (i === state.page ? 'active' : '') + '" onclick="goPage(' + i + ')">' + i + '</button>';
+  h += '<button ' + (state.page === pages ? 'disabled' : '') + ' onclick="goPage(' + (state.page + 1) + ')">' + T('下一頁','Next') + '</button></div>';
+  el.innerHTML = h;
+}
+function renderAll(){ renderChips(); renderControls(); renderTable(); syncUrl(); }
+function goPage(n){ state.page = n; renderTable(); }
+function setFilter(f){ state.filter = f; state.page = 1; renderAll(); }
+function onSearch(){ state.q = document.getElementById('qInput').value; state.page = 1; renderChips(); renderTable(); }
+function onFilter(){ state.plan = document.getElementById('planSel').value; state.page = 1; renderAll(); }
+function onSortSel(){ var o = SORT_OPTS[Number(document.getElementById('sortSel').value)]; if (!o) return; state.sortKey = o[0]; state.sortDir = o[1]; state.page = 1; renderTable(); }
+function sortBy(k){
+  if (state.sortKey === k) state.sortDir = -state.sortDir; else { state.sortKey = k; state.sortDir = 1; }
+  state.page = 1; renderControls(); renderTable();
+}
+function clearAll(){ state = {filter:'all', q:'', plan:'', sortKey:'exp', sortDir:1, page:1}; renderAll(); toast(T('已清除篩選','Filters cleared')); }
+function syncUrl(){
+  try{
+    var u = new URL(location.href);
+    if (state.filter === 'all') u.searchParams.delete('filter'); else u.searchParams.set('filter', state.filter);
+    history.replaceState(null, '', u.toString());
+  }catch(e){}
+}
+
+/* ================= 右側抽屜（唯讀） ================= */
+function kv(k, v){ return '<div class="dl-item"><div class="dl-k">' + k + '</div><div class="dl-v">' + v + '</div></div>'; }
+function openDrawer(id){
+  var s = STUDENTS.find(function(x){ return x.id === id; }); if (!s) return;
+  var d = daysTo(s.exp);
+  document.getElementById('drawerTitle').textContent = s.name + '　' + s.id;
+  var note = '';
+  if (s.status === 'expiring') note = '<div class="note" style="margin-bottom:14px">' + T(s.notified ? 'TLI 顧問已於 ' + s.notified + ' 通知本代理商：此學生課時快用完，請督促學生續課。' : '此學生課時快到期，顧問尚未發出通知；如需協助請洽顧問。', s.notified ? 'Your TLI advisor notified you on ' + s.notified + ' that this student is running low on hours. Please encourage the student to renew.' : 'This student is running low on hours; the advisor has not sent a notice yet. Contact your advisor if you need help.') + '</div>';
+  if (s.status === 'expired') note = '<div class="note" style="margin-bottom:14px">' + T('此學生課時已到期或已用完，續課請洽 TLI 顧問或由學生本人辦理。','This student\'s hours have expired or been used up. Renewal is handled by the TLI advisor or the student.') + '</div>';
+  document.getElementById('drawerBody').innerHTML = note + '<div class="dl">' +
+    kv(T('學生','Student'), escHtml(s.name)) + kv(T('提醒狀態','Reminder'), stBadge(s.status)) +
+    kv(T('所屬方案／課程','Plan / Course'), escHtml(s.plan)) + kv(T('總課時','Total Hours'), s.total + T(' 堂',' lessons')) +
+    kv(T('已使用','Used'), s.used + T(' 堂',' lessons')) + kv(T('剩餘課時','Hours Left'), s.left + T(' 堂',' lessons')) +
+    kv(T('到期日','Expiry'), s.exp + '（' + (d < 0 ? T('已過期 ' + (-d) + ' 天','expired ' + (-d) + ' days ago') : T('尚餘 ' + d + ' 天','in ' + d + ' days')) + '）') + kv(T('最近上課日','Last Class'), s.last || '－') +
+    kv(T('顧問通知日','Advisor Notice'), s.notified || '－') + '</div>' +
+    '<div class="hint" style="margin-top:16px">' + T('代理商僅能查看學生課時，無法修改課時或代學生續課。','Agents can view hours only and cannot change hours or renew on behalf of students.') + '</div>';
+  document.getElementById('drawerMask').classList.add('open');
+  var dr = document.getElementById('drawer'); dr.classList.add('open'); dr.setAttribute('aria-hidden', 'false');
+}
+function closeDrawer(){
+  document.getElementById('drawerMask').classList.remove('open');
+  var dr = document.getElementById('drawer'); dr.classList.remove('open'); dr.setAttribute('aria-hidden', 'true');
+}
+document.addEventListener('keydown', function(e){ if (e.key === 'Escape') closeDrawer(); });
+
+/* ================= 初始化：吃 ?filter=expiring&q=學生名 ================= */
+(function(){
+  try{
+    var sp = new URLSearchParams(location.search);
+    var f = sp.get('filter'); if (f && ST_LABEL[f]) state.filter = f;
+    var q = sp.get('q'); if (q) state.q = q;
+  }catch(e){}
+})();
+renderAll();
+if (window.TLI_I18N){
+  TLI_I18N.onRefresh(renderAll);
+  TLI_I18N.onRefresh(renderNotifPanel);
+}
+</script>
+</body>
+</html>

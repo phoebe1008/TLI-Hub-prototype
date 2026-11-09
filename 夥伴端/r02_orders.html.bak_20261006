@@ -1,0 +1,573 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<title>訂單歸屬｜TLI Hub</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+:root{--navy:#1B4E8C;--navy-dark:#123a68;--orange:#E8792B;--teal:#0F9B79;
+--g50:#F5F7FA;--g200:#E4E7EC;--g500:#667085;--g900:#101828;}
+*{box-sizing:border-box;}
+html,body{overflow-x:hidden;}
+body{margin:0;font-family:"Noto Sans TC","Microsoft JhengHei",system-ui,-apple-system,sans-serif;
+background:var(--g50);color:var(--g900);}
+a{color:var(--navy);}
+.app{display:flex;min-height:100vh;width:100%;background:#fff;}
+.sidebar{width:260px;flex-shrink:0;background:#fff;padding:0;display:flex;flex-direction:column;height:100vh;
+overflow:hidden;border-right:1px solid var(--g200);position:sticky;top:0;align-self:flex-start;transition:left .2s;}
+.sidebar .brand{padding:16px 20px 14px;font-size:14px;font-weight:700;display:flex;flex-direction:column;gap:4px;
+border-bottom:1px solid var(--g200);margin-bottom:6px;text-decoration:none;color:inherit;cursor:pointer;flex-shrink:0;}
+.sidebar .brand-logo{height:28px;width:auto;object-fit:contain;object-position:left center;display:block;}
+.sidebar .brand small{display:block;font-weight:400;font-size:12px;color:var(--g500);margin-top:12px;}
+.sidebar nav{flex:1 1 auto;overflow-y:auto;overflow-x:hidden;padding:8px 8px 8px;}
+.sidebar .sec-label{padding:0 12px;margin:12px 0 8px;font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:#98A2B3;font-weight:600;}
+.sidebar .sec-label:first-child{margin-top:4px;}
+.sidebar nav a{display:flex;align-items:center;gap:12px;height:40px;padding:0 14px;margin:2px 0;border-radius:8px;
+font-size:14px;color:var(--g900);text-decoration:none;}
+.sidebar nav a .navicon{flex-shrink:0;color:var(--g500);}
+.sidebar nav a:hover{background:var(--g50);}
+.sidebar nav a.active{background:#E6EEF8;color:var(--navy);font-weight:600;}
+.sidebar nav a.active .navicon{color:var(--navy);}
+.sidebar-user{display:block;border-top:1px solid var(--g200);padding:10px 12px;margin:0;flex-shrink:0;position:relative;}
+.su-row{display:flex;align-items:center;gap:10px;cursor:pointer;min-width:0;}
+.su-avatar{width:36px;height:36px;border-radius:50%;background:var(--navy);color:#fff;display:flex;
+align-items:center;justify-content:center;font-size:13px;font-weight:600;flex-shrink:0;}
+.su-info{flex:1;min-width:0;display:flex;flex-direction:row;align-items:center;gap:8px;line-height:1.2;}
+.su-name{font-size:14px;font-weight:600;color:var(--g900);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.su-roletag{font-size:12px;background:#E6EEF8;color:var(--navy);padding:1px 7px;border-radius:8px;white-space:nowrap;flex-shrink:0;}
+.su-chevron{color:var(--g500);flex-shrink:0;}
+.su-menu{top:auto;bottom:60px;left:10px;right:10px;width:auto;padding:8px;}
+.su-menu a{display:block;padding:8px 10px;font-size:13px;color:var(--g900);text-decoration:none;border-radius:6px;}
+.su-menu a:hover{background:var(--g50);}
+.main{flex:1;padding:26px 32px 60px;min-width:0;}
+.topbar{display:flex;align-items:center;justify-content:space-between;padding:0 32px;height:56px;
+border-bottom:1px solid var(--g200);position:sticky;top:0;background:#fff;z-index:40;margin:-26px -32px 22px;gap:14px;}
+.hamburger{display:none;background:none;border:none;font-size:19px;cursor:pointer;color:var(--g900);padding:4px 6px;margin-right:4px;}
+.topbar .tb-title{font-size:15px;font-weight:600;color:var(--g900);flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.topbar .tb-actions{display:flex;align-items:center;gap:14px;position:relative;flex-shrink:0;}
+.tb-bellbtn{position:relative;background:none;border:none;cursor:pointer;font-size:17px;padding:4px;line-height:1;}
+.tb-dot{position:absolute;top:0;right:0;width:7px;height:7px;background:#C0392B;border-radius:50%;display:none;}
+.tb-avatarbtn{width:30px;height:30px;border-radius:50%;background:var(--navy);color:#fff;border:none;
+cursor:pointer;font-size:13px;font-weight:600;flex-shrink:0;}
+.tb-panel{display:none;position:absolute;top:44px;right:0;background:#fff;border:1px solid var(--g200);
+border-radius:8px;box-shadow:0 8px 24px rgba(16,24,40,.16);z-index:50;}
+.tb-panel.open{display:block;}
+.tb-notifpanel{width:300px;padding:10px;}
+.tb-notifpanel .tn-head{display:flex;justify-content:space-between;align-items:center;font-size:12.5px;
+padding:4px 6px 8px;border-bottom:1px solid var(--g200);margin-bottom:6px;}
+.tb-notifpanel .tn-head a{font-size:11.5px;cursor:pointer;}
+.tb-notifitem{padding:8px 6px;border-radius:6px;font-size:12.5px;line-height:1.5;}
+.tb-notifitem:hover{background:var(--g50);}
+.tb-notifitem.unread{background:#EEF3FA;}
+.tb-notifitem .tn-t{color:var(--g500);font-size:11px;margin-top:2px;}
+.tb-avatarmenu{width:150px;padding:6px;}
+.tb-avatarmenu a{display:block;padding:8px 10px;font-size:13px;color:var(--g900);text-decoration:none;border-radius:6px;}
+.tb-avatarmenu a:hover{background:var(--g50);}
+.sidebar-backdrop{display:none;position:fixed;inset:0;background:rgba(16,24,40,.4);z-index:110;}
+.pagehead{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:16px;gap:16px;flex-wrap:wrap;}
+.pagehead h1{font-size:20px;margin:0;}
+.pagehead .desc{font-size:12.5px;color:var(--g500);margin-top:5px;line-height:1.6;max-width:720px;}
+.btn{display:inline-block;background:var(--navy);color:#fff;border:none;padding:8px 14px;
+border-radius:6px;font-size:13px;cursor:pointer;text-decoration:none;white-space:nowrap;font-family:inherit;}
+.btn.orange{background:var(--orange);}
+.btn.teal{background:var(--teal);}
+.btn.ghost{background:#fff;border:1px solid var(--g200);color:var(--g900);}
+.btn.sm{padding:5px 10px;font-size:12px;}
+.btn:disabled{background:var(--g200)!important;color:var(--g500)!important;cursor:not-allowed!important;}
+.card{background:#fff;border:1px solid var(--g200);border-radius:12px;padding:18px;margin-bottom:16px;box-shadow:0 1px 3px rgba(16,24,40,.06);}
+.card h2{font-size:15px;margin:0 0 12px;}
+.card .cardesc{font-size:12.5px;color:var(--g500);margin:-4px 0 12px;line-height:1.6;}
+.tablewrap{overflow-x:auto;max-width:100%;}
+table{width:100%;border-collapse:collapse;font-size:13px;}
+th{text-align:left;background:var(--g50);color:var(--g500);font-weight:600;padding:9px 12px;
+border-bottom:1px solid var(--g200);white-space:nowrap;}
+td{padding:9px 12px;border-bottom:1px solid var(--g200);white-space:nowrap;}
+td.num,th.num{text-align:right;}
+tr.rowlink{cursor:pointer;}
+tr.rowlink:hover{background:#F8FAFD;}
+tr.rowlink.opened{background:#F1F5FB;}
+tr.detailrow td{white-space:normal;background:#FBFCFE;padding:0;}
+.badge{display:inline-block;padding:2px 9px;border-radius:10px;font-size:11.5px;font-weight:600;white-space:nowrap;}
+.badge.blue{background:#E7EEF8;color:var(--navy);}
+.badge.green{background:#E4F5EE;color:var(--teal);}
+.badge.orange{background:#FCE9DA;color:var(--orange);}
+.badge.grey{background:var(--g200);color:var(--g500);}
+.badge.red{background:#FBE7E7;color:#C0392B;}
+.note{font-size:12px;color:#7a5b1f;background:#FFF8EE;border:1px solid #F3DFB8;padding:9px 11px;border-radius:6px;line-height:1.6;}
+.formrow{margin-bottom:13px;}
+.formrow label{display:block;font-size:12.5px;color:var(--g500);margin-bottom:4px;}
+.formrow input,.formrow select,.formrow textarea{width:100%;padding:7px 10px;border:1px solid var(--g200);
+border-radius:6px;font-size:13px;box-sizing:border-box;font-family:inherit;}
+.formrow textarea{min-height:92px;resize:vertical;}
+.formrow .err{display:none;font-size:12px;color:#C0392B;margin-top:4px;}
+.formrow.invalid .err{display:block;}
+.formrow.invalid textarea,.formrow.invalid input{border-color:#E3A1A1;}
+.small{font-size:12px;color:var(--g500);}
+.hint{font-size:11.5px;color:var(--g500);margin-top:6px;line-height:1.6;}
+.modal-mask{display:none;position:fixed;inset:0;background:rgba(16,24,40,.42);z-index:160;align-items:center;justify-content:center;padding:16px;}
+.modal-mask.open{display:flex;}
+.modal{background:#fff;border-radius:10px;width:480px;max-width:100%;max-height:85vh;overflow:auto;padding:22px;}
+.modal h3{margin-top:0;font-size:16px;}
+.modal-actions{text-align:right;display:flex;gap:8px;justify-content:flex-end;flex-wrap:wrap;}
+.toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(20px);
+background:#101828;color:#fff;padding:10px 20px;border-radius:8px;font-size:13px;
+opacity:0;pointer-events:none;transition:.2s;z-index:200;max-width:80vw;text-align:center;}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
+.statgrid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;}
+.statbox{border:1px solid var(--g200);border-radius:8px;padding:14px;}
+.statbox .num{font-size:21px;font-weight:700;color:var(--navy);}
+.statbox .lbl{font-size:11.5px;color:var(--g500);margin-top:4px;line-height:1.5;}
+.statbox .sub{font-size:11px;color:var(--g500);margin-top:5px;}
+.filterbar{display:flex;gap:10px;flex-wrap:wrap;align-items:flex-end;margin-bottom:12px;}
+.filterbar .ff{min-width:140px;}
+.filterbar .ff label{display:block;font-size:11.5px;color:var(--g500);margin-bottom:4px;}
+.filterbar select,.filterbar input{padding:7px 10px;border:1px solid var(--g200);border-radius:6px;
+font-size:13px;font-family:inherit;background:#fff;color:var(--g900);width:100%;}
+.searchbox{display:flex;align-items:center;gap:6px;border:1px solid var(--g200);border-radius:6px;
+padding:0 10px;background:#fff;min-width:220px;flex:1;}
+.searchbox .sicon{color:var(--g500);display:flex;}
+.searchbox input{border:none;outline:none;padding:8px 0;font-size:13px;font-family:inherit;width:100%;background:none;color:var(--g900);}
+.clearlink{background:none;border:none;color:var(--navy);font-size:12.5px;cursor:pointer;text-decoration:underline;font-family:inherit;padding:8px 2px;}
+.emptylist{padding:18px 4px;font-size:12.5px;color:var(--g500);text-align:center;}
+.hidden{display:none!important;}
+.loadmore-row{text-align:center;margin-top:14px;}
+.dl{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px 24px;padding:16px 18px;}
+.dl .dl-item{min-width:0;}
+.dl .dl-k{font-size:11.5px;color:var(--g500);margin-bottom:3px;}
+.dl .dl-v{font-size:13px;line-height:1.5;word-break:break-word;}
+.detail-actions{display:flex;gap:8px;flex-wrap:wrap;padding:0 18px 16px;align-items:center;}
+.tabbar{display:flex;gap:4px;border-bottom:1px solid var(--g200);margin-bottom:16px;flex-wrap:wrap;}
+.tabbar button{background:none;border:none;padding:10px 16px;font-size:13.5px;color:var(--g500);cursor:pointer;font-family:inherit;border-bottom:2px solid transparent;margin-bottom:-1px;}
+.tabbar button.active{color:var(--navy);font-weight:600;border-bottom-color:var(--navy);}
+.tabbar button:hover{color:var(--navy);}
+@media (max-width:1023px){
+.hamburger{display:inline-flex;}
+.sidebar{position:fixed;left:-260px;top:0;height:100vh;width:260px;z-index:120;}
+.sidebar.open{left:0;}
+.sidebar-backdrop.open{display:block;}
+.app{width:100%;}
+.main{padding:16px 16px 40px;}
+.topbar{padding:0 16px;margin:-16px -16px 18px;}
+.statgrid{grid-template-columns:1fr 1fr;}
+.dl{grid-template-columns:1fr;}
+}
+@media (max-width:479px){
+.statgrid{grid-template-columns:1fr;}
+}
+
+
+</style>
+</head>
+<body>
+<div class="app">
+<div class="sidebar" id="sidebar">
+<a class="brand" href="r01_dashboard.html"><img class="brand-logo" src="../assets/tli-logo.svg" alt="TLI"><small data-i18n="brand.agentPortal">代理商入口</small></a>
+<nav>
+<div class="sec-label" data-i18n="navgroup.agent">代理商</div>
+<a data-nav="r01" href="r01_dashboard.html"><svg class="navicon" width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="6" height="6" rx="1"/><rect x="11" y="3" width="6" height="6" rx="1"/><rect x="3" y="11" width="6" height="6" rx="1"/><rect x="11" y="11" width="6" height="6" rx="1"/></svg><span data-i18n="nav_r.overview">總覽</span></a>
+<a data-nav="r02" class="active" href="r02_orders.html"><svg class="navicon" width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 2.5h10v15l-2.5-1.6L10 17.5l-2.5-1.6L5 17.5v-15z"/><line x1="7.5" y1="6.5" x2="12.5" y2="6.5"/><line x1="7.5" y1="9.5" x2="12.5" y2="9.5"/></svg><span data-i18n="nav_r.orders">訂單歸屬</span></a>
+<a data-nav="r03" href="r03_performance.html"><svg class="navicon" width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><line x1="4" y1="16.5" x2="4" y2="10"/><line x1="10" y1="16.5" x2="10" y2="4.5"/><line x1="16" y1="16.5" x2="16" y2="12"/></svg><span data-i18n="nav_r.performance">業績與佣金</span></a>
+</nav>
+<div class="sidebar-user" id="sidebarUser">
+<div class="su-row" onclick="toggleSuMenu(event)"><span class="su-avatar">環</span><span class="su-info"><span class="su-name">環宇教育顧問</span><span class="su-roletag" data-i18n="role.agent">代理商</span></span>
+<svg class="su-chevron" width="14" height="14" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 8 10 12 14 8"/></svg></div>
+<div class="tb-panel su-menu" id="suMenu"><a href="javascript:void(0)" onclick="toast(T('個人設定功能建置中','Settings feature coming soon'))" data-i18n="common.settings">個人設定</a><a href="../公開網站/p01_home.html" data-i18n="common.gotoWebsite">前往官網</a><a href="javascript:void(0)" onclick="doLogout()" data-i18n="common.logout">登出</a></div>
+</div>
+</div>
+
+<div class="main">
+<div class="topbar">
+<button class="hamburger" onclick="toggleSidebar()" aria-label="開啟選單" data-i18n-aria-label="common.openMenu"><svg width="18" height="18" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="5.5" x2="17" y2="5.5"/><line x1="3" y1="10" x2="17" y2="10"/><line x1="3" y1="14.5" x2="17" y2="14.5"/></svg></button>
+<div class="tb-title" data-i18n="nav_r.orders">訂單歸屬</div>
+<div class="tb-actions">
+<button class="tb-bellbtn" onclick="toggleNotif(event)" aria-label="通知" data-i18n-aria-label="common.notifications"><svg width="17" height="17" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M10 2.5c-2.2 0-4 1.8-4 4v2.3c0 .6-.2 1.2-.6 1.7L4 12.5h12l-1.4-2c-.4-.5-.6-1.1-.6-1.7V6.5c0-2.2-1.8-4-4-4z"/><path d="M8.2 15.5a1.8 1.8 0 0 0 3.6 0"/></svg><span class="tb-dot" id="tbDot"></span></button>
+<div class="tb-panel tb-notifpanel" id="notifPanel"></div>
+<button class="tb-avatarbtn" onclick="toggleAvatarMenu(event)" aria-label="使用者選單" data-i18n-aria-label="common.userMenu">環</button>
+<div class="tb-panel tb-avatarmenu" id="avatarMenu"><a href="javascript:void(0)" onclick="toast(T('個人設定功能建置中','Settings feature coming soon'))" data-i18n="common.settings">個人設定</a><a href="../公開網站/p01_home.html" data-i18n="common.gotoWebsite">前往官網</a><a href="javascript:void(0)" onclick="doLogout()" data-i18n="common.logout">登出</a></div>
+</div>
+</div>
+<div class="sidebar-backdrop" id="sidebarBackdrop" onclick="closeSidebar()"></div>
+
+<div class="pagehead">
+<div><h1 data-i18n="nav_r.orders">訂單歸屬</h1><div class="desc" id="pageDesc"></div></div>
+</div>
+
+<div class="filterbar">
+<div class="ff" style="flex:1;min-width:220px"><label for="q" data-i18n="label.search">搜尋</label>
+<div class="searchbox"><span class="sicon"><svg width="14" height="14" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="8.5" cy="8.5" r="5.5"/><line x1="16.5" y1="16.5" x2="12.6" y2="12.6"/></svg></span>
+<input type="text" id="q" placeholder="訂單或合約編號、會員、企業、方案" data-i18n-placeholder="placeholder.r02Search" oninput="onFilterChange()"></div></div>
+<div class="ff"><label for="f_type" data-i18n="label.type">型態</label><select id="f_type" onchange="onFilterChange()"><option value="" data-i18n="opt.allTypes">全部型態</option><option value="b2c" data-i18n="type.b2c">B2C 訂單</option><option value="b2b" data-i18n="type.b2b">B2B 企業合約</option><option value="edu" data-i18n="type.edu">B2B 機構授權合約</option></select></div>
+<div class="ff"><label for="f_pay" data-i18n="label.platformPayStatus">平台收款狀態</label><select id="f_pay" onchange="onFilterChange()"><option value="" data-i18n="opt.allPayStatus">全部收款狀態</option><option data-i18n="status.paid2">已收款</option><option data-i18n="status.partiallyPaid">部分收款</option><option data-i18n="status.unpaid">未收款</option><option data-i18n="status.refunded">退款</option></select></div>
+<div class="ff"><label for="f_period" data-i18n="label.period">期間</label><select id="f_period" onchange="onPeriodChange()"><option value="" data-i18n="opt.allPeriods">全部期間</option><option value="thism" data-i18n="opt.thisMonth">本月</option><option value="lastm" data-i18n="opt.lastMonth">上月</option><option value="3m" data-i18n="opt.last3Months">近三個月</option><option value="custom" data-i18n="opt.customRange">自訂區間</option></select></div>
+<button type="button" class="clearlink" onclick="toggleMoreFilter()" data-i18n="btn.moreFilters2">更多篩選</button>
+<button type="button" class="clearlink" onclick="clearFilters()" data-i18n="btn.clearAllFilters">清除篩選</button>
+</div>
+<div class="filterbar hidden" id="moreFilterPanel">
+<div class="ff"><label for="f_attr" data-i18n="label.attrStatus">歸屬狀態</label><select id="f_attr" onchange="onFilterChange()"><option value="" data-i18n="opt.allAttrStatus">全部歸屬狀態</option><option data-i18n="status.valid">有效</option><option data-i18n="status.disputed">爭議中</option><option data-i18n="status.released">已解除</option></select></div>
+<div class="ff"><label for="f_sort" data-i18n="label.sort">排序</label><select id="f_sort" onchange="onFilterChange()"><option value="date_desc" data-i18n="opt.dateDesc">日期（新到舊）</option><option value="date_asc" data-i18n="opt.dateAsc">日期（舊到新）</option><option value="amt_desc" data-i18n="opt.amtDesc">金額（高到低）</option><option value="amt_asc" data-i18n="opt.amtAsc">金額（低到高）</option></select></div>
+<div class="ff hidden" id="customFrom"><label for="f_from" data-i18n="label.from">起</label><input type="date" id="f_from" value="2026-06-01" onchange="onFilterChange()"></div>
+<div class="ff hidden" id="customTo"><label for="f_to" data-i18n="label.to">迄</label><input type="date" id="f_to" value="2026-09-14" onchange="onFilterChange()"></div>
+</div>
+<div id="activeFilters" style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px"></div>
+
+<div class="card">
+<div class="small" id="resultCount" style="margin-bottom:8px"></div>
+<div class="tablewrap"><table id="orderTable"></table></div>
+<p class="emptylist hidden" id="orderEmpty" data-i18n="empty.r02NoMatch">找不到符合條件的訂單或合約。</p>
+<div class="loadmore-row hidden" id="loadMoreRow"><button class="btn ghost" onclick="loadMore()" id="loadMoreBtn" data-i18n="btn.loadMore">載入更多</button></div>
+<div class="hint"><span data-i18n="hint.r02ValidityPrefix">歸屬依會員轉介碼或顧問建單指定，效期 </span><span id="hintValidDays"></span><span data-i18n="hint.r02ValiditySuffix"> 天（依總部 P47 參數計算）。</span></div>
+</div>
+
+<div class="modal-mask" id="disputeModal" onclick="if(event.target===this) closeModal('disputeModal')"><div class="modal">
+<h3 data-i18n="h2.raiseDispute">提出歸屬異議</h3>
+<div class="formrow"><label data-i18n="label.orderOrContractNo">訂單或合約編號</label><div class="dl-v" id="dmOrderId"></div></div>
+<div class="formrow"><label data-i18n="label.memberOrCompany">會員或企業</label><div class="dl-v" id="dmCust"></div></div>
+<div class="formrow"><label data-i18n="label.currentAttrStatus">目前歸屬狀態</label><div class="dl-v" id="dmAttr"></div></div>
+<div class="formrow" id="dmReasonRow"><label for="dmReason" data-i18n="label.disputeReason">異議理由（必填）</label>
+<textarea id="dmReason" placeholder="請說明為什麼這筆應歸屬本代理商，例如會員是由哪一場說明會、哪個管道帶進來的" data-i18n-placeholder="placeholder.disputeReason"></textarea>
+<div class="err" data-i18n="err.fillDisputeReason">請填寫異議理由，總部需要依理由進行覆核。</div></div>
+<div class="formrow"><label for="dmEvidence" data-i18n="label.evidence">佐證補充（選填）</label><input type="text" id="dmEvidence" placeholder="例如：帶客日期、活動名稱、聯繫紀錄編號" data-i18n-placeholder="placeholder.evidenceExample"></div>
+<div class="note" data-i18n="note.disputeSubmit">送出後這筆歸屬狀態改為「爭議中」，由總部覆核；覆核結果分為維持原歸屬、改判他人、解除爭議三種，結果會回到本頁。</div>
+<div class="modal-actions" style="margin-top:16px"><button class="btn ghost" onclick="closeModal('disputeModal')" data-i18n="common.cancel">取消</button><button class="btn" onclick="submitDispute()" data-i18n="btn.submitDispute">送出異議</button></div>
+</div></div>
+
+</div>
+</div>
+
+<script src="../assets/_shared_masters.js"></script>
+<script src="../assets/_i18n_dict.js"></script>
+<script src="../assets/_i18n_dict_partner.js"></script>
+<script src="../assets/_i18n.js"></script>
+<script>
+function T(zh,en){ return window.TLI_I18N ? TLI_I18N.t(zh,en) : zh; }
+/* 立刻依儲存的語言（含 en）初始化，確保初次載入時後續動態渲染的 T() 已讀到正確語言，不用等使用者手動切換 */
+if (window.TLI_I18N) TLI_I18N.init();
+/* ===== 夥伴端共用資料（三頁一致，正式版改由後端 API 取得） ===== */
+/* 佣金比例／歸屬效期一律讀 TLI_MASTERS.partners（a20 p12「環宇教育顧問」），不寫死數值 */
+var AGENT_MASTER = TLI_MASTERS.partners.find(function(p){ return p.name.indexOf('環宇教育顧問') >= 0; });
+var MY_AGENT_NAME = AGENT_MASTER ? AGENT_MASTER.name : '環宇教育顧問';
+var MY_AGENT_CODE = 'REF-SEA07';
+var MY_REF_LINK = '../公開網站/p12_referral.html?ref=' + MY_AGENT_CODE;
+var TODAY_STR = '2026-09-14';
+/* 佣金試算基礎：成交金額 × P48 佣金參數（總部設定，畫面不寫死數值） */
+var P48_RATE = (AGENT_MASTER ? Number(AGENT_MASTER.commRate) : 10) / 100;
+var ATTR_VALID_DAYS = AGENT_MASTER ? Number(AGENT_MASTER.validDays) : 90;
+/* 平台收款狀態四種：已收款／部分收款／未收款／退款；夥伴端唯讀，無任何收款操作 */
+var ORDERS = [
+ {id:'ORD-26090031', date:'2026-09-12', type:'b2c', cust:'學生 A18', plan:'一對一課程包 20 堂', amount:48000, paid:0,     pay:'未收款',   basis:'轉介碼', attr:'有效', channel:'藍新金流'},
+ {id:'ORD-26090028', date:'2026-09-10', type:'b2c', cust:'學生 A16', plan:'團體直播班・季方案', amount:18600, paid:18600, pay:'已收款',   basis:'轉介碼', attr:'有效', channel:'藍新金流'},
+ {id:'CTR-26090004', date:'2026-09-08', type:'b2b', cust:'電子零組件製造商（員工約 120 人）', plan:'企業培訓合約・時數池 300 小時', amount:720000, paid:360000, pay:'部分收款', basis:'顧問指定', attr:'有效', channel:'銀行匯款（平台帳戶）'},
+ {id:'ORD-26090019', date:'2026-09-05', type:'b2c', cust:'學生 B07', plan:'自學課程年方案', amount:12800, paid:12800, pay:'已收款',   basis:'轉介碼', attr:'爭議中', channel:'Stripe'},
+ {id:'ORD-26090008', date:'2026-09-02', type:'b2c', cust:'學生 A12', plan:'一對一課程包 40 堂', amount:92000, paid:92000, pay:'已收款',   basis:'轉介碼', attr:'有效', channel:'藍新金流'},
+ {id:'CTR-26090001', date:'2026-09-01', type:'edu', cust:'北部私立大學・華語中心', plan:'機構授權合約・授權費＋權利金', amount:460000, paid:0, pay:'未收款', basis:'顧問指定', attr:'有效', channel:'銀行匯款（平台帳戶）'},
+ {id:'ORD-26080042', date:'2026-08-28', type:'b2c', cust:'學生 C03', plan:'團體直播班・季方案', amount:18600, paid:18600, pay:'已收款',   basis:'轉介碼', attr:'有效', channel:'藍新金流'},
+ {id:'ORD-26080035', date:'2026-08-24', type:'b2c', cust:'學生 B11', plan:'一對一課程包 20 堂', amount:48000, paid:0,     pay:'退款',     basis:'轉介碼', attr:'已解除', channel:'藍新金流'},
+ {id:'CTR-26080006', date:'2026-08-20', type:'b2b', cust:'精密機械製造商（員工約 340 人）', plan:'企業培訓合約・預付款倒扣制', amount:1200000, paid:1200000, pay:'已收款', basis:'顧問指定', attr:'有效', channel:'銀行匯款（平台帳戶）'},
+ {id:'ORD-26080021', date:'2026-08-15', type:'b2c', cust:'學生 A09', plan:'自學課程年方案', amount:12800, paid:12800, pay:'已收款',   basis:'轉介碼', attr:'有效', channel:'Stripe'},
+ {id:'ORD-26080014', date:'2026-08-11', type:'b2c', cust:'學生 D02', plan:'一對一課程包 20 堂', amount:48000, paid:24000, pay:'部分收款', basis:'轉介碼', attr:'有效', channel:'藍新金流'},
+ {id:'ORD-26080005', date:'2026-08-05', type:'b2c', cust:'學生 C08', plan:'團體直播班・季方案', amount:18600, paid:18600, pay:'已收款',   basis:'轉介碼', attr:'有效', channel:'藍新金流'},
+ {id:'CTR-26070003', date:'2026-07-29', type:'b2b', cust:'物流服務業者（員工約 90 人）', plan:'企業培訓合約・時數池 150 小時', amount:380000, paid:380000, pay:'已收款', basis:'顧問指定', attr:'有效', channel:'銀行匯款（平台帳戶）'},
+ {id:'ORD-26070033', date:'2026-07-22', type:'b2c', cust:'學生 B04', plan:'一對一課程包 40 堂', amount:92000, paid:92000, pay:'已收款',   basis:'轉介碼', attr:'有效', channel:'藍新金流'},
+ {id:'ORD-26070027', date:'2026-07-18', type:'b2c', cust:'學生 A05', plan:'團體直播班・季方案', amount:18600, paid:18600, pay:'已收款',   basis:'轉介碼', attr:'有效', channel:'Stripe'},
+ {id:'ORD-26070011', date:'2026-07-09', type:'b2c', cust:'學生 D06', plan:'自學課程年方案', amount:12800, paid:12800, pay:'已收款',   basis:'轉介碼', attr:'有效', channel:'藍新金流'},
+ {id:'CTR-26060002', date:'2026-06-25', type:'edu', cust:'中部科技大學・應用外語系', plan:'機構授權合約・授權費＋權利金', amount:320000, paid:320000, pay:'已收款', basis:'顧問指定', attr:'有效', channel:'銀行匯款（平台帳戶）'},
+ {id:'ORD-26060019', date:'2026-06-16', type:'b2c', cust:'學生 C11', plan:'一對一課程包 20 堂', amount:48000, paid:48000, pay:'已收款',   basis:'轉介碼', attr:'有效', channel:'藍新金流'},
+ {id:'ORD-26060007', date:'2026-06-04', type:'b2c', cust:'學生 A21', plan:'團體直播班・季方案', amount:18600, paid:18600, pay:'已收款',   basis:'轉介碼', attr:'有效', channel:'藍新金流'},
+ {id:'ORD-26050024', date:'2026-05-20', type:'b2c', cust:'學生 B15', plan:'自學課程年方案', amount:12800, paid:12800, pay:'已收款',   basis:'轉介碼', attr:'有效', channel:'Stripe'},
+ {id:'CTR-26050001', date:'2026-05-12', type:'b2b', cust:'金融服務業者（員工約 210 人）', plan:'企業培訓合約・時數池 200 小時', amount:500000, paid:500000, pay:'已收款', basis:'顧問指定', attr:'有效', channel:'銀行匯款（平台帳戶）'},
+ {id:'ORD-26040016', date:'2026-04-18', type:'b2c', cust:'學生 D09', plan:'一對一課程包 20 堂', amount:48000, paid:48000, pay:'已收款',   basis:'轉介碼', attr:'有效', channel:'藍新金流'}
+];
+var TYPE_LABEL = {b2c:'B2C 訂單', b2b:'B2B 企業合約', edu:'B2B 機構授權合約'};
+var TYPE_LABEL_EN = {b2c:'B2C Order', b2b:'B2B Corporate Contract', edu:'B2B Institutional License Contract'};
+var TYPE_SHORT = {b2c:'B2C', b2b:'B2B 企業', edu:'B2B 機構'};
+var TYPE_SHORT_EN = {b2c:'B2C', b2b:'B2B Corp', edu:'B2B Institution'};
+/* 結算紀錄由總部 a20 產生並標記，夥伴端唯讀 */
+var SETTLEMENTS = [
+ {period:'2026-08', amount:127680, status:'已結算', settledAt:'2026-09-05'},
+ {period:'2026-07', amount:40432,  status:'已結算', settledAt:'2026-08-05'},
+ {period:'2026-06', amount:30928,  status:'已結算', settledAt:'2026-07-06'},
+ {period:'2026-05', amount:41024,  status:'已結算', settledAt:'2026-06-05'}
+];
+
+/* ===== 異議紀錄：寫入 localStorage，讓總部 a20「訂單歸屬」分頁能讀到（正式版改走後端 API） ===== */
+var DISPUTE_KEY = 'tliAgentOrderDisputes';
+function readDisputes(){
+  try{ return JSON.parse(localStorage.getItem(DISPUTE_KEY)) || []; }catch(e){ return []; }
+}
+function writeDisputes(list){
+  try{ localStorage.setItem(DISPUTE_KEY, JSON.stringify(list)); }catch(e){}
+}
+/* 把已送出的異議套回訂單歸屬狀態 */
+function applyDisputes(){
+  var list = readDisputes();
+  list.forEach(function(d){
+    var o = ORDERS.find(function(x){ return x.id === d.orderId; });
+    if (o && o.attr === '有效'){ o.attr = '爭議中'; o.disputeReason = d.reason; o.disputedAt = d.at; }
+  });
+}
+applyDisputes();
+
+function fmtNT(n){ return 'NT$' + Number(n||0).toLocaleString('zh-Hant-TW'); }
+function escHtml(s){ return String(s===undefined||s===null?'':s).replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+var PAY_STATUS_EN = {'已收款':'Paid','已結清':'Settled','部分收款':'Partially Paid','部分結清':'Partially Settled','退款':'Refunded','已沖回':'Reversed','未收款':'Unpaid'};
+function payBadge(s){
+  if (s==='已收款' || s==='已結清') return '<span class="badge green">'+T(s,PAY_STATUS_EN[s]||s)+'</span>';
+  if (s==='部分收款' || s==='部分結清') return '<span class="badge orange">'+T(s,PAY_STATUS_EN[s]||s)+'</span>';
+  if (s==='退款' || s==='已沖回') return '<span class="badge red">'+T(s,PAY_STATUS_EN[s]||s)+'</span>';
+  return '<span class="badge grey">'+T(s,PAY_STATUS_EN[s]||s)+'</span>';
+}
+function attrBadge(s){
+  if (s==='爭議中') return '<span class="badge orange">'+T('爭議中','Disputed')+'</span>';
+  if (s==='已解除') return '<span class="badge grey">'+T('已解除','Released')+'</span>';
+  return '<span class="badge blue">'+T('有效','Valid')+'</span>';
+}
+/* 佣金試算：僅計入歸屬有效且平台已實收的金額 */
+function commOf(o){ return (o.attr === '有效') ? Math.round(o.paid * P48_RATE) : 0; }
+
+function toggleSidebar(){ document.getElementById('sidebar').classList.toggle('open'); document.getElementById('sidebarBackdrop').classList.toggle('open'); }
+function closeSidebar(){ document.getElementById('sidebar').classList.remove('open'); document.getElementById('sidebarBackdrop').classList.remove('open'); }
+function closePanel(id){ var el=document.getElementById(id); if (el) el.classList.remove('open'); }
+function toggleSuMenu(ev){ ev.stopPropagation(); closePanel('notifPanel'); closePanel('avatarMenu'); document.getElementById('suMenu').classList.toggle('open'); }
+function toggleNotif(ev){ ev.stopPropagation(); closePanel('avatarMenu'); closePanel('suMenu'); var p=document.getElementById('notifPanel'); p.classList.toggle('open'); if (p.classList.contains('open')) renderNotifPanel(); }
+function toggleAvatarMenu(ev){ ev.stopPropagation(); closePanel('notifPanel'); closePanel('suMenu'); document.getElementById('avatarMenu').classList.toggle('open'); }
+document.addEventListener('click', function(){ closePanel('suMenu'); closePanel('notifPanel'); closePanel('avatarMenu'); });
+function doLogout(){ location.href = '../公開網站/p07_login_register.html'; }
+function toast(msg){
+  var el = document.getElementById('toastEl');
+  if (!el){ el=document.createElement('div'); el.id='toastEl'; el.className='toast'; document.body.appendChild(el); }
+  el.textContent = msg; el.classList.add('show');
+  clearTimeout(window._toastTimer);
+  window._toastTimer = setTimeout(function(){ el.classList.remove('show'); }, 2400);
+}
+function openModal(id){ document.getElementById(id).classList.add('open'); }
+function closeModal(id){ document.getElementById(id).classList.remove('open'); }
+/* ESC 鍵關閉目前開啟中的 modal */
+document.addEventListener('keydown', function(e){
+  if (e.key !== 'Escape') return;
+  document.querySelectorAll('.modal-mask.open').forEach(function(el){ el.classList.remove('open'); });
+});
+var NOTIFS = [
+  {t:['「學生 A18」的一對一課程包訂單已成立，平台尚未收款','"Student A18" 1-on-1 course package order created — payment not yet received by the platform'], time:['2 小時前','2 hours ago'], unread:true},
+  {t:['2026-08 期佣金已由總部標記為已結算','The 2026-08 commission has been marked as settled by HQ'], time:['昨天','Yesterday'], unread:true},
+  {t:['「學生 B07」訂單歸屬進入爭議中，請補件說明','"Student B07" order attribution is now disputed — please provide supporting documents'], time:['3 天前','3 days ago'], unread:false}
+];
+function renderNotifPanel(){
+  var panel = document.getElementById('notifPanel'); if (!panel) return;
+  var unread = NOTIFS.filter(function(n){return n.unread;}).length;
+  var dot = document.getElementById('tbDot'); if (dot) dot.style.display = unread ? 'block' : 'none';
+  panel.innerHTML = '<div class="tn-head"><span>'+T('通知（'+unread+' 則未讀）','Notifications ('+unread+' unread)')+'</span><a href="javascript:void(0)" onclick="markAllRead(event)">'+T('全部標為已讀','Mark All as Read')+'</a></div>'+
+    NOTIFS.map(function(n){ return '<div class="tb-notifitem'+(n.unread?' unread':'')+'">'+T(n.t[0],n.t[1])+'<div class="tn-t">'+T(n.time[0],n.time[1])+'</div></div>'; }).join('');
+}
+function markAllRead(ev){ if (ev) ev.stopPropagation(); NOTIFS.forEach(function(n){n.unread=false;}); renderNotifPanel(); }
+renderNotifPanel();
+
+/* ================= 頁面說明 =================
+   本頁固定為代理商視角：學員付款給 Connect 平台，本頁顯示「平台收款狀態」，代理商不經手款項。 */
+var PAGE_DESC = ['列出歸屬本代理商的訂單與合約，款項由平台收取，歸屬有疑義可提異議。','Lists orders and contracts attributed to this agent — payment is collected by the platform; you may raise a dispute if the attribution looks wrong.'];
+function applyMode(){
+  document.getElementById('pageDesc').textContent = T(PAGE_DESC[0], PAGE_DESC[1]);
+}
+
+/* ================= 篩選與排序 ================= */
+var PAGE_SIZE = 10;
+var shown = PAGE_SIZE;
+var openedId = null;
+function onPeriodChange(){
+  var isCustom = document.getElementById('f_period').value === 'custom';
+  document.getElementById('customFrom').classList.toggle('hidden', !isCustom);
+  document.getElementById('customTo').classList.toggle('hidden', !isCustom);
+  if (isCustom) document.getElementById('moreFilterPanel').classList.remove('hidden');
+  onFilterChange();
+}
+function toggleMoreFilter(){ document.getElementById('moreFilterPanel').classList.toggle('hidden'); }
+function onFilterChange(){ shown = PAGE_SIZE; render(); }
+function clearFilters(){
+  ['q','f_type','f_pay','f_attr','f_period','f_sort'].forEach(function(id){
+    var el = document.getElementById(id);
+    el.value = (id === 'f_sort') ? 'date_desc' : '';
+  });
+  onPeriodChange();
+  toast(T('已清除所有篩選條件','All filters cleared'));
+}
+function renderActiveFilters(){
+  var tags = [];
+  var map = [['f_type',T('型態','Type')],['f_pay',T('平台收款狀態','Platform Payment Status')],['f_period',T('期間','Period')],['f_attr',T('歸屬狀態','Attribution Status')]];
+  map.forEach(function(m){
+    var el = document.getElementById(m[0]);
+    if (el.value){
+      var label = el.options[el.selectedIndex].textContent;
+      tags.push('<span class="badge blue" style="display:inline-flex;align-items:center;gap:6px">' + m[1] + T('：',': ') + label +
+        '<a href="javascript:void(0)" style="color:inherit" onclick="document.getElementById(\'' + m[0] + '\').value=\'\';' + (m[0]==='f_period'?'onPeriodChange()':'onFilterChange()') + '">×</a></span>');
+    }
+  });
+  document.getElementById('activeFilters').innerHTML = tags.join('');
+}
+function periodRange(){
+  var v = document.getElementById('f_period').value;
+  if (v === 'thism') return ['2026-09-01','2026-09-30'];
+  if (v === 'lastm') return ['2026-08-01','2026-08-31'];
+  if (v === '3m') return ['2026-07-01','2026-09-30'];
+  if (v === 'custom') return [document.getElementById('f_from').value || '0000-01-01', document.getElementById('f_to').value || '9999-12-31'];
+  return null;
+}
+function filtered(){
+  var term = (document.getElementById('q').value || '').trim().toLowerCase();
+  var ty = document.getElementById('f_type').value;
+  var pay = document.getElementById('f_pay').value;
+  var at = document.getElementById('f_attr').value;
+  var range = periodRange();
+  var rows = ORDERS.filter(function(o){
+    if (ty && o.type !== ty) return false;
+    if (pay && o.pay !== pay) return false;
+    if (at && o.attr !== at) return false;
+    if (range && (o.date < range[0] || o.date > range[1])) return false;
+    if (term){
+      var hay = (o.id + ' ' + o.cust + ' ' + o.plan + ' ' + TYPE_LABEL[o.type]).toLowerCase();
+      if (hay.indexOf(term) < 0) return false;
+    }
+    return true;
+  });
+  var sort = document.getElementById('f_sort').value;
+  rows.sort(function(a,b){
+    if (sort === 'date_asc') return a.date < b.date ? -1 : 1;
+    if (sort === 'amt_desc') return b.amount - a.amount;
+    if (sort === 'amt_asc') return a.amount - b.amount;
+    return a.date < b.date ? 1 : -1;
+  });
+  return rows;
+}
+function chevron(open){
+  return '<svg width="14" height="14" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="transform:rotate(' + (open ? '180' : '0') + 'deg);color:#667085"><polyline points="6 8 10 12 14 8"/></svg>';
+}
+function detailHtml(o){
+  var comm = commOf(o);
+  var disputeBtn = (o.attr === '有效')
+    ? '<button class="btn sm" onclick="openDispute(\'' + o.id + '\',event)">'+T('提出異議','Raise Dispute')+'</button>'
+    : '<button class="btn sm" disabled>'+T('已提出異議或歸屬已解除','Already disputed or attribution released')+'</button>';
+  var reason = o.disputeReason ? '<div class="dl-item"><div class="dl-k">'+T('已送出的異議理由','Submitted Dispute Reason')+'</div><div class="dl-v">' + escHtml(o.disputeReason) + '</div></div>' : '';
+  return '<div class="dl">' +
+    '<div class="dl-item"><div class="dl-k">'+T('編號','ID')+'</div><div class="dl-v">' + escHtml(o.id) + '</div></div>' +
+    '<div class="dl-item"><div class="dl-k">'+T('型態','Type')+'</div><div class="dl-v">' + T(TYPE_LABEL[o.type], TYPE_LABEL_EN[o.type]) + '</div></div>' +
+    '<div class="dl-item"><div class="dl-k">'+T('會員或企業','Member / Company')+'</div><div class="dl-v">' + escHtml(o.cust) + '</div></div>' +
+    '<div class="dl-item"><div class="dl-k">'+T('方案','Plan')+'</div><div class="dl-v">' + escHtml(o.plan) + '</div></div>' +
+    '<div class="dl-item"><div class="dl-k">'+T('成交金額','Transaction Amount')+'</div><div class="dl-v">' + fmtNT(o.amount) + '</div></div>' +
+    '<div class="dl-item"><div class="dl-k">'+T('平台已收金額','Amount Received by Platform')+'</div><div class="dl-v">' + fmtNT(o.paid) + '　' + payBadge(o.pay) + '</div></div>' +
+    '<div class="dl-item"><div class="dl-k">'+T('平台收款通路','Platform Payment Channel')+'</div><div class="dl-v">' + escHtml(o.channel) + T('（款項由 Connect 平台收取）',' (payment collected by the Connect platform)') + '</div></div>' +
+    '<div class="dl-item"><div class="dl-k">'+T('歸屬依據','Attribution Basis')+'</div><div class="dl-v">' + basisText(o) + '</div></div>' +
+    '<div class="dl-item"><div class="dl-k">'+T('歸屬狀態','Attribution Status')+'</div><div class="dl-v">' + attrBadge(o.attr) + '</div></div>' +
+    '<div class="dl-item"><div class="dl-k">'+T('歸屬效期','Attribution Validity')+'</div><div class="dl-v">'+T('自 ' + o.date + ' 起算 ' + ATTR_VALID_DAYS + ' 天（依 P47 參數，總部設定）','From ' + o.date + ', valid for ' + ATTR_VALID_DAYS + ' days (per the P47 parameter, set by HQ)')+'</div></div>' +
+    '<div class="dl-item"><div class="dl-k">'+T('佣金試算','Estimated Commission')+'</div><div class="dl-v">' + (comm ? fmtNT(comm) : '－') + '<span class="small">　'+T('依 P48 參數試算','Estimated per the P48 parameter')+'</span></div></div>' +
+    reason +
+    '</div>' +
+    '<div class="detail-actions">' + disputeBtn +
+    '<a class="btn ghost sm" href="r03_performance.html">'+T('看本期業績與佣金','View Performance & Commission This Period')+'</a>' +
+    '<span class="small">'+T('佣金以平台實收金額為計算基礎，結算由總部產生。','Commission is calculated from the amount received by the platform; settlement is generated by HQ.')+'</span></div>';
+}
+function basisText(o){
+  return o.basis === '轉介碼' ? T('轉介碼 ' + MY_AGENT_CODE, 'Referral code ' + MY_AGENT_CODE) : T('顧問建單時指定歸屬','Attributed by advisor at order creation');
+}
+function render(){
+  renderActiveFilters();
+  var rows = filtered();
+  var page = rows.slice(0, shown);
+  var t = document.getElementById('orderTable');
+  t.innerHTML = '';
+  var head = document.createElement('tr');
+  head.innerHTML = '<th>'+T('日期','Date')+'</th><th>'+T('型態','Type')+'</th><th>'+T('會員或企業','Member / Company')+'</th><th>'+T('方案','Plan')+'</th><th class="num">'+T('金額','Amount')+'</th><th>' + T('平台收款狀態','Platform Payment Status') + '</th><th>'+T('歸屬狀態','Attribution Status')+'</th>';
+  t.appendChild(head);
+  page.forEach(function(o){
+    var open = (openedId === o.id);
+    var tr = document.createElement('tr');
+    tr.className = 'rowlink' + (open ? ' opened' : '');
+    tr.id = 'row-' + o.id;
+    tr.setAttribute('onclick', 'toggleRow(\'' + o.id + '\')');
+    tr.innerHTML = '<td>' + o.date + '</td>' +
+      '<td>' + T(TYPE_SHORT[o.type], TYPE_SHORT_EN[o.type]) + '</td>' +
+      '<td>' + escHtml(o.cust) + '</td>' +
+      '<td>' + escHtml(o.plan) + '</td>' +
+      '<td class="num">' + fmtNT(o.amount) + '</td>' +
+      '<td>' + payBadge(o.pay) + '</td>' +
+      '<td style="display:flex;align-items:center;gap:6px">' + attrBadge(o.attr) + chevron(open) + '</td>';
+    t.appendChild(tr);
+    if (open){
+      var dr = document.createElement('tr');
+      dr.className = 'detailrow';
+      dr.innerHTML = '<td colspan="7">' + detailHtml(o) + '</td>';
+      t.appendChild(dr);
+    }
+  });
+  document.getElementById('orderEmpty').classList.toggle('hidden', rows.length > 0);
+  document.getElementById('loadMoreRow').classList.toggle('hidden', rows.length <= shown);
+  document.getElementById('resultCount').textContent = T('符合條件 ' + rows.length + ' 筆，目前顯示 ' + Math.min(shown, rows.length) + ' 筆', rows.length + ' matching, showing ' + Math.min(shown, rows.length));
+}
+function loadMore(){ shown += PAGE_SIZE; render(); toast(T('已載入更多資料','More data loaded')); }
+function toggleRow(id){
+  openedId = (openedId === id) ? null : id;
+  render();
+  if (openedId){
+    var el = document.getElementById('row-' + openedId);
+    if (el) el.scrollIntoView({behavior:'smooth', block:'center'});
+  }
+}
+
+/* ================= 提出異議 ================= */
+var disputeOrderId = null;
+function openDispute(id, ev){
+  if (ev) ev.stopPropagation();
+  var o = ORDERS.find(function(x){ return x.id === id; });
+  if (!o) return;
+  disputeOrderId = id;
+  document.getElementById('dmOrderId').textContent = o.id;
+  document.getElementById('dmCust').textContent = o.cust;
+  document.getElementById('dmAttr').innerHTML = attrBadge(o.attr);
+  document.getElementById('dmReason').value = '';
+  document.getElementById('dmEvidence').value = '';
+  document.getElementById('dmReasonRow').classList.remove('invalid');
+  openModal('disputeModal');
+}
+function submitDispute(){
+  var reason = document.getElementById('dmReason').value.trim();
+  var row = document.getElementById('dmReasonRow');
+  if (!reason){ row.classList.add('invalid'); document.getElementById('dmReason').focus(); return; }
+  row.classList.remove('invalid');
+  var o = ORDERS.find(function(x){ return x.id === disputeOrderId; });
+  if (!o) return;
+  o.attr = '爭議中';
+  o.disputeReason = reason;
+  o.disputedAt = TODAY_STR;
+  var list = readDisputes();
+  list.unshift({orderId:o.id, cust:o.cust, agentName:MY_AGENT_NAME, agentCode:MY_AGENT_CODE,
+    reason:reason, evidence:document.getElementById('dmEvidence').value.trim(), at:TODAY_STR, status:'待覆核'});
+  writeDisputes(list);
+  closeModal('disputeModal');
+  openedId = o.id;
+  render();
+  toast(T('已送出異議，' + o.id + ' 歸屬狀態改為爭議中，待總部覆核', 'Dispute submitted — ' + o.id + ' attribution is now Disputed, pending HQ review'));
+}
+
+/* ================= 深連結：?id= 定位並展開該筆 ================= */
+(function initDeepLink(){
+  var m = /[?&]id=([^&]+)/.exec(location.search);
+  if (!m) return;
+  var id = decodeURIComponent(m[1]);
+  var idx = filtered().findIndex(function(o){ return o.id === id; });
+  if (idx < 0) return;
+  while (shown <= idx) shown += PAGE_SIZE;
+  openedId = id;
+})();
+applyMode();
+document.getElementById('hintValidDays').textContent = ATTR_VALID_DAYS;
+render();
+if (openedId){
+  var target = document.getElementById('row-' + openedId);
+  if (target) target.scrollIntoView({block:'center'});
+}
+if (window.TLI_I18N){
+  TLI_I18N.onRefresh(applyMode);
+  TLI_I18N.onRefresh(render);
+  TLI_I18N.onRefresh(renderNotifPanel);
+}
+
+</script>
+</body>
+</html>

@@ -1,0 +1,1146 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title data-i18n="meta_title">TLI Connect｜活動</title>
+<meta name="description" content="TLI Connect 線上活動：文化講座、直播工作坊、會話交流會，依本月、線上、免費篩選，點選卡片查看詳情並報名。">
+<style>
+:root{
+  --c-primary:#1B4E8C;--c-primary-dark:#123A66;--c-accent:#E8792B;--c-accent-dark:#CF691F;
+  --c-secondary:#0F9B79;--c-bg:#F5F7FA;--c-border:#E4E7EC;--c-muted:#667085;--c-text:#101828;
+  --radius:14px;--shadow:0 1px 3px rgba(16,24,40,.08),0 1px 2px rgba(16,24,40,.04);--shadow-lg:0 8px 24px rgba(16,24,40,.10);
+}
+*{box-sizing:border-box;}html,body{margin:0;padding:0;}
+body{font-family:"Noto Sans TC","Microsoft JhengHei",system-ui,-apple-system,"Segoe UI",sans-serif;background:#fff;color:var(--c-text);line-height:1.65;font-size:15px;}
+a{color:inherit;text-decoration:none;}img{max-width:100%;display:block;}ul{margin:0;padding:0;list-style:none;}h1,h2,h3,p{margin:0;}
+
+.site-header{background:#fff;border-bottom:1px solid var(--c-border);padding:12px 24px;display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;position:sticky;top:0;z-index:40;}
+.brand{font-weight:700;font-size:20px;color:var(--c-primary);display:flex;align-items:center;gap:8px;}
+.brand img{height:32px;width:auto;display:block;}
+.site-nav{display:flex;gap:22px;align-items:center;font-size:14px;font-weight:600;}
+.site-nav a:hover{color:var(--c-primary);}
+.header-right{display:flex;gap:10px;align-items:center;flex-wrap:wrap;}
+.lang-select{border:1px solid var(--c-border);border-radius:6px;padding:6px 8px;font-size:13px;background:#fff;color:var(--c-text);}
+.menu-toggle{display:none;background:none;border:1px solid var(--c-border);border-radius:6px;padding:6px 10px;font-size:16px;cursor:pointer;}
+@media(max-width:780px){
+  .brand img{height:26px;}.site-nav{display:none;width:100%;order:3;flex-direction:column;align-items:flex-start;gap:12px;padding-top:12px;border-top:1px solid var(--c-border);margin-top:10px;}.site-nav.open{display:flex;}.menu-toggle{display:inline-block;min-width:44px;min-height:44px;}
+  .site-nav a{display:flex;align-items:center;width:100%;min-height:44px;box-sizing:border-box;}}
+
+.toast{position:fixed;left:50%;bottom:28px;transform:translateX(-50%) translateY(20px);background:#101828;color:#fff;font-size:13.5px;padding:12px 20px;border-radius:8px;box-shadow:var(--shadow-lg);opacity:0;pointer-events:none;transition:opacity .2s,transform .2s;z-index:100;max-width:90vw;text-align:center;}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
+
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;border:none;border-radius:8px;padding:10px 20px;font-size:14px;font-weight:700;cursor:pointer;font-family:inherit;white-space:nowrap;transition:background .15s,transform .1s;}
+.btn-primary{background:var(--c-primary);color:#fff;}.btn-primary:hover{background:var(--c-primary-dark);}
+.btn-accent{background:var(--c-accent);color:#fff;}.btn-accent:hover{background:var(--c-accent-dark);}
+.btn-outline{background:#fff;border:1px solid var(--c-border);color:var(--c-text);}.btn-outline:hover{background:var(--c-bg);}
+.btn-sm{padding:7px 14px;font-size:13px;}
+.btn-block{width:100%;}
+.btn:disabled{background:var(--c-border)!important;color:#98A2B3!important;cursor:not-allowed;}
+
+/* Hero */
+.course-hero{max-width:1160px;margin:0 auto;padding:44px 20px 8px;display:grid;grid-template-columns:1.2fr .8fr;gap:32px;align-items:center;}
+@media(max-width:860px){.course-hero{grid-template-columns:1fr;padding-top:28px;}}
+.course-hero h1{font-size:30px;font-weight:800;margin-bottom:10px;line-height:1.3;}
+.course-hero .lead{color:var(--c-muted);font-size:14.5px;max-width:480px;}
+.hero-illus{background:linear-gradient(135deg,#EAF1F9,#F5F7FA 60%,#FFF4EC);border-radius:20px;padding:22px;display:grid;grid-template-columns:repeat(3,1fr);gap:12px;box-shadow:var(--shadow);}
+.hero-illus-item{background:#fff;border-radius:14px;box-shadow:var(--shadow);padding:14px 6px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;color:var(--c-primary);}
+.hero-illus-item span{font-size:11px;font-weight:700;color:var(--c-text);}
+.hero-illus-item:nth-child(2){transform:translateY(-6px);}
+
+/* Pill filter bar */
+.pill-bar-wrap{position:sticky;top:57px;background:#fff;z-index:30;border-bottom:1px solid var(--c-border);padding:14px 0;margin-top:20px;}
+@media(max-width:780px){.pill-bar-wrap{top:0;}}
+.pill-bar{max-width:1160px;margin:0 auto;padding:0 20px;display:flex;flex-direction:column;gap:10px;}
+.pill-row{display:flex;flex-wrap:wrap;gap:8px;align-items:center;}
+.pill-row .pill-label{font-size:12px;font-weight:700;color:var(--c-muted);flex:none;}
+.pill{border:1px solid var(--c-border);background:#fff;border-radius:20px;padding:8px 15px;font-size:13px;cursor:pointer;font-family:inherit;color:var(--c-text);min-height:38px;transition:background .12s,border-color .12s,color .12s;}
+.pill:hover{background:var(--c-bg);}
+.pill.active{background:var(--c-primary);border-color:var(--c-primary);color:#fff;font-weight:700;}
+.pill-clear{margin-left:auto;font-size:12.5px;color:var(--c-accent-dark);font-weight:700;background:none;border:none;cursor:pointer;padding:8px 4px;}
+.pill-clear:hover{text-decoration:underline;}
+
+.results-bar{max-width:1160px;margin:22px auto 16px;padding:0 20px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;}
+.results-count{font-size:14px;font-weight:700;}
+.results-count span{color:var(--c-muted);font-weight:400;}
+
+/* Card grid */
+.card-grid{max-width:1160px;margin:0 auto;padding:0 20px 10px;display:grid;grid-template-columns:repeat(3,1fr);gap:20px;}
+@media(max-width:960px){.card-grid{grid-template-columns:repeat(2,1fr);}}
+@media(max-width:620px){.card-grid{grid-template-columns:1fr;}}
+.event-card{background:#fff;border:1px solid var(--c-border);border-radius:16px;overflow:hidden;box-shadow:var(--shadow);display:flex;flex-direction:column;transition:box-shadow .15s,transform .15s;cursor:pointer;text-align:left;font-family:inherit;padding:0;}
+.event-card:hover{box-shadow:var(--shadow-lg);transform:translateY(-3px);}
+.card-media{position:relative;height:96px;display:flex;align-items:center;justify-content:center;font-size:26px;color:#fff;font-weight:800;}
+.card-tag{position:absolute;top:10px;font-size:11px;font-weight:700;padding:4px 10px;border-radius:12px;background:rgba(255,255,255,.92);color:var(--c-text);}
+.card-tag.date{left:10px;}
+.card-tag.format{right:10px;background:rgba(16,24,40,.55);color:#fff;}
+.card-body{padding:16px 18px 18px;display:flex;flex-direction:column;gap:8px;flex:1;}
+.card-body h3{font-size:15.5px;font-weight:800;}
+.card-pitch{font-size:12.5px;color:var(--c-muted);flex:1;}
+.card-meta-row{display:flex;flex-wrap:wrap;gap:6px;align-items:center;font-size:12px;color:var(--c-muted);}
+.fee-badge{font-size:11px;font-weight:700;padding:3px 9px;border-radius:10px;}
+.fee-badge.free{background:#E6F4EF;color:var(--c-secondary);}
+.fee-badge.paid{background:#FDECDD;color:var(--c-accent-dark);}
+.cap-badge{font-size:11px;font-weight:700;padding:3px 9px;border-radius:10px;background:var(--c-bg);color:var(--c-muted);}
+.cap-badge.full{background:#FBEAEA;color:#B42318;}
+.card-actions2{display:flex;justify-content:flex-end;margin-top:4px;}
+
+/* 實體活動卡（連舊官網） */
+.event-card.physical .card-media{background:linear-gradient(135deg,#5A6472,#8A93A0);}
+.physical-inline-note{font-size:11.5px;color:var(--c-muted);margin-top:2px;}
+
+.empty-state{max-width:1160px;margin:20px auto;padding:0 20px;display:none;}
+.empty-state.show{display:block;}
+.empty-inner{background:#fff;border:1px solid var(--c-border);border-radius:16px;box-shadow:var(--shadow);padding:48px 24px;text-align:center;}
+.empty-illus{margin-bottom:14px;color:var(--c-muted);display:flex;justify-content:center;}
+.empty-inner h3{font-size:16px;font-weight:800;margin-bottom:6px;}
+.empty-inner p{color:var(--c-muted);font-size:13.5px;}
+
+.physical-line{max-width:1160px;margin:0 auto 8px;padding:0 24px;display:flex;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap;font-size:13px;color:var(--c-muted);}
+.physical-line strong{color:var(--c-text);}
+.physical-line a{color:var(--c-primary);font-weight:700;text-decoration:underline;white-space:nowrap;}
+
+/* 詳情區 */
+#eventDetailSection{max-width:1160px;margin:26px auto 0;padding:0 20px;}
+.detail-grid{display:grid;grid-template-columns:1.4fr 1fr;gap:28px;margin-top:14px;}
+@media(max-width:900px){.detail-grid{grid-template-columns:1fr;}}
+.title-block{background:#fff;border:1px solid var(--c-border);border-radius:var(--radius);box-shadow:var(--shadow);padding:26px;}
+.title-block .nick{color:var(--c-secondary);font-weight:700;font-size:13px;margin-bottom:8px;}
+.title-block h1{font-size:23px;font-weight:800;margin-bottom:10px;}
+.fact-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;margin:18px 0;}
+@media(max-width:520px){.fact-grid{grid-template-columns:1fr;}}
+.fact{background:var(--c-bg);border-radius:8px;padding:12px 14px;}
+.fact .k{font-size:12px;color:var(--c-muted);margin-bottom:2px;}
+.fact .v{font-size:14px;font-weight:700;}
+.mode-badge{display:inline-flex;align-items:center;font-size:11.5px;font-weight:700;padding:4px 11px;border-radius:12px;}
+.mode-badge.online{background:#E6F4EF;color:var(--c-secondary);}
+.mode-badge.physical{background:#EEF0F3;color:#3A4A5C;}
+.suit-list{margin-top:14px;}
+.suit-list h3{font-size:14.5px;font-weight:700;margin-bottom:8px;}
+.suit-list li{font-size:13.5px;color:var(--c-muted);margin-bottom:6px;padding-left:16px;position:relative;}
+.suit-list li:before{content:"•";position:absolute;left:0;color:var(--c-secondary);}
+.zoom-note{background:#EAF1F9;border:1px solid #CBDCF0;border-radius:10px;padding:12px 14px;margin-top:16px;font-size:12.5px;color:var(--c-primary-dark);}
+.cap-progress{height:8px;border-radius:6px;background:var(--c-border);overflow:hidden;margin-top:8px;}
+.cap-progress > div{height:100%;background:var(--c-secondary);border-radius:6px;}
+.cap-progress.full > div{background:#B42318;}
+.side-card{background:#fff;border:1px solid var(--c-border);border-radius:var(--radius);box-shadow:var(--shadow);padding:20px;margin-bottom:16px;}
+.side-card h3{font-size:14.5px;font-weight:700;margin-bottom:10px;}
+.side-card p{font-size:13px;color:var(--c-muted);margin-bottom:14px;}
+.side-card.reg-success h3{color:var(--c-secondary);}
+.hidden{display:none!important;}
+.reg-badge{font-size:11px;font-weight:700;padding:3px 9px;border-radius:10px;background:#E6F4EF;color:var(--c-secondary);}
+.refund-link{font-size:11.5px;font-weight:700;color:var(--c-primary);text-decoration:underline;margin-left:6px;white-space:nowrap;}
+
+/* 彈窗（確認報名／退費規則共用） */
+.modal-overlay{position:fixed;inset:0;background:rgba(16,24,40,.45);display:none;align-items:center;justify-content:center;z-index:300;padding:20px;}
+.modal-overlay.show{display:flex;}
+.modal-box{background:#fff;border-radius:12px;max-width:480px;width:100%;max-height:80vh;display:flex;flex-direction:column;box-shadow:var(--shadow-lg);}
+.modal-head{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:16px 20px;border-bottom:1px solid var(--c-border);}
+.modal-head h3{font-size:15px;font-weight:800;}
+.modal-close-btn{background:none;border:none;cursor:pointer;color:var(--c-muted);padding:6px;flex:none;}
+.modal-close-btn:hover{color:var(--c-text);}
+.modal-body{padding:18px 20px;overflow-y:auto;font-size:13px;color:var(--c-muted);line-height:1.8;}
+.modal-body p{margin-bottom:8px;}
+.modal-foot{padding:14px 20px;border-top:1px solid var(--c-border);display:flex;gap:10px;justify-content:flex-end;}
+
+.decide-band{max-width:1160px;margin:52px auto 0;padding:0 20px;}
+.decide-inner{background:linear-gradient(120deg,var(--c-primary),#153f70);color:#fff;border-radius:20px;padding:38px 32px;text-align:center;}
+.decide-inner h2{font-size:22px;font-weight:800;margin-bottom:8px;}
+.decide-inner p{color:rgba(255,255,255,.85);font-size:13.5px;margin-bottom:22px;}
+.decide-actions{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;}
+.decide-actions .btn-outline{background:transparent;color:#fff;border-color:rgba(255,255,255,.5);}
+.decide-actions .btn-outline:hover{background:rgba(255,255,255,.12);}
+
+main{max-width:1160px;margin:0 auto;padding:0 0 60px;}
+
+.site-footer{background:#101828;color:#CBD3DE;padding:44px 24px 24px;margin-top:52px;}
+.footer-inner{max-width:1120px;margin:0 auto;display:grid;grid-template-columns:1.4fr 1fr 1fr 1fr;gap:28px;}
+@media(max-width:780px){.footer-inner{grid-template-columns:1fr 1fr;}}
+@media(max-width:480px){.footer-inner{grid-template-columns:1fr;}}
+.footer-inner h4{color:#fff;font-size:14px;margin-bottom:12px;}
+.footer-inner li{font-size:13px;margin-bottom:8px;color:#9AA4B2;}
+.footer-bottom img{display:block;margin:0 auto 10px;height:24px;width:auto;}
+.footer-bottom{max-width:1120px;margin:26px auto 0;padding-top:18px;border-top:1px solid #2A3241;font-size:12px;color:#7C879A;text-align:center;}
+
+/* AI 線上諮詢浮動元件（全站共用，右下角） */
+.ai-fab{position:fixed;right:20px;bottom:20px;width:56px;height:56px;border-radius:50%;background:var(--c-primary);color:#fff;border:none;box-shadow:0 8px 24px rgba(16,24,40,.16);font-size:23px;cursor:pointer;z-index:150;display:flex;align-items:center;justify-content:center;}
+.ai-fab:hover{background:var(--c-primary-dark);}
+.ai-fab-label{position:fixed;right:84px;bottom:36px;background:#101828;color:#fff;font-size:12px;padding:6px 10px;border-radius:6px;z-index:150;white-space:nowrap;opacity:0;pointer-events:none;transition:opacity .2s;}
+.ai-fab:hover + .ai-fab-label,.ai-fab-label.show{opacity:1;}
+.ai-overlay{position:fixed;inset:0;background:rgba(16,24,40,.4);display:none;align-items:flex-end;justify-content:flex-end;z-index:200;padding:20px;}
+.ai-overlay.show{display:flex;}
+@media(max-width:780px){.ai-overlay{align-items:flex-end;justify-content:center;padding:0;}}
+.ai-sheet{background:#fff;width:380px;max-width:100%;height:600px;max-height:85vh;border-radius:16px;box-shadow:0 8px 24px rgba(16,24,40,.16);display:flex;flex-direction:column;overflow:hidden;}
+@media(max-width:780px){.ai-sheet{width:100%;height:85vh;max-height:85vh;border-radius:16px 16px 0 0;}}
+.ai-sheet.minimized{height:auto;}
+.ai-sheet.minimized .ai-body,.ai-sheet.minimized .ai-chips,.ai-sheet.minimized .ai-inputrow,.ai-sheet.minimized .ai-disclaimer{display:none;}
+.ai-head{background:var(--c-primary);color:#fff;padding:12px 14px;display:flex;justify-content:space-between;align-items:center;flex:none;gap:8px;}
+.ai-head-info{display:flex;align-items:center;gap:10px;min-width:0;}
+.ai-avatar{flex:none;width:32px;height:32px;border-radius:50%;background:rgba(255,255,255,.18);display:flex;align-items:center;justify-content:center;}
+.ai-avatar.sm{width:24px;height:24px;background:var(--c-primary);}
+.ai-avatar svg{display:block;}
+.ai-head-text{min-width:0;}
+.ai-head-title{font-weight:700;font-size:14.5px;line-height:1.3;}
+.ai-head-status{font-size:11px;color:rgba(255,255,255,.82);display:flex;align-items:center;gap:5px;margin-top:1px;}
+.ai-status-dot{width:6px;height:6px;border-radius:50%;background:#3FCF8E;flex:none;}
+.ai-head-actions{display:flex;gap:6px;flex:none;}
+.ai-head-btn{background:rgba(255,255,255,.2);border:none;color:#fff;width:30px;height:30px;border-radius:50%;cursor:pointer;display:flex;align-items:center;justify-content:center;}
+.ai-head-btn:hover{background:rgba(255,255,255,.32);}
+.ai-minimize-btn svg{transition:transform .2s;}
+.ai-sheet.minimized .ai-minimize-btn svg{transform:rotate(180deg);}
+.ai-body{flex:1;overflow-y:auto;padding:14px;display:flex;flex-direction:column;gap:12px;background:var(--c-bg);}
+.ai-msg-row{display:flex;align-items:flex-end;gap:8px;max-width:100%;}
+.ai-msg-row.user{justify-content:flex-end;}
+.ai-msg-stack{display:flex;flex-direction:column;max-width:82%;}
+.ai-msg-row.user .ai-msg-stack{align-items:flex-end;}
+.ai-msg-row.bot .ai-msg-stack{align-items:flex-start;}
+.ai-msg{font-size:13.5px;line-height:1.6;padding:10px 13px;border-radius:12px;}
+.ai-msg.user{background:var(--c-primary);color:#fff;border-bottom-right-radius:3px;}
+.ai-msg.bot{background:#fff;border:1px solid var(--c-border);color:var(--c-text);border-bottom-left-radius:3px;}
+.ai-msg-time{font-size:10.5px;color:var(--c-muted);margin-top:4px;padding:0 3px;}
+.ai-msg .ai-actions{display:flex;gap:8px;margin-top:10px;flex-wrap:wrap;}
+.ai-msg .ai-actions button,.ai-msg .ai-actions a{font-size:12px;font-weight:700;border-radius:6px;padding:8px 11px;min-height:36px;border:1px solid var(--c-border);background:#fff;cursor:pointer;color:var(--c-text);font-family:inherit;text-decoration:none;display:inline-flex;align-items:center;}
+.ai-msg .ai-thumbs{display:flex;gap:8px;margin-top:8px;align-items:center;}
+.ai-msg .ai-thumbs span{font-size:12px;color:var(--c-muted);}
+.ai-msg .ai-thumbs button{border:none;background:none;cursor:pointer;padding:4px;opacity:.5;color:var(--c-muted);display:flex;align-items:center;}
+.ai-msg .ai-thumbs button.picked{opacity:1;color:var(--c-secondary);}
+.ai-msg .ai-thumbs-thanks{font-size:11.5px;color:var(--c-secondary);margin-top:6px;}
+.ai-typing .ai-typing-dots{display:flex;gap:4px;padding:2px 0;}
+.ai-typing .ai-typing-dots span{width:6px;height:6px;border-radius:50%;background:var(--c-muted);opacity:.5;animation:aiTypingBounce 1.1s infinite ease-in-out;}
+.ai-typing .ai-typing-dots span:nth-child(2){animation-delay:.15s;}
+.ai-typing .ai-typing-dots span:nth-child(3){animation-delay:.3s;}
+@keyframes aiTypingBounce{0%,60%,100%{transform:translateY(0);opacity:.4;}30%{transform:translateY(-4px);opacity:1;}}
+.ai-live-btn{margin-top:8px;background:#fff;border:1px solid var(--c-border);border-radius:6px;padding:8px 11px;font-size:12px;font-weight:700;cursor:pointer;color:var(--c-text);font-family:inherit;}
+.ai-chips{display:flex;flex-wrap:nowrap;gap:8px;padding:10px 14px;flex:none;overflow-x:auto;-ms-overflow-style:none;scrollbar-width:none;}
+.ai-chips::-webkit-scrollbar{display:none;}
+.ai-chip{flex:none;background:#fff;border:1px solid var(--c-border);border-radius:16px;padding:8px 13px;font-size:12.5px;cursor:pointer;font-family:inherit;min-height:36px;white-space:nowrap;}
+.ai-chip:hover{background:var(--c-bg);}
+.ai-chip.ai-chip-primary{border-color:var(--c-accent);color:var(--c-accent-dark);font-weight:700;}
+.ai-quiz-choices{display:flex;flex-wrap:wrap;gap:8px;margin-top:8px;}
+.ai-quiz-choices button{background:#fff;border:1px solid var(--c-border);border-radius:18px;padding:8px 13px;font-size:12.5px;cursor:pointer;font-family:inherit;min-height:36px;}
+.ai-quiz-choices button:hover{background:var(--c-bg);}
+.ai-plan-card{background:#fff;border:1px solid var(--c-accent);border-radius:10px;padding:12px;margin-top:8px;}
+.ai-plan-card h4{font-size:13.5px;font-weight:800;margin-bottom:4px;color:var(--c-accent-dark);}
+.ai-plan-card p{font-size:12px;color:var(--c-muted);margin:0;}
+.ai-plan-card + .ai-plan-card{margin-top:8px;}
+.ai-inputrow{display:flex;gap:8px;padding:12px 14px;border-top:1px solid var(--c-border);background:#fff;flex:none;}
+.ai-inputrow input{flex:1;border:1px solid var(--c-border);border-radius:20px;padding:10px 14px;font-size:13.5px;font-family:inherit;min-width:0;}
+.ai-inputrow button{background:var(--c-accent);color:#fff;border:none;border-radius:20px;padding:9px 16px;font-size:13px;font-weight:700;cursor:pointer;min-height:40px;}
+.ai-inputrow button:disabled{opacity:.45;cursor:not-allowed;}
+.ai-disclaimer{font-size:10.5px;color:var(--c-muted);text-align:center;padding:0 14px 10px;flex:none;background:#fff;}
+.ai-mini-form{background:#fff;border:1px solid var(--c-border);border-radius:10px;padding:12px;margin-top:8px;display:flex;flex-direction:column;gap:8px;}
+.ai-mini-form input{border:1px solid var(--c-border);border-radius:6px;padding:9px 10px;font-size:13px;font-family:inherit;}
+.ai-mini-form button{align-self:flex-start;min-height:38px;}
+.ai-timeline{display:flex;flex-direction:column;gap:10px;margin-top:6px;}
+.ai-tl-step{display:flex;gap:10px;align-items:flex-start;font-size:12.5px;color:var(--c-muted);opacity:.4;transition:opacity .3s;}
+.ai-tl-step.done{opacity:1;color:var(--c-text);}
+.ai-tl-step .dot{flex:none;width:20px;height:20px;border-radius:50%;border:2px solid var(--c-border);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:800;color:transparent;margin-top:1px;}
+.ai-tl-step.done .dot{background:var(--c-secondary);border-color:var(--c-secondary);color:#fff;}
+</style>
+</head>
+<body>
+
+<header class="site-header">
+  <a class="brand" href="p01_home.html"><img src="../assets/tli-logo.svg" alt="TLI"></a>
+  <button class="menu-toggle" onclick="document.querySelector('.site-nav').classList.toggle('open')" aria-label="開啟選單" data-i18n-aria-label="menu_toggle_aria"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg></button>
+  <nav class="site-nav">
+    <a href="p02_courses.html" data-i18n="nav_courses">課程</a>
+    <a href="p10_enterprise.html" data-i18n="nav_enterprise">企業培訓</a>
+    <a href="p15_placement_test.html" data-i18n="nav_placement">程度測驗</a>
+    <a href="p09_events.html" data-i18n="nav_events">活動</a>
+    <a href="p04_teachers.html" data-i18n="nav_teachers">師資</a>
+    <a href="p05_about_locations.html" data-i18n="nav_about">品牌與校區</a>
+    <a href="p08_faq.html" data-i18n="nav_faq">常見問題</a>
+  </nav>
+  <div class="header-right tb-actions">
+    <a class="btn btn-primary btn-sm" data-i18n="btn_consult" href="p06_trial.html?type=consult">預約諮詢</a>
+    <a class="btn btn-accent btn-sm" data-i18n="btn_trial" href="p06_trial.html?type=trial">預約試聽</a>
+    <a class="btn btn-outline btn-sm" data-i18n="btn_login" href="p07_login_register.html">登入</a>
+  </div>
+</header>
+
+<div class="course-hero">
+  <div>
+    <h1 data-i18n="p09_hero_title">線上活動一次看</h1>
+    <p class="lead" data-i18n="p09_hero_lead">文化講座、直播工作坊、會話交流會，多為免費參加，登入會員區即可報名並取得專屬線上教室連結。</p>
+  </div>
+  <div class="hero-illus">
+    <div class="hero-illus-item"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polygon points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88 16.24 7.76"/></svg><span data-i18n="p09_illus_lecture">文化講座</span></div>
+    <div class="hero-illus-item"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg><span data-i18n="p09_illus_workshop">直播工作坊</span></div>
+    <div class="hero-illus-item"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg><span data-i18n="p09_illus_meetup">會話交流會</span></div>
+  </div>
+</div>
+
+<div class="physical-line">
+  <span><span data-i18n="p09_physical_note_pre">校區也有</span><strong data-i18n="p09_physical_note_strong">實體</strong><span data-i18n="p09_physical_note_post">活動與工作坊，場次與報名請至 TLI 官網查詢。</span></span>
+  <a href="https://tli1956.com/?lang=tc" target="_blank" rel="noopener" data-i18n="p09_physical_note_link">至官網查看實體活動 →</a>
+</div>
+
+<div class="pill-bar-wrap">
+  <div class="pill-bar">
+    <div class="pill-row">
+      <span class="pill-label" data-i18n="p09_pill_label">篩選</span>
+      <div class="pill-row" id="pillFilter" style="gap:8px;"></div>
+      <button class="pill-clear" onclick="clearFilters()" data-i18n="p09_pill_clear">清除篩選</button>
+    </div>
+  </div>
+</div>
+
+<main>
+  <div class="results-bar">
+    <div class="results-count" id="resultsCount">共 0 場活動</div>
+  </div>
+
+  <div class="card-grid" id="eventGrid"></div>
+
+  <div class="empty-state" id="emptyState">
+    <div class="empty-inner">
+      <div class="empty-illus"><svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg></div>
+      <h3 data-i18n="p09_empty_title">目前篩選條件下沒有符合的活動</h3>
+      <p data-i18n="p09_empty_desc">試試調整篩選條件，或直接讓顧問幫您推薦合適的場次</p>
+    </div>
+  </div>
+
+  <section id="eventDetailSection" class="hidden">
+    <button class="btn btn-outline btn-sm" onclick="closeDetail()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:14px;height:14px;"><path d="M15 18l-6-6 6-6"/></svg><span data-i18n="p09_back_to_list">返回活動列表</span></button>
+    <div class="detail-grid" id="detailGrid"></div>
+  </section>
+
+  <div class="decide-band">
+    <div class="decide-inner">
+      <h2 data-i18n="p09_decide_title">找不到想參加的場次？</h2>
+      <p data-i18n="p09_decide_desc">留下聯絡方式，顧問將依您的學習需求推薦合適的活動或課程</p>
+      <div class="decide-actions">
+        <a class="btn btn-accent" data-i18n="btn_consult" href="p06_trial.html?type=consult">預約諮詢</a>
+        <button type="button" class="btn btn-outline" onclick="aiOpen('fab')" data-i18n="ai_fab_label">線上諮詢</button>
+      </div>
+    </div>
+  </div>
+</main>
+
+<div class="modal-overlay" id="confirmRegisterModalOverlay" onclick="if(event.target===this) closeConfirmRegisterModal()">
+  <div class="modal-box">
+    <div class="modal-head">
+      <h3 data-i18n="p09_confirm_modal_title">確認報名</h3>
+      <button class="modal-close-btn" onclick="closeConfirmRegisterModal()" aria-label="關閉" data-i18n-aria-label="p09_close_aria"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
+    </div>
+    <div class="modal-body" id="confirmRegisterModalBody"></div>
+    <div class="modal-foot">
+      <button type="button" class="btn btn-outline btn-sm" onclick="closeConfirmRegisterModal()" data-i18n="p09_confirm_modal_cancel">取消</button>
+      <button type="button" class="btn btn-accent btn-sm" id="confirmRegisterModalBtn" onclick="confirmFreeRegistration()" data-i18n="p09_confirm_modal_btn">確認報名</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="refundModalOverlay" onclick="if(event.target===this) closeEventRefundModal()">
+  <div class="modal-box">
+    <div class="modal-head">
+      <h3 data-i18n="p09_refund_modal_title">活動退費規則</h3>
+      <button class="modal-close-btn" onclick="closeEventRefundModal()" aria-label="關閉" data-i18n-aria-label="p09_close_aria"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
+    </div>
+    <div class="modal-body">
+      <p data-i18n="p09_refund_rule1">活動開始前 N 小時申請，可全額退費。</p>
+      <p data-i18n="p09_refund_rule2">逾前項時限申請，恕不受理退費。</p>
+      <p data-i18n="p09_refund_rule3">N 之實際時數由 TLI 另行公告。</p>
+    </div>
+    <div class="modal-foot">
+      <button type="button" class="btn btn-primary btn-sm" onclick="closeEventRefundModal()" data-i18n="p09_refund_close_btn">我已了解</button>
+    </div>
+  </div>
+</div>
+
+<footer class="site-footer">
+  <div class="footer-inner">
+    <div>
+      <h4 data-i18n="footer_brand_name">TLI 中華語文研習所</h4>
+      <li data-i18n="footer_brand_line1">1956 年創立於美國紐澤西，同年於台北建校</li>
+      <li data-i18n="footer_brand_line2">1976 年教育部核定校名為「中華語文研習所」</li>
+    </div>
+    <div>
+      <h4 data-i18n="footer_col_courses">課程</h4>
+      <ul>
+        <li><a href="p02_courses.html" data-i18n="footer_link_chinese">中文課程</a></li>
+        <li><a href="p02_courses.html" data-i18n="footer_link_foreign">外語課程</a></li>
+        <li><a href="p09_events.html" data-i18n="footer_link_events">線上活動</a></li>
+      </ul>
+    </div>
+    <div>
+      <h4 data-i18n="footer_col_about">關於 TLI</h4>
+      <ul>
+        <li><a href="p05_about_locations.html" data-i18n="footer_link_history">品牌沿革</a></li>
+        <li><a href="p05_about_locations.html" data-i18n="footer_link_locations">四校地址</a></li>
+        <li><a href="p08_faq.html" data-i18n="footer_link_faq">常見問題</a></li>
+      </ul>
+    </div>
+    <div>
+      <h4 data-i18n="footer_col_start">開始學習</h4>
+      <ul>
+        <li><a href="p06_trial.html" data-i18n="footer_link_trial">免費試聽</a></li>
+        <li><a href="p07_login_register.html" data-i18n="footer_link_login">會員登入／註冊</a></li>
+      </ul>
+    </div>
+  </div>
+  <div class="footer-bottom"><img src="../assets/tli-logo.svg" alt="TLI"><span data-i18n="footer_copyright">© 2026 TLI 中華語文研習所．保留所有權利。</span></div>
+</footer>
+
+<div class="toast" id="toast"></div>
+
+<script>
+function showToast(msg){
+  var t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  clearTimeout(window._toastTimer);
+  window._toastTimer = setTimeout(function(){ t.classList.remove('show'); }, 2200);
+}
+</script>
+
+<button class="ai-fab" onclick="aiOpen('fab')" aria-label="開啟線上諮詢" data-i18n-aria-label="ai_fab_aria"><svg width="23" height="23" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg></button>
+<div class="ai-fab-label" data-i18n="ai_fab_label">線上諮詢</div>
+
+<div class="ai-overlay" id="aiOverlay-fab" onclick="if(event.target===this) aiClose('fab')">
+  <div class="ai-sheet" id="aiSheet-fab">
+    <div class="ai-head">
+      <div class="ai-head-info">
+        <div class="ai-avatar" aria-hidden="true"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l7 3v5c0 4.5-3 8.5-7 10-4-1.5-7-5.5-7-10V6l7-3z"/></svg></div>
+        <div class="ai-head-text">
+          <div class="ai-head-title" data-i18n="ai_title">TLI 小幫手</div>
+          <div class="ai-head-status"><span class="ai-status-dot"></span><span data-i18n="ai_status">線上・通常 1 分鐘內回覆</span></div>
+        </div>
+      </div>
+      <div class="ai-head-actions">
+        <button class="ai-head-btn ai-minimize-btn" onclick="aiMinimize('fab')" aria-label="最小化" title="最小化" data-i18n-aria-label="ai_minimize_aria" data-i18n-title="ai_minimize_aria"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg></button>
+        <button class="ai-head-btn" onclick="aiClose('fab')" aria-label="關閉" title="關閉" data-i18n-aria-label="ai_close_aria" data-i18n-title="ai_close_aria"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
+      </div>
+    </div>
+    <div class="ai-body" id="aiBody-fab"></div>
+    <div class="ai-chips" id="aiChips-fab"></div>
+    <form class="ai-inputrow" onsubmit="return aiSubmitInput(event,'fab')">
+      <input id="aiInput-fab" placeholder="輸入您的問題…" aria-label="輸入問題" oninput="aiToggleSend('fab')" data-i18n-placeholder="ai_input_placeholder" data-i18n-aria-label="ai_input_aria">
+      <button type="submit" id="aiSend-fab" disabled data-i18n="ai_send">送出</button>
+    </form>
+    <div class="ai-disclaimer" data-i18n="ai_disclaimer">回覆由 AI 產生，重要事項請以顧問確認為準</div>
+  </div>
+</div>
+
+<script>window.TLI_I18N_PAGE_LANGS=['zh-TW','zh-CN','en','ja','de'];</script>
+<script src="../assets/_i18n_dict.js"></script>
+<script src="../assets/_i18n_dict_ja.js"></script>
+<script src="../assets/_i18n_dict_de.js"></script>
+<script src="../assets/_i18n_dict_public.js"></script>
+<script src="../assets/_i18n_dict_public_ja.js"></script>
+<script src="../assets/_i18n_dict_public_de.js"></script>
+<script src="../assets/_i18n.js"></script>
+<script>
+function T(zh,obj){ return TLI_I18N.t(zh,obj); }
+
+var TLI_AVATAR_SVG = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l7 3v5c0 4.5-3 8.5-7 10-4-1.5-7-5.5-7-10V6l7-3z"/></svg>';
+
+function tliFmt(str, obj){
+  if(!str) return str;
+  return str.replace(/\{(\w+)\}/g, function(_, k){ return (obj && obj[k] !== undefined) ? obj[k] : ''; });
+}
+
+/* ===================== i18n：本頁字典（五語，函式化以支援語言切換即時重算） ===================== */
+function tliDict(){
+  return {
+    ai_chip_trial: T('試聽怎麼預約',{en:'How to book a trial',ja:'体験レッスンの予約方法',de:'Wie bucht man eine Probestunde'}),
+    ai_greeting_default: T('您好，我是 TLI 小幫手，歡迎詢問退費、請假改期、簽證、發票、付款、上課方式或老師配對等問題，也可以直接輸入您的問題。',{en:'Hi, I\u2019m the TLI Assistant. Ask me about refunds, rescheduling, visas, invoices, payment, class formats, or teacher matching — or type your own question.',ja:'こんにちは、TLIアシスタントです。返金、振替・キャンセル、ビザ、領収書、お支払い、受講形式、講師のマッチングなどについてお気軽にご質問ください。',de:'Hallo, ich bin der TLI-Assistent. Fragen Sie mich zu Rückerstattung, Terminverschiebung, Visum, Rechnung, Zahlung, Unterrichtsform oder Lehrer-Zuordnung – oder stellen Sie einfach Ihre eigene Frage.'}),
+    ai_thumbs_prompt: T('這有幫助嗎？',{en:'Was this helpful?',ja:'役に立ちましたか？',de:'War das hilfreich?'}),
+    ai_thumbs_thanks: T('感謝回饋',{en:'Thanks for your feedback',ja:'フィードバックありがとうございます',de:'Danke für Ihr Feedback'}),
+    ai_action_trial: T('預約試聽',{en:'Book a Trial',ja:'体験レッスン予約',de:'Probestunde buchen'}),
+    ai_action_contact: T('聯繫顧問',{en:'Contact an Advisor',ja:'アドバイザーに連絡',de:'Berater kontaktieren'}),
+    ai_repeat: T('剛剛提過「{chip}」的說明，簡單說是：{short}還有其他想了解的嗎？',{en:'As mentioned about “{chip}”: {short} Is there anything else you\u2019d like to know?',ja:'先ほどの「{chip}」についてですが：{short}他にご質問はございますか？',de:'Wie bereits zu „{chip}“ erwähnt: {short} Gibt es noch etwas, das Sie wissen möchten?'}),
+    ai_fallback: T('這題我請顧問回覆比較準，留下聯絡方式，顧問將於 1 個工作日內主動聯繫您。',{en:'Let me have an advisor follow up on this one — please leave your contact info and we\u2019ll reach out within 1 business day.',ja:'こちらはアドバイザーより回答させていただきます。ご連絡先をご記入いただければ１営業日以内にご連絡いたします。',de:'Dazu lasse ich Sie am besten von einem Berater kontaktieren – bitte hinterlassen Sie Ihre Kontaktdaten, wir melden uns innerhalb eines Werktags.'}),
+    ai_escalate_user_msg: T('我想直接聯繫顧問',{en:'I\u2019d like to speak with an advisor',ja:'アドバイザーと直接話したいです',de:'Ich möchte direkt mit einem Berater sprechen'}),
+    ai_form_name_ph: T('姓名',{en:'Name',ja:'お名前',de:'Name'}),
+    ai_form_contact_ph: T('Email 或 LINE ID',{en:'Email or LINE ID',ja:'メールアドレスまたはLINE ID',de:'E-Mail oder LINE-ID'}),
+    ai_form_submit: T('送出，請顧問聯繫我',{en:'Submit — have an advisor contact me',ja:'送信して連絡してもらう',de:'Absenden – Berater soll mich kontaktieren'}),
+    ai_live_btn: T('轉真人客服',{en:'Talk to a live agent',ja:'有人対応に切り替える',de:'Mit einem Mitarbeiter sprechen'}),
+    ai_live_queued: T('已為您排隊，目前前方 1 位，客服人員上線後將立即為您服務。',{en:'You\u2019re in the queue — 1 person ahead of you. An agent will assist you as soon as they\u2019re online.',ja:'ただいま順番待ちです（前に1名）。担当者がオンラインになり次第、すぐに対応いたします。',de:'Sie befinden sich in der Warteschlange – 1 Person vor Ihnen. Ein Mitarbeiter betreut Sie, sobald er online ist.'}),
+    ai_toast_fill_required: T('請填寫姓名與聯絡方式',{en:'Please fill in your name and contact info',ja:'お名前とご連絡先をご入力ください',de:'Bitte Name und Kontaktdaten angeben'}),
+    ai_ticket_created: T('已建立諮詢工單 #{ticket}',{en:'Consultation ticket #{ticket} has been created',ja:'お問い合わせチケット #{ticket} を作成しました',de:'Beratungsticket #{ticket} wurde erstellt'}),
+    ai_tl_assigned: T('已指派專責顧問（{advisor}）',{en:'Assigned to advisor: {advisor}',ja:'担当アドバイザー：{advisor}',de:'Zugewiesener Berater: {advisor}'}),
+    ai_tl_followup: T('顧問 1 個工作日內聯繫（{contact}）',{en:'Advisor will contact you within 1 business day via {contact}',ja:'1営業日以内に{contact}宛にご連絡いたします',de:'Der Berater meldet sich innerhalb eines Werktags über {contact}'}),
+
+    p09_filter_month: T('本月',{en:'This Month',ja:'今月',de:'Diesen Monat'}),
+    p09_filter_online: T('線上',{en:'Online',ja:'オンライン',de:'Online'}),
+    p09_filter_free: T('免費',{en:'Free',ja:'無料',de:'Kostenlos'}),
+    p09_results_count: T('共 {count} 場活動',{en:'{count} events found',ja:'全{count}件のイベント',de:'{count} Veranstaltungen gefunden'}),
+    p09_tag_physical: T('實體',{en:'In Person',ja:'対面',de:'Vor Ort'}),
+    p09_tag_online: T('線上',{en:'Online',ja:'オンライン',de:'Online'}),
+    p09_nick_physical: T('實體活動',{en:'In-Person Event',ja:'対面イベント',de:'Präsenzveranstaltung'}),
+    p09_nick_online: T('線上活動',{en:'Online Event',ja:'オンラインイベント',de:'Online-Veranstaltung'}),
+    p09_btn_view_detail: T('查看詳情',{en:'View Details',ja:'詳細を見る',de:'Details ansehen'}),
+    p09_btn_register: T('報名',{en:'Register',ja:'申し込む',de:'Anmelden'}),
+    p09_physical_inline_note: T('於校區舉辦，詳官網',{en:'Held on campus — see website for details',ja:'キャンパスにて開催・詳細は公式サイトへ',de:'Findet am Campus statt — Details auf der Website'}),
+    p09_label_free: T('免費',{en:'Free',ja:'無料',de:'Kostenlos'}),
+    p09_cap_onsite: T('現場報名',{en:'On-site Registration',ja:'現地受付',de:'Anmeldung vor Ort'}),
+    p09_cap_full: T('名額已滿',{en:'Fully Booked',ja:'満席',de:'Ausgebucht'}),
+    p09_cap_remain: T('剩 {remain} 名／共 {capacity} 名',{en:'{remain} spots left of {capacity}',ja:'残り{remain}名／定員{capacity}名',de:'Noch {remain} von {capacity} Plätzen frei'}),
+    p09_fact_campus: T('校區',{en:'Campus',ja:'キャンパス',de:'Campus'}),
+    p09_fact_time: T('時間',{en:'Time',ja:'時間',de:'Zeit'}),
+    p09_fact_fee: T('費用',{en:'Fee',ja:'費用',de:'Gebühr'}),
+    p09_fact_register_method: T('報名方式',{en:'How to Register',ja:'申込方法',de:'Anmeldeart'}),
+    p09_fact_register_onsite: T('現場報名（詳官網）',{en:'On-site registration (see website)',ja:'現地受付（詳細は公式サイトへ）',de:'Anmeldung vor Ort (siehe Website)'}),
+    p09_fact_speaker: T('講者',{en:'Speaker',ja:'講師',de:'Referent'}),
+    p09_fact_capacity: T('名額',{en:'Capacity',ja:'定員',de:'Plätze'}),
+    p09_content_heading: T('活動內容',{en:'What to Expect',ja:'イベント内容',de:'Was Sie erwartet'}),
+    p09_zoom_note: T('Zoom 連結不公開顯示，報名後登入會員區「我的活動」即可一鍵進入線上教室。',{en:'The Zoom link is never shown publicly. After registering, log in to the member area\u2019s "My Events" to enter your online classroom with one click.',ja:'Zoomリンクは公開されません。お申込み後、会員エリアの「マイイベント」からワンクリックでオンライン教室に入室できます。',de:'Der Zoom-Link wird nie öffentlich angezeigt. Nach der Anmeldung finden Sie ihn im Mitgliederbereich unter „Meine Veranstaltungen“ — ein Klick genügt, um Ihr Online-Klassenzimmer zu betreten.'}),
+    p09_side_physical_title: T('實體活動，詳官網報名',{en:'In-Person Event — Register via Website',ja:'対面イベント・公式サイトでお申込みください',de:'Präsenzveranstaltung — Anmeldung über die Website'}),
+    p09_side_physical_desc: T('本場次於{campus}舉辦，名額與報名方式請至 TLI 官網查詢，Connect 線上會員區不提供本場次報名。',{en:'This session is held at {campus}. For seats and registration, please check the TLI website — this session cannot be registered for through the Connect member area.',ja:'本イベントは{campus}で開催されます。定員・お申込み方法はTLI公式サイトをご確認ください。Connect会員エリアからのお申込みはできません。',de:'Diese Veranstaltung findet am {campus} statt. Plätze und Anmeldung finden Sie auf der TLI-Website — eine Anmeldung über den Connect-Mitgliederbereich ist für diese Veranstaltung nicht möglich.'}),
+    p09_side_physical_btn: T('前往官網報名',{en:'Register on Website',ja:'公式サイトでお申込み',de:'Auf der Website anmelden'}),
+    p09_side_register_title: T('立即報名',{en:'Register Now',ja:'今すぐお申込み',de:'Jetzt anmelden'}),
+    p09_side_register_desc_full: T('本場次名額已滿，可留下聯絡方式候補下一場。',{en:'This session is fully booked. Leave your contact info to join the waitlist for the next one.',ja:'本イベントは満席です。ご連絡先をご記入いただければ、次回開催のキャンセル待ちにご案内します。',de:'Diese Veranstaltung ist ausgebucht. Hinterlassen Sie Ihre Kontaktdaten, um sich für die Warteliste des nächsten Termins einzutragen.'}),
+    p09_side_register_desc_free: T('登入或註冊會員後即可完成報名，免費場次確認即完成。',{en:'Log in or register as a member to complete registration — this free session is confirmed as soon as you register.',ja:'会員登録・ログイン後にお申込みが完了します。無料イベントはお申込み確定でご参加いただけます。',de:'Melden Sie sich an oder registrieren Sie sich als Mitglied, um die Anmeldung abzuschließen — diese kostenlose Veranstaltung ist sofort nach der Anmeldung bestätigt.'}),
+    p09_side_register_desc_paid: T('登入或註冊會員後即可完成報名，付費場次可選擇藍新金流或 Stripe 完成付款。',{en:'Log in or register as a member to complete registration. For paid sessions, you can pay via NewebPay or Stripe.',ja:'会員登録・ログイン後にお申込みが完了します。有料イベントはNewebPayまたはStripeでのお支払いをお選びいただけます。',de:'Melden Sie sich an oder registrieren Sie sich als Mitglied, um die Anmeldung abzuschließen. Für kostenpflichtige Veranstaltungen können Sie über NewebPay oder Stripe bezahlen.'}),
+    p09_side_register_btn_waitlist: T('聯繫顧問候補',{en:'Contact an Advisor to Waitlist',ja:'アドバイザーにキャンセル待ちを相談',de:'Berater für Warteliste kontaktieren'}),
+    p09_side_register_btn_now: T('立即報名',{en:'Register Now',ja:'今すぐお申込み',de:'Jetzt anmelden'}),
+    p09_side_member_title: T('已是會員？',{en:'Already a Member?',ja:'すでに会員の方',de:'Bereits Mitglied?'}),
+    p09_side_member_desc: T('登入後可直接於會員區「我的活動」完成報名與付款。',{en:'Log in to register and pay directly from "My Events" in the member area.',ja:'ログイン後、会員エリアの「マイイベント」から直接お申込み・お支払いいただけます。',de:'Melden Sie sich an, um direkt unter „Meine Veranstaltungen“ im Mitgliederbereich anzumelden und zu bezahlen.'}),
+    p09_side_member_btn_full: T('前往我的活動',{en:'Go to My Events',ja:'マイイベントへ',de:'Zu meinen Veranstaltungen'}),
+    p09_side_member_btn_register: T('登入後報名',{en:'Log In to Register',ja:'ログインしてお申込み',de:'Zum Anmelden einloggen'}),
+    p09_side_register_btn_paid: T('報名並付款',{en:'Register & Pay',ja:'申し込んで支払う',de:'Anmelden und bezahlen'}),
+    p09_side_register_btn_free_confirm: T('確認報名',{en:'Confirm Registration',ja:'申込みを確定する',de:'Anmeldung bestätigen'}),
+    p09_cap_closed: T('報名已截止',{en:'Registration Closed',ja:'受付終了',de:'Anmeldung geschlossen'}),
+    p09_reg_closed_msg: T('本場次報名已截止。',{en:'Registration for this session has closed.',ja:'本イベントのお申込みは締め切りました。',de:'Die Anmeldung für diese Veranstaltung ist geschlossen.'}),
+    p09_reg_success_title: T('已報名，已加入你的活動',{en:'You\u2019re registered — added to your events',ja:'お申込みが完了し、マイイベントに追加されました',de:'Angemeldet — zu Ihren Veranstaltungen hinzugefügt'}),
+    p09_reg_success_desc: T('可至會員區「我的活動」查看報名紀錄與線上教室連結。',{en:'View your registration and classroom link anytime in "My Events" in the member area.',ja:'会員エリアの「マイイベント」でお申込み内容とオンライン教室のリンクをご確認いただけます。',de:'Ihre Anmeldung und den Link zum Online-Klassenzimmer finden Sie jederzeit unter „Meine Veranstaltungen“ im Mitgliederbereich.'}),
+    p09_reg_success_view_btn: T('查看我的活動',{en:'View My Events',ja:'マイイベントを見る',de:'Meine Veranstaltungen ansehen'}),
+    p09_label_registered: T('已報名',{en:'Registered',ja:'申込み済み',de:'Angemeldet'}),
+    p09_label_paid_demo: T('{amount}',{en:'{amount}',ja:'{amount}',de:'{amount}'}),
+    p09_confirm_modal_body: T('確定要報名「{title}」嗎？免費場次確認後立即完成報名。',{en:'Register for "{title}"? Free sessions are confirmed as soon as you confirm.',ja:'「{title}」にお申込みしますか？無料イベントは確定と同時にお申込みが完了します。',de:'Möchten Sie sich für „{title}“ anmelden? Kostenlose Veranstaltungen sind sofort nach Bestätigung angemeldet.'})
+  };
+}
+
+function applyMetaDesc(){
+  /* <title> 在 <head> 裡，共用模組的 data-i18n 掃描只作用在 document.body，不會處理 <title>，需自行設定 */
+  document.title = T('TLI Connect｜活動', {en:'TLI Connect | Events', ja:'TLI Connect｜イベント', de:'TLI Connect | Veranstaltungen'});
+  var m = document.querySelector('meta[name="description"]');
+  if(m) m.setAttribute('content', T('TLI Connect 線上活動：文化講座、直播工作坊、會話交流會，依本月、線上、免費篩選，點選卡片查看詳情並報名。', {en:'TLI Connect online events: cultural talks, livestream workshops, and conversation meetups. Filter by this month, online, or free, then click a card for details and registration.', ja:'TLI Connectオンラインイベント：文化講座、ライブ配信ワークショップ、会話交流会。今月・オンライン・無料で絞り込み、カードをクリックして詳細確認・お申込みができます。', de:'TLI Connect Online-Veranstaltungen: Kulturvorträge, Livestream-Workshops und Konversationstreffen. Filtern Sie nach diesem Monat, online oder kostenlos und klicken Sie auf eine Karte für Details und Anmeldung.'}));
+}
+
+/* ===================== i18n：AI 問答庫（五語，函式化以支援語言切換即時重算） ===================== */
+function getKB(){
+  return [
+    {id:'refund', chip:T('退費',{en:'Refunds',ja:'返金',de:'Rückerstattung'}), q:T('如何申請退費？',{en:'How do I request a refund?',ja:'返金の申請方法は？',de:'Wie beantrage ich eine Rückerstattung?'}), a:T('課程開始前 14 天內申請可全額退費；已開始上課者，依實際已上課堂數與合約約定計算可退款金額，請聯繫原承辦顧問辦理。',{en:'Apply at least 14 days before your course starts for a full refund. Once classes have begun, the refundable amount is calculated based on lessons completed and your contract terms — please contact your original advisor to process it.',ja:'開謖14日前までのお申し込みで全額返金いたします。開講後は、実際に受講した回数と契約条件に基づき返金額を算出しますので、担当アドバイザーまでご連絡ください。',de:'Bei Antrag mindestens 14 Tage vor Kursbeginn erhalten Sie eine vollständige Rückerstattung. Nach Kursbeginn wird der erstattungsfähige Betrag anhand der bereits absolvierten Unterrichtseinheiten und der Vertragsbedingungen berechnet — bitte wenden Sie sich dazu an Ihren zuständigen Berater.'}), short:T('開課前 14 天內可全額退費，開課後依已上課堂數計算可退金額。',{en:'Full refund if requested 14+ days before start; after that, refunds are based on lessons completed.',ja:'開謖14日前までなら全額返金、開講後は受講済み回数に応じて算出します。',de:'Vollständige Rückerstattung bei Antrag 14+ Tage vor Kursbeginn; danach richtet sich der Betrag nach den bereits absolvierten Einheiten.'})},
+    {id:'reschedule', chip:T('請假改期',{en:'Rescheduling',ja:'振替・キャンセル',de:'Terminverschiebung'}), q:T('臨時無法上課，可以退堂或改期嗎？',{en:'Can I cancel or reschedule a class on short notice?',ja:'急に受講できなくなった場合、キャンセルや振替はできますか？',de:'Kann ich eine Unterrichtsstunde kurzfristig absagen oder verschieben?'}), a:T('請於原訂上課時間 12 小時前申請退堂或改期，逾時未通知則視同已上課，不予補課或退還堂數。',{en:'Please cancel or reschedule at least 12 hours before your scheduled class. Requests after that window count as a completed lesson, with no make-up class or refund.',ja:'授業開始の12時間前までにキャンセルまたは振替の申請をお願いします。それ以降のご連絡は受講済みとみなされ、補講や返金の対象にはなりません。',de:'Bitte sagen Sie mindestens 12 Stunden vor dem geplanten Unterricht ab oder verschieben Sie ihn. Anfragen nach Ablauf dieser Frist gelten als abgehaltene Stunde, ohne Nachholtermin oder Rückerstattung.'}), short:T('上課前 12 小時可申請改期或退堂，逾時視同已上課。',{en:'Cancel or reschedule up to 12 hours before class; after that it counts as completed.',ja:'授業12時間前までなら振替・キャンセル可能、それ以降は受講済み扱いです。',de:'Absage oder Verschiebung bis 12 Stunden vor Unterrichtsbeginn möglich; danach gilt die Stunde als abgehalten.'})},
+    {id:'visa', chip:T('簽證',{en:'Student Visa',ja:'学生ビザ',de:'Studentenvisum'}), q:T('上課時數與簽證申請有什麼關係？',{en:'How do class hours relate to visa applications?',ja:'授業時間数はビザ申請にどう関係しますか？',de:'Welchen Einfluss haben die Unterrichtsstunden auf die Visumbeantragung?'}), a:T('台灣校區學期班課程如週時數達 15 小時，即符合申請學生簽證所需之上課證明條件，實際申請流程與文件請洽校區顧問確認。',{en:'Semester courses at our Taiwan campuses with 15+ class hours per week meet the attendance requirement for a student visa application. Please confirm the exact process and documents with your campus advisor.',ja:'台湾キャンパスの学期制コースで週１５時間以上受講する場合、学生ビザ申請に必要な出席証明の条件を満たします。具体的な申請手続きや必要書類はキャンパスのアドバイザーにご確認ください。',de:'Semesterkurse an unseren Taiwan-Standorten mit mindestens 15 Unterrichtsstunden pro Woche erfüllen die Anwesenheitsvoraussetzung für die Beantragung eines Studentenvisums. Den genauen Ablauf und die erforderlichen Unterlagen bestätigt Ihnen bitte Ihr Campus-Berater.'}), short:T('週時數達 15 小時的學期班即符合學生簽證申請條件。',{en:'Semester courses with 15+ weekly hours meet the student visa attendance requirement.',ja:'週１５時間以上の学期制コースは学生ビザの出席条件を満たします。',de:'Semesterkurse mit mindestens 15 Wochenstunden erfüllen die Anwesenheitsvoraussetzung für das Studentenvisum.'})},
+    {id:'invoice', chip:T('發票',{en:'Invoices',ja:'領収書',de:'Rechnungen'}), q:T('會開立發票嗎？',{en:'Will I receive an invoice or receipt?',ja:'領収書は発行されますか？',de:'Erhalte ich eine Rechnung oder Quittung?'}), a:T('是，完成付款後將依規定開立發票；企業包班客戶可申請月結發票，個人課程則於訂單完成後開立。',{en:'Yes — an official invoice is issued after payment is completed. Corporate group-class clients may request monthly billing; individual courses are invoiced once the order is completed.',ja:'はい、お支払い完了後に規定に基づき領収書を発行いたします。法人の団体クラスは月締め請求書の申請が可能で、個人受講は注文完了後に発行されます。',de:'Ja — nach vollständiger Zahlung wird eine offizielle Rechnung ausgestellt. Firmenkunden mit Gruppenkursen können eine monatliche Sammelrechnung beantragen; Einzelkurse werden nach Abschluss der Bestellung in Rechnung gestellt.'}), short:T('付款完成後會開立發票，企業包班可申請月結。',{en:'An invoice is issued after payment; corporate clients can request monthly billing.',ja:'お支払い後に領収書を発行、法人は月締め請求も可能です。',de:'Die Rechnung wird nach der Zahlung ausgestellt; Firmenkunden können eine monatliche Sammelrechnung beantragen.'})},
+    {id:'payment', chip:T('付款方式',{en:'Payment Options',ja:'お支払い方法',de:'Zahlungsmöglichkeiten'}), q:T('有哪些付款方式？',{en:'What payment methods are available?',ja:'どのようなお支払い方法がありますか？',de:'Welche Zahlungsmöglichkeiten gibt es?'}), a:T('提供一次付清、訂金＋尾款、分期三種付款模式，實際適用方式依方案內容與顧問確認之訂單條件為準。',{en:'We offer full payment, deposit + balance, or installment plans. The exact options depend on your course plan and the order terms confirmed with your advisor.',ja:'一括払い、内金＋残金、分割払いの3種類がございます。実際にご利用いただける方法はプラン内容とアドバイザーが確認した注文条件によります。',de:'Wir bieten Zahlung in voller Höhe, Anzahlung + Restbetrag oder Ratenzahlung an. Die genauen Optionen richten sich nach Ihrem Kursplan und den mit Ihrem Berater bestätigten Bestellbedingungen.'}), short:T('可選一次付清、訂金＋尾款或分期，依方案與顧問確認條件為準。',{en:'Choose full payment, deposit + balance, or installments, per your advisor-confirmed plan.',ja:'一括、内金＋残金、分割いずれかを選択でき、詳細はアドバイザーとの確認条件によります。',de:'Wahlweise volle Zahlung, Anzahlung + Restbetrag oder Ratenzahlung, gemäß dem mit dem Berater bestätigten Plan.'})},
+    {id:'format', chip:T('上課方式',{en:'Class Formats',ja:'受講形式',de:'Unterrichtsformen'}), q:T('一對一與彈性團體直播差在哪？',{en:'What’s the difference between 1-on-1 and flexible group livestream classes?',ja:'一対一とグループライブ配信の違いは何ですか？',de:'Was ist der Unterschied zwischen 1:1-Unterricht und flexiblem Gruppen-Livestream?'}), a:T('一對一線上課是預約制，你提出方便的時段，由顧問安排老師；彈性團體直播是固定時段開課、報名即可入班，費用通常更划算，若當期提供回放，錯過直播仍可補看。',{en:'1-on-1 online classes are booking-based — you submit your available times and our advisor arranges a teacher for you. Flexible group livestream classes run at fixed times and you simply enroll to join; they’re usually more affordable, and if a recording is offered that term, you can catch up if you miss the live session.',ja:'一対一のオンライン授業は予約制で、ご都合の良い時間帯をお伝えいただければ、アドバイザーが講師を手配します。グループライブ配信は決まった時間に開講し、申込めばそのまま参加可能で、料金は比較的お得です。その回に録画提供がある場合は、見逃してもあとから視聴できます。',de:'Der 1:1-Online-Unterricht basiert auf Terminvereinbarung — Sie teilen uns Ihre verfügbaren Zeiten mit, und unser Berater stellt Ihnen eine Lehrkraft zusammen. Der flexible Gruppen-Livestream findet zu festen Zeiten statt; Sie melden sich einfach an und nehmen teil. Er ist in der Regel günstiger, und falls in diesem Zeitraum eine Aufzeichnung angeboten wird, können Sie eine verpasste Live-Sitzung nachholen.'}), short:T('一對一是預約制、由顧問安排老師與時段；團體直播是固定時段、費用較划算。',{en:'1-on-1 is booking-based — our advisor arranges the teacher and time based on your availability; group livestream runs on a fixed schedule and costs less.',ja:'一対一は予約制でアドバイザーが講師と時間を手配、グループライブ配信は固定スケジュールで料金がお得です。',de:'1:1 basiert auf Terminvereinbarung — unser Berater stellt Lehrkraft und Zeit nach Ihrer Verfügbarkeit zusammen; der Gruppen-Livestream läuft nach festem Zeitplan und kostet weniger.'})},
+    {id:'classroom', chip:T('線上教室',{en:'Online Classroom',ja:'オンライン教室',de:'Online-Klassenzimmer'}), q:T('線上教室怎麼進入？連結會不會外流？',{en:'How do I join the online classroom? Could the link leak to others?',ja:'オンライン教室にはどうやって入りますか？リンクが流出する心配はありませんか？',de:'Wie betrete ich das Online-Klassenzimmer? Könnte der Link an andere weitergegeben werden?'}), a:T('上課前登入會員區，系統驗證身分後開放「進入教室」按鈕，一鍵進入當堂專屬 Zoom 教室；每堂課使用唯一會議並由老師於等候室放行，不提供可轉傳的連結。',{en:'Log into the member area before class — once your identity is verified, the “Enter Classroom” button unlocks a one-click link to your dedicated Zoom session. Each class uses a unique meeting, and your teacher admits you from the waiting room, so there’s no shareable link that could leak.',ja:'授業前に会員エリアにログインし、本人確認後に「教室に入る」ボタンが表示され、ワンクリックでその回専用のZoom教室に入室できます。各授業は個別のミーティングを使用し、講師が待機室から入室を許可するため、転送可能なリンクは発行されません。',de:'Loggen Sie sich vor dem Unterricht im Mitgliederbereich ein — nach der Identitätsprüfung schaltet die Schaltfläche „Klassenzimmer betreten“ einen Link mit einem Klick zu Ihrer persönlichen Zoom-Sitzung frei. Jede Stunde nutzt ein eigenes Meeting, und Ihre Lehrkraft lässt Sie aus dem Warteraum herein — es gibt also keinen weiterleitbaren Link, der durchsickern könnte.'}), short:T('登入會員區後一鍵進教室，每堂唯一連結、老師等候室放行，不怕連結外流。',{en:'Log in to unlock a one-click link to your unique Zoom session; your teacher admits you from the waiting room.',ja:'ログイン後ワンクリックで専用Zoom教室へ、講師が待機室から許可するためリンク流出の心配はありません。',de:'Nach dem Login erhalten Sie einen Link zu Ihrer persönlichen Zoom-Sitzung; Ihre Lehrkraft lässt Sie aus dem Warteraum herein.'})},
+    {id:'pricing', chip:T('價格與報價',{en:'Pricing',ja:'料金・見積り',de:'Preise & Angebote'}), q:T('課程費用怎麼估算？',{en:'How is the course fee calculated?',ja:'コース料金はどのように算出されますか？',de:'Wie wird die Kursgebühr berechnet?'}), a:T('費用依語言、上課方式（一對一／團體）與堂數而定，建議告知學習目標與時間，由顧問提供試算報價；也可直接預約試聽時一併確認費用。',{en:'Pricing depends on the language, class format (1-on-1 or group), and number of lessons. Share your learning goals and timeline and an advisor will prepare a quote — or confirm pricing when you book a trial class.',ja:'料金は言語、受講形式（一対一／グループ）、レッスン回数によって異なります。学習目標とご希望の時期をお伝えいただければ、アドバイザーが見積りをご案内します。体験レッスンご予約時に料金を確認いただくことも可能です。',de:'Der Preis richtet sich nach der Sprache, der Unterrichtsform (1:1 oder Gruppe) und der Anzahl der Unterrichtseinheiten. Teilen Sie uns Ihre Lernziele und Ihren Zeitrahmen mit, und ein Berater erstellt Ihnen ein Angebot — oder Sie klären den Preis direkt bei der Buchung einer Probestunde.'}), short:T('費用依語言、上課方式與堂數而定，可請顧問提供試算報價。',{en:'Pricing depends on language, format, and lesson count — ask your advisor for a quote.',ja:'料金は言語・受講形式・回数によって異なり、アドバイザーが見積りをご案内します。',de:'Der Preis hängt von Sprache, Unterrichtsform und Stundenzahl ab — fragen Sie Ihren Berater nach einem Angebot.'})},
+    {id:'trial', chip:T('試聽',{en:'Trial Class',ja:'体験レッスン',de:'Probestunde'}), q:T('可以先試聽嗎？',{en:'Can I try a class before signing up?',ja:'事前に体験レッスンを受けられますか？',de:'Kann ich vor der Anmeldung eine Probestunde nehmen?'}), a:T('可以，提供免費試聽課程，由顧問依您的程度與目標安排合適的試聽老師與時段，體驗後再決定是否報名。',{en:'Yes — we offer a free trial class. Your advisor will match you with a suitable teacher and time slot based on your level and goals, so you can decide after experiencing it.',ja:'はい、無料体験レッスンをご用意しています。アドバイザーがレベルと目標に合わせて講師と時間帯をご案内しますので、体験後に受講をご検討いただけます。',de:'Ja — wir bieten eine kostenlose Probestunde an. Ihr Berater ordnet Ihnen passend zu Niveau und Zielen eine geeignete Lehrkraft und einen Termin zu, sodass Sie sich nach dem Ausprobieren entscheiden können.'}), short:T('提供免費試聽，顧問會依程度與目標安排合適老師與時段。',{en:'A free trial is available, matched to your level and goals before you commit.',ja:'無料体験レッスンがあり、レベルと目標に合わせて講師・時間をご案内します。',de:'Eine kostenlose Probestunde wird passend zu Niveau und Zielen angeboten, bevor Sie sich festlegen.'})},
+    {id:'teacher', chip:T('老師配對',{en:'Teacher Matching',ja:'講師のマッチング',de:'Lehrer-Zuordnung'}), q:T('老師怎麼配對？',{en:'How are teachers matched to students?',ja:'講師はどのようにマッチングされますか？',de:'Wie werden Lehrkräfte den Lernenden zugeordnet?'}), a:T('顧問會依您的語言、程度與學習目標，從授證師資中配對合適老師；開課後如覺得不適合，也可申請更換老師。',{en:'Your advisor matches you with a certified teacher based on your language, level, and goals. If it’s not the right fit after classes begin, you can request a change.',ja:'アドバイザーが言語・レベル・学習目標に応じて、資格を持つ講師の中から適切な講師をマッチングします。受講開始後に合わないと感じた場合は、講師の変更も申請できます。',de:'Ihr Berater ordnet Ihnen anhand von Sprache, Niveau und Zielen eine zertifizierte Lehrkraft zu. Falls es nach Unterrichtsbeginn nicht passt, können Sie einen Wechsel beantragen.'}), short:T('依語言、程度與目標配對合適老師，開課後不合適可申請更換。',{en:'Matched to a certified teacher by language, level, and goals; you can request a change later.',ja:'言語・レベル・目標に応じて資格講師をマッチング、開始後の変更申請も可能です。',de:'Zuordnung zu einer zertifizierten Lehrkraft nach Sprache, Niveau und Zielen; ein Wechsel kann später beantragt werden.'})}
+  ];
+}
+
+/* ===================== i18n：顧問姓名（五語，示範人名，de 沿用 en 羅馬拼音） ===================== */
+var TLI_ADVISORS_I18N = {
+  'zh-TW': ['王顧問','李顧問','陳顧問','張顧問','林顧問'],
+  en: ['Advisor Wang','Advisor Li','Advisor Chen','Advisor Chang','Advisor Lin'],
+  ja: ['王アドバイザー','李アドバイザー','陳アドバイザー','張アドバイザー','林アドバイザー'],
+  de: ['Advisor Wang','Advisor Li','Advisor Chen','Advisor Chang','Advisor Lin']
+};
+function aiPickAdvisor(){
+  var lang = TLI_I18N.currentLang();
+  var list = TLI_ADVISORS_I18N[lang] || TLI_ADVISORS_I18N['zh-TW'];
+  return list[Math.floor(Math.random() * list.length)];
+}
+
+var TLI_CHAT_KEY = 'tliChatState_v1';
+var aiAskedIntents = {};
+var TLI_AI_GREETING_KEY = 'ai_greeting_default';
+
+/* ===== 活動資料（示範用，日期基準：今天 2026-08-25；五語，函式化以支援語言切換即時重算）
+   2026-09-30 拍板修正：企業說明會與語言學習博覽會原文提到「分級測試／免費程度快測」，
+   與今日拍板衝突（正式分級測驗已拿掉），已改寫為「需求評估／課程規劃」「免費諮詢」等不涉及正式測驗的說法。 ===== */
+function getEvents(){
+  return [
+  {id:'cert-info', format:'online', month:8, timeLabel:'20:00–21:00', feeType:'free', feeAmount:0, capacity:100, filled:64, hue:'linear-gradient(135deg,#8A6D1F,#C7A855)',
+    title:T('2026 TLI 國際華語教師認證線上說明會',{en:'2026 TLI International Chinese Teacher Certification Online Info Session',ja:'2026年 TLI国際中国語教師認定 オンライン説明会',de:'Info-Session zur TLI International Chinese Teacher Certification 2026'}),
+    dateLabel:T('08/27（四）',{en:'Aug 27 (Thu)',ja:'8/27（木）',de:'27. Aug (Do)'}),
+    speaker:T('教師認證辦公室',{en:'Certification Office',ja:'教師認定オフィス',de:'Zertifizierungsstelle'}),
+    icon:T('認證',{en:'CERT',ja:'認定',de:'ZERT'}),
+    intro:T('完整說明 2026 TLI 國際華語教師認證的課程架構、118 小時線上訓練內容與報名資格，適合有意投入華語教學的學員。',{en:'A complete walkthrough of the 2026 TLI International Chinese Teacher Certification — course structure, the 118-hour online training program, and eligibility requirements. Ideal for anyone considering a career in Chinese language teaching.',ja:'2026年TLI国際中国語教師認定について、カリキュラム構成、118時間のオンライントレーニング内容、申込資格を詳しくご説明します。中国語教育に関心のある方におすすめです。',de:'Ausführliche Vorstellung der TLI International Chinese Teacher Certification 2026 – Kursaufbau, das 118-stündige Online-Training und die Zulassungsvoraussetzungen. Geeignet für alle, die eine Tätigkeit als Chinesischlehrkraft in Erwägung ziehen.'}),
+    bullets:[T('認證課程架構與時數說明',{en:'Certification course structure and hour requirements',ja:'認定コースの構成と時間数について',de:'Kursaufbau und Stundenumfang der Zertifizierung'}),T('線上訓練平台操作導覽',{en:'Guided tour of the online training platform',ja:'オンライントレーニングプラットフォームの操作案内',de:'Geführte Tour durch die Online-Trainingsplattform'}),T('Q&A：認證後的教學銜接與陪跑機會',{en:'Q&A: teaching placement and mentorship after certification',ja:'Q&A：認定後の教壇機会とサポート体制',de:'Fragerunde: Unterrichtseinsatz und Mentoring nach der Zertifizierung'})]},
+  {id:'flex-open-house', format:'online', month:8, timeLabel:'10:00–10:50', feeType:'free', feeAmount:0, capacity:20, filled:18, hue:'linear-gradient(135deg,#C23B5A,#E37E92)',
+    title:T('彈性團體直播 公開體驗場－日文情境會話',{en:'Flexible Group Livestream Open House — Japanese Situational Conversation',ja:'グループライブ配信 体験会－日本語会話（シチュエーション別）',de:'Flexibler Gruppen-Livestream – Schnuppertermin: Japanische Konversation nach Situation'}),
+    dateLabel:T('08/29（六）',{en:'Aug 29 (Sat)',ja:'8/29（土）',de:'29. Aug (Sa)'}),
+    speaker:T('林老師',{en:'Teacher Lin',ja:'林先生',de:'Lehrkraft Lin'}),
+    icon:T('日',{en:'JP',ja:'日',de:'JP'}),
+    intro:T('實際體驗 彈性團體直播上課方式，與其他學員一起練習日常情境會話，感受同儕學習氛圍。',{en:'Get a firsthand feel for the Flexible Group Livestream format — practice everyday situational conversation together with fellow students and experience the peer learning atmosphere.',ja:'グループライブ配信の授業スタイルを実際に体験。他の受講生と一緒に日常のシチュエーション会話を練習し、仲間と学ぶ雰囲気を感じていただけます。',de:'Erleben Sie das Format des flexiblen Gruppen-Livestreams hautnah – üben Sie gemeinsam mit anderen Lernenden alltägliche Situationsgespräche und spüren Sie die Lernatmosphäre in der Gruppe.'}),
+    bullets:[T('情境會話暖身練習',{en:'Warm-up situational conversation practice',ja:'シチュエーション会話のウォームアップ練習',de:'Aufwärmübung mit Situationsgesprächen'}),T('小組角色扮演互動',{en:'Small-group role-play interaction',ja:'グループでのロールプレイ体験',de:'Rollenspiel in Kleingruppen'}),T('體驗後可直接報名正式梯次',{en:'Enroll directly in a regular class after the session',ja:'体験後はそのまま正式クラスにお申込みいただけます',de:'Direkte Anmeldung zum regulären Kurs im Anschluss'})]},
+  {id:'culture-midautumn', format:'online', month:9, timeLabel:'19:00–20:00', feeType:'free', feeAmount:0, capacity:30, filled:22, hue:'linear-gradient(135deg,#C2569B,#E28FC4)',
+    title:T('中文文化直播－中秋節茶道與詩詞賞析',{en:'Chinese Culture Livestream — Mid-Autumn Tea Ceremony & Poetry Appreciation',ja:'中国語文化ライブ配信－中秋節の茶道と詩歌鑑賞',de:'Livestream zur chinesischen Kultur – Mid-Autumn-Teezeremonie & Gedichtinterpretation'}),
+    dateLabel:T('09/03（四）',{en:'Sep 3 (Thu)',ja:'9/3（木）',de:'3. Sep (Do)'}),
+    speaker:T('陳老師',{en:'Teacher Chen',ja:'陳先生',de:'Lehrkraft Chen'}),
+    icon:T('中',{en:'CN',ja:'中',de:'CN'}),
+    intro:T('透過中秋節習俗、茶道體驗與經典詩詞賞析，認識中華文化，適合各程度學員參加，全程中英雙語導覽。',{en:'Explore Chinese culture through Mid-Autumn Festival traditions, a tea ceremony experience, and classic poetry appreciation. Open to students of all levels, with bilingual Chinese-English guidance throughout.',ja:'中秋節の風習や茶道体験、古典詩の鑑賞を通じて中国文化に触れます。レベルを問わずご参加いただけ、中国語・英語のバイリンガルガイド付きです。',de:'Entdecken Sie die chinesische Kultur anhand der Bräuche zum Mid-Autumn-Fest, einer Teezeremonie und der Interpretation klassischer Gedichte. Geeignet für Lernende aller Niveaus, durchgehend zweisprachig (Chinesisch/Englisch) begleitet.'}),
+    bullets:[T('中秋節習俗與典故介紹',{en:'Introduction to Mid-Autumn Festival customs and legends',ja:'中秋節の風習と由来のご紹介',de:'Einführung in Bräuche und Legenden des Mid-Autumn-Fests'}),T('茶道基本禮儀示範',{en:'Basic tea ceremony etiquette demonstration',ja:'茶道の基本作法のデモンストレーション',de:'Demonstration grundlegender Teezeremonie-Etikette'}),T('經典詩詞朗讀與賞析互動',{en:'Classic poetry reading and interactive appreciation',ja:'古典詩の朗読と鑑賞交流',de:'Vortrag und gemeinsame Interpretation klassischer Gedichte'})]},
+  {id:'culture-calligraphy', format:'online', month:9, timeLabel:'15:00–16:30', feeType:'paid', feeAmount:600, capacity:15, filled:9, hue:'linear-gradient(135deg,#8A6D1F,#C7A855)',
+    title:T('中文文化線上課－毛筆書法入門體驗',{en:'Chinese Culture Online Class — Introduction to Brush Calligraphy',ja:'中国語文化オンライン講座－毛筆書道入門体験',de:'Online-Kurs zur chinesischen Kultur – Einführung in die Pinselkalligrafie'}),
+    dateLabel:T('09/05（六）',{en:'Sep 5 (Sat)',ja:'9/5（土）',de:'5. Sep (Sa)'}),
+    speaker:T('陳老師',{en:'Teacher Chen',ja:'陳先生',de:'Lehrkraft Chen'}),
+    icon:T('中',{en:'CN',ja:'中',de:'CN'}),
+    intro:T('從握筆姿勢、基本筆畫到完成一幅作品，老師線上示範並即時指導，材料清單將於報名後email通知。',{en:'From holding the brush correctly to basic strokes and finishing your own piece, your teacher demonstrates live online with real-time guidance. A materials list will be emailed after you register.',ja:'筆の持ち方や基本の筆遣いから作品の完成まで、講師がオンラインでデモンストレーションしながらリアルタイムに指導します。材料リストはお申込み後にメールでご案内します。',de:'Von der richtigen Pinselhaltung über die Grundstriche bis zum fertigen Werk demonstriert Ihre Lehrkraft live online mit Echtzeit-Anleitung. Eine Materialliste erhalten Sie nach der Anmeldung per E-Mail.'}),
+    bullets:[T('握筆姿勢與基本筆畫',{en:'Brush-holding posture and basic strokes',ja:'筆の持ち方と基本の筆遣い',de:'Pinselhaltung und Grundstriche'}),T('部首與簡單字練習',{en:'Practicing radicals and simple characters',ja:'部首と簡単な文字の練習',de:'Übung von Radikalen und einfachen Zeichen'}),T('完成個人書法小品',{en:'Complete your own small calligraphy piece',ja:'ご自身の書道作品を完成させます',de:'Fertigstellung eines eigenen Kalligrafie-Werks'})]},
+  {id:'biz-webinar', format:'online', month:9, timeLabel:'14:00–15:00', feeType:'free', feeAmount:0, capacity:50, filled:12, closed:true, icon:'<svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg>', hue:'linear-gradient(135deg,#3A4A5C,#66798D)',
+    title:T('企業線上培訓說明會－員工華語計畫怎麼規劃',{en:'Corporate Online Training Info Session — Planning an Employee Chinese Program',ja:'企業向けオンライン研修説明会－社員向け中国語プランの立て方',de:'Info-Session zum Online-Firmentraining – Planung eines Chinesischprogramms für Mitarbeitende'}),
+    dateLabel:T('09/10（四）',{en:'Sep 10 (Thu)',ja:'9/10（木）',de:'10. Sep (Do)'}),
+    speaker:T('王顧問',{en:'Advisor Wang',ja:'王アドバイザー',de:'Advisor Wang'}),
+    intro:T('為企業 HR 與主管說明如何規劃員工華語／外語培訓計畫，包含需求評估、包班排課與月結發票流程。',{en:'For HR and managers, this session covers how to plan an employee Chinese or foreign-language training program — including needs assessment, group class scheduling, and monthly invoicing.',ja:'企業の人事担当者・管理者向けに、社員の中国語／外国語研修プランの立て方をご案内します。ニーズ評価、グループクラスの編成、月締め請求の流れも解説します。',de:'Diese Sitzung zeigt HR-Verantwortlichen und Führungskräften, wie sie ein Chinesisch- oder Fremdsprachenprogramm für Mitarbeitende planen – einschließlich Bedarfsanalyse, Gruppenkurs-Planung und monatlicher Rechnungsstellung.'}),
+    bullets:[T('員工華語需求評估與課程規劃',{en:'Employee needs assessment and course planning',ja:'社員のニーズ評価とコース設計',de:'Bedarfsanalyse und Kursplanung für Mitarbeitende'}),T('包班排課與線上上課方式',{en:'Group class scheduling and online class formats',ja:'グループクラスの編成とオンライン受講形式',de:'Gruppenkurs-Planung und Online-Unterrichtsformen'}),T('企業月結發票與合約說明',{en:'Corporate monthly invoicing and contract details',ja:'企業向け月締め請求と契約についてのご説明',de:'Monatliche Rechnungsstellung und Vertragsdetails für Unternehmen'})]},
+  {id:'flex-mock-exam', format:'online', month:9, timeLabel:'19:00–20:30', feeType:'paid', feeAmount:800, capacity:25, filled:25, icon:'<svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="8" y="2" width="8" height="4" rx="1"/><path d="M9 4H6a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2h-3"/><path d="M9 14l2 2 4-4"/></svg>', hue:'linear-gradient(135deg,#5A4FCF,#8B82E0)',
+    title:T('TLI-CPT 模擬檢定線上診斷會',{en:'TLI-CPT Mock Test Online Diagnostic Session',ja:'TLI-CPT模擬検定 オンライン診断会',de:'TLI-CPT Simulationstest – Online-Diagnosesitzung'}),
+    dateLabel:T('09/18（五）',{en:'Sep 18 (Fri)',ja:'9/18（金）',de:'18. Sep (Fr)'}),
+    speaker:T('測驗中心',{en:'Testing Center',ja:'テストセンター',de:'Testzentrum'}),
+    intro:T('線上完成一份完整 TLI-CPT 模擬測驗，測驗後由顧問說明成績落點與建議加強方向。',{en:'Complete a full TLI-CPT mock test online, then get a breakdown of your score range and recommended focus areas from an advisor.',ja:'オンラインで TLI-CPT模擬試験をフルで受験いただき、終了後はアドバイザーがスコア分析と学習の重点分野をご案内します。',de:'Absolvieren Sie online einen vollständigen TLI-CPT-Simulationstest; im Anschluss erläutert Ihnen ein Berater Ihre Ergebniseinordnung und empfohlene Schwerpunkte.'}),
+    bullets:[T('完整模擬測驗（線上進行）',{en:'Full mock test (conducted online)',ja:'フル模擬試験（オンライン実施）',de:'Vollständiger Simulationstest (online durchgeführt)'}),T('成績落點與能力分析',{en:'Score range and skill-level analysis',ja:'スコア分析と能力診断',de:'Ergebniseinordnung und Kompetenzanalyse'}),T('個人化學習建議諮詢',{en:'Personalized study advice consultation',ja:'個別学習アドバイスのご相談',de:'Individuelle Lernberatung'})]},
+  {id:'physical-open-day', format:'physical', month:9, timeLabel:'10:00–16:00', feeType:'free', feeAmount:0, icon:'<svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2l8 4v6c0 5-3.4 8.4-8 10-4.6-1.6-8-5-8-10V6l8-4z"/></svg>', hue:'linear-gradient(135deg,#5A6472,#8A93A0)',
+    title:T('士林校區體驗營（實體開放日）',{en:'Shilin Campus Experience Day (On-site Open House)',ja:'士林キャンパス体験デー（対面オープンデー）',de:'Shilin-Campus Schnuppertag (Vor-Ort-Tag der offenen Tür)'}),
+    dateLabel:T('09/06（日）',{en:'Sep 6 (Sun)',ja:'9/6（日）',de:'6. Sep (So)'}),
+    campus:T('士林校',{en:'Shilin Campus',ja:'士林キャンパス',de:'Campus Shilin'}),
+    intro:T('開放校園參觀、教室試坐與師資諮詢，適合想實際感受台北士林校區教學環境的學員與家長。',{en:'Tour the campus, sit in on a classroom, and speak with our teaching staff — great for students and parents who want to experience our Taipei Shilin campus firsthand.',ja:'キャンパス見学、教室体験、講師への相談などができます。台北士林キャンパスの教育環境を実際に感じていただきたい学生や保護者の方におすすめです。',de:'Campus-Rundgang, Probesitzen im Unterricht und Beratung durch unsere Lehrkräfte — ideal für Lernende und Eltern, die unser Lernumfeld am Taipeh-Campus Shilin live erleben möchten.'}),
+    bullets:[T('校園與教室導覽',{en:'Campus and classroom tour',ja:'キャンパス・教室見学',de:'Rundgang durch Campus und Unterrichtsräume'}),T('師資與課程諮詢桌',{en:'Teacher and course consultation desk',ja:'講師・コース相談デスク',de:'Beratungsstand zu Lehrkräften und Kursen'}),T('現場報名享入班優惠（依當日公告）',{en:'On-site enrollment discount (as announced on the day)',ja:'当日申込みで入学特典あり（当日発表の内容による）',de:'Rabatt bei Anmeldung vor Ort (laut Ankündigung am Veranstaltungstag)'})]},
+  {id:'physical-taichung-fair', format:'physical', month:9, timeLabel:'13:00–17:00', feeType:'free', feeAmount:0, icon:'<svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2l8 4v6c0 5-3.4 8.4-8 10-4.6-1.6-8-5-8-10V6l8-4z"/></svg>', hue:'linear-gradient(135deg,#5A6472,#8A93A0)',
+    title:T('台中校區語言學習博覽會（實體）',{en:'Taichung Campus Language Learning Fair (In-Person)',ja:'台中キャンパス語学学習フェア（対面）',de:'Sprachlern-Messe am Campus Taichung (Vor-Ort)'}),
+    dateLabel:T('09/20（日）',{en:'Sep 20 (Sun)',ja:'9/20（日）',de:'20. Sep (So)'}),
+    campus:T('台中校',{en:'Taichung Campus',ja:'台中キャンパス',de:'Campus Taichung'}),
+    intro:T('集結中文與外語課程諮詢、免費諮詢、企業培訓洽詢攤位，一次了解 TLI 台中校區全部方案。',{en:'Chinese and foreign language course consultations, free consultations, and corporate training inquiries all in one place — everything you need to know about our Taichung campus programs.',ja:'中国語・外国語コースの相談、無料相談、企業研修のご相談ブースなど、TLI台中キャンパスの全プログラムが一度にわかります。',de:'Beratung zu Chinesisch- und Fremdsprachenkursen, kostenlose Beratungsgespräche und Informationen zum Firmentraining an einem Ort — alles Wissenswerte zu unseren Programmen am Campus Taichung.'}),
+    bullets:[T('多語種課程諮詢攤位',{en:'Multi-language course consultation booths',ja:'多言語コース相談ブース',de:'Beratungsstände für mehrsprachige Kurse'}),T('免費諮詢',{en:'Free consultation',ja:'無料相談',de:'Kostenlose Beratung'}),T('企業培訓與合約洽詢',{en:'Corporate training and contract inquiries',ja:'企業研修・契約のご相談',de:'Beratung zu Firmentraining und Verträgen'})]}
+  ];
+}
+
+function evT(ev, field){
+  return ev[field];
+}
+
+var activeFilters = new Set();
+var currentDetailId = null;
+
+/* ===== 登入／報名狀態（前端 demo，串 p07 登入成功寫入的 sessionStorage） ===== */
+var TLI_LOGIN_KEY = 'tliLoggedIn';
+var TLI_REG_KEY = 'tliRegisteredEvents';
+(function persistLoggedFromUrl(){
+  /* ?logged=1 為示範用參數：模擬「已登入會員」情境，寫入 sessionStorage 後即持續生效 */
+  try{
+    if(new URLSearchParams(window.location.search).get('logged') === '1'){
+      sessionStorage.setItem(TLI_LOGIN_KEY, '1');
+    }
+  }catch(e){}
+})();
+function tliIsLoggedIn(){
+  try{ return sessionStorage.getItem(TLI_LOGIN_KEY) === '1'; }catch(e){ return false; }
+}
+function tliGetRegisteredIds(){
+  try{ return JSON.parse(sessionStorage.getItem(TLI_REG_KEY) || '[]'); }catch(e){ return []; }
+}
+function tliIsRegistered(id){ return tliGetRegisteredIds().indexOf(id) > -1; }
+function tliMarkRegistered(id){
+  try{
+    var ids = tliGetRegisteredIds();
+    if(ids.indexOf(id) === -1){ ids.push(id); sessionStorage.setItem(TLI_REG_KEY, JSON.stringify(ids)); }
+  }catch(e){}
+}
+
+function buildFilterPills(){
+  var wrap = document.getElementById('pillFilter');
+  if(!wrap) return;
+  wrap.innerHTML = '';
+  var dict = tliDict();
+  var opts = [
+    {key:'thisMonth', label:dict.p09_filter_month},
+    {key:'online', label:dict.p09_filter_online},
+    {key:'free', label:dict.p09_filter_free}
+  ];
+  opts.forEach(function(opt){
+    var b = document.createElement('button');
+    b.type = 'button';
+    b.className = 'pill' + (activeFilters.has(opt.key) ? ' active' : '');
+    b.textContent = opt.label;
+    b.onclick = function(){
+      if(activeFilters.has(opt.key)){ activeFilters.delete(opt.key); b.classList.remove('active'); }
+      else { activeFilters.add(opt.key); b.classList.add('active'); }
+      renderEvents();
+    };
+    wrap.appendChild(b);
+  });
+}
+function clearFilters(){
+  activeFilters.clear();
+  document.querySelectorAll('#pillFilter .pill').forEach(function(p){ p.classList.remove('active'); });
+  renderEvents();
+}
+function eventMatches(ev){
+  if(activeFilters.has('thisMonth') && ev.month !== 8) return false;
+  if(activeFilters.has('online') && ev.format !== 'online') return false;
+  if(activeFilters.has('free') && ev.feeType !== 'free') return false;
+  return true;
+}
+function feeLabel(ev){
+  var dict = tliDict();
+  /* 付費活動一律標「示範價」＋（模擬），避免被誤認為真實定價 */
+  return ev.feeType === 'free' ? dict.p09_label_free : tliFmt(dict.p09_label_paid_demo, {amount:'NT$'+ev.feeAmount.toLocaleString()});
+}
+function eventCheckoutUrl(ev){
+  /* 導結帳頁（m13）：帶 name／time／price 讓結帳頁可直接顯示活動資訊（示範價，非真實金流金額） */
+  return '../會員區/m13_checkout.html?plan=event&event='+encodeURIComponent(ev.id)
+    +'&name='+encodeURIComponent(evT(ev,'title'))
+    +'&time='+encodeURIComponent(evT(ev,'dateLabel')+' '+ev.timeLabel)
+    +'&price='+ev.feeAmount;
+}
+function capLabel(ev){
+  var dict = tliDict();
+  if(ev.format === 'physical') return dict.p09_cap_onsite;
+  if(ev.closed) return dict.p09_cap_closed;
+  var remain = ev.capacity - ev.filled;
+  return remain <= 0 ? dict.p09_cap_full : tliFmt(dict.p09_cap_remain, {remain:remain, capacity:ev.capacity});
+}
+function eventCardHtml(ev){
+  var dict = tliDict();
+  var isFull = ev.format !== 'physical' && (ev.capacity - ev.filled) <= 0;
+  var isClosed = !!ev.closed;
+  var isBlocked = isFull || isClosed;
+  var isRegistered = ev.format !== 'physical' && tliIsRegistered(ev.id);
+  var tag = ev.format==='physical' ? dict.p09_tag_physical : dict.p09_tag_online;
+  /* 報名截止／額滿：卡片不放報名字樣的按鈕，只保留「查看詳情」；已報名則加標籤 */
+  var actionLabel = ev.format==='physical' ? dict.p09_btn_view_detail
+    : (isBlocked ? dict.p09_btn_view_detail : (isRegistered ? dict.p09_label_registered : dict.p09_btn_register));
+  return '<button type="button" class="event-card'+(ev.format==='physical'?' physical':'')+'" onclick="openDetail(\''+ev.id+'\')">'+
+    '<div class="card-media" style="background:'+ev.hue+';">'+
+      '<span class="card-tag date">'+evT(ev,'dateLabel')+'</span>'+
+      '<span class="card-tag format">'+tag+'</span>'+
+      '<span>'+evT(ev,'icon')+'</span>'+
+    '</div>'+
+    '<div class="card-body">'+
+      '<h3>'+evT(ev,'title')+'</h3>'+
+      '<p class="card-pitch">'+ev.timeLabel+(ev.format==='physical'?('・'+evT(ev,'campus')):'')+'</p>'+
+      '<div class="card-meta-row">'+
+        '<span class="fee-badge '+(ev.feeType==='free'?'free':'paid')+'">'+feeLabel(ev)+'</span>'+
+        '<span class="cap-badge'+(isBlocked?' full':'')+'">'+capLabel(ev)+'</span>'+
+        (isRegistered ? '<span class="reg-badge">'+dict.p09_label_registered+'</span>' : '')+
+      '</div>'+
+      (ev.format==='physical' ? '<p class="physical-inline-note">'+dict.p09_physical_inline_note+'</p>' : '')+
+      '<div class="card-actions2"><span class="btn btn-primary btn-sm" style="pointer-events:none;">'+actionLabel+'</span></div>'+
+    '</div>'+
+  '</button>';
+}
+function renderEvents(){
+  var dict = tliDict();
+  var filtered = getEvents().filter(eventMatches);
+  var grid = document.getElementById('eventGrid');
+  grid.innerHTML = filtered.map(eventCardHtml).join('');
+  document.getElementById('resultsCount').textContent = tliFmt(dict.p09_results_count, {count: filtered.length});
+  document.getElementById('emptyState').classList.toggle('show', filtered.length === 0);
+  grid.style.display = filtered.length === 0 ? 'none' : '';
+}
+
+function eventById(id){
+  var found = null;
+  getEvents().forEach(function(e){ if(e.id===id) found = e; });
+  return found;
+}
+function openDetail(id, opts){
+  var ev = eventById(id);
+  if(!ev) return;
+  currentDetailId = id;
+  var dict = tliDict();
+  var isFull = ev.format !== 'physical' && (ev.capacity - ev.filled) <= 0;
+  var isClosed = !!ev.closed;
+  var isRegistered = ev.format !== 'physical' && tliIsRegistered(ev.id);
+  var isLoggedIn = tliIsLoggedIn();
+  var factsHtml = ev.format === 'physical'
+    ? ('<div class="fact"><div class="k">'+dict.p09_fact_campus+'</div><div class="v">'+evT(ev,'campus')+'</div></div>'+
+       '<div class="fact"><div class="k">'+dict.p09_fact_time+'</div><div class="v">'+evT(ev,'dateLabel')+' '+ev.timeLabel+'</div></div>'+
+       '<div class="fact"><div class="k">'+dict.p09_fact_fee+'</div><div class="v">'+feeLabel(ev)+'</div></div>'+
+       '<div class="fact"><div class="k">'+dict.p09_fact_register_method+'</div><div class="v">'+dict.p09_fact_register_onsite+'</div></div>')
+    : ('<div class="fact"><div class="k">'+dict.p09_fact_time+'</div><div class="v">'+evT(ev,'dateLabel')+' '+ev.timeLabel+'</div></div>'+
+       '<div class="fact"><div class="k">'+dict.p09_fact_speaker+'</div><div class="v">'+evT(ev,'speaker')+'</div></div>'+
+       '<div class="fact"><div class="k">'+dict.p09_fact_fee+'</div><div class="v">'+feeLabel(ev)+(ev.feeType==='paid' ? ' <a href="#" class="refund-link" onclick="openEventRefundModal();return false;">'+dict.p09_refund_link+'</a>' : '')+'</div></div>'+
+       '<div class="fact"><div class="k">'+dict.p09_fact_capacity+'</div><div class="v">'+capLabel(ev)+'</div></div>');
+  var bulletsHtml = evT(ev,'bullets').map(function(b){ return '<li>'+b+'</li>'; }).join('');
+  var tag = ev.format==='physical' ? dict.p09_tag_physical : dict.p09_tag_online;
+  var nick = ev.format==='physical' ? dict.p09_nick_physical : dict.p09_nick_online;
+  var left =
+    '<div class="title-block">'+
+      '<div class="nick">'+nick+'</div>'+
+      '<h1>'+evT(ev,'title')+' <span class="mode-badge '+(ev.format==='physical'?'physical':'online')+'">'+tag+'</span></h1>'+
+      '<div class="fact-grid">'+factsHtml+'</div>'+
+      '<div class="suit-list"><h3>'+dict.p09_content_heading+'</h3><ul>'+bulletsHtml+'</ul></div>'+
+      '<p style="margin-top:14px;font-size:13.5px;color:var(--c-muted);">'+evT(ev,'intro')+'</p>'+
+      (ev.format!=='physical' ? '<div class="zoom-note">'+dict.p09_zoom_note+'</div>' : '')+
+      (ev.format!=='physical' ? ('<div class="cap-progress'+(isFull?' full':'')+'"><div style="width:'+Math.min(100, Math.round(ev.filled/ev.capacity*100))+'%;"></div></div>') : '');
+  left += '</div>';
+  var right;
+  if(ev.format === 'physical'){
+    right = '<div class="side-card"><h3>'+dict.p09_side_physical_title+'</h3><p>'+tliFmt(dict.p09_side_physical_desc,{campus:evT(ev,'campus')})+'</p><a class="btn btn-primary btn-block" href="https://tli1956.com/?lang=tc" target="_blank" rel="noopener">'+dict.p09_side_physical_btn+'</a></div>';
+  } else if(isClosed){
+    /* 報名截止：只給一行原因，不放任何報名按鈕 */
+    right = '<div class="side-card"><h3>'+dict.p09_side_register_title+'</h3><p>'+dict.p09_reg_closed_msg+'</p></div>';
+  } else if(isFull){
+    /* 額滿：不放報名按鈕，但可留候補（聯繫顧問） */
+    right = '<div class="side-card"><h3>'+dict.p09_side_register_title+'</h3><p>'+dict.p09_side_register_desc_full+'</p>'+
+      '<a class="btn btn-outline btn-block" href="p06_trial.html?type=consult">'+dict.p09_side_register_btn_waitlist+'</a></div>';
+  } else if(isRegistered){
+    /* 已報名（本機示範狀態）：導去我的活動查看 */
+    right = '<div class="side-card reg-success"><h3>'+dict.p09_reg_success_title+'</h3><p>'+dict.p09_reg_success_desc+'</p>'+
+      '<a class="btn btn-primary btn-block" href="../會員區/m10_events.html?registered='+ev.id+'">'+dict.p09_reg_success_view_btn+'</a></div>';
+  } else if(isLoggedIn){
+    /* 已登入：免費活動彈確認、付費活動導結帳頁（帶 plan=event&event=id） */
+    var desc = ev.feeType==='free' ? dict.p09_side_register_desc_free : dict.p09_side_register_desc_paid;
+    var actionHtml = ev.feeType==='free'
+      ? '<button type="button" class="btn btn-accent btn-block" onclick="openConfirmRegisterModal(\''+ev.id+'\')">'+dict.p09_side_register_btn_free_confirm+'</button>'
+      : '<a class="btn btn-accent btn-block" href="'+eventCheckoutUrl(ev)+'">'+dict.p09_side_register_btn_paid+'</a>';
+    right = '<div class="side-card"><h3>'+dict.p09_side_register_title+'</h3><p>'+desc+'</p>'+actionHtml+'</div>';
+  } else {
+    /* 未登入：先到登入／註冊頁，帶 next 回本活動並帶 action=register 以便回來後自動接續 */
+    var desc2 = ev.feeType==='free' ? dict.p09_side_register_desc_free : dict.p09_side_register_desc_paid;
+    var nextUrl = 'p09_events.html?event='+encodeURIComponent(ev.id)+'&action=register';
+    right = '<div class="side-card"><h3>'+dict.p09_side_register_title+'</h3><p>'+desc2+'</p>'+
+      '<a class="btn btn-accent btn-block" href="p07_login_register.html?next='+encodeURIComponent(nextUrl)+'">'+dict.p09_side_register_btn_now+'</a></div>';
+  }
+  document.getElementById('detailGrid').innerHTML = left + '<div>'+right+'</div>';
+  document.getElementById('eventGrid').classList.add('hidden');
+  document.querySelector('.results-bar').classList.add('hidden');
+  document.getElementById('emptyState').classList.remove('show');
+  document.getElementById('eventDetailSection').classList.remove('hidden');
+  if(!(opts && opts.skipScroll)) window.scrollTo({top:0, behavior:'smooth'});
+}
+function closeDetail(){
+  currentDetailId = null;
+  document.getElementById('eventDetailSection').classList.add('hidden');
+  document.getElementById('eventGrid').classList.remove('hidden');
+  document.querySelector('.results-bar').classList.remove('hidden');
+}
+function refreshEventsUI(){
+  buildFilterPills();
+  renderEvents();
+  if(currentDetailId && eventById(currentDetailId) && !document.getElementById('eventDetailSection').classList.contains('hidden')){
+    openDetail(currentDetailId, {skipScroll:true});
+  }
+}
+
+/* ===== 確認報名彈窗（免費活動：已登入會員點「確認報名」後跳出） ===== */
+var confirmRegisterEventId = null;
+function openConfirmRegisterModal(id){
+  var ev = eventById(id);
+  if(!ev) return;
+  confirmRegisterEventId = id;
+  var dict = tliDict();
+  document.getElementById('confirmRegisterModalBody').innerHTML = '<p>'+tliFmt(dict.p09_confirm_modal_body, {title: evT(ev,'title')})+'</p>';
+  document.getElementById('confirmRegisterModalOverlay').classList.add('show');
+}
+function closeConfirmRegisterModal(){
+  document.getElementById('confirmRegisterModalOverlay').classList.remove('show');
+}
+function confirmFreeRegistration(){
+  var id = confirmRegisterEventId;
+  if(!id) return;
+  closeConfirmRegisterModal();
+  tliMarkRegistered(id);
+  showToast(tliDict().p09_reg_success_title);
+  /* 若確認的活動就是目前開啟的詳情頁，重繪成「已報名」狀態 */
+  if(currentDetailId === id) openDetail(id, {skipScroll:true});
+  renderEvents();
+}
+
+/* ===== 退費規則彈窗（付費活動示範內容） ===== */
+function openEventRefundModal(){
+  document.getElementById('refundModalOverlay').classList.add('show');
+}
+function closeEventRefundModal(){
+  document.getElementById('refundModalOverlay').classList.remove('show');
+}
+
+/* ESC 鍵關閉目前開啟中的彈窗（確認報名、退費規則、AI 小幫手面板） */
+document.addEventListener('keydown', function(e){
+  if(e.key !== 'Escape') return;
+  var confirmModal = document.getElementById('confirmRegisterModalOverlay');
+  if(confirmModal && confirmModal.classList.contains('show')){ closeConfirmRegisterModal(); return; }
+  var refundModal = document.getElementById('refundModalOverlay');
+  if(refundModal && refundModal.classList.contains('show')){ closeEventRefundModal(); return; }
+  var aiOverlay = document.getElementById('aiOverlay-fab');
+  if(aiOverlay && aiOverlay.classList.contains('show')){ aiClose('fab'); return; }
+});
+
+/* ===================== AI 面板函式 ===================== */
+function aiMakeChipBtn(label, handler){
+  var b = document.createElement('button');
+  b.type = 'button'; b.className = 'ai-chip'; b.textContent = label; b.onclick = handler;
+  return b;
+}
+function aiRenderChips(target){
+  var wrap = document.getElementById('aiChips-'+target);
+  if(!wrap) return;
+  var dict = tliDict();
+  var kb = getKB();
+  wrap.innerHTML = '';
+  wrap.appendChild(aiMakeChipBtn(dict.ai_chip_trial, function(){ aiAsk(dict.ai_chip_trial, target); }));
+  kb.forEach(function(item){
+    if(item.id === 'trial') return;
+    wrap.appendChild(aiMakeChipBtn(item.chip, function(){ aiAsk(item.chip, target); }));
+  });
+}
+function aiInit(target){
+  var body = document.getElementById('aiBody-'+target);
+  if(!body || body.dataset.inited) return;
+  body.dataset.inited = '1';
+  if(aiRestoreState(target)){ aiRenderChips(target); return; }
+  var dict = tliDict();
+  aiAppendBot(target, dict[TLI_AI_GREETING_KEY] || dict.ai_greeting_default);
+  aiRenderChips(target);
+}
+var TLI_AI_KEYWORDS = {
+  refund:['退費','退款','退學費','可以退','取消課程','退錢','refund','返金'],
+  reschedule:['請假','改期','退堂','取消上課','調課','reschedule','cancel class','振替','キャンセル'],
+  visa:['簽證','visa','學生簽證','居留','ビザ'],
+  invoice:['發票','收據','電子發票','invoice','receipt','領収書'],
+  payment:['付款','付費','分期','刷卡','轉帳','怎麼付錢','payment','pay','installment','支払い'],
+  format:['上課方式','預約制','直播制','怎麼上課','一對一','團體班','class format','1-on-1','group','受講形式'],
+  classroom:['線上教室','怎麼進入','連結','教室連結','外流','Zoom','classroom','教室'],
+  pricing:['價格','報價','費用','學費多少','多少錢','price','pricing','cost','料金'],
+  trial:['試聽','免費體驗','體驗課','試聽怎麼預約','trial','free class','体験'],
+  teacher:['老師','配對','老師怎麼選','指定老師','換老師','teacher','matching','講師']
+};
+function aiMatch(text){
+  var t = text.trim().toLowerCase();
+  var kbTc = getKB(), kbCur = kbTc;
+  for(var i=0;i<kbTc.length;i++){
+    var id = kbTc[i].id;
+    var kws = TLI_AI_KEYWORDS[id] || [];
+    for(var j=0;j<kws.length;j++){
+      if(t.indexOf(String(kws[j]).toLowerCase()) !== -1){
+        for(var k=0;k<kbCur.length;k++){ if(kbCur[k].id === id) return kbCur[k]; }
+      }
+    }
+  }
+  return null;
+}
+function aiReplyForMatch(target, match){
+  var dict = tliDict();
+  var asked = aiAskedIntents[match.id];
+  var html;
+  if(asked){
+    html = tliFmt(dict.ai_repeat, {chip: match.chip, short: match.short});
+  }else{
+    html = '<b>'+match.q+'</b><br>'+match.a+
+      '<div class="ai-thumbs"><span>'+dict.ai_thumbs_prompt+'</span>'+
+      '<button type="button" onclick="aiThumb(this,true)"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14 9V5a3 3 0 0 0-3-3l-4 9v11h11.3a2 2 0 0 0 2-1.7l1.4-9a2 2 0 0 0-2-2.3H14z"/><path d="M7 22H4a2 2 0 0 1-2-2v-7a2 2 0 0 1 2-2h3"/></svg></button>'+
+      '<button type="button" onclick="aiThumb(this,false)"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M10 15v4a3 3 0 0 0 3 3l4-9V2H5.7a2 2 0 0 0-2 1.7l-1.4 9a2 2 0 0 0 2 2.3H10z"/><path d="M17 2h3a2 2 0 0 1 2 2v7a2 2 0 0 1-2 2h-3"/></svg></button></div>'+
+      '<div class="ai-actions"><a href="p06_trial.html?type=trial">'+dict.ai_action_trial+'</a><button type="button" onclick="aiEscalate(\''+target+'\')">'+dict.ai_action_contact+'</button></div>';
+    aiAskedIntents[match.id] = true;
+  }
+  aiAppendBot(target, html);
+}
+function aiAsk(text, target){
+  if(!text || !text.trim()) return;
+  aiAppendUser(target, text);
+  var match = aiMatch(text);
+  var dict = tliDict();
+  aiShowTyping(target);
+  var delay = 600 + Math.floor(Math.random()*600);
+  setTimeout(function(){
+    aiHideTyping(target);
+    if(match){
+      aiReplyForMatch(target, match);
+    }else{
+      aiAppendBot(target, dict.ai_fallback);
+      aiShowEscalateForm(target);
+    }
+  }, delay);
+}
+function aiThumb(btn, helpful){
+  var dict = tliDict();
+  var wrap = btn.parentElement;
+  wrap.querySelectorAll('button').forEach(function(b){ b.classList.remove('picked'); });
+  btn.classList.add('picked');
+  var thanks = wrap.nextElementSibling;
+  if(!thanks || !thanks.classList || !thanks.classList.contains('ai-thumbs-thanks')){
+    thanks = document.createElement('div');
+    thanks.className = 'ai-thumbs-thanks';
+    wrap.insertAdjacentElement('afterend', thanks);
+  }
+  thanks.textContent = dict.ai_thumbs_thanks;
+}
+function aiEscalate(target){
+  var dict = tliDict();
+  aiAppendUser(target, dict.ai_escalate_user_msg);
+  aiShowEscalateForm(target);
+}
+function aiShowEscalateForm(target){
+  var dict = tliDict();
+  var html = '<div class="ai-mini-form">'+
+    '<input id="aiName-'+target+'" placeholder="'+dict.ai_form_name_ph+'" required>'+
+    '<input id="aiContact-'+target+'" placeholder="'+dict.ai_form_contact_ph+'" required>'+
+    '<button type="button" class="btn btn-accent btn-sm" onclick="aiSubmitEscalate(\''+target+'\')">'+dict.ai_form_submit+'</button>'+
+    '</div>'+
+    '<button type="button" class="ai-live-btn" onclick="aiLiveQueue(\''+target+'\')">'+dict.ai_live_btn+'</button>';
+  aiAppendBot(target, html);
+}
+function aiLiveQueue(target){
+  var dict = tliDict();
+  aiAppendUser(target, dict.ai_live_btn);
+  aiShowTyping(target);
+  setTimeout(function(){
+    aiHideTyping(target);
+    aiAppendBot(target, dict.ai_live_queued);
+  }, 700);
+}
+function aiSubmitEscalate(target){
+  var dict = tliDict();
+  var nameEl = document.getElementById('aiName-'+target);
+  var contactEl = document.getElementById('aiContact-'+target);
+  var name = nameEl ? nameEl.value.trim() : '';
+  var contact = contactEl ? contactEl.value.trim() : '';
+  if(!name || !contact){ if(typeof showToast === 'function') showToast(dict.ai_toast_fill_required); return; }
+  var ticket = aiTicketNo();
+  var advisor = aiPickAdvisor();
+  var body = document.getElementById('aiBody-'+target);
+  var row = document.createElement('div');
+  row.className = 'ai-msg-row bot';
+  row.innerHTML = '<div class="ai-avatar sm" aria-hidden="true">'+TLI_AVATAR_SVG+'</div><div class="ai-msg-stack"><div class="ai-msg bot"><b>'+tliFmt(dict.ai_ticket_created,{ticket:ticket})+'</b><div class="ai-timeline" id="aiTl-'+target+'-'+Date.now()+'"></div></div><div class="ai-msg-time">'+aiNowStr()+'</div></div>';
+  body.appendChild(row);
+  var tlId = row.querySelector('.ai-timeline').id;
+  aiScrollBottom(target);
+  aiPlayTimeline(tlId, [tliFmt(dict.ai_tl_assigned,{advisor:advisor}), tliFmt(dict.ai_tl_followup,{contact:contact})], function(){
+    aiSaveState(target);
+  });
+}
+
+/* ===================== 語系無關函式，維持原樣不動 ===================== */
+function aiTicketNo(){
+  return 'TL-2026' + String(Math.floor(1000 + Math.random() * 9000));
+}
+function aiNowStr(){
+  var d = new Date();
+  return String(d.getHours()).padStart(2,'0') + ':' + String(d.getMinutes()).padStart(2,'0');
+}
+function aiAppendUser(target, text){
+  var body = document.getElementById('aiBody-'+target);
+  var row = document.createElement('div');
+  row.className = 'ai-msg-row user';
+  row.innerHTML = '<div class="ai-msg-stack"><div class="ai-msg user"></div><div class="ai-msg-time">'+aiNowStr()+'</div></div>';
+  row.querySelector('.ai-msg').textContent = text;
+  body.appendChild(row);
+  aiScrollBottom(target);
+  aiSaveState(target);
+}
+function aiAppendBot(target, html){
+  var body = document.getElementById('aiBody-'+target);
+  var row = document.createElement('div');
+  row.className = 'ai-msg-row bot';
+  row.innerHTML = '<div class="ai-avatar sm" aria-hidden="true">'+TLI_AVATAR_SVG+'</div><div class="ai-msg-stack"><div class="ai-msg bot">'+html+'</div><div class="ai-msg-time">'+aiNowStr()+'</div></div>';
+  body.appendChild(row);
+  aiScrollBottom(target);
+  aiSaveState(target);
+  return row.querySelector('.ai-msg');
+}
+function aiShowTyping(target){
+  var body = document.getElementById('aiBody-'+target);
+  if(!body) return;
+  var row = document.createElement('div');
+  row.className = 'ai-msg-row bot';
+  row.id = 'aiTypingRow-'+target;
+  row.innerHTML = '<div class="ai-avatar sm" aria-hidden="true">'+TLI_AVATAR_SVG+'</div><div class="ai-msg-stack"><div class="ai-msg bot ai-typing"><span class="ai-typing-dots"><span></span><span></span><span></span></span></div></div>';
+  body.appendChild(row);
+  aiScrollBottom(target);
+}
+function aiHideTyping(target){
+  var row = document.getElementById('aiTypingRow-'+target);
+  if(row) row.remove();
+}
+function aiScrollBottom(target){
+  var body = document.getElementById('aiBody-'+target);
+  if(body) body.scrollTop = body.scrollHeight;
+}
+function aiToggleSend(target){
+  var input = document.getElementById('aiInput-'+target);
+  var btn = document.getElementById('aiSend-'+target);
+  if(!input || !btn) return;
+  btn.disabled = !input.value.trim();
+}
+function aiOpen(target){
+  document.getElementById('aiOverlay-'+target).classList.add('show');
+  var sheet = document.getElementById('aiSheet-'+target);
+  if(sheet) sheet.classList.remove('minimized');
+  aiInit(target);
+  setTimeout(function(){ var i=document.getElementById('aiInput-'+target); if(i) i.focus(); }, 100);
+}
+function aiClose(target){
+  document.getElementById('aiOverlay-'+target).classList.remove('show');
+}
+function aiMinimize(target){
+  var sheet = document.getElementById('aiSheet-'+target);
+  if(sheet) sheet.classList.toggle('minimized');
+}
+function aiSubmitInput(e, target){
+  e.preventDefault();
+  var input = document.getElementById('aiInput-'+target);
+  var val = input.value;
+  if(!val.trim()) return false;
+  aiAsk(val, target);
+  input.value = '';
+  aiToggleSend(target);
+  return false;
+}
+function aiPlayTimeline(containerId, steps, onDone){
+  var el = document.getElementById(containerId);
+  if(!el) return;
+  el.innerHTML = '';
+  steps.forEach(function(s){
+    var row = document.createElement('div');
+    row.className = 'ai-tl-step';
+    row.innerHTML = '<span class="dot"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></span><span>'+s+'</span>';
+    el.appendChild(row);
+  });
+  var rows = el.querySelectorAll('.ai-tl-step');
+  var i = 0;
+  function step(){
+    if(i >= rows.length){ if(onDone) onDone(); return; }
+    rows[i].classList.add('done');
+    var wrap = el.closest('.ai-body');
+    if(wrap) wrap.scrollTop = wrap.scrollHeight;
+    i++;
+    setTimeout(step, 600);
+  }
+  setTimeout(step, 300);
+}
+function aiSaveState(target){
+  try{
+    var body = document.getElementById('aiBody-'+target);
+    if(!body) return;
+    var state = {html: body.innerHTML, asked: aiAskedIntents};
+    sessionStorage.setItem(TLI_CHAT_KEY, JSON.stringify(state));
+  }catch(e){}
+}
+function aiRestoreState(target){
+  try{
+    var raw = sessionStorage.getItem(TLI_CHAT_KEY);
+    if(!raw) return false;
+    var state = JSON.parse(raw);
+    if(!state || !state.html) return false;
+    var body = document.getElementById('aiBody-'+target);
+    body.innerHTML = state.html;
+    aiAskedIntents = state.asked || {};
+    aiScrollBottom(target);
+    return true;
+  }catch(e){ return false; }
+}
+
+buildFilterPills();
+renderEvents();
+(function applyUrlEvent(){
+  var params = new URLSearchParams(window.location.search);
+  var id = params.get('event');
+  if(id && eventById(id)) openDetail(id);
+})();
+
+TLI_I18N.onRefresh(refreshEventsUI);
+TLI_I18N.onRefresh(applyMetaDesc);
+applyMetaDesc();
+TLI_I18N.init();
+</script>
+</body>
+</html>

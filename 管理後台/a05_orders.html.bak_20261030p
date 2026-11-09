@@ -1,0 +1,1971 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<title>訂單｜TLI Hub 管理後台</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+:root{--navy:#1B4E8C;--navy-dark:#123a68;--orange:#E8792B;--teal:#0F9B79;
+--g50:#F5F7FA;--g200:#E4E7EC;--g500:#667085;--g900:#101828;}
+*{box-sizing:border-box;}
+body{margin:0;font-family:"Noto Sans TC","Microsoft JhengHei",system-ui,-apple-system,sans-serif;
+background:var(--g50);color:var(--g900);}
+a{color:var(--navy);}
+.app{display:flex;min-height:100vh;width:100%;background:#fff;}
+.sidebar{width:260px;flex-shrink:0;background:#fff;color:var(--g900);padding:18px 0;
+border-right:1px solid var(--g200);display:flex;flex-direction:column;transition:width .15s;
+position:sticky;top:0;height:100vh;align-self:flex-start;}
+.sidebar .brand{padding:0 20px 14px;font-size:14px;font-weight:700;display:flex;flex-direction:column;gap:4px;
+border-bottom:1px solid var(--g200);margin-bottom:6px;text-decoration:none;color:inherit;cursor:pointer;}
+.sidebar .brand-logo{height:28px;width:auto;display:block;}
+.sidebar .brand small{display:block;font-weight:400;font-size:12px;color:var(--g500);margin-top:0;text-transform:uppercase;letter-spacing:.04em;}
+.sidebar nav{flex:1 1 auto;overflow-y:auto;}
+.sidebar nav a,.sidebar nav span.disabled{display:flex;align-items:center;gap:10px;padding:9px 20px;font-size:13.5px;
+color:var(--g900);text-decoration:none;position:relative;}
+.sidebar nav a .navicon{flex-shrink:0;color:var(--g500);}
+.sidebar nav a:hover{background:var(--g50);}
+.sidebar nav a.active{background:#E6EEF8;color:var(--navy);font-weight:600;}
+.sidebar nav a.active .navicon{color:var(--navy);}
+.sidebar .sec-label{padding:16px 20px 4px;font-size:10.5px;color:var(--g500);letter-spacing:.08em;text-transform:uppercase;font-weight:600;}
+.main{flex:1;padding:26px 32px 60px;min-width:0;}
+.pagehead{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:18px;gap:16px;}
+.pagehead h1{font-size:20px;margin:0;}
+.pagehead .desc{font-size:12.5px;color:var(--g500);margin-top:5px;line-height:1.6;}
+.btn{display:inline-block;background:var(--navy);color:#fff;border:none;padding:8px 14px;
+border-radius:6px;font-size:13px;cursor:pointer;text-decoration:none;white-space:nowrap;font-family:inherit;}
+.btn.orange{background:var(--orange);}
+.btn.teal{background:var(--teal);}
+.btn.danger{background:#C0392B;}
+.btn.ghost{background:#fff;border:1px solid var(--g200);color:var(--g900);}
+.btn.sm{padding:5px 10px;font-size:12px;}
+.btn:disabled,.btn.isdisabled{background:var(--g200)!important;color:var(--g500)!important;
+cursor:not-allowed!important;}
+.card{background:#fff;border:1px solid var(--g200);border-radius:12px;padding:18px;margin-bottom:16px;box-shadow:0 1px 3px rgba(16,24,40,.06);}
+/* 20260928ux 新增：篩選列與表格分開包裝（同 a01 寫法），避免篩選用的下拉被誤判為「表格前設定卡」 */
+.filterpanel{background:#fff;border:1px solid var(--g200);border-radius:12px;padding:18px;margin-bottom:16px;box-shadow:0 1px 3px rgba(16,24,40,.06);}
+.tablebox{background:#fff;border:1px solid var(--g200);border-radius:12px;padding:18px;margin-bottom:16px;box-shadow:0 1px 3px rgba(16,24,40,.06);}
+.card h2{font-size:15px;margin:0 0 12px;}
+.tablewrap{overflow-x:auto;}
+table{width:100%;border-collapse:collapse;font-size:13px;}
+th{text-align:left;background:var(--g50);color:var(--g500);font-weight:600;padding:10px 12px;
+border-bottom:1px solid var(--g200);white-space:nowrap;}
+td{padding:10px 12px;border-bottom:1px solid var(--g200);white-space:nowrap;}
+tr.rowlink{cursor:pointer;}
+tr.rowlink:hover{background:#F8FAFD;}
+.badge{display:inline-block;padding:2px 9px;border-radius:10px;font-size:11.5px;font-weight:600;white-space:nowrap;}
+.badge.blue{background:#E7EEF8;color:var(--navy);}
+.badge.green{background:#E4F5EE;color:var(--teal);}
+.badge.orange{background:#FCE9DA;color:var(--orange);}
+.badge.grey{background:var(--g200);color:var(--g500);}
+.badge.red{background:#FBE7E7;color:#C0392B;}
+.tabs{display:flex;gap:4px;border-bottom:1px solid var(--g200);margin-bottom:16px;flex-wrap:wrap;}
+.tabs button{background:none;border:none;padding:10px 12px;font-size:13px;color:var(--g500);
+cursor:pointer;border-bottom:2px solid transparent;font-family:inherit;}
+.tabs button.active{color:var(--navy);border-bottom-color:var(--navy);font-weight:600;}
+.tabpanel{display:none;}
+.tabpanel.active{display:block;}
+.modal-mask{display:none;position:fixed;inset:0;background:rgba(16,24,40,.42);z-index:100;
+align-items:center;justify-content:center;}
+.modal-mask.open{display:flex;}
+.modal{background:#fff;border-radius:10px;width:460px;max-width:90vw;max-height:85vh;
+overflow:auto;padding:22px;}
+.modal.wide{width:640px;}
+.modal h3{margin-top:0;font-size:16px;}
+.formrow{margin-bottom:13px;}
+.formrow label{display:block;font-size:12.5px;color:var(--g500);margin-bottom:4px;}
+.formrow input,.formrow select,.formrow textarea{width:100%;padding:7px 10px;border:1px solid var(--g200);
+border-radius:6px;font-size:13px;box-sizing:border-box;font-family:inherit;}
+.formrow textarea{resize:vertical;min-height:70px;}
+.formrow .static{padding:7px 0;font-size:13.5px;}
+/* 20260927j 新增：必填欄位星號與錯誤狀態（樣式對齊 a20 合作夥伴管理既有寫法） */
+.req{color:#C00000;margin-left:2px;}
+.rowerr{display:none;}
+.formrow.req-error textarea,.formrow.req-error input,.formrow.req-error select{border-color:#C0392B;background:#FBE7E7;}
+.formrow.req-error .rowerr{display:block;color:#C0392B;font-size:11.5px;margin-top:3px;}
+.note{font-size:12px;color:#7a5b1f;background:#FFF8EE;border:1px solid #F3DFB8;padding:9px 11px;
+border-radius:6px;}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
+.kv{display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px dashed var(--g200);font-size:13px;}
+.kv span:first-child{color:var(--g500);}
+.small{font-size:12px;color:var(--g500);}
+.hint{font-size:11.5px;color:var(--g500);margin-top:3px;}
+.manage-link{font-size:11.5px;color:var(--navy);margin-left:8px;white-space:nowrap;text-decoration:underline;}
+/* ---- 訂單列表專用 ---- */
+.toolrow{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:12px;flex-wrap:wrap;}
+.searchbox{flex:1;min-width:220px;max-width:360px;position:relative;}
+.searchbox input{width:100%;padding:8px 10px 8px 30px;border:1px solid var(--g200);border-radius:6px;
+font-size:13px;font-family:inherit;box-sizing:border-box;}
+.searchbox .sicon{position:absolute;left:9px;top:50%;transform:translateY(-50%);color:var(--g500);font-size:13px;}
+.toolbtns{display:flex;gap:8px;flex-wrap:wrap;}
+.chipbar{display:flex;gap:14px;flex-wrap:wrap;align-items:center;margin-bottom:12px;padding:12px;
+background:var(--g50);border:1px solid var(--g200);border-radius:8px;}
+.chipgroup{display:flex;gap:6px;flex-wrap:wrap;align-items:center;}
+.chipgroup .glabel{font-size:11.5px;color:var(--g500);margin-right:2px;}
+.fchip{padding:5px 12px;border-radius:14px;border:1px solid var(--g200);background:#fff;font-size:12.5px;
+cursor:pointer;font-family:inherit;color:var(--g900);}
+.fchip.active{background:var(--navy);color:#fff;border-color:var(--navy);}
+.daterange{display:flex;align-items:center;gap:6px;}
+.daterange input{padding:5px 7px;border:1px solid var(--g200);border-radius:6px;font-size:12px;font-family:inherit;}
+.clearlink{font-size:12px;color:var(--navy);cursor:pointer;text-decoration:underline;background:none;border:none;font-family:inherit;padding:0;}
+.sortable{cursor:pointer;user-select:none;}
+.sortable .sarrow{font-size:10px;color:var(--g200);margin-left:3px;}
+.sortable.sorted .sarrow{color:var(--navy);}
+.batchbar{display:none;align-items:center;gap:10px;background:#EEF3FA;border:1px solid #c7d3e6;
+border-radius:8px;padding:9px 14px;margin-bottom:10px;font-size:13px;flex-wrap:wrap;}
+.batchbar.show{display:flex;}
+.batchbar .bcount{font-weight:600;color:var(--navy);}
+.pagerbar{display:flex;justify-content:space-between;align-items:center;margin-top:12px;font-size:12.5px;
+color:var(--g500);flex-wrap:wrap;gap:10px;}
+.pagerbtns{display:flex;gap:6px;align-items:center;}
+.pagerbtns button{padding:5px 10px;border:1px solid var(--g200);background:#fff;border-radius:6px;
+font-size:12.5px;cursor:pointer;font-family:inherit;}
+.pagerbtns button:disabled{color:var(--g200);cursor:not-allowed;}
+.pagerbtns select{padding:5px 8px;border:1px solid var(--g200);border-radius:6px;font-size:12.5px;font-family:inherit;}
+/* ---- 右側訂單詳情抽屜（較寬，容納分頁表格） ---- */
+.drawer-mask{display:none;position:fixed;inset:0;background:rgba(16,24,40,.35);z-index:150;}
+.drawer-mask.open{display:block;}
+.drawer{position:fixed;top:0;right:0;height:100vh;width:680px;max-width:94vw;background:#fff;
+box-shadow:-8px 0 24px rgba(16,24,40,.18);z-index:151;transform:translateX(100%);transition:transform .2s;
+display:flex;flex-direction:column;}
+.drawer.open{transform:translateX(0);}
+.drawer-head{padding:18px 24px;border-bottom:1px solid var(--g200);display:flex;justify-content:space-between;align-items:flex-start;flex-shrink:0;}
+.drawer-head h2{font-size:16px;margin:0 0 4px;}
+.drawer-close{background:none;border:none;font-size:20px;cursor:pointer;color:var(--g500);line-height:1;padding:2px 6px;}
+.drawer-close:hover{color:var(--g900);}
+.drawer-body{flex:1;overflow-y:auto;padding:16px 24px 40px;}
+/* ---- 批次匯入訂單精靈 ---- */
+.wizsteps{display:flex;gap:6px;margin-bottom:18px;}
+.wizsteps span{flex:1;text-align:center;padding:6px 4px;font-size:11.5px;border-bottom:3px solid var(--g200);color:var(--g500);}
+.wizsteps span.active{border-color:var(--navy);color:var(--navy);font-weight:600;}
+.wizsteps span.done{border-color:var(--teal);color:var(--teal);}
+.dropzone{border:2px dashed var(--g200);border-radius:8px;padding:34px 16px;text-align:center;cursor:pointer;color:var(--g500);font-size:13px;}
+.dropzone:hover{border-color:var(--navy);color:var(--navy);}
+.dropzone.filled{border-color:var(--teal);color:var(--teal);background:#F5FBF9;}
+.maprow{display:flex;align-items:center;gap:10px;padding:6px 0;font-size:13px;}
+.maprow .mlbl{width:120px;flex-shrink:0;color:var(--g500);}
+.maprow select{flex:1;padding:6px 8px;border:1px solid var(--g200);border-radius:6px;font-size:12.5px;font-family:inherit;}
+.previewrow-err{background:#FBE7E7;}
+.wizfoot{display:flex;justify-content:space-between;margin-top:18px;padding-top:14px;border-top:1px solid var(--g200);}
+.statgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin:14px 0;}
+.statbox{border:1px solid var(--g200);border-radius:8px;padding:14px;text-align:center;}
+.statbox .num{font-size:22px;font-weight:700;color:var(--navy);}
+.statbox .lbl{font-size:11.5px;color:var(--g500);margin-top:4px;}
+.pickrow{display:flex;align-items:center;gap:10px;padding:8px 4px;border-bottom:1px solid var(--g200);font-size:13px;cursor:pointer;}
+.pickrow:hover{background:var(--g50);}
+.pickrow.selected{background:#EEF3FA;}
+.pickrow .pname{font-weight:600;}
+.pickrow .pmeta{color:var(--g500);font-size:12px;}
+.planbox{border:1px solid var(--g200);border-radius:8px;padding:10px 12px;margin-bottom:8px;cursor:pointer;}
+.planbox.selected{border-color:var(--navy);background:#EEF3FA;}
+.planbox .pn{font-weight:600;font-size:13.5px;}
+.planbox .pd{font-size:12px;color:var(--g500);margin-top:2px;}
+/* ---- v2 新增：企業訂單（示範畫面，資料為模擬數字） ---- */
+.sectiontitle{font-size:13px;font-weight:600;margin:16px 0 8px;color:var(--g900);}
+.sectiontitle:first-child{margin-top:0;}
+.switchrow{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:8px 0;}
+.switch{position:relative;display:inline-block;width:38px;height:21px;flex-shrink:0;}
+.switch input{opacity:0;width:0;height:0;}
+.switch .slider{position:absolute;cursor:pointer;inset:0;background:var(--g200);border-radius:21px;transition:.15s;}
+.switch .slider:before{position:absolute;content:"";height:15px;width:15px;left:3px;top:3px;background:#fff;border-radius:50%;transition:.15s;}
+.switch input:checked + .slider{background:var(--teal);}
+.switch input:checked + .slider:before{transform:translateX(17px);}
+.statcard{border:1px solid var(--g200);border-radius:8px;padding:12px 14px;}
+.statcard .lbl{font-size:11.5px;color:var(--g500);}
+.statcard .val{font-size:18px;font-weight:700;color:var(--navy);margin-top:2px;}
+.demopick{border:1px solid var(--g200);border-radius:8px;padding:10px 12px;margin-bottom:8px;cursor:pointer;}
+.demopick.selected{border-color:var(--navy);background:#EEF3FA;}
+.demopick .dn{font-weight:600;font-size:13.5px;}
+.demopick .dd{font-size:12px;color:var(--g500);margin-top:2px;}
+/* v2 修正：抽屜（.drawer z-index:151）開啟時會蓋住 modal，modal 一律提高到抽屜之上 */
+.modal-mask{z-index:210;}
+.modal{position:relative;z-index:211;}
+/* ---- 共用：頂欄與側欄使用者卡 ---- */
+.sidebar-user{padding:14px 20px 16px;border-top:1px solid var(--g200);margin-top:6px;position:relative;}
+.su-clickarea{display:flex;align-items:center;gap:10px;cursor:pointer;min-width:0;}
+.su-info{flex:1;min-width:0;}
+.su-name,.su-unit{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.su-menu a{display:block;padding:8px 10px;font-size:13px;color:var(--g900);text-decoration:none;border-radius:6px;}
+.su-menu a:hover{background:var(--g50);}
+.sidebar-user .su-avatar{width:32px;height:32px;border-radius:50%;background:var(--navy);color:#fff;display:flex;
+align-items:center;justify-content:center;font-size:13px;font-weight:600;flex-shrink:0;}
+.sidebar-user .su-info{display:flex;flex-direction:column;line-height:1.5;}
+.sidebar-user .su-name{font-size:13px;font-weight:600;color:var(--g900);}
+.sidebar-user .su-roletag{font-size:10.5px;background:#E6EEF8;color:var(--navy);padding:0 6px;border-radius:8px;display:inline-block;width:fit-content;white-space:nowrap;}
+.sidebar-user .su-unit{font-size:11px;color:var(--g500);}
+.su-menu{top:auto;bottom:64px;left:14px;right:14px;position:absolute;background:#fff;border:1px solid var(--g200);border-radius:8px;box-shadow:0 8px 24px rgba(16,24,40,.16);z-index:50;display:none;}
+.su-menu.open{display:block;}
+.topbar{display:flex;align-items:center;justify-content:space-between;padding:0 32px;height:56px;
+border-bottom:1px solid var(--g200);position:sticky;top:0;background:#fff;z-index:40;margin:-26px -32px 22px;gap:14px;}
+.hamburger{display:none;background:none;border:none;font-size:19px;cursor:pointer;color:var(--g900);padding:4px 6px;margin-right:4px;}
+.topbar .tb-title{font-size:15px;font-weight:600;color:var(--g900);flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.topbar .tb-actions{display:flex;align-items:center;gap:14px;position:relative;flex-shrink:0;}
+.tb-search{display:flex;align-items:center;gap:6px;background:var(--g50);border:1px solid var(--g200);border-radius:8px;
+padding:6px 10px;width:180px;}
+.tb-search input{border:none;background:none;outline:none;font-size:12.5px;font-family:inherit;width:100%;color:var(--g900);}
+.tb-bellbtn{position:relative;background:none;border:none;cursor:pointer;font-size:17px;padding:4px;line-height:1;}
+.tb-dot{position:absolute;top:0;right:0;width:7px;height:7px;background:#C0392B;border-radius:50%;display:none;}
+.tb-avatarbtn{width:30px;height:30px;border-radius:50%;background:var(--navy);color:#fff;border:none;
+cursor:pointer;font-size:13px;font-weight:600;flex-shrink:0;}
+.tb-panel{display:none;position:absolute;top:44px;right:0;background:#fff;border:1px solid var(--g200);
+border-radius:8px;box-shadow:0 8px 24px rgba(16,24,40,.16);z-index:50;}
+.tb-panel.open{display:block;}
+.tb-notifpanel{width:300px;padding:10px;}
+.tb-notifpanel .tn-head{display:flex;justify-content:space-between;align-items:center;font-size:12.5px;
+padding:4px 6px 8px;border-bottom:1px solid var(--g200);margin-bottom:6px;}
+.tb-notifpanel .tn-head a{font-size:11.5px;cursor:pointer;}
+.tb-notifitem{padding:8px 6px;border-radius:6px;font-size:12.5px;line-height:1.5;}
+.tb-notifitem:hover{background:var(--g50);}
+.tb-notifitem.unread{background:#EEF3FA;}
+.tb-notifitem .tn-t{color:var(--g500);font-size:11px;margin-top:2px;}
+.tb-avatarmenu{width:150px;padding:6px;}
+.tb-avatarmenu a{display:block;padding:8px 10px;font-size:13px;color:var(--g900);text-decoration:none;border-radius:6px;}
+.tb-avatarmenu a:hover{background:var(--g50);}
+.toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(20px);
+background:#101828;color:#fff;padding:10px 20px;border-radius:8px;font-size:13px;
+opacity:0;pointer-events:none;transition:.2s;z-index:200;}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
+.sidebar-backdrop{display:none;position:fixed;inset:0;background:rgba(16,24,40,.4);z-index:110;}
+/* ---- RWD ---- */
+@media (max-width:1279px) and (min-width:1024px){
+  .sidebar{width:72px;}
+  .sidebar .navtext{position:absolute;left:100%;top:50%;transform:translateY(-50%);background:#fff;
+    border:1px solid var(--g200);border-radius:6px;padding:6px 10px;font-size:12.5px;white-space:nowrap;
+    box-shadow:0 4px 12px rgba(16,24,40,.12);opacity:0;pointer-events:none;transition:opacity .12s;margin-left:6px;color:var(--g900);}
+  .sidebar nav a:hover .navtext{opacity:1;}
+  .sidebar .brand{align-items:center;overflow:hidden;}
+  .sidebar .brand-logo{max-width:100%;width:32px;height:28px;object-fit:cover;object-position:left center;flex-shrink:0;}
+  .sidebar .brand-text{display:none;}
+  .sidebar .brand small{display:none;}
+  .sidebar-user{justify-content:center;}
+  .sidebar-user .navtext{display:none;}
+}
+@media (max-width:1023px){
+  .hamburger{display:inline-flex;}
+  .sidebar{position:fixed;left:-260px;top:0;height:100vh;width:260px;z-index:120;transition:left .2s;}
+  .sidebar.open{left:0;}
+  .sidebar-backdrop.open{display:block;}
+  .app{width:100%;}
+  .main{padding:16px 16px 40px;}
+  .topbar{padding:0 16px;margin:-16px -16px 18px;}
+  .tb-search{display:none;}
+  .drawer{width:100%;max-width:100%;}
+  .pagerbtns{flex-wrap:wrap;justify-content:flex-end;}
+}
+</style>
+<style>
+/* ==== 側欄改版 20260826f：呼吸感間距／分段收合／底部卡收攏（覆寫舊樣式，回應主管截圖回饋） ==== */
+#sidebar{padding:0;display:flex;flex-direction:column;height:100vh;overflow:hidden;}
+#sidebar .brand{padding:16px 20px 14px;}
+#sidebar .brand-logo{height:28px;width:auto;object-fit:contain;object-position:left center;}
+#sidebar .brand small{margin-top:12px;font-size:12px;color:var(--g500);text-transform:none;letter-spacing:0;font-weight:400;}
+#sidebar .brand-text{display:none;}
+#sidebar nav{flex:1 1 auto;overflow-y:auto;overflow-x:hidden;padding:4px 8px 8px;scrollbar-width:thin;}
+#sidebar nav::-webkit-scrollbar{width:6px;}
+#sidebar nav::-webkit-scrollbar-thumb{background:var(--g200);border-radius:3px;}
+#sidebar nav a,#sidebar nav span.disabled{align-items:center;gap:12px;height:40px;padding:0 14px;margin:2px 0;border-radius:8px;font-size:14px;}
+#sidebar .navgroup .sec-label{display:flex;align-items:center;justify-content:space-between;gap:6px;padding:0 12px;margin:20px 0 8px;font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:#98A2B3;font-weight:600;}
+#sidebar .navgroup:first-child .sec-label{margin-top:8px;}
+#sidebar .sec-toggle{background:none;border:none;padding:2px;margin:0;cursor:pointer;color:var(--g500);display:flex;align-items:center;line-height:1;flex-shrink:0;}
+#sidebar .sec-toggle svg{transition:transform .15s;display:block;}
+#sidebar .navgroup.collapsed .sec-toggle svg{transform:rotate(-90deg);}
+#sidebar .navgroup-items{overflow:hidden;}
+#sidebar .navgroup.collapsed .navgroup-items{display:none;}
+#sidebar .sidebar-user{display:block;border-top:1px solid var(--g200);padding:10px 12px;margin:0;flex-shrink:0;position:relative;}
+#sidebar .su-row{display:flex;align-items:center;gap:10px;cursor:pointer;min-width:0;}
+#sidebar .su-row .su-avatar{flex-shrink:0;width:36px;height:36px;}
+#sidebar .su-row .su-info{flex:1;min-width:0;display:flex;flex-direction:row;align-items:center;gap:8px;line-height:1.2;}
+#sidebar .su-row .su-name{font-size:14px;font-weight:600;color:var(--g900);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+#sidebar .su-row .su-roletag{font-size:12px;background:#E6EEF8;color:var(--navy);padding:1px 7px;border-radius:8px;white-space:nowrap;flex-shrink:0;}
+#sidebar .su-row .su-chevron{color:var(--g500);flex-shrink:0;}
+#sidebar .su-menu{top:auto;bottom:60px;left:10px;right:10px;width:auto;padding:8px;}
+@media (max-width:1279px) and (min-width:1024px){
+  #sidebar{width:72px;}
+  #sidebar .navgroup .sec-label{display:none;}
+  #sidebar .su-row{justify-content:center;}
+  #sidebar .su-menu{left:64px;right:auto;bottom:10px;width:210px;}
+}
+@media (max-width:1023px){
+  #sidebar{width:260px;}
+}
+
+/* ==== 20260826v 容器寬度統一（對齊 a01 基準，覆寫舊版殘留樣式，防止寬內容撐開頁面）==== */
+html,body{overflow-x:hidden;}
+.app{display:flex;min-height:100vh;width:100%;max-width:none;background:#fff;}
+.main{flex:1;padding:26px 32px 60px;min-width:0;}
+.topbar{padding:0 32px;}
+.pagehead{padding:0;}
+.card{border-radius:12px;box-shadow:0 1px 3px rgba(16,24,40,.06);}
+.tablewrap,.cal-wrap,.flex-cal-wrap{overflow-x:auto;max-width:100%;}
+@media (max-width:1023px){
+.app{width:100%;}
+.main{padding:16px 16px 40px;}
+.topbar{padding:0 16px;}
+}
+</style>
+</head>
+<body>
+<div class="app">
+<div class="sidebar" id="sidebar"><a class="brand" href="../顧問工作台/c01_today.html"><img class="brand-logo" src="../assets/tli-logo.svg" alt="TLI"><small class="navtext" data-i18n="brand.adminPortal">管理後台</small></a><nav><div class="navgroup" data-group="sales"><div class="sec-label" onclick="toggleNavGroup(event,'sales')"><span class="navtext" data-i18n="nav.group.sales">銷售</span><button type="button" class="sec-toggle navtext" onclick="toggleNavGroup(event,'sales')" aria-label="收合銷售" data-i18n-aria-label="aria.collapseSales"><svg width="12" height="12" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 8 10 12 14 8"/></svg></button></div><div class="navgroup-items"><a data-nav="a21" href="a21_projects.html"><svg class="navicon" width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="14" height="13" rx="2"/><line x1="3" y1="8" x2="17" y2="8"/><line x1="7" y1="12" x2="13" y2="12"/><line x1="7" y1="14.6" x2="11" y2="14.6"/></svg><span class="navtext" data-i18n="nav.a21">專案設定</span></a><a data-nav="a04" href="a04_packages.html"><svg class="navicon" width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="7" width="14" height="10" rx="1"/><path d="M3 7l7-4 7 4"/><line x1="10" y1="7" x2="10" y2="17"/></svg><span class="navtext" data-i18n="nav.a04">銷售方案</span></a><a data-nav="a05" class="active" href="a05_orders.html"><svg class="navicon" width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 2h10v16l-2-1.3L11 18l-2-1.3L7 18l-2-1.3V2z"/><line x1="7.5" y1="6" x2="12.5" y2="6"/><line x1="7.5" y1="9" x2="12.5" y2="9"/></svg><span class="navtext" data-i18n="nav.a05">訂單</span></a><a data-nav="a20" href="a20_agents.html"><svg class="navicon" width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="6.5" cy="6" r="2.3"/><path d="M2.5 16c0-2.6 1.8-4.3 4-4.3s4 1.7 4 4.3"/><circle cx="14.5" cy="8.5" r="1.8"/><path d="M17.3 16c0-1.9-1.3-3.4-2.8-3.4"/><path d="M9 6l3-1.5"/></svg><span class="navtext" data-i18n="nav.a20">合作夥伴</span></a></div></div><div class="navgroup" data-group="customer"><div class="sec-label" onclick="toggleNavGroup(event,'customer')"><span class="navtext" data-i18n="nav.group.customer">客戶</span><button type="button" class="sec-toggle navtext" onclick="toggleNavGroup(event,'customer')" aria-label="收合客戶" data-i18n-aria-label="aria.collapseCustomer"><svg width="12" height="12" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 8 10 12 14 8"/></svg></button></div><div class="navgroup-items"><a data-nav="a01" href="a01_member_rules.html"><svg class="navicon" width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="10" cy="6.5" r="3"/><path d="M4 17c0-3 2.7-5 6-5s6 2 6 5"/></svg><span class="navtext" data-i18n="nav.a01">會員管理</span></a><a data-nav="a19" href="a19_b2b_enterprise.html"><svg class="navicon" width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="3.5" y="3" width="7" height="14" rx="1"/><rect x="10.5" y="7.5" width="6" height="9.5" rx="1"/><line x1="5.5" y1="6" x2="7.5" y2="6"/><line x1="5.5" y1="9" x2="7.5" y2="9"/><line x1="5.5" y1="12" x2="7.5" y2="12"/><line x1="12.5" y1="10.5" x2="14.5" y2="10.5"/><line x1="12.5" y1="13.5" x2="14.5" y2="13.5"/></svg><span class="navtext" data-i18n="nav.a19">組織客戶</span></a><a data-nav="a14" href="a14_feedback.html"><svg class="navicon" width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M3 4h14a1 1 0 0 1 1 1v8a1 1 0 0 1-1 1H8l-4 3v-3H3a1 1 0 0 1-1-1V5a1 1 0 0 1 1-1z"/></svg><span class="navtext" data-i18n="nav.a14">學員回饋</span></a></div></div><div class="navgroup" data-group="teaching"><div class="sec-label" onclick="toggleNavGroup(event,'teaching')"><span class="navtext" data-i18n="nav.group.teaching">教學</span><button type="button" class="sec-toggle navtext" onclick="toggleNavGroup(event,'teaching')" aria-label="收合教學" data-i18n-aria-label="aria.collapseTeaching"><svg width="12" height="12" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 8 10 12 14 8"/></svg></button></div><div class="navgroup-items"><a data-nav="a02" href="a02_products.html"><svg class="navicon" width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6l7-3.5L17 6v8l-7 3.5L3 14V6z"/><path d="M3 6l7 3.5L17 6"/><line x1="10" y1="9.5" x2="10" y2="17.5"/></svg><span class="navtext" data-i18n="nav.a02">產品管理</span></a><a data-nav="a10" href="a10_teachers.html"><svg class="navicon" width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="2.5" y="6.5" width="15" height="9.5" rx="1.5"/><path d="M7 6.5V5a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2v1.5"/><line x1="2.5" y1="10.5" x2="17.5" y2="10.5"/></svg><span class="navtext" data-i18n="nav.a10">老師管理</span></a><a data-nav="a18" href="a18_resource_library.html"><svg class="navicon" width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><ellipse cx="10" cy="4.5" rx="7" ry="2.5"/><path d="M3 4.5v5c0 1.4 3.1 2.5 7 2.5s7-1.1 7-2.5v-5"/><path d="M3 9.5v5c0 1.4 3.1 2.5 7 2.5s7-1.1 7-2.5v-5"/></svg><span class="navtext" data-i18n="nav.a18">資源庫</span></a><a data-nav="a16" href="a16_events.html"><svg class="navicon" width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="14" height="13" rx="1.5"/><line x1="3" y1="8" x2="17" y2="8"/><line x1="6.5" y1="2" x2="6.5" y2="5.5"/><line x1="13.5" y1="2" x2="13.5" y2="5.5"/><circle cx="10" cy="12.3" r="2"/></svg><span class="navtext" data-i18n="nav.a16">活動管理</span></a><a data-nav="a22" href="a22_quizzes.html"><svg class="navicon" width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="2.5" width="12" height="15" rx="1.5"/><path d="M7 7l1.5 1.5L11 6"/><line x1="12.5" y1="7.5" x2="14" y2="7.5"/><path d="M7 12l1.5 1.5L11 11"/><line x1="12.5" y1="12.5" x2="14" y2="12.5"/></svg><span class="navtext" data-i18n="nav.a22">測驗管理</span></a></div></div><div class="navgroup" data-group="finance"><div class="sec-label" onclick="toggleNavGroup(event,'finance')"><span class="navtext" data-i18n="nav.group.finance">財務</span><button type="button" class="sec-toggle navtext" onclick="toggleNavGroup(event,'finance')" aria-label="收合財務" data-i18n-aria-label="aria.collapseFinance"><svg width="12" height="12" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 8 10 12 14 8"/></svg></button></div><div class="navgroup-items"><a data-nav="a23" href="a23_payment_gateways.html"><svg class="navicon" width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="2.5" y="5" width="15" height="10" rx="1.5"/><line x1="2.5" y1="8.5" x2="17.5" y2="8.5"/><circle cx="13.5" cy="12" r="1.2"/></svg><span class="navtext" data-i18n="nav.a23">收款與發票</span></a><a data-nav="a24" href="a24_partner_settlement.html"><svg class="navicon" width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="2.5" y="4" width="15" height="12" rx="1.5"/><line x1="6" y1="8" x2="14" y2="8"/><line x1="6" y1="11" x2="11" y2="11"/><path d="M12.5 13.5l1.2 1.2 2.3-2.4"/></svg><span class="navtext" data-i18n="nav.a24">結算與對帳</span></a><a data-nav="a07" href="a07_reports.html"><svg class="navicon" width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><line x1="4" y1="17" x2="4" y2="10"/><line x1="10" y1="17" x2="10" y2="5"/><line x1="16" y1="17" x2="16" y2="12"/></svg><span class="navtext" data-i18n="nav.a07">營運報表</span></a></div></div><div class="navgroup" data-group="system"><div class="sec-label" onclick="toggleNavGroup(event,'system')"><span class="navtext" data-i18n="nav.group.system">系統</span><button type="button" class="sec-toggle navtext" onclick="toggleNavGroup(event,'system')" aria-label="收合系統" data-i18n-aria-label="aria.collapseSystem"><svg width="12" height="12" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 8 10 12 14 8"/></svg></button></div><div class="navgroup-items"><a data-nav="a17" href="a17_master_data.html"><svg class="navicon" width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><line x1="4" y1="5" x2="16" y2="5"/><circle cx="8" cy="5" r="1.6"/><line x1="4" y1="10" x2="16" y2="10"/><circle cx="13" cy="10" r="1.6"/><line x1="4" y1="15" x2="16" y2="15"/><circle cx="10" cy="15" r="1.6"/></svg><span class="navtext" data-i18n="nav.a17">基礎資料設定</span></a><a data-nav="a09" href="a09_permissions_notify.html"><svg class="navicon" width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M10 2l6.5 2.5v5C16.5 14 13.8 17 10 18c-3.8-1-6.5-4-6.5-8.5v-5L10 2z"/></svg><span class="navtext" data-i18n="nav.a09">權限管理</span></a><a data-nav="a15" href="a15_notifications.html"><svg class="navicon" width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M10 2.5c-2.2 0-4 1.8-4 4v2.3c0 .6-.2 1.2-.6 1.7L4 12.5h12l-1.4-2c-.4-.5-.6-1.1-.6-1.7V6.5c0-2.2-1.8-4-4-4z"/><path d="M8.2 15.5a1.8 1.8 0 0 0 3.6 0"/></svg><span class="navtext" data-i18n="nav.a15">通知管理</span></a><a data-nav="a08" href="a08_content_cms.html"><svg class="navicon" width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="2.5" y="3" width="15" height="14" rx="1.5"/><line x1="8" y1="3" x2="8" y2="17"/></svg><span class="navtext" data-i18n="nav.a08">內容管理</span></a></div></div></nav><div class="sidebar-user" id="sidebarUser"><div class="su-row" onclick="toggleSuMenu(event)"><span class="su-avatar" id="suAvatar">王</span><span class="navtext su-info"><span class="su-name" id="suName">王大明</span><span class="su-roletag" id="suRoleTag" data-i18n="role.hqAdmin">總公司管理者</span></span><svg class="navtext su-chevron" width="14" height="14" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 8 10 12 14 8"/></svg></div><div class="tb-panel su-menu" id="suMenu"><a href="javascript:void(0)" onclick="toast('功能建置中，敬請期待')" data-i18n="common.settings">個人設定</a><a href="../公開網站/p01_home.html" data-i18n="common.gotoWebsite">前往官網</a><a href="../顧問工作台/c01_today.html" data-i18n="nav_ext.consultantWorkbench">前往顧問工作台</a><a href="javascript:void(0)" onclick="doLogout()" data-i18n="common.logout">登出</a></div></div></div><div class="main"><div class="topbar"><button class="hamburger" onclick="toggleSidebar()" aria-label="開啟選單" data-i18n-aria-label="common.openMenu"><svg class="navicon" width="18" height="18" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="5.5" x2="17" y2="5.5"/><line x1="3" y1="10" x2="17" y2="10"/><line x1="3" y1="14.5" x2="17" y2="14.5"/></svg></button><div class="tb-title" data-i18n="nav.a05">訂單</div><div class="tb-actions"><div class="tb-search"><svg class="navicon" width="15" height="15" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="8.5" cy="8.5" r="5.5"/><line x1="16.5" y1="16.5" x2="12.6" y2="12.6"/></svg><input type="text" placeholder="搜尋" data-i18n-placeholder="search.genericPlaceholder"></div><button class="tb-bellbtn" onclick="toggleNotif(event)" aria-label="通知" data-i18n-aria-label="common.notifications"><svg class="navicon" width="17" height="17" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M10 2.5c-2.2 0-4 1.8-4 4v2.3c0 .6-.2 1.2-.6 1.7L4 12.5h12l-1.4-2c-.4-.5-.6-1.1-.6-1.7V6.5c0-2.2-1.8-4-4-4z"/><path d="M8.2 15.5a1.8 1.8 0 0 0 3.6 0"/></svg><span class="tb-dot" id="tbDot"></span></button><div class="tb-panel tb-notifpanel" id="notifPanel"></div><button class="tb-avatarbtn" onclick="toggleAvatarMenu(event)" aria-label="使用者選單" data-i18n-aria-label="common.userMenu">王</button><div class="tb-panel tb-avatarmenu" id="avatarMenu"><a href="javascript:void(0)" onclick="toast('功能建置中，敬請期待')" data-i18n="common.settings">個人設定</a><a href="../公開網站/p01_home.html" data-i18n="common.gotoWebsite">前往官網</a><a href="javascript:void(0)" onclick="doLogout()" data-i18n="common.logout">登出</a></div></div></div><div class="sidebar-backdrop" id="sidebarBackdrop" onclick="closeSidebar()"></div>
+
+<div class="pagehead">
+<div><h1 data-i18n="nav.a05">訂單</h1><div class="desc" data-i18n="page.desc.orders">向 TLI 付款的訂單，含直營、代理與經銷來源。</div></div>
+<div class="toolbtns" style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">
+<a class="btn" href="../顧問工作台/c04_new_order.html?from=orders" data-i18n="btn.addOrder">＋ 新增訂單</a>
+<button class="btn orange" onclick="openNewEntOrderWizard()" data-i18n="btn.addEnterpriseOrder">＋ 新增企業訂單</button>
+<button class="btn ghost" onclick="openNewDistOrder()" data-i18n="a05.nd.btn">＋ 新增經銷訂單</button>
+<div style="position:relative">
+<button class="btn ghost" onclick="toggleOrdersSettingsMenu(event)" ><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-2px;margin-right:4px"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 11-2.83 2.83l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 11-4 0v-.09a1.65 1.65 0 00-1-1.51 1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 11-2.83-2.83l.06-.06a1.65 1.65 0 00.33-1.82 1.65 1.65 0 00-1.51-1H3a2 2 0 110-4h.09a1.65 1.65 0 001.51-1 1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 112.83-2.83l.06.06a1.65 1.65 0 001.82.33h.01a1.65 1.65 0 001-1.51V3a2 2 0 114 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 112.83 2.83l-.06.06a1.65 1.65 0 00-.33 1.82v.01a1.65 1.65 0 001.51 1H21a2 2 0 110 4h-.09a1.65 1.65 0 00-1.51 1z"/></svg><span data-i18n="btn.settingsGear">設定</span></button>
+<div class="tb-panel tb-avatarmenu" id="ordersSettingsMenu" style="width:168px">
+<a href="javascript:void(0)" onclick="closePanel('ordersSettingsMenu');openOrderImportWizard()" data-i18n="btn.batchImport">批次匯入</a>
+</div>
+</div>
+</div>
+</div>
+
+<!-- 20260927j 新增：歸屬異議待審核提示小卡，點擊切到「歸屬異議」分頁 -->
+<div class="statbox" id="disputeStatCard" style="cursor:pointer;max-width:240px;margin-bottom:14px" onclick="switchTopTab('disputes')" title="點擊查看歸屬異議" data-i18n-title="title.viewDisputes">
+<div class="num" id="disputePendingNum" style="color:var(--orange)">0</div>
+<div class="lbl" data-i18n="stat.disputePendingLabel">筆歸屬異議待審核，點擊查看</div>
+</div>
+
+<div class="tabs" id="topTabs">
+<button type="button" class="active" data-tab="orders" onclick="switchTopTab('orders')" data-i18n="tab.orderList">訂單列表</button>
+<button type="button" data-tab="disputes" onclick="switchTopTab('disputes')" data-i18n="tab.disputes">歸屬異議</button>
+</div>
+
+<div class="tabpanel active" id="toppanel-orders">
+<div class="filterpanel">
+<div class="toolrow">
+<div class="searchbox"><span class="sicon"><svg width="14" height="14" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="8.5" cy="8.5" r="5.5"/><line x1="16.5" y1="16.5" x2="12.6" y2="12.6"/></svg></span><input type="text" id="searchInput" placeholder="搜尋訂單編號／學生姓名" data-i18n-placeholder="search.orderPlaceholder" oninput="onSearchInput(this)"></div>
+</div>
+
+<div class="filterbar" style="display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-bottom:10px">
+<select id="f_bizsource" onchange="onSelFilterChange('bizSource', this.value)"><option value="" data-i18n="filter.allBizSource">全部訂單來源</option><option value="直營" data-i18n="bizsource.direct">直營</option><option value="代理" data-i18n="bizsource.agent">代理</option><option value="企業合約" data-i18n="bizsource.enterpriseContract">企業合約</option><option value="經銷訂單" data-i18n="bizsource.distributorProject">經銷訂單</option></select>
+<select id="f_partner" onchange="onSelFilterChange('partner', this.value)" aria-label="來源夥伴"><option value="">全部來源夥伴</option></select>
+<select id="f_status" onchange="onSelFilterChange('status', this.value)"><option value="">全部狀態</option></select>
+<select id="f_campus" onchange="onSelFilterChange('campus', this.value)"><option value="">全部校區</option></select>
+<button type="button" class="btn ghost sm" onclick="toggleMoreFilters()" data-i18n="common.moreFilters">更多篩選</button>
+<button class="clearlink" onclick="clearAllFilters()" data-i18n="btn.clearAllFilters2">清除全部篩選</button>
+</div>
+<div class="filterbar" id="moreFiltersPanel" style="display:none;gap:10px;flex-wrap:wrap;align-items:center;margin-bottom:10px;padding:10px 12px;background:var(--g50);border:1px solid var(--g200);border-radius:8px">
+<select id="f_paymode" onchange="onSelFilterChange('payMode', this.value)"><option value="">全部付款條件</option></select>
+<select id="f_paychannel" onchange="onSelFilterChange('payChannel', this.value)"><option value="" data-i18n="filter.allPayChannel">全部付款方式</option><option value="線上收款" data-i18n="label.onlineCollection">線上收款</option><option value="線下匯款" data-i18n="label.offlineTransfer">線下匯款</option></select>
+<select id="f_ordertype" onchange="onSelFilterChange('orderType', this.value)"><option value="" data-i18n="filter.allOrderType">全部訂單類型</option><option value="個人訂單" data-i18n="ordertype.individual">個人訂單</option><option value="企業訂單" data-i18n="ordertype.enterprise">企業訂單</option></select>
+<span class="small" data-i18n="filter.createdDate">建立日期：</span><input type="date" id="dateFrom" onchange="onDateChange()"> <span class="small">～</span> <input type="date" id="dateTo" onchange="onDateChange()">
+</div>
+<div id="activeFilterTags" style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:10px"></div>
+</div>
+
+<div class="tablebox">
+<div class="batchbar" id="batchBar">
+<span class="bcount" id="batchCount">已選 0 筆</span>
+<button class="btn ghost" onclick="batchExport()" data-i18n="btn.export">匯出</button>
+<button class="btn ghost" onclick="openBatchRemind()" data-i18n="btn.sendPaymentReminder">發送收款提醒</button>
+</div>
+
+<div class="tablewrap"><table id="orderTable"></table></div>
+<p class="small" id="orderEmpty" style="display:none;text-align:center;padding:16px 0;" data-i18n="empty.noMatchingOrders">找不到符合條件的訂單。</p>
+
+<div class="pagerbar">
+<span id="pagerLabel"></span>
+<div class="pagerbtns">
+<span class="small" data-i18n="pager.perPage">每頁</span>
+<select id="pageSizeSel" onchange="onPageSizeChange(this)"><option value="50">50</option><option value="100">100</option></select>
+<span class="small" data-i18n="pager.unit">筆</span>
+<button onclick="gotoPage(1)" id="btnFirst" data-i18n="pager.first">« 第一頁</button>
+<button onclick="gotoPage(currentPage-1)" id="btnPrev" data-i18n="pager.prev">‹ 上一頁</button>
+<span id="pageIndicator" class="small"></span>
+<button onclick="gotoPage(currentPage+1)" id="btnNext" data-i18n="pager.next">下一頁 ›</button>
+<button onclick="gotoPage(totalPagesNow())" id="btnLast" data-i18n="pager.last">最後一頁 »</button>
+</div>
+</div>
+</div>
+</div>
+
+<!-- 20260927j 新增：歸屬異議分頁，總部覆核代理商在夥伴端 r02 提出的訂單歸屬異議 -->
+<div class="tabpanel" id="toppanel-disputes">
+<div class="card">
+<div class="pagehead" style="margin-bottom:14px">
+<div><h2 style="font-size:15px;margin:0 0 4px" data-i18n="tab.disputes">歸屬異議</h2><div class="desc" data-i18n="desc.disputesPanel">代理商對訂單歸屬提出異議，待覆核後更新來源與佣金</div></div>
+</div>
+<div class="tablewrap"><table id="disputeTable"></table></div>
+<p class="small" id="disputeEmpty" style="display:none;text-align:center;padding:16px 0;" data-i18n="empty.noDisputes">目前沒有歸屬異議。</p>
+</div>
+</div>
+
+</div>
+</div>
+
+<!-- 訂單詳情抽屜 -->
+<div class="drawer-mask" id="odDrawerMask" onclick="closeOrderDrawer()"></div>
+<div class="drawer" id="odDrawer">
+<div class="drawer-head">
+<div><h2 id="od_title"></h2><div class="small" id="od_sub"></div></div>
+<button class="drawer-close" onclick="closeOrderDrawer()" aria-label="關閉" data-i18n-aria-label="common.close"><svg width="16" height="16" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><line x1="4.5" y1="4.5" x2="15.5" y2="15.5"/><line x1="15.5" y1="4.5" x2="4.5" y2="15.5"/></svg></button>
+</div>
+<div class="drawer-body">
+<div id="od_statusrow" style="margin-bottom:12px"></div>
+<div id="od_entityRow" style="margin-bottom:10px"></div>
+<div class="tabs" id="od_tabs"></div>
+<div class="tabpanel active" id="odpanel-items"></div>
+<div class="tabpanel" id="odpanel-enthours"></div>
+<div class="tabpanel" id="odpanel-pay"></div>
+<div class="tabpanel" id="odpanel-invoice"></div>
+<div class="tabpanel" id="odpanel-benefit"></div>
+<div class="tabpanel" id="odpanel-history"></div>
+</div>
+</div>
+
+<!-- 登記／編輯收款 modal -->
+<div class="modal-mask" id="payModal" onclick="if(event.target===this) closeModal('payModal')"><div class="modal">
+<div style="display:flex;justify-content:space-between;align-items:flex-start"><h3 id="payModalTitle" data-i18n="modal.registerPayment">登記收款</h3><button type="button" class="drawer-close" onclick="closeModal('payModal')" aria-label="關閉" data-i18n-aria-label="common.close">&times;</button></div>
+<div class="formrow"><label data-i18n="label.termName">期別名稱</label><input type="text" id="pm_term" placeholder="例：第 1 期" data-i18n-placeholder="ph.termExample"></div>
+<div class="formrow"><label data-i18n="label.dueDate">應收日期</label><input type="date" id="pm_due"></div>
+<div class="formrow"><label data-i18n="label.amount">金額</label><input type="number" id="pm_amount" placeholder="0"></div>
+<div class="formrow"><label data-i18n="label.collectionChannel">收款渠道</label><select id="pm_channel"><option value="藍新金流" data-i18n="chan.newebpay">藍新金流</option><option value="Stripe">Stripe</option><option value="刷卡機（現場）" data-i18n="chan.posOnsite">刷卡機（現場）</option><option value="匯款／現金" data-i18n="chan.bankTransferCash">匯款／現金</option></select></div>
+<div class="formrow"><label data-i18n="common.status">狀態</label><select id="pm_status"><option value="已收款" data-i18n="status.orderPaid">已收款</option><option value="待收款" data-i18n="status.orderDue">待收款</option><option value="逾期" data-i18n="status.orderOverdue">逾期</option></select></div>
+<div class="formrow"><label data-i18n="label.reconStatus">對帳狀態</label><select id="pm_recon"><option value="未對帳" data-i18n="status.notReconciled">未對帳</option><option value="已對帳" data-i18n="status.reconciled">已對帳</option></select></div>
+<div style="text-align:right;margin-top:6px"><button class="btn ghost" onclick="closeModal('payModal')" data-i18n="common.cancel">取消</button> <button class="btn" onclick="savePayment()" data-i18n="common.save">儲存</button></div>
+</div></div>
+
+<!-- 發票 modal（開立／修改抬頭／作廢／折讓／補開共用） -->
+<div class="modal-mask" id="invModal" onclick="if(event.target===this) closeModal('invModal')"><div class="modal">
+<div style="display:flex;justify-content:space-between;align-items:flex-start"><h3 id="invModalTitle" data-i18n="modal.issueInvoice">開立發票</h3><button type="button" class="drawer-close" onclick="closeModal('invModal')" aria-label="關閉" data-i18n-aria-label="common.close">&times;</button></div>
+<div id="invModalBody"></div>
+<div style="text-align:right;margin-top:6px"><button class="btn ghost" onclick="closeModal('invModal')" data-i18n="common.cancel">取消</button> <button class="btn" id="invModalConfirmBtn" onclick="confirmInvoiceAction()" data-i18n="common.confirm">確認</button></div>
+</div></div>
+
+<!-- 發送收款提醒 modal -->
+<div class="modal-mask" id="remindModal" onclick="if(event.target===this) closeModal('remindModal')"><div class="modal">
+<div style="display:flex;justify-content:space-between;align-items:flex-start"><h3 data-i18n="modal.sendPaymentReminder">發送收款提醒</h3><button type="button" class="drawer-close" onclick="closeModal('remindModal')" aria-label="關閉" data-i18n-aria-label="common.close">&times;</button></div>
+<div class="formrow"><label data-i18n="label.notifyTemplate">通知範本</label><select id="remindTmplSel"><option value="付款提醒" data-i18n="tmpl.paymentReminder">付款提醒</option><option value="逾期催收" data-i18n="tmpl.overdueCollection">逾期催收</option><option value="自訂訊息" data-i18n="tmpl.customMessage">自訂訊息</option></select></div>
+<div class="hint" id="remindHint" style="margin-bottom:10px"></div>
+<div style="text-align:right"><button class="btn ghost" onclick="closeModal('remindModal')" data-i18n="common.cancel">取消</button> <button class="btn" onclick="doBatchRemind()" data-i18n="common.submit">送出</button></div>
+</div></div>
+
+<div class="modal-mask" id="newDistModal" onclick="if(event.target===this) closeModal('newDistModal')"><div class="modal">
+<div style="display:flex;justify-content:space-between;align-items:flex-start"><h3 data-i18n="a05.nd.modal">新增經銷訂單</h3><button type="button" class="drawer-close" onclick="closeModal('newDistModal')" aria-label="關閉" data-i18n-aria-label="common.close">&times;</button></div>
+<div class="hint" style="margin-bottom:10px" data-i18n="a05.nd.hint">由 TLI 後台建立，經銷商沒有入口。非企業學員：建單後到合作夥伴的經銷分頁匯入學員名單、寄啟用信；企業會員：名單由企業 HR 於組織端匯入。</div>
+<div class="formrow"><label data-i18n="a05.nd.distributor">經銷商</label><select id="ndPartner" onchange="ndPartnerChange()"></select></div>
+<div class="formrow"><label data-i18n="a05.nd.salesPlan">銷售方案</label><select id="ndPlan"></select></div>
+<div class="formrow"><label data-i18n="a05.nd.seats">學員名額</label><input type="number" id="ndSeats" min="1" value="10"></div>
+<div class="formrow"><label data-i18n="a05.nd.studentType">學員類型</label><label style="margin-right:14px"><input type="radio" name="ndKind" value="individual" checked onchange="ndKindChange()"> <span data-i18n="a05.nd.kindIndividual">非企業學員</span></label><label><input type="radio" name="ndKind" value="enterprise" onchange="ndKindChange()"> <span data-i18n="a05.nd.kindEnterprise">企業會員</span></label></div>
+<div class="formrow" id="ndOrgWrap" style="display:none"><label data-i18n="a05.nd.company">企業</label><select id="ndOrg" onchange="ndOrgNoteUpdate()"></select></div>
+<div class="hint" id="ndOrgNote" style="display:none;margin:-4px 0 10px"></div>
+<div class="hint" id="ndErr" style="display:none;color:var(--red)"></div>
+<div style="text-align:right"><button class="btn ghost" onclick="closeModal('newDistModal')" data-i18n="common.cancel">取消</button> <button class="btn" onclick="saveNewDistOrder()" data-i18n="common.submit">送出</button></div>
+</div></div>
+
+<!-- 20260927j 新增：歸屬異議審核 modal -->
+<div class="modal-mask" id="disputeReviewModal" onclick="if(event.target===this) closeModal('disputeReviewModal')"><div class="modal wide">
+<div style="display:flex;justify-content:space-between;align-items:flex-start"><h3 data-i18n="modal.disputeReview">歸屬異議審核</h3><button class="drawer-close" onclick="closeModal('disputeReviewModal')" aria-label="關閉" data-i18n-aria-label="common.close"><svg width="16" height="16" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><line x1="4.5" y1="4.5" x2="15.5" y2="15.5"/><line x1="15.5" y1="4.5" x2="4.5" y2="15.5"/></svg></button></div>
+<div class="small" id="drm_meta" style="margin-bottom:14px"></div>
+<div class="grid2">
+<div>
+<div class="sectiontitle" data-i18n="section.agentClaim">代理商主張</div>
+<div class="kv"><span data-i18n="label.submittingAgent">提出代理商</span><span id="drm_agent"></span></div>
+<div class="kv"><span data-i18n="label.referralCode">優惠碼</span><span id="drm_code"></span></div>
+<div class="kv"><span data-i18n="label.referralCodeUsedAt">優惠碼使用時間</span><span id="drm_usedat"></span></div>
+<div class="kv"><span data-i18n="label.listProvidedAt">名單提供日期</span><span id="drm_listat"></span></div>
+<div class="kv" style="border-bottom:none"><span data-i18n="label.claimNote">主張說明</span><span id="drm_claimnote"></span></div>
+</div>
+<div>
+<div class="sectiontitle" data-i18n="section.systemRecord">系統目前記錄</div>
+<div class="kv"><span data-i18n="label.currentSource">目前來源</span><span id="drm_syssource"></span></div>
+<div class="kv"><span data-i18n="label.referralClickLog">轉介連結點擊紀錄</span><span id="drm_sysclick"></span></div>
+<div class="kv" style="border-bottom:none"><span data-i18n="label.systemNote">系統備註</span><span id="drm_sysnote"></span></div>
+</div>
+</div>
+<div class="formrow" id="drm_opinionRow" style="margin-top:16px"><label for="drm_opinion"><span data-i18n="label.reviewOpinion">審核意見</span><span class="req">*</span></label><textarea id="drm_opinion" placeholder="請填寫審核依據，例如比對結果、是否有補件、後續提醒事項" data-i18n-placeholder="ph.reviewOpinion"></textarea><div class="rowerr" data-i18n="err.reviewOpinionRequired">必填，請填寫審核意見才能送出審核結果。</div></div>
+<div class="note" id="drm_resultNote" style="display:none"></div>
+<div style="text-align:right;margin-top:14px;display:flex;gap:8px;justify-content:flex-end;flex-wrap:wrap">
+<button class="btn ghost" onclick="closeModal('disputeReviewModal')" data-i18n="common.cancel">取消</button>
+<button class="btn danger" onclick="submitDisputeReview('reject')" data-i18n="btn.reject">駁回</button>
+<button class="btn" onclick="submitDisputeReview('accept')" data-i18n="btn.acceptDispute">接受異議</button>
+</div>
+</div></div>
+
+<!-- 批次匯入訂單精靈 -->
+<div class="modal-mask" id="importOrderModal" onclick="if(event.target===this) closeOrderImportWizard()"><div class="modal wide">
+<div style="display:flex;justify-content:space-between;align-items:flex-start"><h3 data-i18n="modal.batchImportOrders">批次匯入訂單</h3><button type="button" class="drawer-close" onclick="closeOrderImportWizard()" aria-label="關閉" data-i18n-aria-label="common.close">&times;</button></div>
+<div class="wizsteps" id="oiSteps"></div>
+<div id="oiBody"></div>
+</div></div>
+
+<!-- v2 新增：企業訂單建立精靈（示範畫面，資料為模擬數字） -->
+<div class="modal-mask" id="neoModal" onclick="if(event.target===this) closeNewEntOrderWizard()"><div class="modal wide">
+<div style="display:flex;justify-content:space-between;align-items:flex-start"><h3 data-i18n="modal.newEnterpriseOrder">新增企業訂單</h3><button class="drawer-close" onclick="closeNewEntOrderWizard()" aria-label="關閉" data-i18n-aria-label="common.close"><svg width="16" height="16" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><line x1="4.5" y1="4.5" x2="15.5" y2="15.5"/><line x1="15.5" y1="4.5" x2="4.5" y2="15.5"/></svg></button></div>
+<div class="wizsteps" id="neoSteps"></div>
+<div id="neoBody"></div>
+</div></div>
+
+<script src="../assets/_shared_masters.js"></script>
+<script src="../assets/_i18n_dict.js"></script>
+<script src="../assets/_i18n_dict_admin.js"></script>
+<script src="../assets/_i18n.js"></script>
+<script>
+
+/* ================= 示範資料：學生與方案（供新增訂單／匯入使用） ================= */
+var DEMO_STUDENTS = [
+  {id:'m1', name:'王小明', campus:'羅斯福校區', tier:'C'},
+  {id:'m2', name:'陳雅婷', campus:'士林校區', tier:'C'},
+  {id:'m3', name:'林建宏', campus:'台中校區', tier:'BIP'},
+  {id:'m4', name:'黃詩涵', campus:'高雄校區', tier:'B'},
+  {id:'m5', name:'張家瑜', campus:'羅斯福校區', tier:'G'},
+  {id:'m6', name:'吳柏勳', campus:'士林校區', tier:'C'},
+  {id:'m7', name:'許雅筑', campus:'台中校區', tier:'C'},
+  {id:'m8', name:'蕭承恩', campus:'高雄校區', tier:'BIP'},
+  {id:'m9', name:'潘思妤', campus:'羅斯福校區', tier:'C'},
+  {id:'m10', name:'羅冠霖', campus:'士林校區', tier:'G'},
+  {id:'m11', name:'高詩涵', campus:'台中校區', tier:'C'},
+  {id:'m12', name:'江宗翰', campus:'高雄校區', tier:'C'}
+];
+/* 訂單品項的方案示範資料改讀共用主檔 TLI_MASTERS.packages（只取線上直購、上架中、已選好組成課程的方案），
+   金額取 C 類售價、稅別與上課方式反查方案第一項課程的產品主檔，確保跟「銷售方案設定」（a04）看到的是同一份方案 */
+var DEMO_PLANS = TLI_MASTERS.packages.filter(function(pk){
+  return pk.salesMode==='direct' && pk.status==='上架' && pk.items && pk.items.length;
+}).map(function(pk){
+  var firstProd = TLI_MASTERS.byId('products', pk.items[0].sku);
+  var dm = firstProd && firstProd.deliveryModeId ? TLI_MASTERS.byId('deliveryModes', firstProd.deliveryModeId) : null;
+  var priceVals = pk.prices ? Object.keys(pk.prices).map(function(k){ return pk.prices[k]; }) : [];
+  var amount = (pk.prices && pk.prices.C != null) ? pk.prices.C : (priceVals.length ? priceVals[0] : 0);
+  return {
+    id:pk.id, name:pk.name, amount:amount,
+    tax:(firstProd && firstProd.tax) || '免稅',
+    mode: dm ? dm.name : '實體（舊網站）'
+  };
+});
+var CAMPUSES = TLI_MASTERS.campuses.filter(function(c){ return c.id!=='online'; }).map(function(c){ return c.name; });
+var STATUSES = ['待收款','分期中','已完成','已取消'];
+var PAYMODES = ['一次付清','訂金＋尾款','分期','月結'];
+var SOURCES = ['Connect 線上自助下單','顧問建訂單'];
+var CHANNELS = ['藍新金流','Stripe','刷卡機（現場）','匯款／現金'];
+var ADVISORS_LIST = ['顧問 A','顧問 B','顧問 C','顧問 D'];
+var CURRENT_STAFF = '王大明';
+
+/* ================= i18n：骨架詞彙（狀態／付款方式／來源等）中翻英對照表 =================
+   人名／企業名／校區名等示範資料不進此表；只收「畫面骨架」會反覆出現的固定詞彙，
+   由 tr() 統一查表，避免同一詞在各渲染函式各寫一次英文譯文、彼此不一致。 */
+var ORD_I18N_MAP = {
+  '待收款':'Pending Payment','分期中':'In Installments','已完成':'Completed','已取消':'Cancelled',
+  '一次付清':'Lump Sum','訂金＋尾款':'Deposit + Balance','分期':'Installments','月結':'Monthly Billing','預付款倒扣':'Prepaid Deduction',
+  '直營':'Direct','代理':'Agent','企業合約':'Enterprise Contract','經銷訂單':'Distributor Order',
+  '線上收款':'Online Payment','線下匯款':'Offline Transfer',
+  '個人訂單':'Individual Order','企業訂單':'Enterprise Order',
+  '正式訂單':'Formal Order','續約／加購':'Renewal / Add-on',
+  '已收款':'Paid','逾期':'Overdue','已對帳':'Reconciled','未對帳':'Not Reconciled',
+  '已開立':'Issued','已作廢':'Voided','已折讓':'Credited','待收款後開立':'Issue After Payment',
+  '免稅':'Tax-Exempt','應稅':'Taxable',
+  '顧問建訂單':'Advisor-Created Order','Connect 線上自助下單':'Connect Self-Checkout',
+  '待審核':'Pending Review','已接受':'Accepted','已駁回':'Rejected',
+  '已入帳':'Credited','未入帳':'Not Credited',
+  '個人':'Individual',
+  '查無點擊紀錄':'No click record found',
+  '（未使用優惠碼）':'(promo code not used)',
+  '直營（Connect 官網自助下單，未帶優惠碼）':'Direct (Connect website self-checkout, no promo code)',
+  '顧問建訂單（校區顧問現場建單，未指定代理歸屬）':'Advisor-Created Order (created on-site by campus advisor, no agent attribution specified)',
+  '依帳號數':'By Account Count','依總時數':'By Total Hours',
+  '全額':'Full Amount','訂金':'Deposit','尾款':'Balance','預付入帳':'Prepaid Credit',
+  '藍新金流':'NewebPay','刷卡機（現場）':'POS (On-site)','匯款／現金':'Bank Transfer / Cash',
+  '藍新':'NewebPay','匯款':'Bank Transfer',
+  '付款提醒':'Payment Reminder','逾期催收':'Overdue Collection','自訂訊息':'Custom Message'
+};
+function tr(zh){ return window.TLI_I18N ? TLI_I18N.t(zh, ORD_I18N_MAP[zh] || zh) : zh; }
+/* 一次性組字串（含示範資料、數字）用 tr2，直接給英文譯文，不查上表 */
+function tr2(zh, en){ return window.TLI_I18N ? TLI_I18N.t(zh, en) : zh; }
+
+/* ================= v2 新增：企業訂單相關示範資料（示範畫面，資料為模擬數字） ================= */
+var ORDER_TYPES = ['個人','正式訂單','續約／加購'];
+/* 20260927e 修正：開票主體不再各頁各寫一份，改複製 a06 開票主體清單（ENTITIES）當單一來源，
+   確保名稱與統編跟 a06 完全一致；正式版由後端提供同一份主體清單，前端不應各自維護。 */
+var ENTITIES_SOURCE=[
+  {id:'e1', name:'中華語文', taxId:'70560259', status:'啟用'},
+  {id:'e2', name:'靈呱', taxId:'42307734', status:'啟用'},
+  {id:'e3', name:'附設臺北市私立中華語文', taxId:'42379477', status:'啟用'},
+  {id:'e4', name:'基金會', taxId:'20084864', status:'啟用'},
+  {id:'e5', name:'世華', taxId:'42328787', status:'啟用'},
+  {id:'e6', name:'大西華', taxId:'45787905', status:'啟用'},
+  {id:'e7', name:'南華', taxId:'08213673', status:'啟用'}
+];
+/* 20260928fix：海外買家一律開立 Invoice（海外），與 a23「海外 Invoice」單一組設定一致，
+   不在此清單提供可各自挑選的多個海外法人選項 */
+var OVERSEAS_INVOICE_LABEL = 'Invoice（海外）';
+function entityLabel(e){ return e.taxId ? (e.name+'（統編'+e.taxId+'）') : e.name; }
+var INVOICE_ENTITIES = ENTITIES_SOURCE.map(entityLabel);
+function entityByName(name){ return ENTITIES_SOURCE.find(function(e){ return e.name===name; }); }
+/* 20260928y 新增：各校區開票法人不同（vicki 確認），依上課校區自動帶預設開票法人；
+   線上課程無實體校區，比照總部法人「中華語文」開票 */
+var CAMPUS_ENTITY_MAP = {'羅斯福校區':'中華語文','士林校區':'世華','台中校區':'大西華','高雄校區':'南華','線上課程':'中華語文'};
+function entityNameForCampus(campus){ return CAMPUS_ENTITY_MAP[campus] || '中華語文'; }
+function entityFullLabelForCampus(campus){
+  var e = entityByName(entityNameForCampus(campus));
+  return e ? entityLabel(e) : entityNameForCampus(campus);
+}
+/* 20260909 拍板：企業訂單付款方式改為合約層三選一，收款渠道另欄 */
+var ENT_PAYMODES = ['分期','月結','預付款倒扣'];
+var ENT_CHANNELS = ['藍新','Stripe','匯款'];
+var DEMO_ENTERPRISES = [
+  {id:'ent1', name:'範例半導體股份有限公司', plant:'美國廠區', currency:'USD', invoiceEntity:'Invoice（海外）',
+    contract:{tieredType:'依帳號數', tiers:[{from:1,to:50},{from:51,to:200},{from:201,to:''}], poolTotal:1200, poolExpiry:'2027-03-31'}, advisor:'顧問 A'},
+  {id:'ent2', name:'範例半導體股份有限公司（日本廠區子公司）', plant:'日本廠區', currency:'JPY', invoiceEntity:'Invoice（海外）',
+    contract:{tieredType:'依總時數', tiers:[{from:1,to:500},{from:501,to:2000},{from:2001,to:''}], poolTotal:2000, poolExpiry:'2027-06-30'}, advisor:'顧問 B'},
+  {id:'ent3', name:'恆祥電子股份有限公司', plant:'台灣總部', currency:'TWD', invoiceEntity:'中華語文（統編70560259）',
+    contract:{tieredType:'依帳號數', tiers:[{from:1,to:30},{from:31,to:100},{from:101,to:''}], poolTotal:600, poolExpiry:'2027-01-31'}, advisor:'顧問 C'}
+];
+function entById2(id){ return DEMO_ENTERPRISES.find(function(x){return x.id===id;}); }
+function orderTypeBadge(o){
+  if (o.orderType==='正式訂單') return '<span class="badge blue">'+tr('正式訂單')+'</span>';
+  if (o.orderType==='續約／加購') return '<span class="badge green">'+tr('續約／加購')+'</span>';
+  return '<span class="badge grey">'+tr('個人')+'</span>';
+}
+function entityLabelForOrder(o){
+  if (o.invoiceEntity) return o.invoiceEntity;
+  return o.invoices && o.invoices.length ? o.invoices[0].entity : '－';
+}
+function currencyLabelForOrder(o){ return o.currency || 'TWD'; }
+
+function seededRand(seed){ var x = Math.sin(seed*9301+49297)*233280; return x - Math.floor(x); }
+function addDays(baseStr, days){ var d = new Date(baseStr+'T00:00:00'); d.setDate(d.getDate()+days); return d.toISOString().slice(0,10); }
+function padNum(n, len){ var s=String(n); while(s.length<len) s='0'+s; return s; }
+function money(n){ return 'NT$ '+Number(n).toLocaleString(); }
+function moneyC(o){
+  var cur = o.currency || 'TWD';
+  var sym = cur==='TWD' ? 'NT$ ' : cur+' ';
+  return sym+Number(o.amount).toLocaleString();
+}
+
+/* ================= 訂單資料生成（示範：2,400 餘筆訂單，代表大量真實資料規模） ================= */
+var TOTAL_SEED = 2437;
+var ORDERS = [];
+function buildPaymentsFor(mode, total, baseDate, status){
+  var pays = [];
+  if (mode === '一次付清'){
+    pays.push({id:'py0', term:'全額', due:baseDate, amount:total, status: status==='待收款'?'待收款':'已收款', channel:CHANNELS[Math.floor(seededRand(total+1)*4)], recon: status==='已收款'?'已對帳':'未對帳'});
+  } else if (mode === '訂金＋尾款'){
+    var dep = Math.round(total*0.3);
+    pays.push({id:'py0', term:'訂金', due:baseDate, amount:dep, status:'已收款', channel:CHANNELS[0], recon:'已對帳'});
+    pays.push({id:'py1', term:'尾款', due:addDays(baseDate,14), amount:total-dep, status: status==='待收款'?'待收款':'已收款', channel:CHANNELS[1], recon: status==='待收款'?'未對帳':'已對帳'});
+  } else if (mode === '分期'){
+    var n = 3, per = Math.round(total/n);
+    for (var i=0;i<n;i++){
+      var st = i===0 ? '已收款' : (status==='待收款' && i===n-1 ? '待收款' : (i===n-1&&status==='分期中'?'逾期':'已收款'));
+      pays.push({id:'py'+i, term:'第 '+(i+1)+' 期', due:addDays(baseDate, i*30), amount: i===n-1 ? total-per*(n-1) : per, status:st, channel:CHANNELS[i%4], recon: st==='已收款'?'已對帳':'未對帳'});
+    }
+  } else { // 月結
+    for (var j=0;j<2;j++){
+      pays.push({id:'py'+j, term: (7+j)+' 月月結', due:addDays(baseDate, j*30), amount:Math.round(total/2), status: j===0?'已收款':(status==='待收款'?'待收款':'已收款'), channel:'匯款／現金', recon: j===0?'已對帳':'未對帳'});
+    }
+  }
+  return pays;
+}
+function buildInvoicesFor(items, amount, status, campus){
+  if (status === '已取消') return [];
+  var entityFull = campus ? entityFullLabelForCampus(campus) : '中華語文（統編70560259）';
+  var free = items.filter(function(i){return i.tax==='免稅';});
+  var taxed = items.filter(function(i){return i.tax==='應稅';});
+  var out = [];
+  if (free.length){ out.push({id:'iv0', no: status==='待收款' ? '（尚未開立）' : 'AB-'+padNum(12300000+Math.floor(amount),8), kind:'免稅', item:free.map(function(i){return i.name;}).join('、'), amount:free.reduce(function(s,i){return s+i.amount;},0), entity:entityFull, status: status==='待收款' ? '待收款後開立':'已開立'}); }
+  if (taxed.length){ out.push({id:'iv1', no: status==='待收款' ? '（尚未開立）' : 'AB-'+padNum(12400000+Math.floor(amount),8), kind:'應稅', item:taxed.map(function(i){return i.name;}).join('、'), amount:taxed.reduce(function(s,i){return s+i.amount;},0), entity:entityFull, status: status==='待收款' ? '待收款後開立':'已開立'}); }
+  return out;
+}
+function makeOrder(i){
+  var r1=seededRand(i*7+1), r2=seededRand(i*13+2), r3=seededRand(i*31+3), r4=seededRand(i*53+5), r5=seededRand(i*71+7), r6=seededRand(i*97+11);
+  var stu = DEMO_STUDENTS[i % DEMO_STUDENTS.length];
+  var plan = DEMO_PLANS[Math.floor(r2*DEMO_PLANS.length)];
+  var extra = r3 < 0.25 ? [DEMO_PLANS[(Math.floor(r2*DEMO_PLANS.length)+2)%DEMO_PLANS.length]] : [];
+  var items = [plan].concat(extra).map(function(p){ return {name:p.name, amount:p.amount, tax:p.tax}; });
+  var amount = items.reduce(function(s,x){return s+x.amount;},0);
+  var status = r4 < 0.12 ? '待收款' : r4 < 0.30 ? '分期中' : r4 < 0.93 ? '已完成' : '已取消';
+  var payMode = PAYMODES[Math.floor(r5*4)];
+  var source = r6 < 0.62 ? 'Connect 線上自助下單' : '顧問建訂單';
+  var builder = source==='顧問建訂單' ? ADVISORS_LIST[Math.floor(seededRand(i*41+3)*4)] : '（學生自助下單）';
+  var dayOffset = Math.floor(seededRand(i*17+19)*260);
+  var baseDate = addDays('2025-12-01', dayOffset);
+  return {
+    id:'ORD-2026-'+padNum(1000+i,4),
+    student:stu.name, studentId:stu.id, campus:stu.campus, tier:stu.tier,
+    status:status, amount:amount, payMode:payMode, source:source, builder:builder,
+    created:baseDate,
+    items:items,
+    invoiceEntity: entityFullLabelForCampus(stu.campus),
+    payments: buildPaymentsFor(payMode, amount, baseDate, status),
+    invoices: buildInvoicesFor(items, amount, status, stu.campus),
+    benefits: items.map(function(it,idx){ return {id:'bn'+idx, item:it.name, qty: it.tax==='免稅' ? '依方案堂數' : '1 份', granted: status!=='待收款' && status!=='已取消', grantedAt: status!=='待收款'&&status!=='已取消' ? addDays(baseDate,1) : ''}; }),
+    history:[{t:baseDate+' 10:00', who: source==='顧問建訂單'?builder:'系統', what:'訂單建立（來源：'+source+(source==='顧問建訂單'?'，建訂單人：'+builder:'')+'），付款方式選擇「'+payMode+'」'}],
+    nextPayId: 100, nextInvId: 100
+  };
+}
+for (var gi=0; gi<TOTAL_SEED; gi++){ var _o = makeOrder(gi); _o.orderType='個人'; _o.currency='TWD'; ORDERS.push(_o); }
+var nextOrderSeq = TOTAL_SEED + 1;
+
+/* ================= v2 新增：企業訂單示範資料（母帳號採購；示範畫面，資料為模擬數字） ================= */
+var EMP_SURNAMES_ENT = ['王','陳','林','黃','張','李','吳','劉','蔡','楊'];
+var EMP_GIVENS_ENT = ['小明','雅婷','建宏','詩涵','志遠','雅萍','冠廷','佳蓉'];
+var LESSON_NAMES_ENT = ['商務會話彈性堂數包','日常會話學期班 Lv.5–8','主管溝通專班','新人基礎會話班'];
+/* 20260909 修改：payMode 為合約層付款方式（分期／月結／預付款倒扣），channel 為收款渠道（藍新／Stripe／匯款），兩者分開傳入 */
+function entChannelLabelFull(channel){ return channel==='藍新' ? '藍新金流' : (channel==='匯款' ? '匯款／現金' : 'Stripe'); }
+function buildEntPayments(payMode, channel, total, baseDate, status){
+  if (payMode==='月結') return buildPaymentsFor('月結', total, baseDate, status);
+  if (payMode==='分期') return buildPaymentsFor('分期', total, baseDate, status);
+  if (total<=0) return [];
+  /* 預付款倒扣：示範顯示為一筆預付入帳，實際每堂扣抵明細在 a13 預付款頁面示範 */
+  return [{id:'py0', term:'預付入帳', due:baseDate, amount:total, status: status==='待收款'?'待收款':'已收款', channel:entChannelLabelFull(channel), recon: status==='已收款'?'已對帳':'未對帳'}];
+}
+function buildSubAccountDeductions(seed, n){
+  var rows = [];
+  for (var k=0;k<n;k++){
+    var r1=seededRand(seed*11+k*3+1), r2=seededRand(seed*13+k*5+2), r3=seededRand(seed*17+k*7+3);
+    var name = EMP_SURNAMES_ENT[Math.floor(r1*10)] + EMP_GIVENS_ENT[Math.floor(r2*8)];
+    var hrs = [1,1,1.5,2][Math.floor(r3*4)];
+    rows.push({employee:name, lesson: LESSON_NAMES_ENT[k % LESSON_NAMES_ENT.length], hours:hrs, remaining: null, time: addDays('2026-07-01', Math.floor(r1*60))+' '+padNum(9+Math.floor(r2*8),2)+':00'});
+  }
+  return rows;
+}
+function makeEnterpriseOrder(seq, entId, orderType, payMode, channel, status, amount, prepaidAmount){
+  var ent = entById2(entId);
+  var baseDate = addDays('2026-07-01', seq*3);
+  var entPlan = TLI_MASTERS.byId('packages','pk4'); // 企業／機構合約統一讀主檔方案名稱，不再自造「企業內訓合約價方案」
+  var entPlanName = (entPlan ? entPlan.name : '企業華語線上培訓方案（企業專案）') + '（依合約階梯計價）';
+  var items = [{name:ent.name+' '+entPlanName, amount:amount, tax:'免稅'}];
+  var invoices = buildInvoicesFor(items, amount, status);
+  invoices.forEach(function(iv){ iv.entity = ent.invoiceEntity; });
+  var poolTotal = ent.contract.poolTotal;
+  var poolUsed = Math.round(poolTotal * (0.15 + seededRand(seq*29+7)*0.5));
+  var subRows = buildSubAccountDeductions(seq+1, 6);
+  var running = poolTotal - poolUsed;
+  subRows.forEach(function(r){ r.remaining = Math.max(0, Math.round(running)); running += r.hours; });
+  var o = {
+    id:'ORD-2026-E'+padNum(200+seq,3),
+    student: ent.name, studentId:'', campus: ent.plant, tier:'ENT',
+    status:status, amount:amount, payMode:payMode, entChannel:channel, source:'顧問建訂單', builder:ent.advisor,
+    created:baseDate, items:items,
+    payments: buildEntPayments(payMode, channel, amount, baseDate, status),
+    invoices: invoices,
+    benefits: items.map(function(it,idx){ return {id:'bn'+idx, item:it.name, qty:'企業時數池扣抵', granted: status!=='待收款', grantedAt: status!=='待收款' ? addDays(baseDate,1) : ''}; }),
+    history:[{t:baseDate+' 10:00', who:ent.advisor, what:'企業訂單建立（來源：顧問建訂單，母帳號：'+ent.name+'），付款方式選擇「'+payMode+'」，收款渠道「'+channel+'」'}],
+    nextPayId:100, nextInvId:100,
+    orderType: orderType, currency: ent.currency, invoiceEntity: ent.invoiceEntity, enterpriseId: entId,
+    contractSummary:{tieredType: ent.contract.tieredType, tiers: ent.contract.tiers, poolTotal: poolTotal, poolUsed: poolUsed, poolExpiry: ent.contract.poolExpiry},
+    subAccountDeductions: subRows,
+    prepaidAmount: payMode==='預付款倒扣' ? (prepaidAmount||amount) : null
+  };
+  return o;
+}
+var ENT_ORDER_SEEDS = [
+  {entId:'ent1', orderType:'正式訂單', payMode:'月結', channel:'藍新', status:'分期中', amount:186000},
+  {entId:'ent2', orderType:'續約／加購', payMode:'分期', channel:'Stripe', status:'已完成', amount:96000},
+  {entId:'ent3', orderType:'正式訂單', payMode:'月結', channel:'匯款', status:'待收款', amount:52000},
+  {entId:'ent1', orderType:'正式訂單', payMode:'預付款倒扣', channel:'匯款', status:'分期中', amount:90000, prepaidAmount:90000}
+];
+ENT_ORDER_SEEDS.slice().reverse().forEach(function(s, idx){
+  ORDERS.unshift(makeEnterpriseOrder(idx+1, s.entId, s.orderType, s.payMode, s.channel, s.status, s.amount, s.prepaidAmount));
+});
+
+/* 20260927j 新增：對齊夥伴端 r02「訂單歸屬」示範資料的爭議訂單（ORD-26090019／學生 B07），
+   讓總部「歸屬異議」分頁的示範案例可以連回真實訂單，訂單編號沿用 r02 同一筆，確保跨頁資料一致 */
+(function addAgentDisputeDemoOrder(){
+  var baseDate = '2026-09-05';
+  var items = [{name:'自學課程年方案', amount:12800, tax:'免稅'}];
+  ORDERS.unshift({
+    id:'ORD-26090019',
+    student:'學生 B07', studentId:'m-agentB07', campus:'羅斯福校區', tier:'C',
+    status:'已完成', amount:12800, payMode:'一次付清', source:'Connect 線上自助下單', builder:'（學生自助下單）',
+    created:baseDate, items:items,
+    invoiceEntity: entityFullLabelForCampus('羅斯福校區'),
+    payments: buildPaymentsFor('一次付清', 12800, baseDate, '已完成'),
+    invoices: buildInvoicesFor(items, 12800, '已完成', '羅斯福校區'),
+    benefits: items.map(function(it,idx){ return {id:'bn'+idx, item:it.name, qty:'依方案堂數', granted:true, grantedAt: addDays(baseDate,1)}; }),
+    history:[{t:baseDate+' 10:00', who:'系統', what:'訂單建立（來源：Connect 線上自助下單），付款方式選擇「一次付清」'}],
+    nextPayId:100, nextInvId:100,
+    orderType:'個人', currency:'TWD'
+  });
+})();
+
+/* 20260928y 新增：「代理」帶來的個人訂單示範（歸屬清楚、非異議案件），
+   對應合作夥伴管理（a20）代理型態夥伴 p08／p09／p12；示範畫面，資料為模擬數字 */
+/* 示範用：代理與經銷訂單的建立日取目前列表最新日期，預設依建立日新到舊排序時會排在第一頁 */
+function latestCreated(){ return ORDERS.reduce(function(m,o){ return o.created>m ? o.created : m; }, '2000-01-01'); }
+(function addAgentSourcedDemoOrders(){
+  var seeds = [
+    {id:'ORD-2026-A201', student:'學生 A21', campus:'羅斯福校區', tier:'B', agent:'歐洲文化交流協會', amount:16800, overseas:true},
+    {id:'ORD-2026-A202', student:'學生 A22', campus:'士林校區', tier:'C', agent:'香港教育橋樑', amount:14200, overseas:false},
+    {id:'ORD-2026-A203', student:'學生 A23', campus:'台中校區', tier:'B', agent:'環宇教育顧問', amount:15600, overseas:false}
+  ];
+  seeds.forEach(function(s, idx){
+    var baseDate = latestCreated();
+    var items = [{name:'自學課程年方案', amount:s.amount, tax:'免稅'}];
+    ORDERS.unshift({
+      id:s.id, student:s.student, studentId:'m-'+s.id, campus:s.campus, tier:s.tier,
+      status:'已完成', amount:s.amount, payMode:'一次付清', source:'Connect 線上自助下單', builder:'（學生自助下單）',
+      created:baseDate, items:items,
+      invoiceEntity: s.overseas ? null : entityFullLabelForCampus(s.campus),
+      payments: buildPaymentsFor('一次付清', s.amount, baseDate, '已完成'),
+      invoices: buildInvoicesFor(items, s.amount, '已完成', s.campus),
+      benefits: items.map(function(it,idx2){ return {id:'bn'+idx2, item:it.name, qty:'依方案堂數', granted:true, grantedAt: addDays(baseDate,1)}; }),
+      history:[{t:baseDate+' 10:00', who:'系統', what:'訂單建立（來源：Connect 線上自助下單，帶入代理商優惠碼），付款方式選擇「一次付清」'}],
+      nextPayId:100, nextInvId:100,
+      orderType:'個人', currency:'TWD', demoAgentName:s.agent, overseasBuyer:s.overseas
+    });
+  });
+})();
+
+/* 20261013 改版：經銷訂單單一來源＝TLI_MASTERS.distOrders（TLI 後台建立，經銷商沒有入口）。
+   本頁負責列出與建立訂單、付款與開票；a20 合作夥伴的經銷分頁負責匯入名單與寄啟用信。
+   付款一律線下匯款，開票對象為經銷商本身。 */
+var DIST_PAY_SEED = {'DO-2026-0001':'已完成','DO-2026-0002':'分期中','DO-2026-0003':'待收款','DO-2026-0004':'已完成','DO-2026-0005':'待收款','DO-2026-0006':'待收款'};
+/* 20261022 經銷訂單單價：先讀該經銷商在 a20 設定的專案折讓價（partner.discountPrices[方案id]），沒設才用標準售價 */
+function distUnitInfo(x){
+  var k = TLI_MASTERS.byId('packages', x.planId), pr = k && k.prices ? k.prices : {};
+  var std = pr.BIP || pr.C || pr.B || pr[Object.keys(pr)[0]] || 0;
+  var p = TLI_MASTERS.byId('partners', x.partnerId), dp = p && p.discountPrices ? p.discountPrices[x.planId] : undefined;
+  var has = dp !== undefined && dp !== null && dp !== '';
+  return {unit: has ? Number(dp) : std, discounted: has};
+}
+function distOrderAmount(x){ return distUnitInfo(x).unit * x.seats; }
+function buildDistOrderEntry(x, status){
+  var p = TLI_MASTERS.byId('partners', x.partnerId), k = TLI_MASTERS.byId('packages', x.planId);
+  var name = p ? p.name : x.partnerId, amount = distOrderAmount(x), base = x.createdAt;
+  var ui = distUnitInfo(x);
+  var items = [{name:(k ? k.name : x.planId)+' × '+x.seats+tr2('（經銷訂單・單價 NT$','（Distributor order, unit price NT$')+ui.unit.toLocaleString('en-US')+' '+(ui.discounted ? tr2('專案折讓價）','project discount price)') : tr2('標準售價）','standard price)')), amount:amount, tax:'免稅'}];
+  return {
+    id:x.id, student:name, studentId:'', campus:'（經銷商所在地）', tier:'ENT',
+    status:status, amount:amount, payMode:'月結', entChannel:'匯款', source:'顧問建訂單', builder:'顧問 A',
+    created:base, items:items,
+    payments: buildPaymentsFor('月結', amount, base, status),
+    invoices: buildInvoicesFor(items, amount, status),
+    benefits: items.map(function(it,idx2){ return {id:'bn'+idx2, item:it.name, qty:x.seats+' 個名額', granted: status!=='待收款', grantedAt: status!=='待收款' ? addDays(base,1) : ''}; }),
+    history:[{t:base+' 10:00', who:'顧問 A', what:'經銷訂單建立（TLI 後台建單，經銷商：'+name+'）'}],
+    nextPayId:100, nextInvId:100,
+    orderType:'個人', currency:'TWD', distributorProject:true, overseasBuyer:true, distOrderId:x.id
+  };
+}
+(function syncDistOrders(){
+  TLI_MASTERS.distOrders.slice().reverse().forEach(function(x){
+    if (ORDERS.some(function(o){ return o.id===x.id; })) return;
+    ORDERS.unshift(buildDistOrderEntry(x, DIST_PAY_SEED[x.id] || '待收款'));
+  });
+})();
+function distManageHref(o){ return 'a20_agents.html?partner='+encodeURIComponent((TLI_MASTERS.byId('distOrders', o.id)||{}).partnerId || '')+'&order='+encodeURIComponent(o.id); }
+
+/* ---- 新增經銷訂單 ---- */
+function openNewDistOrder(pid){
+  var ds = TLI_MASTERS.partners.filter(function(p){ return p.type==='distributor'; });
+  document.getElementById('ndPartner').innerHTML = ds.map(function(p){ return '<option value="'+p.id+'">'+p.name+'</option>'; }).join('');
+  if (pid) document.getElementById('ndPartner').value = pid;
+  document.getElementById('ndPlan').innerHTML = TLI_MASTERS.packages.filter(function(k){ return k.type==='pkg'; }).map(function(k){ return '<option value="'+k.id+'">'+k.name+'</option>'; }).join('');
+  document.getElementById('ndSeats').value = 10;
+  document.querySelector('input[name="ndKind"][value="individual"]').checked = true;
+  document.getElementById('ndErr').style.display = 'none';
+  ndPartnerChange();
+  document.getElementById('newDistModal').classList.add('open');
+}
+function ndKindChange(){ document.getElementById('ndOrgWrap').style.display = document.querySelector('input[name="ndKind"]:checked').value==='enterprise' ? '' : 'none'; ndOrgNoteUpdate(); }
+/* 經銷帶來的企業：白名單由企業 HR 在組織端匯入，TLI 管理者不代匯 */
+function ndOrgNoteUpdate(){
+  var box = document.getElementById('ndOrgNote'); if (!box) return;
+  var ent = document.querySelector('input[name="ndKind"]:checked').value==='enterprise', id = document.getElementById('ndOrg').value;
+  var o = ent && id ? TLI_MASTERS.byId('orgCustomers', id) : null;
+  if (!o){ box.style.display = 'none'; box.textContent = ''; return; }
+  box.textContent = tr2('此訂單的員工名單由 '+o.name+' 企業 HR 於組織端匯入，TLI 不代匯名單。','The employee roster for this order is imported by the HR of '+o.name+' in the organization portal. TLI does not import it on their behalf.');
+  box.style.display = '';
+}
+function ndPartnerChange(){
+  var pid = document.getElementById('ndPartner').value;
+  var orgs = TLI_MASTERS.orgCustomers.filter(function(g){ return g.sourceType==='distributor' && g.sourceUnitId===pid; });
+  document.getElementById('ndOrg').innerHTML = orgs.length ? orgs.map(function(g){ return '<option value="'+g.id+'">'+g.name+'</option>'; }).join('') : '<option value="">'+tr2('此經銷商尚無帶來的企業','No companies brought in by this distributor')+'</option>';
+  ndKindChange();
+}
+function saveNewDistOrder(){
+  var err = document.getElementById('ndErr'), msg = '';
+  var seats = parseInt(document.getElementById('ndSeats').value, 10);
+  var kind = document.querySelector('input[name="ndKind"]:checked').value, org = document.getElementById('ndOrg').value;
+  if (!document.getElementById('ndPartner').value) msg = tr2('請選擇經銷商','Select a distributor');
+  else if (!seats || seats<1) msg = tr2('學員名額請填 1 以上的數字','Enter a seat count of 1 or more');
+  else if (kind==='enterprise' && !org) msg = tr2('請選擇企業','Select a company');
+  if (msg){ err.textContent = msg; err.style.display = ''; return; }
+  var mx = 0, y = new Date().getFullYear();
+  TLI_MASTERS.distOrders.forEach(function(x){ var n = parseInt(String(x.id).split('-').pop(),10)||0; if (n>mx) mx=n; });
+  var x = {id:'DO-'+y+'-'+('0000'+(mx+1)).slice(-4), partnerId:document.getElementById('ndPartner').value, planId:document.getElementById('ndPlan').value, seats:seats, kind:kind, orgId:kind==='enterprise'?org:'', createdAt:new Date().toISOString().slice(0,10), status:'待匯入名單'};
+  TLI_MASTERS.distOrders.unshift(x);
+  TLI_MASTERS.saveMemberData();
+  ORDERS.unshift(buildDistOrderEntry(x, '待收款'));
+  closeModal('newDistModal');
+  currentPage = 1; renderTable();
+  toast(kind==='enterprise' ? tr2('已建立經銷訂單 '+x.id+'，員工名單由企業 HR 於組織端匯入','Distributor order '+x.id+' created. The company HR imports the roster in the organization portal.') : tr2('已建立經銷訂單 '+x.id+'，請到合作夥伴匯入學員名單','Distributor order '+x.id+' created. Import the roster in Partners.'));
+}
+
+function statusBadgeOrd(s){
+  if (s === '已完成') return '<span class="badge green">'+tr('已完成')+'</span>';
+  if (s === '待收款') return '<span class="badge orange">'+tr('待收款')+'</span>';
+  if (s === '分期中') return '<span class="badge blue">'+tr('分期中')+'</span>';
+  return '<span class="badge grey">'+tr('已取消')+'</span>';
+}
+function sourceBadge(s){ return s==='顧問建訂單' ? '<span class="badge blue">'+tr2('顧問建訂單','Advisor-Created Order')+'</span>' : '<span class="badge teal" style="background:#E4F5EE;color:var(--teal)">'+tr2('Connect 自助下單','Connect Self-Checkout')+'</span>'; }
+/* 20260927j 新增：訂單經歸屬異議覆核接受後，來源欄改顯示歸屬代理商 */
+function sourceCellOrd(o){ return o.attributedAgent ? '<span class="badge blue">'+tr2('代理商：','Agent: ')+o.attributedAgent+'</span>' : sourceBadge(o.source); }
+
+/* 20260928y 新增：「訂單來源」＝業務分類（直營／代理／企業合約／經銷訂單），
+   與上面 o.source（建立方式：Connect 自助下單／顧問建訂單）是兩個不同維度，不要混用。
+   對應 vicki 提問「a05 訂單是指直營跟代理的嗎」：本頁只收「向 TLI 付款」的訂單，
+   專案合作不在此列。 */
+function bizSourceOf(o){
+  if (o.orderType && o.orderType!=='個人') return '企業合約';
+  if (o.distributorProject) return '經銷訂單';
+  if (o.attributedAgent || o.demoAgentName) return '代理';
+  return '直營';
+}
+/* 夥伴識別碼：讀主檔 partners.code（代理沿用夥伴端優惠碼 REF-…）；代理依名稱對到主檔夥伴 */
+var PARTNER_CODES = {};
+TLI_MASTERS.partners.forEach(function(p){ if (p.code) PARTNER_CODES[p.id] = p.code; });
+function masterPartnerByName(n){ return TLI_MASTERS.partners.filter(function(p){ return p.name===n; })[0] || null; }
+function sourcePartnerOf(o){
+  var b = bizSourceOf(o);
+  if (b==='代理'){ return masterPartnerByName(o.attributedAgent || o.demoAgentName); }
+  if (b==='經銷訂單'){ return masterPartnerByName(o.student); }
+  return null;
+}
+function sourcePartnerLabel(o){
+  var p = sourcePartnerOf(o); if (!p) return '';
+  return p.name + (PARTNER_CODES[p.id] ? '（'+(p.type==='agent' ? tr2('優惠碼','Promo code')+' ' : tr2('來源標籤','Source tag')+' ')+PARTNER_CODES[p.id]+'）' : '');
+}
+function bizSourceCell(o){
+  var b = bizSourceOf(o);
+  var cls = b==='直營' ? 'grey' : b==='代理' ? 'blue' : b==='企業合約' ? 'orange' : 'green';
+  var p = sourcePartnerOf(o);
+  var who = p ? sourcePartnerLabel(o) : (o.attributedAgent || o.demoAgentName);
+  var lbl = b==='經銷訂單' ? tr2('經銷','Distributor') : tr(b);
+  if (b==='企業合約') who = o.student;
+  return '<span class="badge '+cls+'" style="white-space:normal;display:inline-block;width:200px;max-width:100%;line-height:1.4;text-align:left">'+lbl+(who?'：'+who:'')+'</span>';
+}
+/* 付款方式（線上收款／線下匯款）：經銷訂單一律線下；月結／預付款倒扣視為線下匯款，其餘視為線上收款 */
+function payChannelTypeOf(o){
+  if (bizSourceOf(o)==='經銷訂單') return '線下匯款';
+  if (o.payMode==='月結' || o.payMode==='預付款倒扣') return '線下匯款';
+  return '線上收款';
+}
+function payChannelCell(o){
+  var t = payChannelTypeOf(o);
+  return t==='線下匯款' ? '<span class="badge grey">'+tr('線下匯款')+'</span>' : '<span class="badge teal" style="background:#E4F5EE;color:var(--teal)">'+tr('線上收款')+'</span>';
+}
+/* 發票欄：台灣買家＝電子發票，海外買家（含經銷／代理／海外機構）＝Invoice */
+function isOverseasBuyer(o){
+  if (typeof o.overseasBuyer === 'boolean') return o.overseasBuyer;
+  return !!(o.currency && o.currency!=='TWD');
+}
+function invoiceCell(o){
+  var overseas = isOverseasBuyer(o);
+  var hasInv = o.invoices && o.invoices.length>0;
+  var issued = hasInv && o.invoices.every(function(iv){ return iv.status==='已開立'; });
+  if (overseas) return issued ? '<span class="badge blue">'+tr2('Invoice 已出','Invoice Issued')+'</span>' : '<span class="badge grey">'+tr2('Invoice 待出','Invoice Pending')+'</span>';
+  return issued ? '<span class="badge blue">'+tr2('電子發票已開','e-Invoice Issued')+'</span>' : '<span class="badge grey">'+tr2('電子發票待開','e-Invoice Pending')+'</span>';
+}
+/* 20260928y 新增：開票法人欄（vicki 確認各校區開票法人不同）。
+   台灣買家依上課校區自動帶預設法人（可於訂單詳情改選）；海外買家一律顯示「－」。 */
+function entityShortName(fullLabel){
+  if (!fullLabel) return '－';
+  var m = /^([^（]+)/.exec(fullLabel);
+  return m ? m[1] : fullLabel;
+}
+function entityShortNameForOrder(o){
+  if (isOverseasBuyer(o)) return '－';
+  return entityShortName(o.invoiceEntity || entityFullLabelForCampus(o.campus));
+}
+function entityCell(o){ return entityShortNameForOrder(o); }
+
+/* ================= 狀態 ================= */
+var searchTerm = '';
+var filters = {status:'', campus:'', payMode:'', payChannel:'', bizSource:'', orderType:'', partner:''};
+var dateFrom = '', dateTo = '';
+var sortKey = 'created', sortDir = 'desc';
+var pageSize = 50;
+var currentPage = 1;
+var selectedIds = {};
+
+function getFiltered(){
+  var term = searchTerm.trim().toLowerCase();
+  return ORDERS.filter(function(o){
+    if (term && o.id.toLowerCase().indexOf(term)===-1 && o.student.toLowerCase().indexOf(term)===-1 && sourcePartnerLabel(o).toLowerCase().indexOf(term)===-1) return false;
+    if (filters.status && o.status!==filters.status) return false;
+    if (filters.campus && o.campus!==filters.campus) return false;
+    if (filters.payMode && o.payMode!==filters.payMode) return false;
+    if (filters.payChannel && payChannelTypeOf(o)!==filters.payChannel) return false;
+    if (filters.bizSource && bizSourceOf(o)!==filters.bizSource) return false;
+    if (filters.partner){
+      var sp = sourcePartnerOf(o);
+      if (filters.partner==='__direct'){ if (bizSourceOf(o)!=='直營') return false; }
+      else if (!sp || sp.id!==filters.partner) return false;
+    }
+    if (filters.orderType){
+      var f = filters.orderType;
+      var passOt = (f==='個人訂單' && (!o.orderType || o.orderType==='個人')) ||
+        (f==='企業訂單' && o.orderType && o.orderType!=='個人');
+      if (!passOt) return false;
+    }
+    if (dateFrom && o.created < dateFrom) return false;
+    if (dateTo && o.created > dateTo) return false;
+    return true;
+  });
+}
+function getSorted(list){
+  var copy = list.slice();
+  copy.sort(function(a,b){
+    var va=a[sortKey], vb=b[sortKey];
+    if (va<vb) return sortDir==='asc'?-1:1;
+    if (va>vb) return sortDir==='asc'?1:-1;
+    return 0;
+  });
+  return copy;
+}
+function totalPagesNow(){ var total=getFiltered().length; return Math.max(1, Math.ceil(total/pageSize)); }
+function gotoPage(p){ var max=totalPagesNow(); if(p<1)p=1; if(p>max)p=max; currentPage=p; renderTable(); }
+
+var FILTER_LABELS = {bizSource:'訂單來源', partner:'來源夥伴', status:'狀態', campus:'校區', payMode:'付款條件', payChannel:'付款方式', orderType:'訂單類型'};
+var FILTER_LABELS_EN = {bizSource:'Order Source', partner:'Source Partner', status:'Status', campus:'Campus', payMode:'Payment Terms', payChannel:'Payment Method', orderType:'Order Type'};
+function renderChipBars(){
+  var i18n = window.TLI_I18N;
+  var allLabel = i18n ? i18n.t('全部狀態','All Statuses') : '全部狀態';
+  document.getElementById('f_status').innerHTML = '<option value="">'+allLabel+'</option>' + STATUSES.map(function(s){ return '<option value="'+s+'"'+(filters.status===s?' selected':'')+'>'+tr(s)+'</option>'; }).join('');
+  var allCampusLabel = i18n ? i18n.t('全部校區','All Campuses') : '全部校區';
+  /* 校區為主檔實際地點名稱（示範資料），不進詞典翻譯，僅選單預設「全部」與已選狀態需要語系處理 */
+  document.getElementById('f_campus').innerHTML = '<option value="">'+allCampusLabel+'</option>' + CAMPUSES.map(function(c){ return '<option value="'+c+'"'+(filters.campus===c?' selected':'')+'>'+c+'</option>'; }).join('');
+  /* 20260909 修正：付款方式篩選需涵蓋企業訂單新增的「預付款倒扣」，與個人訂單既有選項合併去重 */
+  var allPaymodes = PAYMODES.concat(ENT_PAYMODES.filter(function(p){ return PAYMODES.indexOf(p)===-1; }));
+  var allPaymodeLabel = i18n ? i18n.t('全部付款條件','All Payment Terms') : '全部付款條件';
+  document.getElementById('f_paymode').innerHTML = '<option value="">'+allPaymodeLabel+'</option>' + allPaymodes.map(function(p){ return '<option value="'+p+'"'+(filters.payMode===p?' selected':'')+'>'+tr(p)+'</option>'; }).join('');
+  document.getElementById('f_partner').innerHTML = '<option value="">'+(i18n?i18n.t('全部來源夥伴','All Source Partners'):'全部來源夥伴')+'</option><option value="__direct"'+(filters.partner==='__direct'?' selected':'')+'>'+(i18n?i18n.t('直營（無夥伴）','Direct (no partner)'):'直營（無夥伴）')+'</option>' +
+    TLI_MASTERS.partners.filter(function(p){ return p.type==='agent' || p.type==='distributor'; }).map(function(p){
+      var lab = (p.type==='agent' ? (i18n?i18n.t('代理：','Agent: '):'代理：') : (i18n?i18n.t('經銷：','Distributor: '):'經銷：')) + p.name + (PARTNER_CODES[p.id] ? '（'+(p.type==='agent' ? tr2('優惠碼','Promo code')+' ' : '')+PARTNER_CODES[p.id]+'）' : '');
+      return '<option value="'+p.id+'"'+(filters.partner===p.id?' selected':'')+'>'+lab+'</option>';
+    }).join('');
+  document.getElementById('f_bizsource').value = filters.bizSource;
+  document.getElementById('f_paychannel').value = filters.payChannel;
+  document.getElementById('f_ordertype').value = filters.orderType;
+  document.getElementById('dateFrom').value = dateFrom;
+  document.getElementById('dateTo').value = dateTo;
+  renderActiveTags();
+}
+function onSelFilterChange(kind, val){
+  filters[kind] = val; currentPage=1; renderChipBars(); renderTable();
+}
+function renderActiveTags(){
+  var wrap = document.getElementById('activeFilterTags'); if (!wrap) return;
+  var i18n = window.TLI_I18N;
+  var tags = [];
+  Object.keys(FILTER_LABELS).forEach(function(k){
+    if (filters[k]) tags.push({k:k, label:(i18n?i18n.t(FILTER_LABELS[k],FILTER_LABELS_EN[k]):FILTER_LABELS[k])+'：'+(k==='partner' ? (filters[k]==='__direct' ? '直營' : (function(){ var p=TLI_MASTERS.partners.filter(function(x){return x.id===filters[k];})[0]; return p?p.name:filters[k]; })()) : tr(filters[k]))});
+  });
+  if (dateFrom || dateTo) tags.push({k:'__date', label:(i18n?i18n.t('建立日期','Created Date'):'建立日期')+'：'+(dateFrom||'—')+' ～ '+(dateTo||'—')});
+  wrap.innerHTML = tags.map(function(t){
+    return '<span class="fchip active" style="cursor:pointer" onclick="removeActiveTag(\''+t.k+'\')">'+t.label+' ×</span>';
+  }).join('');
+}
+function removeActiveTag(k){
+  if (k==='__date'){ dateFrom=''; dateTo=''; }
+  else { filters[k]=''; }
+  currentPage=1; renderChipBars(); renderTable();
+}
+function toggleMoreFilters(){
+  var p = document.getElementById('moreFiltersPanel');
+  p.style.display = (p.style.display==='none') ? 'flex' : 'none';
+}
+function onDateChange(){ dateFrom=document.getElementById('dateFrom').value; dateTo=document.getElementById('dateTo').value; currentPage=1; renderActiveTags(); renderTable(); }
+function onSearchInput(el){ searchTerm=el.value; currentPage=1; renderTable(); }
+function clearAllFilters(){
+  searchTerm=''; document.getElementById('searchInput').value='';
+  filters={status:'',campus:'',payMode:'',payChannel:'',bizSource:'',orderType:'',partner:''};
+  dateFrom=''; dateTo='';
+  currentPage=1; renderChipBars(); renderTable();
+}
+function onSortClick(key){
+  if (sortKey===key){ sortDir = sortDir==='asc'?'desc':'asc'; } else { sortKey=key; sortDir='asc'; }
+  renderTable();
+}
+
+/* 20260929 移除欄位顯示切換：表格固定 7 欄（≤8），校區／訂單類型／付款條件／開票法人不再進表格 */
+var ORD_COLS_ALL = [
+  {key:'id', label:'訂單編號', en:'Order No.', sortable:true},
+  {key:'student', label:'買家', en:'Buyer', sortable:true},
+  {key:'bizSource', label:'來源', en:'Source', sortable:false},
+  {key:'items', label:'方案或品項', en:'Plan / Items', sortable:false},
+  {key:'amount', label:'金額', en:'Amount', sortable:true},
+  {key:'payChannel', label:'付款方式', en:'Payment Method', sortable:false},
+  {key:'status', label:'狀態／發票', en:'Status / Invoice', sortable:true}
+];
+function activeOrdCols(){ return ORD_COLS_ALL; }
+function toggleOrdersSettingsMenu(ev){
+  ev.stopPropagation();
+  closePanel('notifPanel'); closePanel('avatarMenu');
+  document.getElementById('ordersSettingsMenu').classList.toggle('open');
+}
+function cellHtml(col, o){
+  switch(col.key){
+    case 'id': return o.id;
+    case 'student': return o.student;
+    case 'currency': return currencyLabelForOrder(o);
+    case 'invoiceEntity': return entityLabelForOrder(o);
+    case 'bizSource': return bizSourceCell(o);
+    case 'payChannel': return payChannelCell(o);
+    case 'invoice': return invoiceCell(o);
+    case 'items': return o.items.map(function(i){return i.name;}).join('、');
+    case 'amount': return moneyC(o);
+    case 'source': return sourceCellOrd(o);
+    case 'status': return statusBadgeOrd(o.status)+' '+invoiceCell(o);
+  }
+  return '';
+}
+function renderTable(){
+  var filtered = getFiltered();
+  var sorted = getSorted(filtered);
+  var total = sorted.length;
+  var maxPage = Math.max(1, Math.ceil(total/pageSize));
+  if (currentPage>maxPage) currentPage=maxPage;
+  var startIdx = (currentPage-1)*pageSize;
+  var pageRows = sorted.slice(startIdx, startIdx+pageSize);
+
+  var cols = activeOrdCols();
+  var t = document.getElementById('orderTable');
+  var i18n = window.TLI_I18N;
+  var headCells = '<th style="width:34px"><input type="checkbox" id="selectAllChk" onchange="onSelectAllToggle(this)"></th>' +
+    cols.map(function(c){
+      var label = i18n ? i18n.t(c.label, c.en) : c.label;
+      if (!c.sortable) return '<th>'+label+'</th>';
+      var arrow = sortKey===c.key ? (sortDir==='asc'?'▲':'▼') : '↕';
+      return '<th class="sortable'+(sortKey===c.key?' sorted':'')+'" onclick="onSortClick(\''+c.key+'\')">'+label+' <span class="sarrow">'+arrow+'</span></th>';
+    }).join('');
+  t.innerHTML = '<tr>'+headCells+'</tr>';
+
+  pageRows.forEach(function(o){
+    var tr = document.createElement('tr');
+    tr.className = 'rowlink';
+    tr.innerHTML = '<td onclick="event.stopPropagation()"><input type="checkbox" class="rowchk" data-id="'+o.id+'" '+(selectedIds[o.id]?'checked':'')+' onchange="onRowCheck(this)"></td>' +
+      cols.map(function(c){ return '<td>'+cellHtml(c,o)+'</td>'; }).join('');
+    tr.addEventListener('click', function(){ openOrderDrawer(o.id); });
+    t.appendChild(tr);
+  });
+
+  document.getElementById('orderEmpty').style.display = total ? 'none' : '';
+
+  var selChk = document.getElementById('selectAllChk');
+  var pageIds = pageRows.map(function(o){return o.id;});
+  selChk.checked = pageIds.length>0 && pageIds.every(function(id){return selectedIds[id];});
+
+  var startLabel = total===0 ? 0 : startIdx+1;
+  var endLabel = Math.min(startIdx+pageSize, total);
+  document.getElementById('pagerLabel').textContent = i18n
+    ? i18n.t('第 '+startLabel.toLocaleString()+'–'+endLabel.toLocaleString()+' 筆／共 '+total.toLocaleString()+' 筆', startLabel.toLocaleString()+'–'+endLabel.toLocaleString()+' of '+total.toLocaleString())
+    : '第 '+startLabel.toLocaleString()+'–'+endLabel.toLocaleString()+' 筆／共 '+total.toLocaleString()+' 筆';
+  document.getElementById('pageIndicator').textContent = i18n
+    ? i18n.t('第 '+currentPage+' / '+maxPage+' 頁', 'Page '+currentPage+' / '+maxPage)
+    : '第 '+currentPage+' / '+maxPage+' 頁';
+  document.getElementById('btnFirst').disabled = currentPage<=1;
+  document.getElementById('btnPrev').disabled = currentPage<=1;
+  document.getElementById('btnNext').disabled = currentPage>=maxPage;
+  document.getElementById('btnLast').disabled = currentPage>=maxPage;
+  document.getElementById('pageSizeSel').value = String(pageSize);
+  renderBatchBar();
+  if (window.TLI_I18N) TLI_I18N.refresh();
+}
+function onPageSizeChange(el){ pageSize=Number(el.value); currentPage=1; renderTable(); }
+
+function onRowCheck(el){
+  var id = el.dataset.id;
+  if (el.checked) selectedIds[id]=true; else delete selectedIds[id];
+  renderBatchBar();
+  var selChk = document.getElementById('selectAllChk');
+  var pageIds = Array.from(document.querySelectorAll('.rowchk')).map(function(c){return c.dataset.id;});
+  selChk.checked = pageIds.length>0 && pageIds.every(function(id){return selectedIds[id];});
+}
+function onSelectAllToggle(el){
+  var chks = document.querySelectorAll('.rowchk');
+  chks.forEach(function(c){ c.checked=el.checked; if(el.checked) selectedIds[c.dataset.id]=true; else delete selectedIds[c.dataset.id]; });
+  renderBatchBar();
+}
+function selectedCount(){ return Object.keys(selectedIds).length; }
+function renderBatchBar(){
+  var bar = document.getElementById('batchBar');
+  var n = selectedCount();
+  bar.classList.toggle('show', n>0);
+  document.getElementById('batchCount').textContent = window.TLI_I18N ? TLI_I18N.t('已選 '+n+' 筆', n+' selected') : '已選 '+n+' 筆';
+}
+function batchExport(){ toast(tr2('已產生匯出檔案，共 '+selectedCount()+' 筆，請至下載中心取得', 'Export file generated, '+selectedCount()+' record(s); please retrieve it from the download center')); }
+function openBatchRemind(){ document.getElementById('remindHint').textContent=tr2('將發送給目前已選取的 '+selectedCount()+' 筆訂單的學生。', 'Will be sent to the students of the '+selectedCount()+' currently selected order(s).'); document.getElementById('remindModal').classList.add('open'); }
+function doBatchRemind(){
+  var n = selectedCount(); var tmpl = document.getElementById('remindTmplSel').value;
+  closeModal('remindModal');
+  toast(tr2('通知「'+tr(tmpl)+'」已排入發送佇列，共 '+n+' 筆', 'Notification “'+tr(tmpl)+'” has been queued for sending, '+n+' record(s)'));
+}
+function closeModal(id){ document.getElementById(id).classList.remove('open'); }
+
+/* ================= 訂單詳情抽屜 ================= */
+var currentOrderId = null;
+function findOrder(id){ return ORDERS.find(function(x){return x.id===id;}); }
+/* 20260928y 新增：開票法人可於訂單詳情改選（預設依上課校區帶入，海外買家開 Invoice 不適用） */
+function renderOdEntityRow(o){
+  var el = document.getElementById('od_entityRow'); if (!el) return;
+  if (isOverseasBuyer(o)){
+    el.innerHTML = '<div class="small">'+tr2('開票法人：－（海外買家，開立 Invoice，非台灣電子發票）','Billing Entity: – (overseas buyer, issues an Invoice, not a Taiwan e-Invoice)')+'</div>';
+    return;
+  }
+  var current = o.invoiceEntity || entityFullLabelForCampus(o.campus);
+  var domesticNames = ['中華語文','世華','大西華','南華'];
+  var domesticEntities = domesticNames.map(function(n){ var e=entityByName(n); return e?entityLabel(e):n; });
+  el.innerHTML = '<div class="small" style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">'+tr2('開票法人：','Billing Entity: ')+
+    '<select onchange="onOdEntityChange(this.value)">' +
+    domesticEntities.map(function(x){ return '<option'+(x===current?' selected':'')+'>'+x+'</option>'; }).join('') +
+    '</select><span class="hint">'+tr2('預設依上課校區帶入，可視實際開票需求改選','Defaults to the enrolled campus; change it if the actual billing need differs')+'</span></div>';
+}
+function onOdEntityChange(val){
+  var o = findOrder(currentOrderId); if (!o) return;
+  o.invoiceEntity = val;
+  if (o.invoices) o.invoices.forEach(function(iv){ iv.entity = val; });
+  renderTable();
+  renderOdEntityRow(o);
+  toast(tr2('開票法人已改為「'+entityShortName(val)+'」','Billing entity changed to “'+entityShortName(val)+'”'));
+}
+var ODTABS_BASE = [{key:'items',label:'明細',en:'Items'},{key:'pay',label:'收款紀錄',en:'Payment Records'},{key:'invoice',label:'發票',en:'Invoice'},{key:'benefit',label:'課時與權益入帳',en:'Hours & Benefit Credit'},{key:'history',label:'異動歷程',en:'History'}];
+var ODTABS_ENTHOURS = {key:'enthours', label:'企業時數池', en:'Enterprise Hour Pool'};
+function odTabsFor(o){
+  if (o.orderType && o.orderType!=='個人'){
+    return [ODTABS_BASE[0], ODTABS_ENTHOURS].concat(ODTABS_BASE.slice(1));
+  }
+  return ODTABS_BASE.slice();
+}
+function openOrderDrawer(id){
+  currentOrderId = id;
+  var o = findOrder(id);
+  document.getElementById('od_title').textContent = o.id + '　' + o.student;
+  var campusLabel = (o.orderType && o.orderType!=='個人') ? o.campus : (o.campus+tr2('校',''));
+  document.getElementById('od_sub').textContent = campusLabel+'｜'+o.tier+tr2(' 類',' Category')+'｜'+tr2('建立方式：','Created via: ')+tr(o.source)+(o.source==='顧問建訂單'?tr2('（建訂單人：','(Created by: ')+o.builder+tr2('）',')'):'')+'｜'+tr2('建立於 ','Created on ')+o.created+'｜'+tr2('幣別：','Currency: ')+currencyLabelForOrder(o);
+  document.getElementById('od_statusrow').innerHTML = statusBadgeOrd(o.status)+' '+bizSourceCell(o)+' '+sourceBadge(o.source)+' '+orderTypeBadge(o);
+  if (o.distributorProject) document.getElementById('od_statusrow').innerHTML += ' <a class="btn ghost" style="padding:2px 10px" href="'+distManageHref(o)+'">'+tr2('匯入名單與寄啟用信','Import roster and send activation emails')+'</a>';
+  renderOdEntityRow(o);
+  var i18n = window.TLI_I18N;
+  var tabs = odTabsFor(o);
+  document.getElementById('od_tabs').innerHTML = tabs.map(function(t, i){
+    return '<button class="'+(i===0?'active':'')+'" onclick="odTab(this,\''+t.key+'\')">'+(i18n?i18n.t(t.label,t.en):t.label)+'</button>';
+  }).join('');
+  document.querySelectorAll('.drawer-body .tabpanel').forEach(function(p){ p.classList.toggle('active', p.id==='odpanel-items'); });
+  renderOdItems(o); renderOdPay(o); renderOdInvoice(o); renderOdBenefit(o); renderOdHistory(o); renderOdEntHours(o);
+  document.getElementById('odDrawerMask').classList.add('open');
+  document.getElementById('odDrawer').classList.add('open');
+}
+function closeOrderDrawer(){
+  document.getElementById('odDrawerMask').classList.remove('open');
+  document.getElementById('odDrawer').classList.remove('open');
+  currentOrderId = null;
+}
+function odTab(btn, name){
+  btn.parentNode.querySelectorAll('button').forEach(function(b){b.classList.remove('active');});
+  btn.classList.add('active');
+  document.querySelectorAll('.drawer-body .tabpanel').forEach(function(p){p.classList.remove('active');});
+  document.getElementById('odpanel-'+name).classList.add('active');
+}
+function refreshOdPanels(){ var o=findOrder(currentOrderId); if(!o) return; renderOdPay(o); renderOdInvoice(o); renderOdBenefit(o); renderOdHistory(o); renderOdEntHours(o); }
+function renderOdEntHours(o){
+  var el = document.getElementById('odpanel-enthours');
+  if (!o.orderType || o.orderType==='個人'){ el.innerHTML=''; return; }
+  var cs = o.contractSummary;
+  var remaining = Math.max(0, cs.poolTotal - cs.poolUsed);
+  var pct = cs.poolTotal ? Math.round((cs.poolUsed/cs.poolTotal)*100) : 0;
+  var tierRows = cs.tiers.map(function(t){ return '<tr><td>'+t.from+'</td><td>'+(t.to===''?tr2('不限','Unlimited'):t.to)+'</td><td class="small">'+tr2('由 TLI 拍板','Set by TLI')+'</td></tr>'; }).join('');
+  var hr = tr2('小時','hrs');
+  var html = '<div class="grid2" style="margin-bottom:14px">' +
+    '<div class="statcard"><div class="lbl">'+tr2('時數池總量','Total Hour Pool')+'</div><div class="val">'+cs.poolTotal+' '+hr+'</div></div>' +
+    '<div class="statcard"><div class="lbl">'+tr2('已扣抵','Deducted')+'</div><div class="val">'+cs.poolUsed+' '+hr+'（'+pct+'%）</div></div>' +
+    '<div class="statcard"><div class="lbl">'+tr2('剩餘時數','Remaining Hours')+'</div><div class="val" style="color:var(--teal)">'+remaining+' '+hr+'</div></div>' +
+    '<div class="statcard"><div class="lbl">'+tr2('效期','Validity')+'</div><div class="val" style="font-size:14px">'+cs.poolExpiry+'</div></div>' +
+    '</div>' +
+    '<div class="sectiontitle">'+tr2('階梯計價規則（','Tiered Pricing Rule (')+tr(cs.tieredType)+tr2('）',')')+'</div>' +
+    '<div class="tablewrap"><table><tr><th>'+tr2('級距起','Tier From')+'</th><th>'+tr2('級距迄','Tier To')+'</th><th>'+tr2('單價','Unit Price')+'</th></tr>'+tierRows+'</table></div>' +
+    '<div class="sectiontitle">'+tr2('子帳號扣時數紀錄','Sub-Account Hour Deduction Log')+'</div>' +
+    '<div class="tablewrap"><table><tr><th>'+tr2('員工','Employee')+'</th><th>'+tr2('課堂','Lesson')+'</th><th>'+tr2('扣抵時數','Hours Deducted')+'</th><th>'+tr2('剩餘','Remaining')+'</th><th>'+tr2('時間','Time')+'</th></tr>' +
+    o.subAccountDeductions.map(function(r){
+      return '<tr><td>'+r.employee+'</td><td>'+r.lesson+'</td><td>'+r.hours+' '+hr+'</td><td>'+r.remaining+' '+hr+'</td><td>'+r.time+'</td></tr>';
+    }).join('') + '</table></div>' +
+    '<div class="hint" style="margin-top:8px">'+tr2('子帳號扣時數從企業母帳號時數池統一扣抵，非各自獨立計算。','Sub-account hours are deducted from the enterprise master account’s pool as a whole, not tracked separately per sub-account.')+'</div>';
+  el.innerHTML = html;
+}
+
+function curSym(o){ var c=(o&&o.currency)||'TWD'; return c==='TWD' ? 'NT$ ' : c+' '; }
+function renderOdItems(o){
+  document.getElementById('odpanel-items').innerHTML =
+    '<div class="tablewrap"><table><tr><th>'+tr2('品項','Item')+'</th><th>'+tr2('金額','Amount')+'</th><th>'+tr2('稅別','Tax Type')+'</th></tr>' +
+    o.items.map(function(i){
+      var amtCell = (i.amount===null || i.amount===undefined) ? '<span class="small">'+tr2('參數設定 #待定','Parameter #TBD')+(i.qty?'（× '+i.qty+'）':'')+'</span>' : curSym(o)+Number(i.amount).toLocaleString();
+      return '<tr><td>'+i.name+'</td><td>'+amtCell+'</td><td>'+(i.tax==='免稅'?'<span class="badge green">'+tr('免稅')+'</span>':'<span class="badge orange">'+tr('應稅')+'</span>')+'</td></tr>';
+    }).join('') +
+    '<tr><td><b>'+tr2('合計','Total')+'</b></td><td><b>'+moneyC(o)+'</b></td><td></td></tr></table></div>';
+}
+function renderOdPay(o){
+  var html = '<div style="text-align:right;margin-bottom:10px"><button class="btn sm" onclick="openPayModal(null)">＋ '+tr2('登記收款','Register Payment')+'</button></div>' +
+    '<div class="tablewrap"><table><tr><th>'+tr2('期別','Term')+'</th><th>'+tr2('到期日','Due Date')+'</th><th>'+tr2('金額','Amount')+'</th><th>'+tr2('渠道','Channel')+'</th><th>'+tr2('對帳','Reconciliation')+'</th><th>'+tr2('狀態','Status')+'</th><th></th></tr>' +
+    o.payments.map(function(p){
+      var b = p.status==='已收款' ? '<span class="badge green">'+tr('已收款')+'</span>' : p.status==='逾期' ? '<span class="badge red">'+tr('逾期')+'</span>' : p.status==='已取消' ? '<span class="badge grey">'+tr('已取消')+'</span>' : '<span class="badge orange">'+tr('待收款')+'</span>';
+      var rb = p.recon==='已對帳' ? '<span class="badge blue">'+tr('已對帳')+'</span>' : '<span class="badge grey">'+tr('未對帳')+'</span>';
+      return '<tr><td>'+tr(p.term)+'</td><td>'+p.due+'</td><td>'+curSym(o)+Number(p.amount).toLocaleString()+'</td><td>'+tr(p.channel)+'</td><td>'+rb+'</td><td>'+b+'</td>' +
+        '<td><button class="btn ghost sm" onclick="openPayModal(\''+p.id+'\')">'+tr2('編輯','Edit')+'</button> <button class="btn ghost sm" onclick="voidPayment(\''+p.id+'\')">'+tr2('作廢','Void')+'</button></td></tr>';
+    }).join('') + '</table></div><div class="hint">'+tr2('收款排程依付款方式自動產生；逾期會同步進入顧問工作台的續約與到期提醒清單；對帳狀態供財務與藍新／Stripe／刷卡機對帳單勾稽。','Payment schedules are auto-generated from the payment terms; overdue items also appear in the Consultant Workbench renewal/expiry reminder list; reconciliation status is used by Finance to match against NewebPay/Stripe/POS statements.')+'</div>';
+  document.getElementById('odpanel-pay').innerHTML = html;
+}
+function renderOdInvoice(o){
+  var html = '<div style="text-align:right;margin-bottom:10px"><button class="btn sm" onclick="openInvoiceModal(null,\'issue\')">＋ '+tr2('開立發票','Issue Invoice')+'</button></div>';
+  if (!o.invoices.length){
+    html += '<div class="note">'+tr2('尚未開票（訂單已取消或未達開票條件）。','No invoice yet (order cancelled or billing conditions not met).')+'</div>';
+  } else {
+    html += '<div style="display:flex;gap:16px;flex-wrap:wrap">' + o.invoices.map(function(inv){
+      var stBadge = inv.status==='已開立' ? '<span class="badge green">'+tr('已開立')+'</span>' : inv.status==='已作廢' ? '<span class="badge grey">'+tr('已作廢')+'</span>' : inv.status==='已折讓' ? '<span class="badge orange">'+tr('已折讓')+'</span>' : '<span class="badge orange">'+tr('待收款後開立')+'</span>';
+      var actions = '';
+      if (inv.status==='已開立'){
+        actions = '<button class="btn ghost sm" onclick="openInvoiceModal(\''+inv.id+'\',\'edit\')">'+tr2('修改抬頭統編','Edit Header/Tax ID')+'</button> <button class="btn ghost sm" onclick="openInvoiceModal(\''+inv.id+'\',\'credit\')">'+tr2('折讓','Credit Note')+'</button> <button class="btn ghost sm" onclick="openInvoiceModal(\''+inv.id+'\',\'void\')">'+tr2('作廢','Void')+'</button>';
+      } else if (inv.status==='已作廢' || inv.status==='已折讓'){
+        actions = '<button class="btn ghost sm" onclick="openInvoiceModal(\''+inv.id+'\',\'reissue\')">'+tr2('補開','Reissue')+'</button>';
+      } else {
+        actions = '<button class="btn ghost sm" onclick="openInvoiceModal(\''+inv.id+'\',\'issue\')">'+tr2('開立','Issue')+'</button>';
+      }
+      return '<div class="card" style="width:280px"><div class="kv"><span>'+tr2('狀態','Status')+'</span><span>'+stBadge+'</span></div>' +
+        '<div class="kv"><span>'+tr2('發票號碼','Invoice No.')+'</span><span>'+inv.no+'</span></div>' +
+        '<div class="kv"><span>'+tr2('稅別','Tax Type')+'</span><span>'+(inv.kind==='免稅'?'<span class="badge green">'+tr('免稅')+'</span>':'<span class="badge orange">'+tr('應稅')+'</span>')+'</span></div>' +
+        '<div class="kv"><span>'+tr2('品項','Item')+'</span><span>'+inv.item+'</span></div>' +
+        '<div class="kv"><span>'+tr2('金額（含稅）','Amount (Tax Incl.)')+'</span><span>'+curSym(o)+Number(inv.amount).toLocaleString()+'</span></div>' +
+        '<div class="kv"><span>'+tr2('開票主體','Billing Entity')+'</span><span>'+inv.entity+'</span></div>' +
+        '<div style="margin-top:8px">'+actions+'</div></div>';
+    }).join('') + '</div><div class="hint" style="margin-top:8px">'+tr2('同一張訂單同時含免稅（學費）與應稅（教材）品項時，系統自動分成兩張發票各自開立。','When an order contains both tax-exempt (tuition) and taxable (materials) items, the system automatically issues two separate invoices.')+'</div>';
+  }
+  document.getElementById('odpanel-invoice').innerHTML = html;
+}
+function renderOdBenefit(o){
+  document.getElementById('odpanel-benefit').innerHTML =
+    '<div class="hint" style="margin-bottom:10px">'+tr2('付款完成後系統把購買內容（課時、效期、教材、自學課程、活動資格）放進學生帳戶，可手動入帳／收回。','Once payment is complete, the system credits the purchased content (class hours, validity, materials, self-study courses, event eligibility) to the student’s account; it can be credited or reversed manually.')+'</div>' +
+    '<div class="tablewrap"><table><tr><th>'+tr2('項目','Item')+'</th><th>'+tr2('數量／效期','Qty / Validity')+'</th><th>'+tr2('入帳狀態','Credit Status')+'</th><th>'+tr2('入帳時間','Credited At')+'</th><th></th></tr>' +
+    o.benefits.map(function(b){
+      return '<tr><td>'+b.item+'</td><td>'+b.qty+'</td><td>'+(b.granted?'<span class="badge green">'+tr('已入帳')+'</span>':'<span class="badge grey">'+tr('未入帳')+'</span>')+'</td><td>'+(b.grantedAt||'－')+'</td>' +
+        '<td>'+(b.granted ? '<button class="btn ghost sm" onclick="toggleBenefit(\''+b.id+'\',false)">'+tr2('收回','Reverse')+'</button>' : '<button class="btn ghost sm" onclick="toggleBenefit(\''+b.id+'\',true)">'+tr2('手動入帳','Credit Manually')+'</button>')+'</td></tr>';
+    }).join('') + '</table></div>';
+}
+function renderOdHistory(o){
+  document.getElementById('odpanel-history').innerHTML =
+    '<div class="tablewrap"><table><tr><th>'+tr2('時間','Time')+'</th><th>'+tr2('操作人','Operator')+'</th><th>'+tr2('內容','Content')+'</th></tr>' +
+    o.history.map(function(h){return '<tr><td>'+h.t+'</td><td>'+h.who+'</td><td>'+h.what+'</td></tr>';}).join('') + '</table></div>';
+}
+function pushHistory(o, what){ o.history.unshift({t:new Date().toISOString().slice(0,16).replace('T',' '), who:CURRENT_STAFF, what:what}); }
+
+/* ---- 收款紀錄 CRUD ---- */
+var payEditId = null;
+function openPayModal(id){
+  payEditId = id;
+  var o = findOrder(currentOrderId);
+  document.getElementById('payModalTitle').textContent = id ? tr2('編輯收款紀錄','Edit Payment Record') : tr2('登記收款','Register Payment');
+  if (id){
+    var p = o.payments.find(function(x){return x.id===id;});
+    document.getElementById('pm_term').value = p.term;
+    document.getElementById('pm_due').value = p.due;
+    document.getElementById('pm_amount').value = p.amount;
+    document.getElementById('pm_channel').value = p.channel;
+    document.getElementById('pm_status').value = p.status==='逾期' ? '待收款' : p.status;
+    document.getElementById('pm_recon').value = p.recon;
+  } else {
+    document.getElementById('pm_term').value = '';
+    document.getElementById('pm_due').value = new Date().toISOString().slice(0,10);
+    document.getElementById('pm_amount').value = '';
+    document.getElementById('pm_channel').value = CHANNELS[0];
+    document.getElementById('pm_status').value = '已收款';
+    document.getElementById('pm_recon').value = '未對帳';
+  }
+  document.getElementById('payModal').classList.add('open');
+}
+function savePayment(){
+  var o = findOrder(currentOrderId);
+  var term = document.getElementById('pm_term').value.trim();
+  if (!term){ toast(tr2('請輸入期別名稱','Please enter a term name')); return; }
+  var data = {
+    term:term, due:document.getElementById('pm_due').value,
+    amount:Number(document.getElementById('pm_amount').value)||0,
+    channel:document.getElementById('pm_channel').value,
+    status:document.getElementById('pm_status').value,
+    recon:document.getElementById('pm_recon').value
+  };
+  if (payEditId){
+    var p = o.payments.find(function(x){return x.id===payEditId;});
+    Object.assign(p, data);
+    pushHistory(o, '收款紀錄「'+term+'」已修改');
+    toast(tr2('已儲存收款紀錄','Payment record saved'));
+  } else {
+    o.nextPayId++;
+    data.id = 'py'+o.nextPayId;
+    o.payments.push(data);
+    pushHistory(o, '新增收款紀錄「'+term+'」'+money(data.amount)+'（渠道：'+data.channel+'）');
+    toast(tr2('已登記收款','Payment registered'));
+  }
+  closeModal('payModal');
+  refreshOdPanels();
+}
+function voidPayment(id){
+  var o = findOrder(currentOrderId);
+  var p = o.payments.find(function(x){return x.id===id;});
+  if (!p) return;
+  if (!confirm(tr2('確定要作廢收款紀錄「'+p.term+'」？','Void the payment record “'+p.term+'”?'))) return;
+  p.status = '已取消';
+  pushHistory(o, '收款紀錄「'+p.term+'」已作廢');
+  refreshOdPanels();
+  toast(tr2('已作廢收款紀錄','Payment record voided'));
+}
+
+/* ---- 發票 CRUD ---- */
+var invEditId = null, invMode = null;
+function openInvoiceModal(id, mode){
+  invEditId = id; invMode = mode;
+  var o = findOrder(currentOrderId);
+  var inv = id ? o.invoices.find(function(x){return x.id===id;}) : null;
+  var titles = {
+    issue: tr2('開立發票','Issue Invoice'), edit: tr2('修改抬頭統編','Edit Header/Tax ID'),
+    void: tr2('作廢發票','Void Invoice'), credit: tr2('開立折讓','Issue Credit Note'), reissue: tr2('補開發票','Reissue Invoice')
+  };
+  document.getElementById('invModalTitle').textContent = titles[mode];
+  var body = '';
+  var overseasBuyer = isOverseasBuyer(o);
+  var entityFieldHtml = overseasBuyer
+    ? '<input type="text" id="im_entity" value="'+OVERSEAS_INVOICE_LABEL+'" disabled>'
+    : '<select id="im_entity">'+INVOICE_ENTITIES.map(function(x){return '<option'+(x===(inv?inv.entity:o.invoices&&o.invoices[0]&&o.invoices[0].entity)?' selected':'')+'>'+x+'</option>';}).join('')+'</select>';
+  var entityFieldHtmlEdit = overseasBuyer
+    ? '<input type="text" id="im_entity" value="'+OVERSEAS_INVOICE_LABEL+'" disabled>'
+    : '<select id="im_entity">'+INVOICE_ENTITIES.map(function(x){return '<option'+(x===inv.entity?' selected':'')+'>'+x+'</option>';}).join('')+'</select>';
+  if (mode === 'issue'){
+    body = '<div class="formrow"><label>'+tr2('品項','Item')+'</label><input type="text" id="im_item" value="'+(inv?inv.item:o.items.map(function(i){return i.name;}).join('、'))+'"></div>' +
+      '<div class="formrow"><label>'+tr2('金額（含稅）','Amount (Tax Incl.)')+'</label><input type="number" id="im_amount" value="'+(inv?inv.amount:o.amount)+'"></div>' +
+      '<div class="formrow"><label>'+tr2('開票主體','Billing Entity')+'</label>'+entityFieldHtml+'</div>';
+  } else if (mode === 'edit'){
+    body = '<div class="formrow"><label>'+tr2('發票號碼','Invoice No.')+'</label><div class="static">'+inv.no+'</div></div>' +
+      '<div class="formrow"><label>'+tr2('開票主體（抬頭）','Billing Entity (Header)')+'</label>'+entityFieldHtmlEdit+'</div>' +
+      '<div class="hint">'+tr2('修改抬頭統編需在稅局規範時限內辦理，系統會記錄異動紀錄。','Editing the header/tax ID must be done within the tax authority’s deadline; the system logs the change.')+'</div>';
+  } else if (mode === 'void'){
+    body = '<div class="note">'+tr2('作廢後此發票號碼將不可再使用，需要新發票請另行補開。','Once voided, this invoice number can no longer be used; issue a new one via reissue if needed.')+'</div><div class="kv"><span>'+tr2('發票號碼','Invoice No.')+'</span><span>'+inv.no+'</span></div><div class="kv"><span>'+tr2('金額','Amount')+'</span><span>'+money(inv.amount)+'</span></div>';
+  } else if (mode === 'credit'){
+    body = '<div class="formrow"><label>'+tr2('折讓金額','Credit Amount')+'</label><input type="number" id="im_creditamt" value="'+inv.amount+'" max="'+inv.amount+'"></div>' +
+      '<div class="formrow"><label>'+tr2('折讓原因','Credit Reason')+'</label><input type="text" id="im_creditreason" placeholder="例：課程異動退部分金額" data-i18n-placeholder="ph.creditReasonExample"></div>';
+  } else if (mode === 'reissue'){
+    body = '<div class="hint" style="margin-bottom:10px">'+tr2('將以同品項、同金額補開一張新發票。','A new invoice will be reissued with the same item and amount.')+'</div><div class="kv"><span>'+tr2('品項','Item')+'</span><span>'+inv.item+'</span></div><div class="kv"><span>'+tr2('金額','Amount')+'</span><span>'+money(inv.amount)+'</span></div>';
+  }
+  document.getElementById('invModalBody').innerHTML = body;
+  if (window.TLI_I18N) TLI_I18N.refresh();
+  document.getElementById('invModal').classList.add('open');
+}
+function confirmInvoiceAction(){
+  var o = findOrder(currentOrderId);
+  o.nextInvId = o.nextInvId || 100;
+  if (invMode === 'issue'){
+    var item = document.getElementById('im_item').value.trim();
+    var amount = Number(document.getElementById('im_amount').value)||0;
+    var entity = document.getElementById('im_entity').value;
+    if (invEditId){
+      var inv0 = o.invoices.find(function(x){return x.id===invEditId;});
+      inv0.item=item; inv0.amount=amount; inv0.entity=entity; inv0.status='已開立'; inv0.no='AB-'+padNum(12500000+Math.floor(Math.random()*90000),8);
+    } else {
+      o.nextInvId++;
+      o.invoices.push({id:'iv'+o.nextInvId, no:'AB-'+padNum(12500000+Math.floor(Math.random()*90000),8), kind:'免稅', item:item, amount:amount, entity:entity, status:'已開立'});
+    }
+    pushHistory(o, '發票已開立：'+item+'（'+money(amount)+'）');
+    toast(tr2('已開立發票','Invoice issued'));
+  } else if (invMode === 'edit'){
+    var inv1 = o.invoices.find(function(x){return x.id===invEditId;});
+    inv1.entity = document.getElementById('im_entity').value;
+    pushHistory(o, '發票 '+inv1.no+' 抬頭統編已修改為「'+inv1.entity+'」');
+    toast(tr2('已修改抬頭統編','Header/Tax ID updated'));
+  } else if (invMode === 'void'){
+    var inv2 = o.invoices.find(function(x){return x.id===invEditId;});
+    inv2.status = '已作廢';
+    pushHistory(o, '發票 '+inv2.no+' 已作廢');
+    toast(tr2('已作廢發票','Invoice voided'));
+  } else if (invMode === 'credit'){
+    var inv3 = o.invoices.find(function(x){return x.id===invEditId;});
+    var amt = Number(document.getElementById('im_creditamt').value)||0;
+    var reason = document.getElementById('im_creditreason').value.trim() || tr2('（未填原因）','(no reason entered)');
+    inv3.status = '已折讓';
+    pushHistory(o, '發票 '+inv3.no+' 開立折讓 '+money(amt)+'，原因：'+reason);
+    toast(tr2('已開立折讓','Credit note issued'));
+  } else if (invMode === 'reissue'){
+    var inv4 = o.invoices.find(function(x){return x.id===invEditId;});
+    o.nextInvId++;
+    var newNo = 'AB-'+padNum(12600000+Math.floor(Math.random()*90000),8);
+    o.invoices.push({id:'iv'+o.nextInvId, no:newNo, kind:inv4.kind, item:inv4.item, amount:inv4.amount, entity:inv4.entity, status:'已開立'});
+    pushHistory(o, '補開發票 '+newNo+'（原發票 '+inv4.no+'）');
+    toast(tr2('已補開發票','Invoice reissued'));
+  }
+  closeModal('invModal');
+  refreshOdPanels();
+}
+
+/* ---- 課時與權益入帳 ---- */
+function toggleBenefit(id, grant){
+  var o = findOrder(currentOrderId);
+  var b = o.benefits.find(function(x){return x.id===id;});
+  if (!b) return;
+  b.granted = grant;
+  b.grantedAt = grant ? new Date().toISOString().slice(0,10) : '';
+  pushHistory(o, (grant?'手動入帳：':'手動收回：')+b.item);
+  refreshOdPanels();
+  toast(grant ? tr2('已手動入帳','Credited manually') : tr2('已收回權益','Benefit reversed'));
+}
+
+/* ================= 批次匯入訂單精靈 ================= */
+var oiStep=1, oiFile=null, oiMapping={student:'A_學生姓名', plan:'B_方案', amount:'C_金額', paymode:'D_付款方式', campus:'E_校區'}, oiPreview=null, oiResult=null;
+function openOrderImportWizard(){
+  oiStep=1; oiFile=null; oiPreview=null; oiResult=null;
+  document.getElementById('importOrderModal').classList.add('open');
+  renderOiWizard();
+}
+function closeOrderImportWizard(){ document.getElementById('importOrderModal').classList.remove('open'); }
+function renderOiSteps(){
+  var labels=[tr2('上傳檔案','Upload File'), tr2('欄位對映','Field Mapping'), tr2('驗證預覽','Validate & Preview'), tr2('匯入結果','Import Result')];
+  document.getElementById('oiSteps').innerHTML = labels.map(function(l,i){
+    var n=i+1; var cls=n===oiStep?'active':(n<oiStep?'done':'');
+    return '<span class="'+cls+'">'+n+'. '+l+'</span>';
+  }).join('');
+}
+function renderOiWizard(){
+  renderOiSteps();
+  var body = document.getElementById('oiBody');
+  if (oiStep===1){
+    body.innerHTML = '<div class="dropzone'+(oiFile?' filled':'')+'" onclick="document.getElementById(\'oiFileInput\').click()">' +
+      (oiFile ? tr2('已選擇檔案：'+oiFile+'（點擊可重新選擇）','File selected: '+oiFile+' (click to reselect)') : tr2('點擊選擇 CSV／Excel 檔案，或將檔案拖放至此','Click to choose a CSV/Excel file, or drag and drop it here')) + '</div>' +
+      '<input type="file" id="oiFileInput" accept=".csv,.xlsx" style="display:none" onchange="onOiFileChosen(this)">' +
+      '<div class="hint" style="margin-top:10px">'+tr2('尚未有匯入檔案？','Don’t have an import file yet? ')+'<a href="javascript:void(0)" onclick="toast(tr2(\'已下載匯入範本檔案\',\'Template file downloaded\'))">'+tr2('下載範本檔案','Download Template File')+'</a></div>' +
+      oiWizFoot(false, true);
+  } else if (oiStep===2){
+    var fields=[{key:'student',label:'學生姓名',en:'Student Name'},{key:'plan',label:'方案名稱',en:'Plan Name'},{key:'amount',label:'金額',en:'Amount'},{key:'paymode',label:'付款方式',en:'Payment Method'},{key:'campus',label:'校區',en:'Campus'}];
+    var options=['A_學生姓名','B_方案','C_金額','D_付款方式','E_校區','F_備註'];
+    body.innerHTML = '<div class="desc" style="margin-bottom:8px">'+tr2('系統已自動偵測欄位，請確認對應是否正確：','The system has auto-detected the columns; please confirm the mapping is correct:')+'</div>' +
+      fields.map(function(f){
+        return '<div class="maprow"><span class="mlbl">'+tr2(f.label,f.en)+'</span><select onchange="oiMapping[\''+f.key+'\']=this.value">' +
+          options.map(function(o){return '<option'+(o===oiMapping[f.key]?' selected':'')+'>'+o+'</option>';}).join('') + '</select></div>';
+      }).join('') + oiWizFoot(true, true);
+  } else if (oiStep===3){
+    if (!oiPreview) oiPreview = buildOiPreview();
+    var errCount = oiPreview.filter(function(r){return r.err;}).length;
+    body.innerHTML = '<div class="desc" style="margin-bottom:10px">'+tr2('共 '+oiPreview.length+' 筆（預覽），預計成功 '+(oiPreview.length-errCount)+' 筆、錯誤 '+errCount+' 筆：', oiPreview.length+' record(s) (preview); expected '+(oiPreview.length-errCount)+' to succeed, '+errCount+' with errors:')+'</div>' +
+      '<div class="tablewrap"><table><tr><th>'+tr2('學生','Student')+'</th><th>'+tr2('方案','Plan')+'</th><th>'+tr2('金額','Amount')+'</th><th>'+tr2('付款方式','Payment Method')+'</th><th>'+tr2('驗證結果','Validation Result')+'</th></tr>' +
+      oiPreview.map(function(r){
+        return '<tr class="'+(r.err?'previewrow-err':'')+'"><td>'+r.student+'</td><td>'+r.plan+'</td><td>'+money(r.amount)+'</td><td>'+tr(r.paymode)+'</td><td>'+(r.err?'<span class="badge red">'+tr2('錯誤：','Error: ')+r.err+'</span>':'<span class="badge green">'+tr2('通過','Passed')+'</span>')+'</td></tr>';
+      }).join('') + '</table></div>' + oiWizFoot(true, false, true);
+  } else if (oiStep===4){
+    if (!oiResult) oiResult = doOiImport();
+    body.innerHTML = '<div class="statgrid"><div class="statbox"><div class="num">'+oiResult.total+'</div><div class="lbl">'+tr2('檔案總筆數','Total Rows in File')+'</div></div>' +
+      '<div class="statbox"><div class="num" style="color:var(--teal)">'+oiResult.success+'</div><div class="lbl">'+tr2('成功匯入','Successfully Imported')+'</div></div>' +
+      '<div class="statbox"><div class="num" style="color:#C0392B">'+oiResult.fail+'</div><div class="lbl">'+tr2('略過（錯誤）','Skipped (Errors)')+'</div></div></div>' +
+      '<div class="hint">'+tr2('耗時約 '+oiResult.seconds+' 秒。成功匯入的訂單來源標記為「顧問建訂單」，已加入訂單列表最前面。','Took about '+oiResult.seconds+' seconds. Successfully imported orders are marked as source “Advisor-Created Order” and added to the top of the order list.')+'</div>' +
+      '<div style="text-align:right;margin-top:16px"><button class="btn" onclick="finishOiWizard()">'+tr2('完成','Done')+'</button></div>';
+  }
+  if (window.TLI_I18N) TLI_I18N.refresh();
+}
+function oiWizFoot(showPrev, showNext, showStart){
+  var html='<div class="wizfoot">';
+  html += '<div><button class="btn ghost" onclick="closeOrderImportWizard()">'+tr2('取消','Cancel')+'</button>';
+  html += showPrev ? ' <button class="btn ghost" onclick="oiWizPrev()">'+tr2('上一步','Back')+'</button>' : '';
+  html += '</div>';
+  if (showStart) html += '<button class="btn orange" onclick="oiWizStart()">'+tr2('開始匯入','Start Import')+'</button>';
+  else if (showNext) html += '<button class="btn" onclick="oiWizNext()">'+tr2('下一步','Next')+'</button>';
+  else html += '<span></span>';
+  html += '</div>';
+  return html;
+}
+function onOiFileChosen(el){ oiFile = el.files && el.files[0] ? el.files[0].name : 'orders_import.csv'; renderOiWizard(); }
+function oiWizNext(){ if (oiStep===1 && !oiFile) oiFile='orders_import.csv'; oiStep++; renderOiWizard(); }
+function oiWizPrev(){ oiStep--; renderOiWizard(); }
+function oiWizStart(){ oiStep=4; renderOiWizard(); }
+function buildOiPreview(){
+  var rows = DEMO_STUDENTS.slice(0,8).map(function(s,i){
+    var plan = DEMO_PLANS[i%DEMO_PLANS.length];
+    var err = null;
+    if (i===2) err=tr2('金額格式錯誤','Invalid amount format');
+    if (i===5) err=tr2('付款方式代碼不存在（原始值：X）','Payment method code not found (original value: X)');
+    return {student:s.name, plan:plan.name, amount: err==='金額格式錯誤' ? 0 : plan.amount, paymode: err && err.indexOf('付款')>-1 ? 'X' : PAYMODES[i%4], err:err};
+  });
+  return rows;
+}
+function doOiImport(){
+  var errCount = oiPreview.filter(function(r){return r.err;}).length;
+  var successCount = oiPreview.length - errCount;
+  var today = new Date().toISOString().slice(0,10);
+  oiPreview.filter(function(r){return !r.err;}).forEach(function(r){
+    nextOrderSeq++;
+    var items=[{name:r.plan, amount:r.amount, tax:'免稅'}];
+    ORDERS.unshift({
+      id:'ORD-2026-'+padNum(nextOrderSeq,4), student:r.student, studentId:'', campus:'羅斯福校區', tier:'C',
+      status:'待收款', amount:r.amount, payMode:r.paymode, source:'顧問建訂單', builder:'批次匯入', created:today,
+      invoiceEntity: entityFullLabelForCampus('羅斯福校區'),
+      items:items, payments:buildPaymentsFor(r.paymode, r.amount, today, '待收款'), invoices:buildInvoicesFor(items, r.amount, '待收款', '羅斯福校區'),
+      benefits:[{id:'bn0', item:r.plan, qty:'依方案堂數', granted:false, grantedAt:''}],
+      history:[{t:today+' 00:00', who:'批次匯入', what:'訂單由批次匯入建立（來源：顧問建訂單）'}],
+      nextPayId:100, nextInvId:100
+    });
+  });
+  return {total:oiPreview.length, success:successCount, fail:errCount, seconds:(1.4+errCount*0.3).toFixed(1)};
+}
+function finishOiWizard(){
+  closeOrderImportWizard();
+  currentPage=1; renderTable();
+  toast(tr2('匯入完成，已新增 '+oiResult.success+' 筆訂單資料','Import complete; '+oiResult.success+' order record(s) added'));
+}
+
+/* ================= v2 新增：企業訂單建立精靈（示範畫面，資料為模擬數字） ================= */
+var neoStep = 1;
+var neoDraft = null;
+function openNewEntOrderWizard(){
+  neoStep = 1;
+  neoDraft = {entId:null, orderType:'正式訂單', payMode:'月結', channel:'藍新', prepaidAmount:0, invoiceEntity:null, amount:0};
+  document.getElementById('neoModal').classList.add('open');
+  renderNeoWizard();
+}
+function closeNewEntOrderWizard(){ document.getElementById('neoModal').classList.remove('open'); }
+function renderNeoSteps(){
+  var labels=[tr2('選企業客戶','Select Enterprise Customer'), tr2('合約參數','Contract Parameters'), tr2('訂單類型與開票付款','Order Type & Billing/Payment'), tr2('確認送出','Confirm & Submit')];
+  document.getElementById('neoSteps').innerHTML = labels.map(function(l,i){
+    var n=i+1; var cls=n===neoStep?'active':(n<neoStep?'done':'');
+    return '<span class="'+cls+'">'+n+'. '+l+'</span>';
+  }).join('');
+}
+function neoWizFoot(showPrev, nextLabel, nextFn){
+  var html='<div class="wizfoot">';
+  html += showPrev ? '<button class="btn ghost" onclick="neoWizPrev()">'+tr2('上一步','Back')+'</button>' : '<span></span>';
+  html += '<button class="btn" onclick="'+nextFn+'">'+nextLabel+'</button>';
+  html += '</div>';
+  return html;
+}
+function neoWizPrev(){ neoStep--; renderNeoWizard(); }
+function renderNeoWizard(){
+  renderNeoSteps();
+  var body = document.getElementById('neoBody');
+  if (neoStep===1){
+    body.innerHTML = '<div class="desc" style="margin-bottom:8px">'+tr2('選擇要建立訂單的企業客戶（母帳號）：','Select the enterprise customer (master account) to create the order for:')+'</div>' +
+      DEMO_ENTERPRISES.map(function(e){
+        return '<div class="demopick'+(neoDraft.entId===e.id?' selected':'')+'" onclick="neoSelectEnterprise(\''+e.id+'\')">' +
+          '<div class="dn">'+e.name+'</div><div class="dd">'+e.plant+tr2('｜幣別 ','｜Currency ')+e.currency+tr2('｜對應顧問：','｜Advisor: ')+e.advisor+'</div></div>';
+      }).join('') +
+      neoWizFoot(false, tr2('下一步','Next'), 'neoGoStep2()');
+  } else if (neoStep===2){
+    var ent = entById2(neoDraft.entId);
+    var tierRows = ent.contract.tiers.map(function(t){ return '<tr><td>'+t.from+'</td><td>'+(t.to===''?tr2('不限','Unlimited'):t.to)+'</td><td class="small">'+tr2('由 TLI 拍板','Set by TLI')+'</td></tr>'; }).join('');
+    body.innerHTML = '<div class="note" style="margin-bottom:12px">'+tr2('已帶出「'+ent.name+'」的合約參數，供本次建訂單參考。','Contract parameters for “'+ent.name+'” have been loaded for reference on this order.')+'</div>' +
+      '<div class="grid2" style="margin-bottom:14px">' +
+      '<div class="statcard"><div class="lbl">'+tr2('階梯計價規則類型','Tiered Pricing Rule Type')+'</div><div class="val" style="font-size:15px">'+tr(ent.contract.tieredType)+'</div></div>' +
+      '<div class="statcard"><div class="lbl">'+tr2('時數池總量','Total Hour Pool')+'</div><div class="val">'+ent.contract.poolTotal+' '+tr2('小時','hrs')+'</div></div>' +
+      '<div class="statcard"><div class="lbl">'+tr2('幣別','Currency')+'</div><div class="val">'+ent.currency+'</div></div>' +
+      '<div class="statcard"><div class="lbl">'+tr2('時數池效期','Hour Pool Validity')+'</div><div class="val" style="font-size:14px">'+ent.contract.poolExpiry+'</div></div>' +
+      '</div>' +
+      '<div class="sectiontitle">'+tr2('階梯級距','Tier Levels')+'</div>' +
+      '<div class="tablewrap"><table><tr><th>'+tr2('級距起','Tier From')+'</th><th>'+tr2('級距迄','Tier To')+'</th><th>'+tr2('單價','Unit Price')+'</th></tr>'+tierRows+'</table></div>' +
+      neoWizFoot(true, tr2('下一步','Next'), 'neoGoStep3()');
+  } else if (neoStep===3){
+    var ent2 = entById2(neoDraft.entId);
+    var ent2Overseas = ent2.currency !== 'TWD';
+    var entityFieldNeo = ent2Overseas
+      ? '<input type="text" id="neo_entity" value="'+OVERSEAS_INVOICE_LABEL+'" disabled>'
+      : '<select id="neo_entity">'+INVOICE_ENTITIES.map(function(x){ return '<option'+(x===neoDraft.invoiceEntity?' selected':'')+'>'+x+'</option>'; }).join('')+'</select>';
+    var payOptions = ENT_PAYMODES.map(function(p){ return '<option value="'+p+'"'+(p===neoDraft.payMode?' selected':'')+'>'+tr(p)+'</option>'; }).join('');
+    var chanOptions = ENT_CHANNELS.map(function(ch){ return '<option value="'+ch+'"'+(ch===neoDraft.channel?' selected':'')+'>'+tr(ch)+'</option>'; }).join('');
+    body.innerHTML = '<div class="formrow"><label>'+tr2('訂單類型','Order Type')+'</label><select id="neo_ordertype" onchange="onNeoOrderTypeChange(this.value)">' +
+        '<option value="正式訂單"'+(neoDraft.orderType==='正式訂單'?' selected':'')+'>'+tr2('正式訂單（依合約計價）','Formal Order (Contract-Priced)')+'</option>' +
+        '<option value="續約／加購"'+(neoDraft.orderType==='續約／加購'?' selected':'')+'>'+tr2('續約／加購（依合約計價）','Renewal / Add-on (Contract-Priced)')+'</option>' +
+      '</select></div>' +
+      '<div class="formrow"><label>'+tr2('訂單金額（依合約階梯計價試算，可調整）','Order Amount (estimated per contract tier, adjustable)')+'</label><input type="number" id="neo_amount" value="'+neoDraft.amount+'" onchange="neoDraft.amount=Number(this.value)||0"></div>' +
+      '<div class="formrow"><label>'+tr2('開票主體（依企業合約自動帶出'+(ent2Overseas?'':'，可改')+'）','Billing Entity (auto-filled from the enterprise contract'+(ent2Overseas?'':', editable')+')')+'</label>'+entityFieldNeo+'</div>' +
+      '<div class="formrow"><label>'+tr2('付款方式（合約層，限分期／月結／預付款倒扣）','Payment Method (contract level; installments / monthly billing / prepaid deduction only)')+'</label><select id="neo_paymode" onchange="onNeoPaymodeChange(this.value)">'+payOptions+'</select></div>' +
+      '<div class="formrow"><label>'+tr2('收款渠道','Collection Channel')+'</label><select id="neo_channel" onchange="neoDraft.channel=this.value">'+chanOptions+'</select></div>' +
+      (neoDraft.payMode==='預付款倒扣' ?
+        '<div class="formrow"><label>'+tr2('預付金額（NT$）','Prepaid Amount (NT$)')+'</label><input type="number" id="neo_prepaid" value="'+(neoDraft.prepaidAmount||neoDraft.amount)+'" onchange="neoDraft.prepaidAmount=Number(this.value)||0"></div>' +
+        '<div class="note">'+tr2('入帳後在「結算與對帳」出月結帳單。','Once credited, the monthly statement is issued in “Settlement & Reconciliation”.')+'</div>'
+        : '') +
+      neoWizFoot(true, tr2('下一步','Next'), 'neoGoStep4()');
+  } else if (neoStep===4){
+    var ent3 = entById2(neoDraft.entId);
+    var amtLabel = ent3.currency+' '+Number(neoDraft.amount).toLocaleString();
+    body.innerHTML = '<div class="kv"><span>'+tr2('企業客戶','Enterprise Customer')+'</span><span>'+ent3.name+'</span></div>' +
+      '<div class="kv"><span>'+tr2('訂單類型','Order Type')+'</span><span>'+tr(neoDraft.orderType)+'</span></div>' +
+      '<div class="kv"><span>'+tr2('金額','Amount')+'</span><span>'+amtLabel+'</span></div>' +
+      '<div class="kv"><span>'+tr2('開票主體','Billing Entity')+'</span><span>'+neoDraft.invoiceEntity+'</span></div>' +
+      '<div class="kv"><span>'+tr2('付款方式','Payment Method')+'</span><span>'+tr(neoDraft.payMode)+'</span></div>' +
+      '<div class="kv"><span>'+tr2('收款渠道','Collection Channel')+'</span><span>'+tr(neoDraft.channel)+'</span></div>' +
+      (neoDraft.payMode==='預付款倒扣' ? '<div class="kv"><span>'+tr2('預付金額','Prepaid Amount')+'</span><span>NT$ '+Number(neoDraft.prepaidAmount||0).toLocaleString()+'</span></div>' : '') +
+      '<div class="hint" style="margin-top:8px">'+tr2('確認送出後將產生一筆訂單，加入訂單列表最前面。','Once confirmed, an order will be created and added to the top of the order list.')+'</div>' +
+      '<div style="text-align:right;margin-top:16px"><button class="btn ghost" onclick="neoWizPrev()">'+tr2('上一步','Back')+'</button> <button class="btn orange" onclick="neoWizFinish()">'+tr2('產生訂單','Generate Order')+'</button></div>';
+  }
+  if (window.TLI_I18N) TLI_I18N.refresh();
+}
+function neoSelectEnterprise(id){ neoDraft.entId = id; renderNeoWizard(); }
+function neoGoStep2(){
+  if (!neoDraft.entId){ toast(tr2('請先選擇企業客戶','Please select an enterprise customer first')); return; }
+  neoStep = 2; renderNeoWizard();
+}
+function neoGoStep3(){
+  var ent = entById2(neoDraft.entId);
+  neoDraft.invoiceEntity = ent.invoiceEntity;
+  neoDraft.amount = ent.contract.poolTotal * 90;
+  neoStep = 3; renderNeoWizard();
+}
+function onNeoOrderTypeChange(val){ neoDraft.orderType = val; renderNeoWizard(); }
+function onNeoPaymodeChange(val){ neoDraft.payMode = val; renderNeoWizard(); }
+function neoGoStep4(){
+  var entitySel = document.getElementById('neo_entity'); if (entitySel) neoDraft.invoiceEntity = entitySel.value;
+  var paySel = document.getElementById('neo_paymode'); if (paySel) neoDraft.payMode = paySel.value;
+  var chanSel = document.getElementById('neo_channel'); if (chanSel) neoDraft.channel = chanSel.value;
+  var amtEl = document.getElementById('neo_amount'); if (amtEl) neoDraft.amount = Number(amtEl.value)||0;
+  var prepaidEl = document.getElementById('neo_prepaid'); if (prepaidEl) neoDraft.prepaidAmount = Number(prepaidEl.value)||0;
+  neoStep = 4; renderNeoWizard();
+}
+function neoWizFinish(){
+  var ent = entById2(neoDraft.entId);
+  var status = '待收款';
+  nextOrderSeq++;
+  var o = makeEnterpriseOrder(nextOrderSeq, neoDraft.entId, neoDraft.orderType, neoDraft.payMode, neoDraft.channel, status, neoDraft.amount, neoDraft.prepaidAmount);
+  o.invoiceEntity = neoDraft.invoiceEntity;
+  o.invoices.forEach(function(iv){ iv.entity = neoDraft.invoiceEntity; });
+  ORDERS.unshift(o);
+  closeNewEntOrderWizard();
+  currentPage=1; renderTable();
+  toast(tr2('已產生企業訂單「'+o.id+'」（'+ent.name+'）','Enterprise order “'+o.id+'” created ('+ent.name+')'));
+}
+
+/* ================= 側欄／頂欄／RBAC（全站共用） ================= */
+function toggleSidebar(){ document.getElementById('sidebar').classList.toggle('open'); document.getElementById('sidebarBackdrop').classList.toggle('open'); }
+function closeSidebar(){ document.getElementById('sidebar').classList.remove('open'); document.getElementById('sidebarBackdrop').classList.remove('open'); }
+var NOTIFS = [
+  {t:'訂單 ORD-2026-0102 已逾期 5 天未收款', en:'Order ORD-2026-0102 is 5 days overdue for payment', time:'10 分鐘前', timeEn:'10 minutes ago', unread:true},
+  {t:'銷售方案「學期班 Lv.5–8 一期方案」即將於 1/31 下架', en:'Sales plan \u201c學期班 Lv.5\u20138 一期方案\u201d will be delisted on 1/31', time:'1 小時前', timeEn:'1 hour ago', unread:true},
+  {t:'內容管理：首頁 Hero 文案已由校區主管發佈', en:'Content Management: homepage hero copy has been published by the campus manager', time:'今天 09:12', timeEn:'Today 09:12', unread:false},
+  {t:'老師黃志遠已切換為留職停薪', en:'Teacher 黃志遠 has switched to unpaid leave', time:'昨天', timeEn:'Yesterday', unread:false}
+];
+function renderNotifPanel(){
+  var panel = document.getElementById('notifPanel'); if (!panel) return;
+  var unread = NOTIFS.filter(function(n){return n.unread;}).length;
+  var dot = document.getElementById('tbDot'); if (dot) dot.style.display = unread ? 'block' : 'none';
+  panel.innerHTML = '<div class="tn-head"><span>'+(window.TLI_I18N?TLI_I18N.t('通知（'+unread+' 則未讀）','Notifications ('+unread+' unread)'):('通知（'+unread+' 則未讀）'))+'</span><a href="javascript:void(0)" onclick="markAllRead(event)">'+(window.TLI_I18N?TLI_I18N.t('全部標為已讀','Mark All as Read'):'全部標為已讀')+'</a></div>' +
+    NOTIFS.map(function(n){return '<div class="tb-notifitem'+(n.unread?' unread':'')+'">'+(window.TLI_I18N?TLI_I18N.t(n.t,n.en):n.t)+'<div class="tn-t">'+(window.TLI_I18N?TLI_I18N.t(n.time,n.timeEn):n.time)+'</div></div>';}).join('');
+}
+function markAllRead(ev){ if(ev) ev.stopPropagation(); NOTIFS.forEach(function(n){n.unread=false;}); renderNotifPanel(); }
+function toggleNotif(ev){ ev.stopPropagation(); closePanel('avatarMenu'); var p=document.getElementById('notifPanel'); p.classList.toggle('open'); if(p.classList.contains('open')) renderNotifPanel(); }
+function toggleAvatarMenu(ev){ ev.stopPropagation(); closePanel('notifPanel'); document.getElementById('avatarMenu').classList.toggle('open'); }
+function closePanel(id){ var el=document.getElementById(id); if (el) el.classList.remove('open'); }
+document.addEventListener('click', function(){ closePanel('notifPanel'); closePanel('avatarMenu'); closePanel('ordersSettingsMenu'); });
+function doLogout(){ location.href = '../公開網站/p07_login_register.html'; }
+function toast(msg){
+  var el = document.getElementById('toastEl');
+  if (!el){ el=document.createElement('div'); el.id='toastEl'; el.className='toast'; document.body.appendChild(el); }
+  el.textContent = msg; el.classList.add('show');
+  clearTimeout(window._toastTimer);
+  window._toastTimer = setTimeout(function(){ el.classList.remove('show'); }, 2200);
+}
+renderNotifPanel();
+
+/* ================= 20260927j 新增：歸屬異議（代理商端 r02「提出異議」的總部覆核畫面） =================
+   代理商在夥伴端 r02 對訂單提出異議、主張某筆應歸屬自己；此處為總部覆核清單。
+   接受後訂單「來源」欄同步顯示新歸屬代理商，並寫入該筆訂單的異動歷程；佣金於下期結算重新計算（示範不做實際結算連動）。
+   代理商名稱與優惠碼示範對齊 a20 合作夥伴管理（代理型態）與夥伴端 r02 的示範資料。 */
+var DISPUTES = [
+  {
+    /* 20260928u：代理商名稱改為 TLI_MASTERS.partners 內既有的代理型夥伴（原名稱不在主檔內，查無此夥伴） */
+    id:'DIS-2026-004', orderId:'ORD-26090019', student:'學生 B07',
+    agentName:'環宇教育顧問', agentCode:'REF-MEA07',
+    claimUsedAt:'2026-09-01', claimListAt:'2026-08-28',
+    claimNote:'學員為代理商說明會帶來的名單，主張於 9/1 使用優惠碼完成結帳',
+    sysSource:'直營（Connect 官網自助下單，未帶優惠碼）', sysClickAt:'查無點擊紀錄',
+    sysNote:'學員以個人帳號於官網自行下單，系統未記錄優惠碼帶入',
+    submittedAt:'2026-09-14', status:'待審核',
+    pendingNote:'尚待代理商補件：待提供轉介連結點擊紀錄或說明會簽到紀錄佐證',
+    reviewedAt:'', reviewNote:'', reviewedBy:''
+  },
+  {
+    id:'DIS-2026-005', orderId:'ORD-2026-1003', student:'黃詩涵',
+    agentName:'環宇教育顧問', agentCode:'REF-MEA08',
+    claimUsedAt:'2026-06-05', claimListAt:'2026-05-30',
+    claimNote:'學員經代理商招生說明會報名，提供報名表為佐證',
+    sysSource:'顧問建訂單（校區顧問現場建單，未指定代理歸屬）', sysClickAt:'查無點擊紀錄',
+    sysNote:'訂單由校區顧問現場建立，未帶入任何代理商優惠碼',
+    submittedAt:'2026-06-12', status:'待審核',
+    pendingNote:'',
+    reviewedAt:'', reviewNote:'', reviewedBy:''
+  },
+  {
+    id:'DIS-2026-006', orderId:'ORD-2026-1004', student:'張家瑜',
+    agentName:'香港教育橋樑', agentCode:'REF-HKB09',
+    claimUsedAt:'2026-01-19', claimListAt:'2026-01-10',
+    claimNote:'學員透過代理商轉介連結完成註冊，提供申請表單截圖為佐證',
+    sysSource:'直營（Connect 官網自助下單，未帶優惠碼）', sysClickAt:'2026-01-19 14:22（與結帳時間吻合）',
+    sysNote:'',
+    submittedAt:'2026-01-22', status:'已接受',
+    pendingNote:'',
+    reviewedAt:'2026-01-25', reviewNote:'經核對轉介連結點擊紀錄與結帳時間吻合，予以接受，歸屬改為香港教育橋樑，佣金於下期結算重算', reviewedBy:'王大明'
+  },
+  {
+    id:'DIS-2026-007', orderId:'ORD-2026-1001', student:'陳雅婷',
+    agentName:'歐洲文化交流協會', agentCode:'REF-EUR10',
+    claimUsedAt:'（未使用優惠碼）', claimListAt:'2026-02-10',
+    claimNote:'主張學員為代理商說明會帶來的名單，但學員下單時未使用優惠碼',
+    sysSource:'直營（Connect 官網自助下單，未帶優惠碼）', sysClickAt:'查無點擊紀錄',
+    sysNote:'代理商提供名單日期晚於學員下單日期，且查無轉介連結點擊紀錄',
+    submittedAt:'2026-02-05', status:'已駁回',
+    pendingNote:'',
+    reviewedAt:'2026-02-08', reviewNote:'代理商提供名單日期（2026-02-10）晚於學員下單日期（2026-02-02），且未使用優惠碼、查無點擊紀錄，證據不足，予以駁回', reviewedBy:'王大明'
+  }
+];
+/* 申訴單的優惠碼一律依代理名稱讀主檔 partners.code，不在頁內寫死 */
+DISPUTES.forEach(function(d){ var pp = masterPartnerByName(d.agentName); if (pp && pp.code) d.agentCode = pp.code; });
+function findDispute(id){ return DISPUTES.find(function(x){ return x.id===id; }); }
+function disputeStatusBadge(s){
+  if (s==='已接受') return '<span class="badge green">'+tr('已接受')+'</span>';
+  if (s==='已駁回') return '<span class="badge red">'+tr('已駁回')+'</span>';
+  return '<span class="badge orange">'+tr('待審核')+'</span>';
+}
+function disputePendingCount(){ return DISPUTES.filter(function(d){ return d.status==='待審核'; }).length; }
+function updateDisputeStatCard(){
+  var el = document.getElementById('disputePendingNum');
+  if (el) el.textContent = disputePendingCount();
+}
+function renderDisputeTable(){
+  var t = document.getElementById('disputeTable');
+  t.innerHTML = '<tr><th>'+tr2('異議編號','Dispute No.')+'</th><th>'+tr2('訂單編號','Order No.')+'</th><th>'+tr2('學員','Student')+'</th><th>'+tr2('提出的代理商','Submitting Agent')+'</th><th>'+tr2('代理商主張的依據','Agent’s Claimed Basis')+'</th><th>'+tr2('系統目前記錄的來源','System’s Current Source')+'</th><th>'+tr2('提出日期','Submitted On')+'</th><th>'+tr2('狀態','Status')+'</th></tr>';
+  DISPUTES.forEach(function(d){
+    var trEl = document.createElement('tr');
+    trEl.className = 'rowlink';
+    var claimCell = tr2('優惠碼 ','Promo code ')+d.agentCode+tr2(' 於 ',' used on ')+tr(d.claimUsedAt)+tr2(' 使用；學員名單提供於 ','; student list provided on ')+d.claimListAt
+      + (d.pendingNote ? '<div class="hint" style="color:var(--orange)">'+d.pendingNote+'</div>' : '');
+    var sysCell = tr(d.sysSource) + (d.sysClickAt ? '<div class="hint">'+tr2('轉介連結點擊：','Referral link clicks: ')+tr(d.sysClickAt)+'</div>' : '');
+    trEl.innerHTML = '<td>'+d.id+'</td>' +
+      '<td><a href="javascript:void(0)" onclick="event.stopPropagation();openOrderDrawer(\''+d.orderId+'\')">'+d.orderId+'</a></td>' +
+      '<td>'+d.student+'</td>' +
+      '<td>'+d.agentName+'</td>' +
+      '<td>'+claimCell+'</td>' +
+      '<td>'+sysCell+'</td>' +
+      '<td>'+d.submittedAt+'</td>' +
+      '<td>'+disputeStatusBadge(d.status)+'</td>';
+    trEl.addEventListener('click', function(){ openDisputeReview(d.id); });
+    t.appendChild(trEl);
+  });
+  document.getElementById('disputeEmpty').style.display = DISPUTES.length ? 'none' : '';
+  updateDisputeStatCard();
+  if (window.TLI_I18N) TLI_I18N.refresh();
+}
+function switchTopTab(name){
+  document.querySelectorAll('#topTabs button').forEach(function(b){ b.classList.toggle('active', b.dataset.tab===name); });
+  document.getElementById('toppanel-orders').classList.toggle('active', name==='orders');
+  document.getElementById('toppanel-disputes').classList.toggle('active', name==='disputes');
+  if (name==='disputes') renderDisputeTable();
+}
+
+/* ================= 歸屬異議審核 modal ================= */
+var currentDisputeId = null;
+function openDisputeReview(id){
+  currentDisputeId = id;
+  var d = findDispute(id);
+  if (!d) return;
+  document.getElementById('drm_meta').textContent = d.id+tr2('　訂單 ','　Order ')+d.orderId+tr2('　學員 ','　Student ')+d.student+tr2('　目前狀態：','　Current Status: ')+tr(d.status);
+  document.getElementById('drm_agent').textContent = d.agentName;
+  document.getElementById('drm_code').textContent = d.agentCode;
+  document.getElementById('drm_usedat').textContent = d.claimUsedAt;
+  document.getElementById('drm_listat').textContent = d.claimListAt;
+  document.getElementById('drm_claimnote').textContent = d.claimNote;
+  document.getElementById('drm_syssource').textContent = tr(d.sysSource);
+  document.getElementById('drm_sysclick').textContent = d.sysClickAt ? tr(d.sysClickAt) : '－';
+  document.getElementById('drm_sysnote').textContent = d.sysNote || '－';
+  document.getElementById('drm_opinion').value = d.reviewNote || '';
+  document.getElementById('drm_opinionRow').classList.remove('req-error');
+  var resultBox = document.getElementById('drm_resultNote');
+  if (d.status !== '待審核'){
+    resultBox.style.display = '';
+    resultBox.textContent = tr2('此筆已於 '+d.reviewedAt+' 由 '+d.reviewedBy+' 覆核為「'+d.status+'」；如需調整，修改審核意見後可重新送出以更新結果。', 'This item was reviewed on '+d.reviewedAt+' by '+d.reviewedBy+' as “'+tr(d.status)+'”; to adjust, edit the review opinion and resubmit to update the result.');
+  } else {
+    resultBox.style.display = 'none';
+  }
+  if (window.TLI_I18N) TLI_I18N.refresh();
+  document.getElementById('disputeReviewModal').classList.add('open');
+}
+function submitDisputeReview(decision){
+  var d = findDispute(currentDisputeId);
+  if (!d) return;
+  var opinion = document.getElementById('drm_opinion').value.trim();
+  var row = document.getElementById('drm_opinionRow');
+  if (!opinion){
+    row.classList.add('req-error');
+    document.getElementById('drm_opinion').focus();
+    return;
+  }
+  row.classList.remove('req-error');
+  var order = findOrder(d.orderId);
+  if (decision === 'accept'){
+    d.status = '已接受';
+    if (order){
+      order.attributedAgent = d.agentName;
+      pushHistory(order, '歸屬異議 '+d.id+' 經核准，歸屬改為代理商「'+d.agentName+'」，佣金將於下期結算重新計算');
+    }
+    toast(tr2('已改歸屬給 '+d.agentName+'，佣金將於下期結算重算','Attribution changed to '+d.agentName+'; commission will be recalculated in the next settlement'));
+  } else {
+    d.status = '已駁回';
+    if (order){
+      pushHistory(order, '歸屬異議 '+d.id+'（代理商「'+d.agentName+'」）經覆核駁回');
+    }
+    toast(tr2('已駁回，代理商將收到通知','Rejected; the agent will be notified'));
+  }
+  d.reviewedAt = new Date().toISOString().slice(0,10);
+  d.reviewNote = opinion;
+  d.reviewedBy = CURRENT_STAFF;
+  closeModal('disputeReviewModal');
+  renderDisputeTable();
+  renderTable();
+}
+
+/* ================= 初始化 ================= */
+renderChipBars();
+renderTable();
+(function(){ var q = new URLSearchParams(location.search); if (q.get('new')==='dist') openNewDistOrder(q.get('partner')||''); if (q.get('q')){ searchTerm = q.get('q'); var si = document.getElementById('searchInput'); if (si) si.value = searchTerm; renderTable(); } })();
+renderDisputeTable();
+if (window.TLI_I18N) { TLI_I18N.onRefresh(renderChipBars); TLI_I18N.onRefresh(renderTable); TLI_I18N.onRefresh(renderDisputeTable); TLI_I18N.onRefresh(renderNotifPanel); TLI_I18N.init(); }
+
+</script>
+<script>
+function toggleNavGroup(ev, gid){
+  ev.stopPropagation();
+  var g = document.querySelector('#sidebar .navgroup[data-group="'+gid+'"]');
+  if (!g) return;
+  var collapsed = g.classList.toggle('collapsed');
+  try{ localStorage.setItem('tliNavCollapse_'+gid, collapsed ? '1' : '0'); }catch(e){}
+}
+(function initNavGroups(){
+  var activeLink = document.querySelector('#sidebar a.active');
+  var activeGroup = activeLink ? activeLink.closest('.navgroup') : null;
+  /* 20260927f：預設只展開目前頁面所在的群，其他群收合；若使用者手動展開/收合過某群，之後照該紀錄 */
+  document.querySelectorAll('#sidebar .navgroup[data-group]').forEach(function(g){
+    var gid = g.dataset.group, saved = null;
+    try{ saved = localStorage.getItem('tliNavCollapse_'+gid); }catch(e){}
+    if (saved === '1') g.classList.add('collapsed');
+    else if (saved === '0') g.classList.remove('collapsed');
+    else if (g !== activeGroup) g.classList.add('collapsed');
+  });
+  /* 目前頁所屬群組不可被收合到看不到 active 項目 */
+  if (activeGroup) activeGroup.classList.remove('collapsed');
+})();
+
+/* ================= ESC 鍵關閉目前開啟中的 modal／drawer ================= */
+document.addEventListener('keydown', function(e){
+  if (e.key !== 'Escape') return;
+  if (document.getElementById('importOrderModal').classList.contains('open')) { closeOrderImportWizard(); return; }
+  if (document.getElementById('neoModal').classList.contains('open')) { closeNewEntOrderWizard(); return; }
+  ['payModal','invModal','remindModal','disputeReviewModal'].forEach(function(id){
+    var el = document.getElementById(id);
+    if (el && el.classList.contains('open')) closeModal(id);
+  });
+  if (document.getElementById('odDrawerMask').classList.contains('open')) closeOrderDrawer();
+});
+</script>
+<script>
+/* 20260929 死按鈕修正：側欄使用者選單（姓名／大頭貼）點擊開合；此頁樣板漏帶 toggleSuMenu */
+window.toggleSuMenu = window.toggleSuMenu || function(ev){
+  if (ev) ev.stopPropagation();
+  var m = document.getElementById('suMenu'); if (!m) return;
+  ['notifPanel','avatarMenu'].forEach(function(id){ var e = document.getElementById(id); if (e) e.classList.remove('open'); });
+  m.classList.toggle('open');
+};
+document.addEventListener('click', function(ev){
+  var m = document.getElementById('suMenu');
+  if (m && !m.contains(ev.target)) m.classList.remove('open');
+});
+</script>
+</body>
+</html>

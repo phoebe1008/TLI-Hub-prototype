@@ -1,0 +1,1180 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<title>營運報表｜TLI Hub 管理後台</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+:root{--navy:#1B4E8C;--navy-dark:#123a68;--orange:#E8792B;--teal:#0F9B79;
+--g50:#F5F7FA;--g200:#E4E7EC;--g500:#667085;--g900:#101828;}
+*{box-sizing:border-box;}
+body{margin:0;font-family:"Noto Sans TC","Microsoft JhengHei",system-ui,-apple-system,sans-serif;
+background:var(--g50);color:var(--g900);}
+a{color:var(--navy);}
+.app{display:flex;min-height:100vh;width:100%;background:#fff;}
+.sidebar{width:260px;flex-shrink:0;background:#fff;color:var(--g900);padding:18px 0;
+border-right:1px solid var(--g200);display:flex;flex-direction:column;transition:width .15s;
+position:sticky;top:0;height:100vh;align-self:flex-start;}
+.sidebar .brand{padding:0 20px 14px;font-size:14px;font-weight:700;display:flex;flex-direction:column;gap:4px;
+border-bottom:1px solid var(--g200);margin-bottom:6px;text-decoration:none;color:inherit;cursor:pointer;}
+.sidebar .brand-logo{height:28px;width:auto;display:block;}
+.sidebar .brand small{display:block;font-weight:400;font-size:12px;color:var(--g500);margin-top:0;text-transform:uppercase;letter-spacing:.04em;}
+.sidebar nav{flex:1 1 auto;overflow-y:auto;}
+.sidebar nav a,.sidebar nav span.disabled{display:flex;align-items:center;gap:10px;padding:9px 20px;font-size:13.5px;
+color:var(--g900);text-decoration:none;position:relative;}
+.sidebar nav a .navicon{flex-shrink:0;color:var(--g500);}
+.sidebar nav a:hover{background:var(--g50);}
+.sidebar nav a.active{background:#E6EEF8;color:var(--navy);font-weight:600;}
+.sidebar nav a.active .navicon{color:var(--navy);}
+.sidebar .sec-label{padding:16px 20px 4px;font-size:10.5px;color:var(--g500);letter-spacing:.08em;text-transform:uppercase;font-weight:600;}
+.main{flex:1;padding:26px 32px 60px;min-width:0;}
+.pagehead{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:18px;gap:16px;}
+.pagehead h1{font-size:20px;margin:0;}
+.pagehead .desc{font-size:12.5px;color:var(--g500);margin-top:5px;line-height:1.6;}
+.btn{display:inline-block;background:var(--navy);color:#fff;border:none;padding:8px 14px;
+border-radius:6px;font-size:13px;cursor:pointer;text-decoration:none;white-space:nowrap;font-family:inherit;}
+.btn.orange{background:var(--orange);}
+.btn.ghost{background:#fff;border:1px solid var(--g200);color:var(--g900);}
+.btn:disabled,.btn.isdisabled{background:var(--g200)!important;color:var(--g500)!important;
+cursor:not-allowed!important;}
+.card{background:#fff;border:1px solid var(--g200);border-radius:12px;padding:18px;margin-bottom:16px;box-shadow:0 1px 3px rgba(16,24,40,.06);}
+.reportbox{background:#fff;border:1px solid var(--g200);border-radius:12px;padding:18px;margin-bottom:16px;box-shadow:0 1px 3px rgba(16,24,40,.06);}
+.card h2{font-size:15px;margin:0 0 12px;}
+.tablewrap{overflow-x:auto;}
+table{width:100%;border-collapse:collapse;font-size:13px;}
+th{text-align:left;background:var(--g50);color:var(--g500);font-weight:600;padding:10px 12px;
+border-bottom:1px solid var(--g200);white-space:nowrap;}
+td{padding:10px 12px;border-bottom:1px solid var(--g200);white-space:nowrap;}
+tr.rowlink{cursor:pointer;}
+tr.rowlink:hover{background:#F8FAFD;}
+.badge{display:inline-block;padding:2px 9px;border-radius:10px;font-size:11.5px;font-weight:600;white-space:nowrap;}
+.badge.blue{background:#E7EEF8;color:var(--navy);}
+.badge.green{background:#E4F5EE;color:var(--teal);}
+.badge.orange{background:#FCE9DA;color:var(--orange);}
+.badge.grey{background:var(--g200);color:var(--g500);}
+.badge.red{background:#FBE7E7;color:#C0392B;}
+.tabs{display:flex;gap:4px;border-bottom:1px solid var(--g200);margin-bottom:16px;flex-wrap:wrap;}
+.tabs button{background:none;border:none;padding:10px 16px;font-size:13.5px;color:var(--g500);
+cursor:pointer;border-bottom:2px solid transparent;font-family:inherit;}
+.tabs button.active{color:var(--navy);border-bottom-color:var(--navy);font-weight:600;}
+.tabpanel{display:none;}
+.tabpanel.active{display:block;}
+.filterbar{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-bottom:14px;}
+.filterbar select,.filterbar input{padding:7px 10px;border:1px solid var(--g200);border-radius:6px;
+font-size:13px;font-family:inherit;}
+.modal-mask{display:none;position:fixed;inset:0;background:rgba(16,24,40,.42);z-index:100;
+align-items:center;justify-content:center;}
+.modal-mask.open{display:flex;}
+.modal{background:#fff;border-radius:10px;width:460px;max-width:90vw;max-height:85vh;
+overflow:auto;padding:22px;}
+.modal h3{margin-top:0;font-size:16px;}
+.formrow{margin-bottom:13px;}
+.formrow label{display:block;font-size:12.5px;color:var(--g500);margin-bottom:4px;}
+.formrow input,.formrow select{width:100%;padding:7px 10px;border:1px solid var(--g200);
+border-radius:6px;font-size:13px;box-sizing:border-box;font-family:inherit;}
+.formrow .static{padding:7px 0;font-size:13.5px;}
+.note{font-size:12px;color:#7a5b1f;background:#FFF8EE;border:1px solid #F3DFB8;padding:9px 11px;
+border-radius:6px;}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
+.kv{display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px dashed var(--g200);font-size:13px;}
+.kv span:first-child{color:var(--g500);}
+.matrix td,.matrix th{text-align:center;}
+.matrix td:first-child,.matrix th:first-child{text-align:left;}
+.chk{transform:scale(1.15);cursor:pointer;}
+.small{font-size:12px;color:var(--g500);}
+.hint{font-size:11.5px;color:var(--g500);margin-top:3px;}
+.manage-link{font-size:11.5px;color:var(--navy);margin-left:6px;white-space:nowrap;text-decoration:underline;}
+
+.sidebar-user{padding:14px 20px 16px;border-top:1px solid var(--g200);margin-top:6px;display:flex;align-items:center;gap:10px;position:relative;}
+.sidebar-user .su-avatar{width:32px;height:32px;border-radius:50%;background:var(--navy);color:#fff;display:flex;
+align-items:center;justify-content:center;font-size:13px;font-weight:600;flex-shrink:0;}
+.sidebar-user .su-info{display:flex;flex-direction:column;line-height:1.4;}
+.sidebar-user .su-name{font-size:13px;font-weight:600;color:var(--g900);}
+.sidebar-user .su-role{font-size:11px;color:var(--g500);}
+.sidebar .su-logout{display:block;margin:6px 20px 4px;font-size:12px;color:var(--navy);text-decoration:none;}
+.sidebar .su-logout:hover{text-decoration:underline;}
+.topbar{display:flex;align-items:center;justify-content:space-between;padding:0 32px;height:56px;
+border-bottom:1px solid var(--g200);position:sticky;top:0;background:#fff;z-index:40;margin:-26px -32px 22px;gap:14px;}
+.hamburger{display:none;background:none;border:none;font-size:19px;cursor:pointer;color:var(--g900);padding:4px 6px;margin-right:4px;}
+.topbar .tb-title{font-size:15px;font-weight:600;color:var(--g900);flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.topbar .tb-actions{display:flex;align-items:center;gap:14px;position:relative;flex-shrink:0;}
+.tb-search{display:flex;align-items:center;gap:6px;background:var(--g50);border:1px solid var(--g200);border-radius:8px;
+padding:6px 10px;width:180px;}
+.tb-search input{border:none;background:none;outline:none;font-size:12.5px;font-family:inherit;width:100%;color:var(--g900);}
+.tb-searchicon{font-size:12px;color:var(--g500);}
+.tb-bellbtn{position:relative;background:none;border:none;cursor:pointer;font-size:17px;padding:4px;line-height:1;}
+.tb-dot{position:absolute;top:0;right:0;width:7px;height:7px;background:#C0392B;border-radius:50%;display:none;}
+.tb-avatarbtn{width:30px;height:30px;border-radius:50%;background:var(--navy);color:#fff;border:none;
+cursor:pointer;font-size:13px;font-weight:600;flex-shrink:0;}
+.tb-panel{display:none;position:absolute;top:44px;right:0;background:#fff;border:1px solid var(--g200);
+border-radius:8px;box-shadow:0 8px 24px rgba(16,24,40,.16);z-index:50;}
+.tb-panel.open{display:block;}
+.tb-notifpanel{width:300px;padding:10px;}
+.tb-notifpanel .tn-head{display:flex;justify-content:space-between;align-items:center;font-size:12.5px;
+padding:4px 6px 8px;border-bottom:1px solid var(--g200);margin-bottom:6px;}
+.tb-notifpanel .tn-head a{font-size:11.5px;cursor:pointer;}
+.tb-notifitem{padding:8px 6px;border-radius:6px;font-size:12.5px;line-height:1.5;}
+.tb-notifitem:hover{background:var(--g50);}
+.tb-notifitem.unread{background:#EEF3FA;}
+.tb-notifitem .tn-t{color:var(--g500);font-size:11px;margin-top:2px;}
+.tb-avatarmenu{width:150px;padding:6px;}
+.tb-avatarmenu a{display:block;padding:8px 10px;font-size:13px;color:var(--g900);text-decoration:none;border-radius:6px;}
+.tb-avatarmenu a:hover{background:var(--g50);}
+.toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(20px);
+background:#101828;color:#fff;padding:10px 20px;border-radius:8px;font-size:13px;
+opacity:0;pointer-events:none;transition:.2s;z-index:200;}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
+.sidebar-backdrop{display:none;position:fixed;inset:0;background:rgba(16,24,40,.4);z-index:110;}
+.sidebar-user{padding:14px 20px 16px;border-top:1px solid var(--g200);margin-top:6px;position:relative;}
+.su-clickarea{display:flex;align-items:center;gap:10px;cursor:pointer;min-width:0;}
+.su-info{flex:1;min-width:0;}
+.su-name,.su-unit{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.su-menu a{display:block;padding:8px 10px;font-size:13px;color:var(--g900);text-decoration:none;border-radius:6px;}
+.su-menu a:hover{background:var(--g50);}
+.sidebar-user .su-avatar{width:32px;height:32px;border-radius:50%;background:var(--navy);color:#fff;display:flex;
+align-items:center;justify-content:center;font-size:13px;font-weight:600;flex-shrink:0;}
+.sidebar-user .su-info{display:flex;flex-direction:column;line-height:1.5;}
+.sidebar-user .su-name{font-size:13px;font-weight:600;color:var(--g900);}
+.sidebar-user .su-roletag{font-size:10.5px;background:#E6EEF8;color:var(--navy);padding:0 6px;border-radius:8px;display:inline-block;width:fit-content;white-space:nowrap;}
+.sidebar-user .su-unit{font-size:11px;color:var(--g500);}
+.su-menu{top:auto;bottom:64px;left:14px;right:14px;}
+/* ---- RWD ---- */
+@media (max-width:1279px) and (min-width:1024px){
+  .sidebar{width:72px;}
+  .sidebar .navtext{position:absolute;left:100%;top:50%;transform:translateY(-50%);background:#fff;
+    border:1px solid var(--g200);border-radius:6px;padding:6px 10px;font-size:12.5px;white-space:nowrap;
+    box-shadow:0 4px 12px rgba(16,24,40,.12);opacity:0;pointer-events:none;transition:opacity .12s;margin-left:6px;color:var(--g900);}
+  .sidebar nav a:hover .navtext{opacity:1;}
+  .sidebar .brand{align-items:center;overflow:hidden;}
+  .sidebar .brand-logo{max-width:100%;width:32px;height:28px;object-fit:cover;object-position:left center;flex-shrink:0;}
+  .sidebar .brand-text{display:none;}
+  .sidebar .brand small{display:none;}
+  .sidebar-user{justify-content:center;}
+  .sidebar-user .navtext{display:none;}
+  .sidebar .su-logout{text-align:center;}
+}
+@media (max-width:1023px){
+  .hamburger{display:inline-flex;}
+  .sidebar{position:fixed;left:-260px;top:0;height:100vh;width:260px;z-index:120;transition:left .2s;}
+  .sidebar.open{left:0;}
+  .sidebar-backdrop.open{display:block;}
+  .app{width:100%;}
+  .main{padding:16px 16px 40px;}
+  .topbar{padding:0 16px;margin:-16px -16px 18px;}
+  .tb-search{display:none;}
+  .drawer{width:100%;max-width:100%;}
+}
+</style>
+<style>
+/* ==== 側欄改版 20260826f：呼吸感間距／分段收合／底部卡收攏（覆寫舊樣式，回應主管截圖回饋） ==== */
+#sidebar{padding:0;display:flex;flex-direction:column;height:100vh;overflow:hidden;}
+#sidebar .brand{padding:16px 20px 14px;}
+#sidebar .brand-logo{height:28px;width:auto;object-fit:contain;object-position:left center;}
+#sidebar .brand small{margin-top:12px;font-size:12px;color:var(--g500);text-transform:none;letter-spacing:0;font-weight:400;}
+#sidebar .brand-text{display:none;}
+#sidebar nav{flex:1 1 auto;overflow-y:auto;overflow-x:hidden;padding:4px 8px 8px;scrollbar-width:thin;}
+#sidebar nav::-webkit-scrollbar{width:6px;}
+#sidebar nav::-webkit-scrollbar-thumb{background:var(--g200);border-radius:3px;}
+#sidebar nav a,#sidebar nav span.disabled{align-items:center;gap:12px;height:40px;padding:0 14px;margin:2px 0;border-radius:8px;font-size:14px;}
+#sidebar .navgroup .sec-label{display:flex;align-items:center;justify-content:space-between;gap:6px;padding:0 12px;margin:20px 0 8px;font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:#98A2B3;font-weight:600;}
+#sidebar .navgroup:first-child .sec-label{margin-top:8px;}
+#sidebar .sec-toggle{background:none;border:none;padding:2px;margin:0;cursor:pointer;color:var(--g500);display:flex;align-items:center;line-height:1;flex-shrink:0;}
+#sidebar .sec-toggle svg{transition:transform .15s;display:block;}
+#sidebar .navgroup.collapsed .sec-toggle svg{transform:rotate(-90deg);}
+#sidebar .navgroup-items{overflow:hidden;}
+#sidebar .navgroup.collapsed .navgroup-items{display:none;}
+#sidebar .sidebar-user{display:block;border-top:1px solid var(--g200);padding:10px 12px;margin:0;flex-shrink:0;position:relative;}
+#sidebar .su-row{display:flex;align-items:center;gap:10px;cursor:pointer;min-width:0;}
+#sidebar .su-row .su-avatar{flex-shrink:0;width:36px;height:36px;}
+#sidebar .su-row .su-info{flex:1;min-width:0;display:flex;flex-direction:row;align-items:center;gap:8px;line-height:1.2;}
+#sidebar .su-row .su-name{font-size:14px;font-weight:600;color:var(--g900);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+#sidebar .su-row .su-roletag{font-size:12px;background:#E6EEF8;color:var(--navy);padding:1px 7px;border-radius:8px;white-space:nowrap;flex-shrink:0;}
+#sidebar .su-row .su-chevron{color:var(--g500);flex-shrink:0;}
+#sidebar .su-menu{top:auto;bottom:60px;left:10px;right:10px;width:auto;padding:8px;}
+@media (max-width:1279px) and (min-width:1024px){
+  #sidebar{width:72px;}
+  #sidebar .navgroup .sec-label{display:none;}
+  #sidebar .su-row{justify-content:center;}
+  #sidebar .su-menu{left:64px;right:auto;bottom:10px;width:210px;}
+}
+@media (max-width:1023px){
+  #sidebar{width:260px;}
+}
+
+/* ==== 20260826v 容器寬度統一（對齊 a01 基準，覆寫舊版殘留樣式，防止寬內容撐開頁面）==== */
+html,body{overflow-x:hidden;}
+.app{display:flex;min-height:100vh;width:100%;max-width:none;background:#fff;}
+.main{flex:1;padding:26px 32px 60px;min-width:0;}
+.topbar{padding:0 32px;}
+.pagehead{padding:0;}
+.card{border-radius:12px;box-shadow:0 1px 3px rgba(16,24,40,.06);}
+.reportbox{border-radius:12px;box-shadow:0 1px 3px rgba(16,24,40,.06);}
+.tablewrap,.cal-wrap,.flex-cal-wrap{overflow-x:auto;max-width:100%;}
+@media (max-width:1023px){
+.app{width:100%;}
+.main{padding:16px 16px 40px;}
+.topbar{padding:0 16px;}
+}
+.phase2-pill{display:inline-block;background:#FFF4E0;border:1px solid #E8A23D;color:#8A5A00;border-radius:999px;padding:2px 8px;font-size:11px;font-weight:700;margin-left:8px;vertical-align:middle;white-space:nowrap;}
+.grid4{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:16px;}
+.grid5{display:grid;grid-template-columns:repeat(5,1fr);gap:14px;margin-bottom:16px;}
+.statcard{background:#fff;border:1px solid var(--g200);border-radius:8px;padding:16px 18px;}
+.statcard .lbl{font-size:12px;color:var(--g500);margin-bottom:6px;}
+.statcard .val{font-size:23px;font-weight:700;}
+.statcard .sub{font-size:11.5px;color:var(--g500);margin-top:4px;}
+.chiprow{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px;}
+.chiprow button{padding:6px 13px;border-radius:16px;border:1px solid var(--g200);background:#fff;font-size:12.5px;
+cursor:pointer;color:var(--g500);font-family:inherit;}
+.chiprow button.active{background:var(--navy);color:#fff;border-color:var(--navy);}
+.modal.wide{width:640px;}
+.linklike{color:var(--navy);cursor:pointer;text-decoration:underline;font-size:12.5px;}
+.sectiontitle{font-size:13px;font-weight:600;margin:16px 0 8px;color:var(--g900);}
+.sectiontitle:first-child{margin-top:0;}
+.fieldlist{margin:0;padding-left:18px;font-size:13px;line-height:1.9;}
+.trendwrap{background:#fff;border:1px solid var(--g200);border-radius:8px;padding:14px 16px 8px;margin:14px 0;}
+.trendwrap .tw-head{display:flex;justify-content:space-between;align-items:center;font-size:12.5px;color:var(--g500);margin-bottom:6px;}
+@media (max-width:1023px){ .grid4{grid-template-columns:repeat(2,1fr);} .grid5{grid-template-columns:repeat(2,1fr);} }
+/* ==== 20260927r 報表重建：五群分類（左）＋報表清單與內容（右） ==== */
+.reportlayout{display:flex;gap:20px;align-items:flex-start;margin-top:4px;}
+.reportnav{width:196px;flex-shrink:0;display:flex;flex-direction:column;gap:3px;background:#fff;border:1px solid var(--g200);border-radius:12px;padding:10px;position:sticky;top:82px;}
+.rg-item{display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:8px;border:none;background:none;
+text-align:left;font-size:13.5px;color:var(--g900);cursor:pointer;font-family:inherit;width:100%;}
+.rg-item .navicon{color:var(--g500);flex-shrink:0;}
+.rg-item:hover{background:var(--g50);}
+.rg-item.active{background:#E6EEF8;color:var(--navy);font-weight:600;}
+.rg-item.active .navicon{color:var(--navy);}
+.reportmain{flex:1;min-width:0;}
+.replist-item{padding:7px 15px;border-radius:16px;border:1px solid var(--g200);background:#fff;font-size:12.5px;
+cursor:pointer;color:var(--g500);font-family:inherit;}
+.replist-item.active{background:var(--navy);color:#fff;border-color:var(--navy);}
+.subhint{font-size:12px;color:var(--g500);margin:2px 0 14px;}
+@media (max-width:1023px){
+.reportlayout{flex-direction:column;}
+.reportnav{width:100%;flex-direction:row;overflow-x:auto;position:static;gap:6px;}
+.rg-item{flex-shrink:0;width:auto;}
+.reportmain{width:100%;max-width:100%;}
+}
+</style>
+</head>
+<body>
+<div class="app">
+<div class="sidebar" id="sidebar"><a class="brand" href="../顧問工作台/c01_today.html"><img class="brand-logo" src="../assets/tli-logo.svg" alt="TLI"><small class="navtext" data-i18n="brand.adminPortal">管理後台</small></a><nav><div class="navgroup" data-group="sales"><div class="sec-label" onclick="toggleNavGroup(event,'sales')"><span class="navtext" data-i18n="nav.group.sales">銷售</span><button type="button" class="sec-toggle navtext" onclick="toggleNavGroup(event,'sales')" aria-label="收合銷售" data-i18n-aria-label="aria.collapseSales"><svg width="12" height="12" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 8 10 12 14 8"/></svg></button></div><div class="navgroup-items"><a data-nav="a21" href="a21_projects.html"><svg class="navicon" width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="14" height="13" rx="2"/><line x1="3" y1="8" x2="17" y2="8"/><line x1="7" y1="12" x2="13" y2="12"/><line x1="7" y1="14.6" x2="11" y2="14.6"/></svg><span class="navtext" data-i18n="nav.a21">專案設定</span></a><a data-nav="a04" href="a04_packages.html"><svg class="navicon" width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="7" width="14" height="10" rx="1"/><path d="M3 7l7-4 7 4"/><line x1="10" y1="7" x2="10" y2="17"/></svg><span class="navtext" data-i18n="nav.a04">銷售方案</span></a><a data-nav="a05" href="a05_orders.html"><svg class="navicon" width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 2h10v16l-2-1.3L11 18l-2-1.3L7 18l-2-1.3V2z"/><line x1="7.5" y1="6" x2="12.5" y2="6"/><line x1="7.5" y1="9" x2="12.5" y2="9"/></svg><span class="navtext" data-i18n="nav.a05">訂單</span></a><a data-nav="a20" href="a20_agents.html"><svg class="navicon" width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="6.5" cy="6" r="2.3"/><path d="M2.5 16c0-2.6 1.8-4.3 4-4.3s4 1.7 4 4.3"/><circle cx="14.5" cy="8.5" r="1.8"/><path d="M17.3 16c0-1.9-1.3-3.4-2.8-3.4"/><path d="M9 6l3-1.5"/></svg><span class="navtext" data-i18n="nav.a20">合作夥伴</span></a></div></div><div class="navgroup" data-group="customer"><div class="sec-label" onclick="toggleNavGroup(event,'customer')"><span class="navtext" data-i18n="nav.group.customer">客戶</span><button type="button" class="sec-toggle navtext" onclick="toggleNavGroup(event,'customer')" aria-label="收合客戶" data-i18n-aria-label="aria.collapseCustomer"><svg width="12" height="12" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 8 10 12 14 8"/></svg></button></div><div class="navgroup-items"><a data-nav="a01" href="a01_member_rules.html"><svg class="navicon" width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="10" cy="6.5" r="3"/><path d="M4 17c0-3 2.7-5 6-5s6 2 6 5"/></svg><span class="navtext" data-i18n="nav.a01">會員管理</span></a><a data-nav="a19" href="a19_b2b_enterprise.html"><svg class="navicon" width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="3.5" y="3" width="7" height="14" rx="1"/><rect x="10.5" y="7.5" width="6" height="9.5" rx="1"/><line x1="5.5" y1="6" x2="7.5" y2="6"/><line x1="5.5" y1="9" x2="7.5" y2="9"/><line x1="5.5" y1="12" x2="7.5" y2="12"/><line x1="12.5" y1="10.5" x2="14.5" y2="10.5"/><line x1="12.5" y1="13.5" x2="14.5" y2="13.5"/></svg><span class="navtext" data-i18n="nav.a19">組織客戶</span></a><a data-nav="a14" href="a14_feedback.html"><svg class="navicon" width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M3 4h14a1 1 0 0 1 1 1v8a1 1 0 0 1-1 1H8l-4 3v-3H3a1 1 0 0 1-1-1V5a1 1 0 0 1 1-1z"/></svg><span class="navtext" data-i18n="nav.a14">學員回饋</span></a></div></div><div class="navgroup" data-group="teaching"><div class="sec-label" onclick="toggleNavGroup(event,'teaching')"><span class="navtext" data-i18n="nav.group.teaching">教學</span><button type="button" class="sec-toggle navtext" onclick="toggleNavGroup(event,'teaching')" aria-label="收合教學" data-i18n-aria-label="aria.collapseTeaching"><svg width="12" height="12" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 8 10 12 14 8"/></svg></button></div><div class="navgroup-items"><a data-nav="a02" href="a02_products.html"><svg class="navicon" width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6l7-3.5L17 6v8l-7 3.5L3 14V6z"/><path d="M3 6l7 3.5L17 6"/><line x1="10" y1="9.5" x2="10" y2="17.5"/></svg><span class="navtext" data-i18n="nav.a02">產品管理</span></a><a data-nav="a10" href="a10_teachers.html"><svg class="navicon" width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="2.5" y="6.5" width="15" height="9.5" rx="1.5"/><path d="M7 6.5V5a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2v1.5"/><line x1="2.5" y1="10.5" x2="17.5" y2="10.5"/></svg><span class="navtext" data-i18n="nav.a10">老師管理</span></a><a data-nav="a18" href="a18_resource_library.html"><svg class="navicon" width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><ellipse cx="10" cy="4.5" rx="7" ry="2.5"/><path d="M3 4.5v5c0 1.4 3.1 2.5 7 2.5s7-1.1 7-2.5v-5"/><path d="M3 9.5v5c0 1.4 3.1 2.5 7 2.5s7-1.1 7-2.5v-5"/></svg><span class="navtext" data-i18n="nav.a18">資源庫</span></a><a data-nav="a16" href="a16_events.html"><svg class="navicon" width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="14" height="13" rx="1.5"/><line x1="3" y1="8" x2="17" y2="8"/><line x1="6.5" y1="2" x2="6.5" y2="5.5"/><line x1="13.5" y1="2" x2="13.5" y2="5.5"/><circle cx="10" cy="12.3" r="2"/></svg><span class="navtext" data-i18n="nav.a16">活動管理</span></a><a data-nav="a22" href="a22_quizzes.html"><svg class="navicon" width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="2.5" width="12" height="15" rx="1.5"/><path d="M7 7l1.5 1.5L11 6"/><line x1="12.5" y1="7.5" x2="14" y2="7.5"/><path d="M7 12l1.5 1.5L11 11"/><line x1="12.5" y1="12.5" x2="14" y2="12.5"/></svg><span class="navtext" data-i18n="nav.a22">測驗管理</span></a></div></div><div class="navgroup" data-group="finance"><div class="sec-label" onclick="toggleNavGroup(event,'finance')"><span class="navtext" data-i18n="nav.group.finance">財務</span><button type="button" class="sec-toggle navtext" onclick="toggleNavGroup(event,'finance')" aria-label="收合財務" data-i18n-aria-label="aria.collapseFinance"><svg width="12" height="12" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 8 10 12 14 8"/></svg></button></div><div class="navgroup-items"><a data-nav="a23" href="a23_payment_gateways.html"><svg class="navicon" width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="2.5" y="5" width="15" height="10" rx="1.5"/><line x1="2.5" y1="8.5" x2="17.5" y2="8.5"/><circle cx="13.5" cy="12" r="1.2"/></svg><span class="navtext" data-i18n="nav.a23">收款與發票</span></a><a data-nav="a24" href="a24_partner_settlement.html"><svg class="navicon" width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="2.5" y="4" width="15" height="12" rx="1.5"/><line x1="6" y1="8" x2="14" y2="8"/><line x1="6" y1="11" x2="11" y2="11"/><path d="M12.5 13.5l1.2 1.2 2.3-2.4"/></svg><span class="navtext" data-i18n="nav.a24">結算與對帳</span></a><a data-nav="a07" class="active" href="a07_reports.html"><svg class="navicon" width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><line x1="4" y1="17" x2="4" y2="10"/><line x1="10" y1="17" x2="10" y2="5"/><line x1="16" y1="17" x2="16" y2="12"/></svg><span class="navtext" data-i18n="nav.a07">營運報表</span></a></div></div><div class="navgroup" data-group="system"><div class="sec-label" onclick="toggleNavGroup(event,'system')"><span class="navtext" data-i18n="nav.group.system">系統</span><button type="button" class="sec-toggle navtext" onclick="toggleNavGroup(event,'system')" aria-label="收合系統" data-i18n-aria-label="aria.collapseSystem"><svg width="12" height="12" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 8 10 12 14 8"/></svg></button></div><div class="navgroup-items"><a data-nav="a17" href="a17_master_data.html"><svg class="navicon" width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><line x1="4" y1="5" x2="16" y2="5"/><circle cx="8" cy="5" r="1.6"/><line x1="4" y1="10" x2="16" y2="10"/><circle cx="13" cy="10" r="1.6"/><line x1="4" y1="15" x2="16" y2="15"/><circle cx="10" cy="15" r="1.6"/></svg><span class="navtext" data-i18n="nav.a17">基礎資料設定</span></a><a data-nav="a09" href="a09_permissions_notify.html"><svg class="navicon" width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M10 2l6.5 2.5v5C16.5 14 13.8 17 10 18c-3.8-1-6.5-4-6.5-8.5v-5L10 2z"/></svg><span class="navtext" data-i18n="nav.a09">權限管理</span></a><a data-nav="a15" href="a15_notifications.html"><svg class="navicon" width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M10 2.5c-2.2 0-4 1.8-4 4v2.3c0 .6-.2 1.2-.6 1.7L4 12.5h12l-1.4-2c-.4-.5-.6-1.1-.6-1.7V6.5c0-2.2-1.8-4-4-4z"/><path d="M8.2 15.5a1.8 1.8 0 0 0 3.6 0"/></svg><span class="navtext" data-i18n="nav.a15">通知管理</span></a><a data-nav="a08" href="a08_content_cms.html"><svg class="navicon" width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="2.5" y="3" width="15" height="14" rx="1.5"/><line x1="8" y1="3" x2="8" y2="17"/></svg><span class="navtext" data-i18n="nav.a08">內容管理</span></a></div></div></nav><div class="sidebar-user" id="sidebarUser"><div class="su-row" onclick="toggleSuMenu(event)"><span class="su-avatar" id="suAvatar">王</span><span class="navtext su-info"><span class="su-name" id="suName">王大明</span><span class="su-roletag" id="suRoleTag" data-i18n="role.hqAdmin">總公司管理者</span></span><svg class="navtext su-chevron" width="14" height="14" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 8 10 12 14 8"/></svg></div><div class="tb-panel su-menu" id="suMenu"><a href="javascript:void(0)" onclick="toast('功能建置中，敬請期待')" data-i18n="common.settings">個人設定</a><a href="../公開網站/p01_home.html" data-i18n="common.gotoWebsite">前往官網</a><a href="../顧問工作台/c01_today.html" data-i18n="nav_ext.consultantWorkbench">前往顧問工作台</a><a href="javascript:void(0)" onclick="doLogout()" data-i18n="common.logout">登出</a></div></div></div><div class="main"><div class="topbar"><button class="hamburger" onclick="toggleSidebar()" aria-label="開啟選單" data-i18n-aria-label="common.openMenu"><svg class="navicon" width="18" height="18" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="5.5" x2="17" y2="5.5"/><line x1="3" y1="10" x2="17" y2="10"/><line x1="3" y1="14.5" x2="17" y2="14.5"/></svg></button><div class="tb-title" data-i18n="page.title.a07">報表</div><div class="tb-actions"><div class="tb-search"><svg class="navicon" width="15" height="15" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="8.5" cy="8.5" r="5.5"/><line x1="16.5" y1="16.5" x2="12.6" y2="12.6"/></svg><input type="text" placeholder="搜尋" data-i18n-placeholder="search.genericPlaceholder"></div><button class="tb-bellbtn" onclick="toggleNotif(event)" aria-label="通知" data-i18n-aria-label="common.notifications"><svg class="navicon" width="17" height="17" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M10 2.5c-2.2 0-4 1.8-4 4v2.3c0 .6-.2 1.2-.6 1.7L4 12.5h12l-1.4-2c-.4-.5-.6-1.1-.6-1.7V6.5c0-2.2-1.8-4-4-4z"/><path d="M8.2 15.5a1.8 1.8 0 0 0 3.6 0"/></svg><span class="tb-dot" id="tbDot"></span></button><div class="tb-panel tb-notifpanel" id="notifPanel"></div><button class="tb-avatarbtn" onclick="toggleAvatarMenu(event)" aria-label="使用者選單" data-i18n-aria-label="common.userMenu">王</button><div class="tb-panel tb-avatarmenu" id="avatarMenu"><a href="javascript:void(0)" onclick="toast('功能建置中，敬請期待')" data-i18n="common.settings">個人設定</a><a href="../公開網站/p01_home.html" data-i18n="common.gotoWebsite">前往官網</a><a href="javascript:void(0)" onclick="doLogout()" data-i18n="common.logout">登出</a></div></div></div><div class="sidebar-backdrop" id="sidebarBackdrop" onclick="closeSidebar()"></div>
+<div class="pagehead">
+<div><h1 data-i18n="page.title.a07">營運報表</h1><div class="desc" data-i18n="page.desc.a07">依銷售、夥伴、組織客戶、教學、財務五群檢視營運數據。</div></div>
+</div>
+
+<div class="reportlayout">
+<div class="reportnav" id="reportGroupNav">
+<button class="rg-item active" data-group="sales" onclick="selectReportGroup('sales')"><svg class="navicon" width="18" height="18" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 2h10v16l-2-1.3L11 18l-2-1.3L7 18l-2-1.3V2z"/><line x1="7.5" y1="6" x2="12.5" y2="6"/><line x1="7.5" y1="9" x2="12.5" y2="9"/></svg><span data-i18n="nav.group.sales">銷售</span></button>
+<button class="rg-item" data-group="partner" onclick="selectReportGroup('partner')"><svg class="navicon" width="18" height="18" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="6.5" cy="6" r="2.3"/><path d="M2.5 16c0-2.6 1.8-4.3 4-4.3s4 1.7 4 4.3"/><circle cx="14.5" cy="8.5" r="1.8"/><path d="M17.3 16c0-1.9-1.3-3.4-2.8-3.4"/><path d="M9 6l3-1.5"/></svg><span data-i18n="nav.a20">合作夥伴</span></button>
+<button class="rg-item" data-group="org" onclick="selectReportGroup('org')"><svg class="navicon" width="18" height="18" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="3.5" y="3" width="7" height="14" rx="1"/><rect x="10.5" y="7.5" width="6" height="9.5" rx="1"/><line x1="5.5" y1="6" x2="7.5" y2="6"/><line x1="5.5" y1="9" x2="7.5" y2="9"/><line x1="5.5" y1="12" x2="7.5" y2="12"/><line x1="12.5" y1="10.5" x2="14.5" y2="10.5"/><line x1="12.5" y1="13.5" x2="14.5" y2="13.5"/></svg><span data-i18n="nav.a19">組織客戶</span></button>
+<button class="rg-item" data-group="teaching" onclick="selectReportGroup('teaching')"><svg class="navicon" width="18" height="18" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="2.5" y="6.5" width="15" height="9.5" rx="1.5"/><path d="M7 6.5V5a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2v1.5"/><line x1="2.5" y1="10.5" x2="17.5" y2="10.5"/></svg><span data-i18n="nav.group.teaching">教學</span></button>
+<button class="rg-item" data-group="finance" onclick="selectReportGroup('finance')"><svg class="navicon" width="18" height="18" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="2.5" y="5" width="15" height="10" rx="1.5"/><line x1="2.5" y1="8.5" x2="17.5" y2="8.5"/><line x1="5" y1="12" x2="8" y2="12"/></svg><span data-i18n="nav.group.finance">財務</span></button>
+</div>
+<div class="reportmain">
+<div class="chiprow" id="reportListNav"></div>
+<div class="reportbox" id="reportContent"></div>
+</div>
+</div>
+
+<div class="modal-mask" id="detailModal" onclick="if(event.target===this) this.classList.remove('open')"><div class="modal">
+<h3 id="dm_title"></h3>
+<div id="dm_body"></div>
+<div style="text-align:right;margin-top:10px"><button class="btn ghost" onclick="document.getElementById('detailModal').classList.remove('open')" data-i18n="common.close">關閉</button></div>
+</div></div>
+
+</div>
+</div>
+<script>
+function toggleSidebar(){
+  document.getElementById('sidebar').classList.toggle('open');
+  document.getElementById('sidebarBackdrop').classList.toggle('open');
+}
+function closeSidebar(){
+  document.getElementById('sidebar').classList.remove('open');
+  document.getElementById('sidebarBackdrop').classList.remove('open');
+}
+/* ---- 共用：頂欄通知／使用者選單／登出／toast（全站同一段） ---- */
+var NOTIFS = [
+  {t:'代理商「環宇教育顧問」本期佣金已試算完成，待對帳', en:'Agent \u201c環宇教育顧問\u201d commission for this period has been calculated, pending reconciliation', time:'10 分鐘前', timeEn:'10 minutes ago', unread:true},
+  {t:'銷售方案「學期班 Lv.5–8 一期方案」即將於 1/31 下架', en:'Sales plan \u201c學期班 Lv.5\u20138 一期方案\u201d will be delisted on 1/31', time:'1 小時前', timeEn:'1 hour ago', unread:true},
+  {t:'內容管理：首頁 Hero 文案已由行銷主管發佈', en:'Content Management: homepage hero copy has been published by the marketing manager', time:'今天 09:12', timeEn:'Today 09:12', unread:false},
+  {t:'老師黃志遠已切換為留職停薪', en:'Teacher 黃志遠 has switched to unpaid leave', time:'昨天', timeEn:'Yesterday', unread:false}
+];
+function renderNotifPanel(){
+  var panel = document.getElementById('notifPanel');
+  if (!panel) return;
+  var unread = NOTIFS.filter(function(n){return n.unread;}).length;
+  var dot = document.getElementById('tbDot');
+  if (dot) dot.style.display = unread ? 'block' : 'none';
+  panel.innerHTML = '<div class="tn-head"><span>'+(window.TLI_I18N?TLI_I18N.t('通知（'+unread+' 則未讀）','Notifications ('+unread+' unread)'):('通知（'+unread+' 則未讀）'))+'</span><a href="javascript:void(0)" onclick="markAllRead(event)">'+(window.TLI_I18N?TLI_I18N.t('全部標為已讀','Mark All as Read'):'全部標為已讀')+'</a></div>' +
+    NOTIFS.map(function(n){ return '<div class="tb-notifitem'+(n.unread?' unread':'')+'">'+(window.TLI_I18N?TLI_I18N.t(n.t,n.en):n.t)+'<div class="tn-t">'+(window.TLI_I18N?TLI_I18N.t(n.time,n.timeEn):n.time)+'</div></div>'; }).join('');
+}
+function markAllRead(ev){
+  if (ev) ev.stopPropagation();
+  NOTIFS.forEach(function(n){ n.unread = false; });
+  renderNotifPanel();
+}
+function toggleNotif(ev){
+  ev.stopPropagation();
+  closePanel('avatarMenu');
+  var p = document.getElementById('notifPanel');
+  p.classList.toggle('open');
+  if (p.classList.contains('open')) renderNotifPanel();
+}
+function toggleAvatarMenu(ev){
+  ev.stopPropagation();
+  closePanel('notifPanel');
+  document.getElementById('avatarMenu').classList.toggle('open');
+}
+function closePanel(id){
+  var el = document.getElementById(id);
+  if (el) el.classList.remove('open');
+}
+document.addEventListener('click', function(){ closePanel('notifPanel'); closePanel('avatarMenu'); });
+function doLogout(){ location.href = '../公開網站/p07_login_register.html'; }
+function toast(msg){
+  var el = document.getElementById('toastEl');
+  if (!el){
+    el = document.createElement('div');
+    el.id = 'toastEl';
+    el.className = 'toast';
+    document.body.appendChild(el);
+  }
+  el.textContent = msg;
+  el.classList.add('show');
+  clearTimeout(window._toastTimer);
+  window._toastTimer = setTimeout(function(){ el.classList.remove('show'); }, 2200);
+}
+renderNotifPanel();
+</script>
+<script>
+function toggleNavGroup(ev, gid){
+  ev.stopPropagation();
+  var g = document.querySelector('#sidebar .navgroup[data-group="'+gid+'"]');
+  if (!g) return;
+  var collapsed = g.classList.toggle('collapsed');
+  try{ localStorage.setItem('tliNavCollapse_'+gid, collapsed ? '1' : '0'); }catch(e){}
+}
+(function initNavGroups(){
+  var activeLink = document.querySelector('#sidebar a.active');
+  var activeGroup = activeLink ? activeLink.closest('.navgroup') : null;
+  /* 20260927f：預設只展開目前頁面所在的群，其他群收合；若使用者手動展開/收合過某群，之後照該紀錄 */
+  document.querySelectorAll('#sidebar .navgroup[data-group]').forEach(function(g){
+    var gid = g.dataset.group, saved = null;
+    try{ saved = localStorage.getItem('tliNavCollapse_'+gid); }catch(e){}
+    if (saved === '1') g.classList.add('collapsed');
+    else if (saved === '0') g.classList.remove('collapsed');
+    else if (g !== activeGroup) g.classList.add('collapsed');
+  });
+  /* 目前頁所屬群組不可被收合到看不到 active 項目 */
+  if (activeGroup) activeGroup.classList.remove('collapsed');
+})();
+</script>
+<script src="../assets/_shared_masters.js"></script>
+<script src="../assets/_i18n_dict.js"></script>
+<script src="../assets/_i18n_dict_admin.js"></script>
+<script src="../assets/_i18n.js"></script>
+<script>
+/* ================================================================
+   20260927r 報表全面重建：對齊四種合作型態／專案／會員來源標記架構
+   資料源對齊：a21（4 個專案）、a20（10 家合作夥伴）、a19（組織客戶）、a02（6 個產品分類）
+   五群：銷售／合作夥伴／組織客戶／教學／財務
+================================================================ */
+function seededRand(seed){
+  var x = Math.sin(seed*9301+49297)*233280;
+  return x - Math.floor(x);
+}
+function fmtNT(n){ return 'NT$ '+Math.round(n).toLocaleString(); }
+/* i18n 小工具：批次翻譯表頭／固定標籤用，pairs 為 [[中文,英文], ...] */
+function trH(pairs){ return pairs.map(function(p){ return TLI_I18N.t(p[0], p[1]); }); }
+function tableHtml(headers, rows, footRow){
+  var h = '<tr>'+headers.map(function(x){return '<th>'+x+'</th>';}).join('')+'</tr>';
+  var b = rows.map(function(r){return '<tr>'+r.map(function(c){return '<td>'+c+'</td>';}).join('')+'</tr>';}).join('');
+  var f = footRow ? '<tr>'+footRow.map(function(c){return '<td><b>'+c+'</b></td>';}).join('')+'</tr>' : '';
+  return '<div class="tablewrap"><table>'+h+b+f+'</table></div>';
+}
+function showDetailModal(title, kvPairs){
+  document.getElementById('dm_title').textContent = title;
+  document.getElementById('dm_body').innerHTML = kvPairs.map(function(kv){
+    return '<div class="kv"><span>'+kv[0]+'</span><span>'+kv[1]+'</span></div>';
+  }).join('');
+  document.getElementById('detailModal').classList.add('open');
+}
+/* 報表名稱中文常數固定當內部索引用（onclick 參數／篩選比對），顯示與 toast 一律另外經 TLI_I18N.t() 轉語言 */
+var REPORT_NAME_EN = {
+  '依專案':'By Project', '依合作模式':'By Cooperation Mode', '依產品分類':'By Product Category', '依市場':'By Market',
+  '夥伴業績總表':'Partner Performance Summary', '代理銷售報表':'Agent Sales Report', '經銷返佣試算':'Distributor Rebate Estimate',
+  '企業使用狀況':'Enterprise Usage', '專案合作使用狀況':'Project Partnership Usage',
+  '教師授課統計':'Teacher Teaching Stats', '學員學習進度':'Student Learning Progress', '出席與請假':'Attendance & Leave',
+  '收款彙總':'Collection Summary', '開票統計':'Invoice Stats', '應收帳齡':'Receivables Aging'
+};
+function reportLabelT(label){ return TLI_I18N.t(label, REPORT_NAME_EN[label] || label); }
+function reportExport(label){ toast(TLI_I18N.t('已匯出「'+label+'」報表 CSV', 'Exported “'+reportLabelT(label)+'” report as CSV')); }
+function reportRequery(label){ toast(TLI_I18N.t('已依篩選條件重新查詢「'+label+'」', 'Refreshed “'+reportLabelT(label)+'” with current filters')); }
+function periodFilterHtml(id, from, to){
+  return '<input type="date" id="'+id+'_from" value="'+from+'"> <span class="small">～</span> <input type="date" id="'+id+'_to" value="'+to+'">';
+}
+function marketSelectHtml(id, onchange, selected){
+  selected = selected || '';
+  /* 市場名稱屬主檔示範資料（校區／市場類命名），不進詞典翻譯 */
+  return '<select id="'+id+'" onchange="'+onchange+'()"><option value=""'+(selected===''?' selected':'')+'>'+TLI_I18N.t('全部市場','All Markets')+'</option>'+
+    MARKETS.map(function(m){return '<option'+(m===selected?' selected':'')+'>'+m+'</option>';}).join('')+'</select>';
+}
+function modeSelectHtml(id, onchange, selected){
+  selected = selected || '';
+  /* value 固定用原始中文（篩選比對用），顯示文字另外翻譯，避免翻譯影響既有篩選邏輯 */
+  return '<select id="'+id+'" onchange="'+onchange+'()"><option value=""'+(selected===''?' selected':'')+'>'+TLI_I18N.t('全部合作模式','All Modes')+'</option>'+
+    MODES.map(function(m){return '<option value="'+m+'"'+(m===selected?' selected':'')+'>'+TLI_I18N.t(m, MODE_EN[m])+'</option>';}).join('')+'</select>';
+}
+
+/* ================= 對齊資料源：專案／夥伴／產品分類一律改讀共用主檔 TLI_MASTERS，不再各自寫死 =================
+   PROJECT_STATS／SALES_BY_MODE／SALES_BY_CATEGORY 等業績數字是報表示範用的模擬數字，主檔沒有財務欄位，
+   仍留在本頁；但名稱／代號／市場／型態一律反查主檔，確保跟 a21／a20／a02 是同一份名單。 */
+var PROJECT_STATS = {
+  'PRJ-B2C-TW': {orders:482, revenue:3120000, students:410},
+  'PRJ-ENT-JP': {orders:39, revenue:905400, students:520},
+  'PRJ-RESELL-SEA': {orders:6, revenue:1160000, students:64}
+};
+/* 合作模式中文常數固定當內部值／篩選比對用，顯示時一律另外經 TLI_I18N.t() 轉語言，避免翻譯影響篩選邏輯 */
+function projectModeLabel(pr){
+  var ch = pr.channels || {};
+  var labels = [];
+  if (ch.direct) labels.push(TLI_I18N.t('直營','Direct'));
+  if (ch.project) labels.push(TLI_I18N.t('專案合作','Project Partnership'));
+  if (ch.distributor) labels.push(TLI_I18N.t('經銷','Distributor'));
+  if (ch.agent) labels.push(TLI_I18N.t('代理','Agent'));
+  return labels.join('／') || TLI_I18N.t('未設定','Not Set');
+}
+/* 專案合作型態的專案不經手金流，不列入任何金額報表 */
+var PROJECTS = TLI_MASTERS.projects.filter(function(pr){ return !(pr.channels && pr.channels.project); }).map(function(pr){
+  var s = PROJECT_STATS[pr.code] || {orders:0, revenue:0, students:0};
+  return {code:pr.code, name:pr.name, market:pr.market, channels:pr.channels, orders:s.orders, revenue:s.revenue, students:s.students};
+});
+var MARKETS = PROJECTS.map(function(p){return p.market;}).filter(function(v,i,a){return a.indexOf(v)===i;});
+var MODES = ['直營','經銷','代理'];
+var MODE_EN = {'直營':'Direct','經銷':'Distributor','代理':'Agent','專案合作':'Project Partnership'};
+var PARTNER_TYPE_LABEL = {project:'專案合作', distributor:'經銷', agent:'代理'};
+/* 金額報表只收代理與經銷；專案合作不經手金流，不列入 */
+var PARTNERS = TLI_MASTERS.partners.filter(function(p){ return p.type==='agent' || p.type==='distributor'; }).map(function(p){ return {id:p.id, name:p.name, type:p.type, country:p.country}; });
+var CATEGORIES = TLI_MASTERS.productCategories.map(function(c){ return {id:c.id, name:c.name}; });
+var CATEGORY_EN = {c_1to1:'1-on-1 Courses', c_group:'Group Live Classes', c_selfpace:'Self-Paced Courses', c_event:'Events', c_chat:'Mandarin Lounge & Conversation Booking'};
+function catLabel(id, name){ return TLI_I18N.t(name, CATEGORY_EN[id]||name); }
+
+/* ================= 銷售群 ================= */
+function render_sales_by_project(){
+  var mkSel = document.getElementById('f_market');
+  var mk = mkSel ? mkSel.value : '';
+  var rows = PROJECTS.filter(function(p){ return !mk || p.market===mk; });
+  /* 未綁定專案的夥伴訂單（代理 p09／p10／p12、經銷 p07／p11）：訂單 15 筆、NT$ 1,665,600；
+     加上三個專案後總額對到「依合作模式」合計 NT$ 6,851,000 */
+  var OTHER_ROW = {orders:15, revenue:1665600};
+  var showOther = !mk;
+  var totalRev = rows.reduce(function(s,p){return s+p.revenue;},0) + (showOther?OTHER_ROW.revenue:0);
+  var totalOrd = rows.reduce(function(s,p){return s+p.orders;},0) + (showOther?OTHER_ROW.orders:0);
+  var totalStu = rows.reduce(function(s,p){return s+p.students;},0);
+  var html = '<div class="filterbar">'+periodFilterHtml('f_p','2026-07-01','2026-09-30')+marketSelectHtml('f_market','render_sales_by_project',mk)+
+    '<button class="btn ghost" onclick="reportRequery(\'依專案\')">'+TLI_I18N.t('重新取數','Refresh')+'</button>'+
+    '<button class="btn ghost" onclick="reportExport(\'依專案\')">'+TLI_I18N.t('匯出 CSV','Export CSV')+'</button></div>';
+  html += '<div class="subhint">'+TLI_I18N.t('對齊專案設定（a21）目前 4 個上線／草稿專案。','Aligned with Project Settings (a21): currently 4 live/draft projects.')+' <a class="manage-link" href="a21_projects.html">'+TLI_I18N.t('前往設定 →','Go to Settings →')+'</a></div>';
+  html += tableHtml(
+    trH([['專案代號','Project Code'],['專案名稱','Project Name'],['市場','Market'],['合作模式','Cooperation Mode'],['訂單數','Orders'],['成交金額','Deal Amount'],['學員數','Students'],['','']]),
+    rows.map(function(p){
+      var modeLabel = projectModeLabel(p);
+      return [p.code, p.name, p.market, modeLabel, p.orders, fmtNT(p.revenue), p.students,
+        '<span class="linklike" onclick=\'showDetailModal("'+p.name+'",[["'+TLI_I18N.t('專案代號','Project Code')+'","'+p.code+'"],["'+TLI_I18N.t('市場','Market')+'","'+p.market+'"],["'+TLI_I18N.t('合作模式','Cooperation Mode')+'","'+modeLabel+'"],["'+TLI_I18N.t('成交金額','Deal Amount')+'","'+fmtNT(p.revenue)+'"],["'+TLI_I18N.t('學員數','Students')+'","'+p.students+' '+TLI_I18N.t('人','ppl')+'"]])\'>'+TLI_I18N.t('看明細','View Details')+'</span>'];
+    }).concat(showOther ? [['－', TLI_I18N.t('未綁定專案的夥伴訂單','Partner orders not bound to a project'), '－', '－', OTHER_ROW.orders, fmtNT(OTHER_ROW.revenue), '－', '']] : []),
+    [TLI_I18N.t('合計','Total'),'','','', totalOrd, fmtNT(totalRev), totalStu, '']
+  );
+  document.getElementById('reportContent').innerHTML = html;
+}
+var SALES_BY_MODE = [
+ {mode:'直營', revenue:3980000},
+ {mode:'經銷', revenue:2680000},
+ {mode:'代理', revenue:191000}
+];
+function render_sales_by_mode(){
+  var total = SALES_BY_MODE.reduce(function(s,m){return s+m.revenue;},0);
+  var html = '<div class="filterbar">'+periodFilterHtml('f_m2','2026-07-01','2026-09-30')+
+    '<button class="btn ghost" onclick="reportRequery(\'依合作模式\')">'+TLI_I18N.t('重新取數','Refresh')+'</button>'+
+    '<button class="btn ghost" onclick="reportExport(\'依合作模式\')">'+TLI_I18N.t('匯出 CSV','Export CSV')+'</button></div>';
+  html += '<div class="subhint">'+TLI_I18N.t('三種合作型態決定誰招生、誰收錢；直營與代理走線上收款，經銷走線下匯款。','The three cooperation modes determine who enrolls students and who collects payment; Direct and Agent use online payment, Distributor uses offline remittance.')+'</div>';
+  html += tableHtml(trH([['合作模式','Cooperation Mode'],['成交金額','Deal Amount'],['佔比','Share']]), SALES_BY_MODE.map(function(m){
+    return [TLI_I18N.t(m.mode, MODE_EN[m.mode]), fmtNT(m.revenue), Math.round(m.revenue/total*100)+'%'];
+  }), [TLI_I18N.t('合計','Total'), fmtNT(total), '100%']);
+  document.getElementById('reportContent').innerHTML = html;
+}
+var SALES_BY_CATEGORY = [
+ {id:'c_1to1', revenue:2650000},
+ {id:'c_group', revenue:2221000},
+ {id:'c_selfpace', revenue:1120000},
+ {id:'c_event', revenue:320000},
+ {id:'c_chat', revenue:540000}
+];
+function render_sales_by_category(){
+  var total = SALES_BY_CATEGORY.reduce(function(s,c){return s+c.revenue;},0);
+  var html = '<div class="filterbar">'+periodFilterHtml('f_c2','2026-07-01','2026-09-30')+
+    '<button class="btn ghost" onclick="reportRequery(\'依產品分類\')">'+TLI_I18N.t('重新取數','Refresh')+'</button>'+
+    '<button class="btn ghost" onclick="reportExport(\'依產品分類\')">'+TLI_I18N.t('匯出 CSV','Export CSV')+'</button></div>';
+  html += '<div class="subhint">'+TLI_I18N.t('對齊產品分類（a02）目前固定的 5 個分類。','Aligned with Product Categories (a02): currently 5 fixed categories.')+' <a class="manage-link" href="a02_products.html">'+TLI_I18N.t('前往設定 →','Go to Settings →')+'</a></div>';
+  html += tableHtml(trH([['分類','Category'],['銷售金額','Sales Amount'],['佔比','Share']]), SALES_BY_CATEGORY.map(function(c){
+    var cat = CATEGORIES.find(function(x){return x.id===c.id;});
+    return [catLabel(cat.id, cat.name), fmtNT(c.revenue), Math.round(c.revenue/total*100)+'%'];
+  }), [TLI_I18N.t('合計','Total'), fmtNT(total), '100%']);
+  document.getElementById('reportContent').innerHTML = html;
+}
+var SALES_BY_MARKET = [
+ {market:'台灣', modeLabel:'直營／代理', orders:486, revenue:3181000},
+ {market:'日本', modeLabel:'直營／代理／經銷', orders:42, revenue:1825400},
+ {market:'東南亞', modeLabel:'經銷', orders:6, revenue:1160000},
+ {market:'其他地區', modeLabel:'經銷／代理', orders:8, revenue:684600}
+];
+/* 台灣市場（直營）校區拆分：校區清單改讀共用主檔 TLI_MASTERS.campuses；權重與金額為示範數字，非實際數字，
+   合計會對到「依市場」表台灣列的成交金額，供校區維度的示範拆解 */
+var CAMPUS_SALES_TW = (function(){
+  var weights = [0.34, 0.24, 0.22, 0.20];
+  return TLI_MASTERS.campuses.filter(function(c){ return c.id!=='online'; }).map(function(c,i){
+    return {campus:c.name, revenue: Math.round(3120000*(weights[i]||0))};
+  });
+})();
+function render_sales_by_market(){
+  var modeSel = document.getElementById('f_mode3');
+  var mode = modeSel ? modeSel.value : '';
+  var rows = SALES_BY_MARKET.filter(function(m){ return !mode || m.modeLabel.indexOf(mode)>=0; });
+  var total = rows.reduce(function(s,m){return s+m.revenue;},0);
+  var totalOrd = rows.reduce(function(s,m){return s+m.orders;},0);
+  var html = '<div class="filterbar">'+periodFilterHtml('f_m3','2026-07-01','2026-09-30')+modeSelectHtml('f_mode3','render_sales_by_market',mode)+
+    '<button class="btn ghost" onclick="reportRequery(\'依市場\')">'+TLI_I18N.t('重新取數','Refresh')+'</button>'+
+    '<button class="btn ghost" onclick="reportExport(\'依市場\')">'+TLI_I18N.t('匯出 CSV','Export CSV')+'</button></div>';
+  html += tableHtml(trH([['市場','Market'],['主要合作模式','Primary Cooperation Mode'],['訂單數','Orders'],['成交金額','Deal Amount']]), rows.map(function(m){
+    /* modeLabel 內部值固定用原始中文（篩選比對用），顯示時逐段翻譯 */
+    var modeDisplay = m.modeLabel.split('／').map(function(x){ return TLI_I18N.t(x, MODE_EN[x] || x); }).join('／');
+    return [m.market==='其他地區' ? TLI_I18N.t('其他地區','Other Regions') : m.market, modeDisplay, m.orders, fmtNT(m.revenue)];
+  }), [TLI_I18N.t('合計','Total'),'', totalOrd, fmtNT(total)]);
+  if (rows.some(function(m){ return m.market==='台灣'; })){
+    var campusTotal = CAMPUS_SALES_TW.reduce(function(s,c){return s+c.revenue;},0);
+    html += '<div class="sectiontitle">'+TLI_I18N.t('台灣市場校區拆分（直營）','Taiwan Market Campus Breakdown (Direct)')+'</div>' +
+      tableHtml(trH([['校區','Campus'],['成交金額','Deal Amount']]), CAMPUS_SALES_TW.map(function(c){ return [c.campus, fmtNT(c.revenue)]; }), [TLI_I18N.t('合計','Total'), fmtNT(campusTotal)]);
+  }
+  document.getElementById('reportContent').innerHTML = html;
+}
+
+/* ================= 合作夥伴群 ================= */
+function partnerAmountLabel(type){
+  return type==='agent' ? TLI_I18N.t('應付佣金','Commission Payable') : TLI_I18N.t('應收貨款','Payment Receivable');
+}
+function partnerPerfStats(idx){
+  var r1=seededRand(idx*31+7), r2=seededRand(idx*37+11), r3=seededRand(idx*41+13);
+  return {
+    revenue: 300000 + Math.floor(r1*1200000),
+    students: 20 + Math.floor(r2*180),
+    amount: 20000 + Math.floor(r3*220000)
+  };
+}
+function render_partner_performance(){
+  var typeSel = document.getElementById('f_ptype');
+  var mode = typeSel ? typeSel.value : '';
+  var typeMap = {'直營':'', '經銷':'distributor','代理':'agent'};
+  var rows = !mode ? PARTNERS.slice() : PARTNERS.filter(function(p){ return p.type===typeMap[mode]; });
+  var html = '<div class="filterbar">'+periodFilterHtml('f_pp','2026-07-01','2026-09-30')+modeSelectHtml('f_ptype','render_partner_performance',mode)+
+    '<button class="btn ghost" onclick="reportRequery(\'夥伴業績總表\')">'+TLI_I18N.t('重新取數','Refresh')+'</button>'+
+    '<button class="btn ghost" onclick="reportExport(\'夥伴業績總表\')">'+TLI_I18N.t('匯出 CSV','Export CSV')+'</button></div>';
+  var nAg=PARTNERS.filter(function(p){return p.type==='agent';}).length, nDi=PARTNERS.filter(function(p){return p.type==='distributor';}).length;
+  html += '<div class="subhint">'+TLI_I18N.t('對齊合作夥伴管理（a20）：'+nDi+' 家經銷／'+nAg+' 家代理；直營由 TLI 自營，不列於本表。','Aligned with Partner Management (a20): '+nDi+' Distributors / '+nAg+' Agents; Direct is operated by TLI itself and is not listed here.')+' <a class="manage-link" href="a20_agents.html">'+TLI_I18N.t('前往設定 →','Go to Settings →')+'</a></div>';
+  if (mode==='直營'){
+    html += '<div class="note">'+TLI_I18N.t('直營是 TLI 自己經營，不是合作夥伴，本表不列示。','Direct is operated by TLI itself, not a partner, so it is not listed in this table.')+'</div>';
+  } else {
+    html += tableHtml(trH([['夥伴','Partner'],['型態','Type'],['本期成交','Deals This Period'],['訂單數','Orders'],['應付佣金／返佣','Commission / Rebate Payable']]), rows.map(function(p){
+      var m = TLI_MASTERS.byId('partners', p.id), from='2026-07-01', to='2026-09-30', deal, cnt, pay;
+      if (p.type==='agent'){
+        var os = AGENT_ORDERS.filter(function(o){ return o.pid===p.id && o.status==='已完成' && inRange(o.date,from,to); });
+        var amt = os.reduce(function(a,o){ return a+o.amount; },0);
+        deal = fmtNT(amt); cnt = os.length; pay = TLI_I18N.t('應付佣金','Commission Payable')+'　'+fmtNT(Math.round(amt*m.commRate/100));
+      } else {
+        var ds = DIST_ORDERS.filter(function(o){ return o.pid===p.id && inRange(o.date,from,to); });
+        var tot = ds.reduce(function(a,o){ return a+o.amount; },0);
+        deal = fmtUSD(tot); cnt = ds.length; pay = TLI_I18N.t('應付返佣','Rebate Payable')+'　'+fmtUSD(Math.round(tot*Number(pickTier(m,tot).rate)/100));
+      }
+      return [p.name, TLI_I18N.t(PARTNER_TYPE_LABEL[p.type], MODE_EN[PARTNER_TYPE_LABEL[p.type]]), deal, cnt+' '+TLI_I18N.t('筆','orders'), pay];
+    }));
+  }
+  document.getElementById('reportContent').innerHTML = html;
+}
+/* ================= 代理銷售報表／經銷返佣試算 =================
+   夥伴名稱、型態、佣金比例（commRate）、返佣級距（rebateTiers）一律讀主檔 TLI_MASTERS.partners；
+   識別碼讀主檔 partners.code（代理沿用夥伴端轉介碼 REF-…）。專案合作不經手金流，不列入本區任何報表。 */
+var AGENT_ORDERS = [
+ {id:'ORD-2026-A301', date:'2026-07-05', pid:'p08', amount:15800, status:'已完成'},
+ {id:'ORD-2026-A302', date:'2026-07-19', pid:'p08', amount:12800, status:'已完成'},
+ {id:'ORD-2026-A303', date:'2026-09-02', pid:'p08', amount:16800, status:'已完成'},
+ {id:'ORD-2026-A304', date:'2026-07-11', pid:'p09', amount:12800, status:'已完成'},
+ {id:'ORD-2026-A202', date:'2026-08-07', pid:'p09', amount:14200, status:'已完成'},
+ {id:'ORD-2026-A305', date:'2026-08-22', pid:'p09', amount:9800,  status:'已完成'},
+ {id:'ORD-2026-A306', date:'2026-09-09', pid:'p09', amount:16800, status:'已完成'},
+ {id:'ORD-2026-A307', date:'2026-09-15', pid:'p09', amount:14200, status:'已取消'},
+ {id:'ORD-2026-A201', date:'2026-08-01', pid:'p10', amount:16800, status:'已完成'},
+ {id:'ORD-2026-A308', date:'2026-07-27', pid:'p10', amount:14200, status:'已完成'},
+ {id:'ORD-2026-A203', date:'2026-08-13', pid:'p12', amount:15600, status:'已完成'},
+ {id:'ORD-2026-A309', date:'2026-07-03', pid:'p12', amount:12800, status:'已完成'},
+ {id:'ORD-2026-A310', date:'2026-08-29', pid:'p12', amount:12800, status:'已完成'},
+ {id:'ORD-2026-A311', date:'2026-09-12', pid:'p12', amount:19800, status:'已完成'},
+ {id:'ORD-2026-A312', date:'2026-09-20', pid:'p12', amount:15600, status:'待收款'}
+];
+var DIST_ORDERS = [
+ {id:'ORD-2026-D301-1', date:'2026-07-01', pid:'p05', tag:'KL-旅行社通路', amount:180000},
+ {id:'ORD-2026-D301-2', date:'2026-07-01', pid:'p05', tag:'KL-旅行社通路', amount:140000},
+ {id:'ORD-2026-D301-3', date:'2026-07-01', pid:'p05', tag:'KL-校園展', amount:240000},
+ {id:'ORD-2026-D302-1', date:'2026-07-10', pid:'p06', tag:'HCM-學生團', amount:230000},
+ {id:'ORD-2026-D302-2', date:'2026-07-10', pid:'p06', tag:'HCM-學生團', amount:150000},
+ {id:'ORD-2026-D302-3', date:'2026-07-10', pid:'p06', tag:'HCM-企業團', amount:220000},
+ {id:'ORD-2026-D303-1', date:'2026-07-19', pid:'p07', tag:'SEL-留學展', amount:350000},
+ {id:'ORD-2026-D303-2', date:'2026-07-19', pid:'p07', tag:'SEL-老客戶轉介', amount:250000},
+ {id:'ORD-2026-D304-1', date:'2026-07-28', pid:'p11', tag:'TYO-春季班', amount:300000},
+ {id:'ORD-2026-D304-2', date:'2026-07-28', pid:'p11', tag:'TYO-春季班', amount:220000},
+ {id:'ORD-2026-D304-3', date:'2026-07-28', pid:'p11', tag:'TYO-夏季班', amount:400000}
+];
+function partnerM(pid){ return TLI_MASTERS.byId('partners', pid); }
+function fmtUSD(n){ return fmtNT(n); }
+function inRange(d, from, to){ return (!from || d>=from) && (!to || d<=to); }
+function valOf(id, def){ var el=document.getElementById(id); return el ? el.value : def; }
+function downloadCsv(name, rows){
+  try{
+    var csv = '﻿' + rows.map(function(r){ return r.map(function(c){ return '"'+String(c).replace(/"/g,'""')+'"'; }).join(','); }).join('\r\n');
+    var a = document.createElement('a');
+    a.href = URL.createObjectURL(new Blob([csv], {type:'text/csv;charset=utf-8'}));
+    a.download = name+'.csv'; document.body.appendChild(a); a.click(); document.body.removeChild(a);
+  }catch(e){}
+}
+function agentRows(){
+  var from = valOf('ag_from','2026-07-01'), to = valOf('ag_to','2026-09-30');
+  var q = valOf('ag_q','').trim().toLowerCase(), pid = valOf('ag_p','');
+  var out = [];
+  TLI_MASTERS.partners.filter(function(p){ return p.type==='agent'; }).forEach(function(p){
+    if (pid && p.id!==pid) return;
+    var code = p.code || '';
+    if (q && (p.name+' '+code).toLowerCase().indexOf(q)<0) return;
+    var os = AGENT_ORDERS.filter(function(o){ return o.pid===p.id && inRange(o.date, from, to); });
+    var done = os.filter(function(o){ return o.status==='已完成'; });
+    var amount = done.reduce(function(s,o){ return s+o.amount; },0);
+    out.push({p:p, code:code, orders:os, count:done.length, amount:amount, rate:p.commRate, commission:Math.round(amount*p.commRate/100),
+      pending: os.filter(function(o){ return o.status==='待收款'; }).length});
+  });
+  var sort = valOf('ag_sort','amount');
+  out.sort(function(a,b){
+    if (sort==='count') return b.count-a.count;
+    if (sort==='commission') return b.commission-a.commission;
+    if (sort==='name') return a.p.name.localeCompare(b.p.name,'zh-Hant');
+    return b.amount-a.amount;
+  });
+  return out;
+}
+function render_partner_agent(){
+  var agents = TLI_MASTERS.partners.filter(function(p){ return p.type==='agent'; });
+  var html = '<div class="filterbar">'+
+    '<input type="date" id="ag_from" value="2026-07-01" onchange="updateAgentReport()"> <span class="small">～</span> <input type="date" id="ag_to" value="2026-09-30" onchange="updateAgentReport()">'+
+    '<select id="ag_p" onchange="updateAgentReport()"><option value="">'+TLI_I18N.t('全部代理商','All Agents')+'</option>'+agents.map(function(p){ return '<option value="'+p.id+'">'+p.name+'</option>'; }).join('')+'</select>'+
+    '<input type="text" id="ag_q" placeholder="'+TLI_I18N.t('搜尋代理商或折扣碼','Search agent or code')+'" oninput="updateAgentReport()" style="min-width:180px">'+
+    '<select id="ag_sort" onchange="updateAgentReport()"><option value="amount">'+TLI_I18N.t('依成交金額','By Deal Amount')+'</option><option value="count">'+TLI_I18N.t('依訂單數','By Orders')+'</option><option value="commission">'+TLI_I18N.t('依佣金金額','By Commission')+'</option><option value="name">'+TLI_I18N.t('依名稱','By Name')+'</option></select>'+
+    '<button class="btn ghost" onclick="exportAgentReport()">'+TLI_I18N.t('匯出 CSV','Export CSV')+'</button></div>';
+  html += '<div class="subhint">'+TLI_I18N.t('依折扣碼（識別碼）統計各代理商帶來的訂單；成交金額只計「已完成」訂單，待收款與已取消不計入。佣金＝成交金額 × 該代理商佣金比例（取自合作夥伴管理）。','Orders are grouped by discount code (identifier). Deal amount counts completed orders only; pending and cancelled orders are excluded. Commission = deal amount × the agent commission rate (from Partner Management).')+' <a class="manage-link" href="a20_agents.html">'+TLI_I18N.t('前往設定 →','Go to Settings →')+'</a></div>';
+  html += '<div id="agArea"></div>';
+  document.getElementById('reportContent').innerHTML = html;
+  updateAgentReport();
+}
+function updateAgentReport(){
+  var rows = agentRows();
+  var tc=0, ta=0, tm=0;
+  rows.forEach(function(r){ tc+=r.count; ta+=r.amount; tm+=r.commission; });
+  var area = document.getElementById('agArea'); if (!area) return;
+  if (!rows.length){ area.innerHTML = '<div class="note">'+TLI_I18N.t('沒有符合條件的代理商。','No agents match the filters.')+'</div>'; return; }
+  area.innerHTML = tableHtml(
+    trH([['代理商','Agent'],['折扣碼／識別碼','Discount Code'],['訂單數','Orders'],['成交金額','Deal Amount'],['佣金比例','Commission Rate'],['佣金金額','Commission'],['','']]),
+    rows.map(function(r){
+      return [r.p.name+(r.p.status==='停用'?' <span class="badge grey">'+TLI_I18N.t('停用','Inactive')+'</span>':''), r.code, r.count+(r.pending?' <span class="small">（'+TLI_I18N.t('另有待收款 ','Pending: ')+r.pending+'）</span>':''), fmtNT(r.amount), r.rate+'%', fmtNT(r.commission),
+        '<span class="linklike" onclick="showAgentDetail(\''+r.p.id+'\')">'+TLI_I18N.t('訂單明細','Order Details')+'</span>'];
+    }),
+    [TLI_I18N.t('合計','Total'),'',tc,fmtNT(ta),'',fmtNT(tm),'']
+  );
+}
+function showAgentDetail(pid){
+  var r = agentRows().filter(function(x){ return x.p.id===pid; })[0]; if (!r) return;
+  showDetailModal(r.p.name+'（'+r.code+'）', r.orders.sort(function(a,b){ return a.date.localeCompare(b.date); }).map(function(o){
+    return [o.date+'　'+o.id+'　'+o.status, fmtNT(o.amount)];
+  }).concat([[TLI_I18N.t('已完成合計','Completed Total'), fmtNT(r.amount)],[TLI_I18N.t('佣金（'+r.rate+'%）','Commission ('+r.rate+'%)'), fmtNT(r.commission)]]));
+}
+function exportAgentReport(){
+  var rows = agentRows();
+  downloadCsv('代理銷售報表', [['代理商','折扣碼','訂單數','成交金額','佣金比例','佣金金額']].concat(rows.map(function(r){ return [r.p.name,r.code,r.count,r.amount,r.rate+'%',r.commission]; })));
+  toast(TLI_I18N.t('已匯出「代理銷售報表」報表 CSV','Exported “Agent Sales Report” as CSV'));
+}
+
+/* 返佣級距取主檔 rebateTiers：依經銷商期間內累計採購額落在哪一級距，整筆適用該級距比例，各來源標籤按金額分攤 */
+function tierNum(s){ return s==='' || s==null ? Infinity : Number(String(s).replace(/,/g,'')); }
+function pickTier(p, total){
+  var tiers = p.rebateTiers || [];
+  for (var i=0;i<tiers.length;i++){
+    var min = tierNum(tiers[i].min) || 0, max = tierNum(tiers[i].max);
+    if (total>=min && total<=max) return tiers[i];
+  }
+  return tiers[0] || {min:'0',max:'',rate:'0'};
+}
+function rebateData(){
+  var from = valOf('rb_from','2026-07-01'), to = valOf('rb_to','2026-09-30');
+  var pid = valOf('rb_p',''), tag = valOf('rb_tag','');
+  var dists = TLI_MASTERS.partners.filter(function(p){ return p.type==='distributor' && (!pid || p.id===pid); });
+  var sums = [], tagRows = [];
+  dists.forEach(function(p){
+    var all = DIST_ORDERS.filter(function(o){ return o.pid===p.id && inRange(o.date,from,to); });
+    var allTotal = all.reduce(function(s,o){ return s+o.amount; },0);
+    var os = all.filter(function(o){ return !tag || o.tag===tag; });
+    var total = os.reduce(function(s,o){ return s+o.amount; },0);
+    var tier = pickTier(p, allTotal), rate = Number(tier.rate);
+    sums.push({p:p, total:total, count:os.length, tier:tier, rate:rate, rebate:Math.round(total*rate/100)});
+    var byTag = {};
+    os.forEach(function(o){ (byTag[o.tag] = byTag[o.tag] || {tag:o.tag, count:0, amount:0}); byTag[o.tag].count++; byTag[o.tag].amount += o.amount; });
+    Object.keys(byTag).forEach(function(k){ tagRows.push({p:p, tag:k, count:byTag[k].count, amount:byTag[k].amount, rate:rate, rebate:Math.round(byTag[k].amount*rate/100)}); });
+  });
+  var sort = valOf('rb_sort','rebate');
+  sums.sort(function(a,b){ return sort==='total' ? b.total-a.total : sort==='name' ? a.p.name.localeCompare(b.p.name,'zh-Hant') : b.rebate-a.rebate; });
+  tagRows.sort(function(a,b){ return sort==='name' ? (a.p.name+a.tag).localeCompare(b.p.name+b.tag,'zh-Hant') : b.rebate-a.rebate; });
+  return {sums:sums, tagRows:tagRows};
+}
+function tierText(t){ return fmtUSDnum(t.min)+(t.max===''?TLI_I18N.t(' 以上',' and above'):' – '+fmtUSDnum(t.max)); }
+function fmtUSDnum(s){ return 'NT$ '+s; }
+function render_partner_rebate(){
+  var dists = TLI_MASTERS.partners.filter(function(p){ return p.type==='distributor'; });
+  var tags = DIST_ORDERS.map(function(o){ return o.tag; }).filter(function(v,i,a){ return a.indexOf(v)===i; });
+  var html = '<div class="filterbar">'+
+    '<input type="date" id="rb_from" value="2026-07-01" onchange="updateRebateReport()"> <span class="small">～</span> <input type="date" id="rb_to" value="2026-09-30" onchange="updateRebateReport()">'+
+    '<select id="rb_p" onchange="updateRebateReport()"><option value="">'+TLI_I18N.t('全部經銷商','All Distributors')+'</option>'+dists.map(function(p){ return '<option value="'+p.id+'">'+p.name+'</option>'; }).join('')+'</select>'+
+    '<select id="rb_tag" onchange="updateRebateReport()"><option value="">'+TLI_I18N.t('全部來源標籤','All Source Tags')+'</option>'+tags.map(function(t){ return '<option>'+t+'</option>'; }).join('')+'</select>'+
+    '<select id="rb_sort" onchange="updateRebateReport()"><option value="rebate">'+TLI_I18N.t('依返佣金額','By Rebate')+'</option><option value="total">'+TLI_I18N.t('依採購額','By Purchase')+'</option><option value="name">'+TLI_I18N.t('依名稱','By Name')+'</option></select>'+
+    '<button class="btn ghost" onclick="exportRebateReport()">'+TLI_I18N.t('匯出 CSV','Export CSV')+'</button></div>';
+  html += '<div class="subhint">'+TLI_I18N.t('依來源標籤統計經銷商的採購額，返佣比例取經銷商期間內累計採購額所在的級距（級距取自合作夥伴管理），整筆適用該比例，各標籤按金額分攤。含待收款訂單，僅供試算，實際返佣以收款對帳為準。','Purchases are grouped by source tag. The rebate rate is the tier that the distributor’s cumulative purchases fall into (tiers from Partner Management), applied to the whole amount and allocated to tags pro rata. Includes unpaid orders; for estimation only, actual rebates follow payment reconciliation.')+' <a class="manage-link" href="a20_agents.html">'+TLI_I18N.t('前往設定 →','Go to Settings →')+'</a></div>';
+  html += '<div class="sectiontitle">'+TLI_I18N.t('依經銷商','By Distributor')+'</div><div id="rbSum"></div>';
+  html += '<div class="sectiontitle">'+TLI_I18N.t('依來源標籤','By Source Tag')+'</div><div id="rbTag"></div>';
+  document.getElementById('reportContent').innerHTML = html;
+  updateRebateReport();
+}
+function updateRebateReport(){
+  var d = rebateData();
+  var sumEl = document.getElementById('rbSum'), tagEl = document.getElementById('rbTag'); if (!sumEl) return;
+  var tt=0, tr_=0, tc=0;
+  d.sums.forEach(function(r){ tt+=r.total; tr_+=r.rebate; tc+=r.count; });
+  sumEl.innerHTML = tableHtml(trH([['經銷商','Distributor'],['訂單數','Orders'],['期間採購額','Purchases'],['適用級距','Tier'],['返佣比例','Rebate Rate'],['返佣金額','Rebate']]),
+    d.sums.map(function(r){ return [r.p.name, r.count, fmtUSD(r.total), tierText(r.tier), r.rate+'%', fmtUSD(r.rebate)]; }),
+    [TLI_I18N.t('合計','Total'), tc, fmtUSD(tt), '', '', fmtUSD(tr_)]);
+  var tt2=0, tr2=0, tc2=0;
+  d.tagRows.forEach(function(r){ tt2+=r.amount; tr2+=r.rebate; tc2+=r.count; });
+  tagEl.innerHTML = d.tagRows.length ? tableHtml(trH([['經銷商','Distributor'],['來源標籤','Source Tag'],['訂單數','Orders'],['採購額','Purchases'],['返佣比例','Rebate Rate'],['返佣金額','Rebate']]),
+    d.tagRows.map(function(r){ return [r.p.name, r.tag, r.count, fmtUSD(r.amount), r.rate+'%', fmtUSD(r.rebate)]; }),
+    [TLI_I18N.t('合計','Total'),'',tc2,fmtUSD(tt2),'',fmtUSD(tr2)]) : '<div class="note">'+TLI_I18N.t('沒有符合條件的訂單。','No orders match the filters.')+'</div>';
+}
+function exportRebateReport(){
+  var d = rebateData();
+  downloadCsv('經銷返佣試算', [['經銷商','來源標籤','訂單數','採購額','返佣比例','返佣金額']].concat(d.tagRows.map(function(r){ return [r.p.name,r.tag,r.count,r.amount,r.rate+'%',r.rebate]; })));
+  toast(TLI_I18N.t('已匯出「經銷返佣試算」報表 CSV','Exported “Distributor Rebate Estimate” as CSV'));
+}
+
+/* ================= 組織客戶群 ================= */
+/* 20260930：組織客戶名單改讀共用主檔 TLI_MASTERS.orgCustomers（企業，type='general'），
+   不再各自寫死同名清單；depts（部門）主檔沒有此欄位，仍留在本頁當報表示範用途，
+   有對照示範資料的用原資料，其餘用通用預設部門組合 */
+var RPT_DEPTS_BY_ID = {
+  ent0:['業務部','研發部','財務部'],
+  ent1:['研發部','人資部','行政部'],
+  ent2:['業務部','行政部'],
+  ent3:['業務部','人資部','海外事業部']
+};
+var RPT_ENTERPRISES = TLI_MASTERS.orgCustomers.filter(function(o){ return o.type==='general'; }).map(function(o){
+  return {id:o.id, name:o.name, depts: RPT_DEPTS_BY_ID[o.id] || ['業務部','行政部','財務部']};
+});
+function deptStats(entIdx, deptIdx){
+  var r1 = seededRand(entIdx*41+deptIdx*3+7), r2 = seededRand(entIdx*43+deptIdx*5+11),
+      r3 = seededRand(entIdx*47+deptIdx*7+13), r4 = seededRand(entIdx*53+deptIdx*11+17);
+  var attendTotal = 40 + Math.floor(r1*60);
+  var attendActual = Math.round(attendTotal * (0.72 + r2*0.26));
+  var poolTotal = 200 + Math.floor(r3*400);
+  var poolUsed = Math.round(poolTotal * (0.35 + r4*0.5));
+  return {attendActual: attendActual, attendTotal: attendTotal, poolUsed: poolUsed, poolTotal: poolTotal};
+}
+function render_org_enterprise(){
+  var content = document.getElementById('reportContent');
+  content.innerHTML = '<div class="filterbar">'+
+    '<select id="ent_select" onchange="onEntSelectChange()"></select>'+
+    '<select id="ent_dept" onchange="renderEnterpriseTable()"><option value="">'+TLI_I18N.t('全部部門','All Departments')+'</option></select>'+
+    periodFilterHtml('ent','2026-07-01','2026-08-31')+
+    '<button class="btn ghost" onclick="reportRequery(\'企業使用狀況\')">'+TLI_I18N.t('重新取數','Refresh')+'</button>'+
+    '<button class="btn ghost" onclick="reportExport(\'企業使用狀況\')">'+TLI_I18N.t('匯出 CSV','Export CSV')+'</button></div>'+
+    '<div class="subhint">'+TLI_I18N.t('出勤率＝實到堂數／應到堂數；時數池消耗與部門分布依所選企業與部門即時彙總。','Attendance rate = actual classes attended / classes due; hour pool usage and department breakdown are aggregated live based on the selected enterprise and department.')+'</div>'+
+    '<div class="grid4" id="entKpiRow"></div>'+
+    '<div class="tablewrap"><table id="entTable"></table></div>';
+  initEntSelect();
+  renderEnterpriseTable();
+}
+function initEntSelect(){
+  var sel = document.getElementById('ent_select');
+  if (!sel) return;
+  sel.innerHTML = RPT_ENTERPRISES.map(function(e){ return '<option value="'+e.id+'">'+e.name+'</option>'; }).join('');
+  refreshDeptOptions();
+}
+function refreshDeptOptions(){
+  var ent = RPT_ENTERPRISES.find(function(e){return e.id===document.getElementById('ent_select').value;}) || RPT_ENTERPRISES[0];
+  var dsel = document.getElementById('ent_dept');
+  dsel.innerHTML = '<option value="">'+TLI_I18N.t('全部部門','All Departments')+'</option>' + ent.depts.map(function(d){ return '<option>'+d+'</option>'; }).join('');
+}
+function onEntSelectChange(){ refreshDeptOptions(); renderEnterpriseTable(); }
+function renderEnterpriseTable(){
+  var ent = RPT_ENTERPRISES.find(function(e){return e.id===document.getElementById('ent_select').value;}) || RPT_ENTERPRISES[0];
+  var entIdx = RPT_ENTERPRISES.indexOf(ent);
+  var deptFilter = document.getElementById('ent_dept').value;
+  var depts = deptFilter ? [deptFilter] : ent.depts;
+  var rows = depts.map(function(d){
+    var di = ent.depts.indexOf(d);
+    var s = deptStats(entIdx, di);
+    s.dept = d;
+    return s;
+  });
+  var sumActual=0, sumTotal=0, sumPoolUsed=0, sumPoolTotal=0;
+  rows.forEach(function(s){ sumActual+=s.attendActual; sumTotal+=s.attendTotal; sumPoolUsed+=s.poolUsed; sumPoolTotal+=s.poolTotal; });
+  var avgAttend = sumTotal ? Math.round(sumActual/sumTotal*1000)/10 : 0;
+  var poolPct = sumPoolTotal ? Math.round(sumPoolUsed/sumPoolTotal*100) : 0;
+  document.getElementById('entKpiRow').innerHTML =
+    '<div class="statcard"><div class="lbl">'+TLI_I18N.t('出勤率（實到／應到）','Attendance Rate (Actual/Due)')+'</div><div class="val">'+avgAttend+'%</div><div class="sub">'+sumActual+' ／ '+sumTotal+' '+TLI_I18N.t('堂','sessions')+'</div></div>' +
+    '<div class="statcard"><div class="lbl">'+TLI_I18N.t('時數池消耗','Hour Pool Usage')+'</div><div class="val">'+poolPct+'%</div><div class="sub">'+sumPoolUsed+' ／ '+sumPoolTotal+' '+TLI_I18N.t('小時','hours')+'</div></div>' +
+    '<div class="statcard"><div class="lbl">'+TLI_I18N.t('部門數（部門分布）','Departments (Distribution)')+'</div><div class="val">'+rows.length+'</div><div class="sub">'+TLI_I18N.t('個部門','depts')+'</div></div>' +
+    '<div class="statcard"><div class="lbl">'+TLI_I18N.t('企業客戶','Enterprise Customer')+'</div><div class="val" style="font-size:15px">'+ent.name+'</div></div>';
+  var t = document.getElementById('entTable');
+  t.innerHTML = '<tr>'+trH([['部門','Department'],['出勤率（實到／應到）','Attendance Rate (Actual/Due)'],['時數池消耗','Hour Pool Usage']]).map(function(h){return '<th>'+h+'</th>';}).join('') + '</tr>' +
+    rows.map(function(s){
+      var pct = s.attendTotal ? Math.round(s.attendActual/s.attendTotal*1000)/10 : 0;
+      var pp = s.poolTotal ? Math.round(s.poolUsed/s.poolTotal*100) : 0;
+      return '<tr><td>'+s.dept+'</td><td>'+pct+'%（'+s.attendActual+'／'+s.attendTotal+'）</td><td>'+pp+'%（'+s.poolUsed+'／'+s.poolTotal+'）</td></tr>';
+    }).join('') +
+    (rows.length>1 ? '<tr><td><b>'+TLI_I18N.t('合計／均值','Total/Average')+'</b></td><td><b>'+avgAttend+'%</b></td><td><b>'+poolPct+'%</b></td></tr>' : '');
+}
+/* 專案合作使用狀況：夥伴取自主檔（type='project'），學生／班級／啟用率直接由 projectClasses、projectRoster 計算；不含任何金額 */
+var PROJECT_PARTNERS = TLI_MASTERS.partners.filter(function(p){ return p.type==='project'; });
+function projectUsageStats(pid){
+  var classes = TLI_MASTERS.projectClasses.filter(function(c){ return c.partnerId===pid; });
+  var ids = classes.map(function(c){ return c.id; });
+  var roster = TLI_MASTERS.projectRoster.filter(function(r){ return ids.indexOf(r.classId)>-1; });
+  var students = roster.filter(function(r){ return r.role==='學生'; });
+  var active = students.filter(function(r){ return r.status==='已啟用'; });
+  return {students:students.length, classes:classes.length, teachers:roster.filter(function(r){ return r.role==='老師'; }).length,
+    activation: students.length ? Math.round(active.length/students.length*100) : 0, classList:classes};
+}
+function render_org_school(){
+  var content = document.getElementById('reportContent');
+  content.innerHTML = '<div class="filterbar">'+
+    '<select id="sch_select" onchange="renderSchoolTable()">'+PROJECT_PARTNERS.map(function(s){return '<option value="'+s.id+'">'+s.name+'</option>';}).join('')+'</select>'+
+    '<button class="btn ghost" onclick="reportRequery(\'專案合作使用狀況\')">'+TLI_I18N.t('重新取數','Refresh')+'</button>'+
+    '<button class="btn ghost" onclick="reportExport(\'專案合作使用狀況\')">'+TLI_I18N.t('匯出 CSV','Export CSV')+'</button></div>'+
+    '<div class="subhint">'+TLI_I18N.t('專案合作夥伴的班級與名單資料取自合作夥伴管理（a20），本表只呈現使用狀況。','Class and roster data for project-partnership partners come from Partner Management (a20). This report shows usage only.')+'</div>'+
+    '<div class="grid4" id="schKpiRow"></div>'+
+    '<div class="tablewrap"><table id="schTable"></table></div>';
+  renderSchoolTable();
+}
+function renderSchoolTable(){
+  var sel = document.getElementById('sch_select'); if (!sel || !PROJECT_PARTNERS.length) return;
+  var p = PROJECT_PARTNERS.filter(function(x){ return x.id===sel.value; })[0] || PROJECT_PARTNERS[0];
+  var s = projectUsageStats(p.id);
+  document.getElementById('schKpiRow').innerHTML =
+    '<div class="statcard"><div class="lbl">'+TLI_I18N.t('學生數','Students')+'</div><div class="val">'+s.students+'</div><div class="sub">'+TLI_I18N.t('人','ppl')+'</div></div>' +
+    '<div class="statcard"><div class="lbl">'+TLI_I18N.t('班級數','Classes')+'</div><div class="val">'+s.classes+'</div><div class="sub">'+TLI_I18N.t('班','classes')+'</div></div>' +
+    '<div class="statcard"><div class="lbl">'+TLI_I18N.t('帳號啟用率','Account Activation Rate')+'</div><div class="val">'+s.activation+'%</div></div>' +
+    '<div class="statcard"><div class="lbl">'+TLI_I18N.t('老師數','Teachers')+'</div><div class="val">'+s.teachers+'</div><div class="sub">'+TLI_I18N.t('人','ppl')+'</div></div>';
+  document.getElementById('schTable').innerHTML =
+    '<tr>'+trH([['班級','Class'],['學生數','Students'],['帳號啟用率','Account Activation Rate'],['合作期間','Period']]).map(function(h){return '<th>'+h+'</th>';}).join('')+'</tr>' +
+    s.classList.map(function(c){
+      var st = TLI_MASTERS.projectRoster.filter(function(r){ return r.classId===c.id && r.role==='學生'; });
+      var act = st.filter(function(r){ return r.status==='已啟用'; }).length;
+      return '<tr><td>'+c.name+'</td><td>'+st.length+' '+TLI_I18N.t('人','ppl')+'</td><td>'+(st.length?Math.round(act/st.length*100):0)+'%</td><td>'+c.from+' ～ '+c.to+'</td></tr>';
+    }).join('');
+}
+
+/* ================= 教學群：教師姓名改讀共用主檔 TLI_MASTERS.teachers（老師管理 a10），不再各頁各自寫死示範名單 =================
+   授課時數／學生數／評分是報表示範用的模擬數字，主檔沒有這些統計欄位，仍留在本頁，但姓名／服務校區時區／
+   所屬夥伴／認證狀態一律反查主檔。中心教師只取在職者（tc1／tc2／tc3／tc4）；班級老師取專案合作名單（projectRoster）中角色為老師的成員。 */
+function teacherMarketLabel(t){
+  if (!t) return TLI_I18N.t('未設定','Not Set');
+  if (/GMT-5/.test(t.timezone||'')) return TLI_I18N.t('美洲','Americas');
+  if (/GMT\+8/.test(t.timezone||'')) return TLI_I18N.t('台灣／全球','Taiwan/Global');
+  return t.timezone || TLI_I18N.t('未設定','Not Set');
+}
+var CENTER_TEACHER_STATS = [
+  {id:'tc1', hours:186, students:64, rating:4.8},
+  {id:'tc2', hours:152, students:52, rating:4.6},
+  {id:'tc3', hours:98, students:30, rating:4.9},
+  {id:'tc4', hours:120, students:41, rating:4.7}
+];
+/* market 不在載入時算好（會被固定在載入當下的語言），改存原始 teacher 主檔紀錄，render 時才呼叫 teacherMarketLabel() 取當下語言的顯示文字 */
+var CENTER_TEACHERS = CENTER_TEACHER_STATS.map(function(s){
+  var t = TLI_MASTERS.byId('teachers', s.id);
+  return {name: t ? t.name : s.id, _teacher: t, hours:s.hours, students:s.students, rating:s.rating};
+});
+/* 班級老師：取專案合作名單中角色為老師的成員；班級、學生數由 projectClasses／projectRoster 即時計算 */
+function classTeacherRows(){
+  return TLI_MASTERS.projectClasses.map(function(c){
+    var t = TLI_MASTERS.projectRoster.filter(function(r){ return r.id===c.teacherRid; })[0];
+    var partner = TLI_MASTERS.byId('partners', c.partnerId);
+    var stu = TLI_MASTERS.projectRoster.filter(function(r){ return r.classId===c.id && r.role==='學生'; });
+    return {name: t ? t.name : '－', partner: partner ? partner.name : '', cls: c.name, students: stu.length, status: t ? t.status : ''};
+  });
+}
+var teachTeacherKey = 'center';
+function render_teach_teachers(){
+  var content = document.getElementById('reportContent');
+  content.innerHTML = '<div class="chiprow" id="ttChips">'+
+    '<button class="active" onclick="teachTeacherTab(this,\'center\')">'+TLI_I18N.t('中心教師','Center Teachers')+'</button>'+
+    '<button onclick="teachTeacherTab(this,\'local\')">'+TLI_I18N.t('班級老師','Class Teachers')+'</button></div>'+
+    '<div class="filterbar">'+periodFilterHtml('tt','2026-07-01','2026-09-30')+
+    '<button class="btn ghost" onclick="reportRequery(\'教師授課統計\')">'+TLI_I18N.t('重新取數','Refresh')+'</button>'+
+    '<button class="btn ghost" onclick="reportExport(\'教師授課統計\')">'+TLI_I18N.t('匯出 CSV','Export CSV')+'</button></div>'+
+    '<div id="ttBody"></div>';
+  teachTeacherKey = 'center';
+  renderTeachTeacherBody();
+}
+function teachTeacherTab(btn, key){
+  teachTeacherKey = key;
+  btn.parentNode.querySelectorAll('button').forEach(function(b){b.classList.remove('active');});
+  btn.classList.add('active');
+  renderTeachTeacherBody();
+}
+function renderTeachTeacherBody(){
+  var el = document.getElementById('ttBody');
+  if (teachTeacherKey==='center'){
+    el.innerHTML = '<div class="subhint">'+TLI_I18N.t('中心教師由 Hub 排程，服務全球會員。','Center teachers are scheduled by the Hub and serve members worldwide.')+' <a class="manage-link" href="a10_teachers.html">'+TLI_I18N.t('前往設定 →','Go to Settings →')+'</a></div>'+tableHtml(
+      trH([['教師姓名','Teacher Name'],['服務市場','Market Served'],['授課時數','Teaching Hours'],['學生數','Students'],['平均評分','Avg. Rating']]),
+      CENTER_TEACHERS.map(function(t){return [t.name, teacherMarketLabel(t._teacher), t.hours+' '+TLI_I18N.t('小時','hrs'), t.students, t.rating];})
+    );
+  } else {
+    el.innerHTML = '<div class="subhint">'+TLI_I18N.t('班級老師是專案合作夥伴名單中的老師，只看自己班級學生的自學進度。','Class teachers are teachers on a project partner\'s roster; they only see the self-paced progress of their own class.')+' <a class="manage-link" href="a20_agents.html">'+TLI_I18N.t('前往設定 →','Go to Settings →')+'</a></div>'+tableHtml(
+      trH([['老師姓名','Teacher Name'],['所屬夥伴','Partner'],['班級','Class'],['學生數','Students'],['帳號狀態','Account Status']]),
+      classTeacherRows().map(function(t){
+        var badge = t.status==='已啟用' ? '<span class="badge green">'+TLI_I18N.t('已啟用','Active')+'</span>' : '<span class="badge orange">'+TLI_I18N.t(t.status||'未寄送', t.status==='已寄開通信' ? 'Invite sent' : 'Not sent')+'</span>';
+        return [t.name, t.partner, t.cls, t.students, badge];
+      })
+    );
+  }
+}
+var SELFPACE_PROGRESS = [
+ {name:'自學影音課程包（中文基礎）一年', completion:78},
+ {name:'自學影音課程包（中文進階）一年', completion:64},
+ {name:'HSK 衝刺自學課程包 半年', completion:71}
+];
+var TEST_PASS = [
+ {name:'華語能力認證模擬測驗', passRate:69},
+ {name:'期末測驗（中文學期班）', passRate:75}
+];
+function render_teach_progress(){
+  var html = '<div class="filterbar">'+periodFilterHtml('tp','2026-07-01','2026-09-30')+
+    '<button class="btn ghost" onclick="reportRequery(\'學員學習進度\')">'+TLI_I18N.t('重新取數','Refresh')+'</button>'+
+    '<button class="btn ghost" onclick="reportExport(\'學員學習進度\')">'+TLI_I18N.t('匯出 CSV','Export CSV')+'</button></div>';
+  html += '<div class="sectiontitle">'+TLI_I18N.t('自學課程完成率','Self-Paced Course Completion Rate')+'</div>'+tableHtml(trH([['課程','Course'],['完成率','Completion Rate']]), SELFPACE_PROGRESS.map(function(c){return [c.name, c.completion+'%'];}));
+  html += '<div class="sectiontitle">'+TLI_I18N.t('測驗通過率','Test Pass Rate')+'</div>'+tableHtml(trH([['測驗','Test'],['通過率','Pass Rate']]), TEST_PASS.map(function(c){return [c.name, c.passRate+'%'];}));
+  document.getElementById('reportContent').innerHTML = html;
+}
+var ONLINE_ATTEND = [
+ {cls:'中文彈性團體直播班 一期', due:96, actual:88, leave:8},
+ {cls:'企業華語線上培訓（團體班）', due:120, actual:109, leave:11},
+ {cls:'日語彈性團體直播班 一期', due:64, actual:57, leave:7}
+];
+var OFFLINE_ATTEND = [
+ {cls:'學期班 Lv.5–8 一期', due:180, actual:162, leave:18},
+ {cls:'小組班（4 人）90 分鐘', due:40, actual:35, leave:5}
+];
+var attendKey = 'online';
+function render_teach_attendance(){
+  var content = document.getElementById('reportContent');
+  content.innerHTML = '<div class="chiprow" id="atChips">'+
+    '<button class="active" onclick="attendTab(this,\'online\')">'+TLI_I18N.t('線上','Online')+'</button>'+
+    '<button onclick="attendTab(this,\'offline\')">'+TLI_I18N.t('實體','In-Person')+'<span class="phase2-pill">'+TLI_I18N.t('第二階段','Phase 2')+'</span></button></div>'+
+    '<div class="filterbar">'+periodFilterHtml('at','2026-09-01','2026-09-30')+
+    '<button class="btn ghost" onclick="reportRequery(\'出席與請假\')">'+TLI_I18N.t('重新取數','Refresh')+'</button>'+
+    '<button class="btn ghost" onclick="reportExport(\'出席與請假\')">'+TLI_I18N.t('匯出 CSV','Export CSV')+'</button></div>'+
+    '<div id="atBody"></div>';
+  attendKey = 'online';
+  renderAttendBody();
+}
+function attendTab(btn, key){
+  attendKey = key;
+  btn.parentNode.querySelectorAll('button').forEach(function(b){b.classList.remove('active');});
+  btn.classList.add('active');
+  renderAttendBody();
+}
+function renderAttendBody(){
+  var el = document.getElementById('atBody');
+  var rows = attendKey==='online' ? ONLINE_ATTEND : OFFLINE_ATTEND;
+  var hint = attendKey==='online' ? TLI_I18N.t('線上班務資料，由 Hub 直接管理。','Online class data is managed directly by the Hub.') : TLI_I18N.t('實體班務目前由 Park 管理，二階段隨 Park 整併進 Hub。','In-person class operations are currently managed by Park; this will merge into the Hub in Phase 2 as Park is integrated.');
+  el.innerHTML = '<div class="subhint">'+hint+'</div>'+tableHtml(
+    trH([['班級','Class'],['應到','Due'],['實到','Actual'],['出席率','Attendance Rate'],['請假數','Leave Count']]),
+    rows.map(function(r){ return [r.cls, r.due, r.actual, Math.round(r.actual/r.due*1000)/10+'%', r.leave]; })
+  );
+}
+
+/* ================= 財務群 ================= */
+var COLLECTION_ROWS = [
+ {method:'線上收款', mode:'直營', amount:3980000},
+ {method:'線上收款', mode:'代理', amount:191000},
+ {method:'線下匯款', mode:'經銷', amount:2680000}
+];
+function render_fin_collection(){
+  var total = COLLECTION_ROWS.reduce(function(s,r){return s+r.amount;},0);
+  var html = '<div class="filterbar">'+periodFilterHtml('fc','2026-07-01','2026-09-30')+
+    '<button class="btn ghost" onclick="reportRequery(\'收款彙總\')">'+TLI_I18N.t('重新取數','Refresh')+'</button>'+
+    '<button class="btn ghost" onclick="reportExport(\'收款彙總\')">'+TLI_I18N.t('匯出 CSV','Export CSV')+'</button></div>';
+  html += '<div class="subhint">'+TLI_I18N.t('客戶付錢給 TLI 走線上收款（直營／代理）；TLI 與經銷商之間的錢走線下匯款，後台只記錄不經手。','Students pay TLI via online payment (Direct/Agent); money between TLI and distributors moves via offline remittance; the back office only records it, never handles the funds.')+'</div>';
+  html += tableHtml(trH([['收款方式','Collection Method'],['合作模式','Cooperation Mode'],['金額','Amount'],['佔比','Share']]), COLLECTION_ROWS.map(function(r){
+    return [TLI_I18N.t(r.method, r.method==='線上收款'?'Online Payment':'Offline Remittance'), TLI_I18N.t(r.mode, MODE_EN[r.mode]), fmtNT(r.amount), Math.round(r.amount/total*100)+'%'];
+  }), [TLI_I18N.t('合計','Total'),'', fmtNT(total), '100%']);
+  document.getElementById('reportContent').innerHTML = html;
+}
+var billingCurrentKey = 'tw';
+var INVOICE_TW = CATEGORIES.map(function(c){
+  var sc = SALES_BY_CATEGORY.find(function(x){return x.id===c.id;});
+  return {id:c.id, name:c.name, orders: Math.round(sc.revenue/6500), revenue:sc.revenue};
+});
+var INVOICE_OS = [
+ {currency:'USD', entity:'企業客戶（示例）', orders:3, amount:12800},
+ {currency:'JPY', entity:'企業客戶（示例）', orders:2, amount:1860000}
+];
+function render_fin_invoice(){
+  var content = document.getElementById('reportContent');
+  content.innerHTML = '<div class="chiprow" id="billChips">'+
+    '<button class="active" onclick="billTab(this,\'tw\')">'+TLI_I18N.t('台灣主體','Taiwan Entity')+'</button>'+
+    '<button onclick="billTab(this,\'os\')">'+TLI_I18N.t('海外公司（登記國待定）','Overseas Entity (Country TBD)')+'</button></div>'+
+    '<div class="subhint">'+TLI_I18N.t('依開票主體拆分營收與訂單數；海外主體以原幣別呈現，換算金額待月結匯率結算後產出。','Revenue and order counts are split by billing entity; the overseas entity is shown in its original currency — the converted amount is produced after month-end FX settlement.')+'</div>'+
+    '<div id="billingArea"></div>'+
+    '<div style="margin-top:10px"><button class="btn ghost" onclick="reportExport(\'開票統計\')">'+TLI_I18N.t('匯出 CSV','Export CSV')+'</button></div>';
+  billTab(null, 'tw');
+}
+function billTab(btn, key){
+  billingCurrentKey = key;
+  if (btn){
+    btn.parentNode.querySelectorAll('button').forEach(function(b){b.classList.remove('active');});
+    btn.classList.add('active');
+  } else {
+    var chips = document.querySelectorAll('#billChips button');
+    chips.forEach(function(b,i){ b.classList.toggle('active', (key==='tw'&&i===0)||(key==='os'&&i===1)); });
+  }
+  var area = document.getElementById('billingArea');
+  if (key==='tw'){
+    var total = INVOICE_TW.reduce(function(s,c){return s+c.revenue;},0);
+    var totalOrders = INVOICE_TW.reduce(function(s,c){return s+c.orders;},0);
+    area.innerHTML = tableHtml(trH([['產品分類','Product Category'],['訂單數','Orders'],['營收（NT$）','Revenue (NT$)'],['','']]), INVOICE_TW.map(function(c){
+      return [catLabel(c.id,c.name), c.orders, fmtNT(c.revenue), '<span class="linklike" onclick=\'showDetailModal("'+catLabel(c.id,c.name)+'",[["'+TLI_I18N.t('開票主體','Billing Entity')+'","'+TLI_I18N.t('TLI 台灣總部','TLI Taiwan HQ')+'"],["'+TLI_I18N.t('幣別','Currency')+'","'+TLI_I18N.t('新台幣（TWD）','New Taiwan Dollar (TWD)')+'"],["'+TLI_I18N.t('營收','Revenue')+'","'+fmtNT(c.revenue)+'"]])\'>'+TLI_I18N.t('看明細','View Details')+'</span>'];
+    }), [TLI_I18N.t('合計','Total'), totalOrders, fmtNT(total), '']) +
+    '<div class="hint">'+TLI_I18N.t('開票主體：TLI 台灣總部，幣別：新台幣（TWD）。','Billing entity: TLI Taiwan HQ, currency: New Taiwan Dollar (TWD).')+'</div>';
+  } else {
+    area.innerHTML = tableHtml(trH([['幣別','Currency'],['企業客戶','Enterprise Customer'],['訂單數','Orders'],['原幣金額','Original Amount'],['換算金額（NT$）','Converted Amount (NT$)'],['','']]), INVOICE_OS.map(function(o){
+      return [o.currency, o.entity, o.orders, o.currency+' '+o.amount.toLocaleString(), TLI_I18N.t('依月結匯率','Pending Month-End FX'),
+        '<span class="linklike" onclick=\'showDetailModal("'+o.entity+'",[["'+TLI_I18N.t('開票主體','Billing Entity')+'","'+TLI_I18N.t('海外公司（登記國待定）','Overseas Entity (Country TBD)')+'"],["'+TLI_I18N.t('幣別','Currency')+'","'+o.currency+'"],["'+TLI_I18N.t('原幣金額','Original Amount')+'","'+o.currency+' '+o.amount.toLocaleString()+'"]])\'>'+TLI_I18N.t('看明細','View Details')+'</span>'];
+    })) +
+    '<div class="hint">'+TLI_I18N.t('開票主體：海外公司（登記國待定）。換算金額待月結匯率結算後產出。','Billing entity: Overseas Entity (country TBD). The converted amount is produced after month-end FX settlement.')+'</div>';
+  }
+}
+var STUDENT_OVERDUE = [
+ {order:'ORD-2026-0102', student:'林建宏', project:'PRJ-B2C-TW', amount:13900, days:5},
+ {order:'ORD-2026-0064', student:'李冠廷', project:'PRJ-B2C-TW', amount:8200, days:12},
+ {order:'ORD-2026-0058', student:'周佳蓉', project:'PRJ-ENT-JP', amount:21000, days:27}
+];
+var PARTNER_AGING = [
+ {partner:'韓國語言留學社', type:'經銷', item:'尾款（9 月開課）', amount:96000, days:3, status:'逾期'},
+ {partner:'中東教育顧問公司', type:'代理', item:'佣金（2026 H1）', amount:64000, days:0, status:'即將到期'}
+];
+function agingStatusBadge(s){ return s==='逾期' ? '<span class="badge red">'+TLI_I18N.t('逾期','Overdue')+'</span>' : '<span class="badge orange">'+TLI_I18N.t('即將到期','Due Soon')+'</span>'; }
+function render_fin_aging(){
+  var html = '<div class="filterbar">'+periodFilterHtml('fa','2026-09-01','2026-09-27')+
+    '<button class="btn ghost" onclick="reportRequery(\'應收帳齡\')">'+TLI_I18N.t('重新取數','Refresh')+'</button>'+
+    '<button class="btn ghost" onclick="reportExport(\'應收帳齡\')">'+TLI_I18N.t('匯出 CSV','Export CSV')+'</button></div>';
+  html += '<div class="sectiontitle">'+TLI_I18N.t('學員分期','Student Installments')+'</div>'+tableHtml(trH([['訂單編號','Order No.'],['學員','Student'],['所屬專案','Project'],['逾期金額','Overdue Amount'],['逾期天數','Days Overdue']]), STUDENT_OVERDUE.map(function(r){
+    return [r.order, r.student, r.project, fmtNT(r.amount), '<span class="badge red">'+r.days+' '+TLI_I18N.t('天','days')+'</span>'];
+  }));
+  html += '<div class="sectiontitle">'+TLI_I18N.t('夥伴款項','Partner Payments')+'</div>'+tableHtml(trH([['夥伴','Partner'],['型態','Type'],['項目','Item'],['金額','Amount'],['狀態','Status']]), PARTNER_AGING.map(function(r){
+    return [r.partner, TLI_I18N.t(r.type, MODE_EN[r.type]), r.item, fmtNT(r.amount), agingStatusBadge(r.status)];
+  }));
+  document.getElementById('reportContent').innerHTML = html;
+}
+
+/* ================= 報表清單註冊與五群切換 ================= */
+var REPORT_GROUPS = {
+  sales: {label:'銷售', reports:[
+    {id:'sales_by_project', name:'依專案', render:render_sales_by_project},
+    {id:'sales_by_mode', name:'依合作模式', render:render_sales_by_mode},
+    {id:'sales_by_category', name:'依產品分類', render:render_sales_by_category},
+    {id:'sales_by_market', name:'依市場', render:render_sales_by_market}
+  ]},
+  partner: {label:'合作夥伴', reports:[
+    {id:'partner_performance', name:'夥伴業績總表', render:render_partner_performance},
+    {id:'partner_agent', name:'代理銷售報表', render:render_partner_agent},
+    {id:'partner_rebate', name:'經銷返佣試算', render:render_partner_rebate}
+  ]},
+  org: {label:'組織客戶', reports:[
+    {id:'org_enterprise', name:'企業使用狀況', render:render_org_enterprise},
+    {id:'org_school', name:'專案合作使用狀況', render:render_org_school}
+  ]},
+  teaching: {label:'教學', reports:[
+    {id:'teach_teachers', name:'教師授課統計', render:render_teach_teachers},
+    {id:'teach_progress', name:'學員學習進度', render:render_teach_progress},
+    {id:'teach_attendance', name:'出席與請假', render:render_teach_attendance}
+  ]},
+  finance: {label:'財務', reports:[
+    {id:'fin_collection', name:'收款彙總', render:render_fin_collection},
+    {id:'fin_invoice', name:'開票統計', render:render_fin_invoice},
+    {id:'fin_aging', name:'應收帳齡', render:render_fin_aging}
+  ]}
+};
+var currentGroup = 'sales';
+var currentReportId = 'sales_by_project';
+function selectReportGroup(key){
+  currentGroup = key;
+  document.querySelectorAll('#reportGroupNav .rg-item').forEach(function(b){
+    b.classList.toggle('active', b.dataset.group===key);
+  });
+  currentReportId = REPORT_GROUPS[key].reports[0].id;
+  renderReportListNav();
+  renderCurrentReport();
+}
+function renderReportListNav(){
+  var reports = REPORT_GROUPS[currentGroup].reports;
+  document.getElementById('reportListNav').innerHTML = reports.map(function(r){
+    return '<button class="replist-item'+(r.id===currentReportId?' active':'')+'" onclick="selectReport(\''+r.id+'\')">'+reportLabelT(r.name)+'</button>';
+  }).join('');
+}
+function selectReport(id){
+  currentReportId = id;
+  renderReportListNav();
+  renderCurrentReport();
+}
+function renderCurrentReport(){
+  var report = REPORT_GROUPS[currentGroup].reports.find(function(r){return r.id===currentReportId;});
+  if (report) report.render();
+}
+renderReportListNav();
+renderCurrentReport();
+/* 語言切換時：先重繪報表清單（含目前語言下的名稱），再重繪目前選中的報表內容 */
+if (window.TLI_I18N) { TLI_I18N.onRefresh(renderReportListNav); TLI_I18N.onRefresh(renderCurrentReport); TLI_I18N.onRefresh(renderNotifPanel); TLI_I18N.init(); }
+
+/* ================= ESC 鍵關閉目前開啟中的 modal ================= */
+document.addEventListener('keydown', function(e){
+  if (e.key !== 'Escape') return;
+  var el = document.getElementById('detailModal');
+  if (el && el.classList.contains('open')) el.classList.remove('open');
+});
+</script>
+<script>
+/* 20260929 死按鈕修正：側欄使用者選單（姓名／大頭貼）點擊開合；此頁樣板漏帶 toggleSuMenu */
+window.toggleSuMenu = window.toggleSuMenu || function(ev){
+  if (ev) ev.stopPropagation();
+  var m = document.getElementById('suMenu'); if (!m) return;
+  ['notifPanel','avatarMenu'].forEach(function(id){ var e = document.getElementById(id); if (e) e.classList.remove('open'); });
+  m.classList.toggle('open');
+};
+document.addEventListener('click', function(ev){
+  var m = document.getElementById('suMenu');
+  if (m && !m.contains(ev.target)) m.classList.remove('open');
+});
+</script>
+</body>
+</html>

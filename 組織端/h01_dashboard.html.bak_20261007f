@@ -1,0 +1,697 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<title>HR Dashboard｜TLI Hub 組織端</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+:root{--navy:#1B4E8C;--navy-dark:#123a68;--orange:#E8792B;--teal:#0F9B79;
+--g50:#F5F7FA;--g200:#E4E7EC;--g500:#667085;--g900:#101828;}
+*{box-sizing:border-box;}
+html,body{overflow-x:hidden;}
+body{margin:0;font-family:"Noto Sans TC","Microsoft JhengHei",system-ui,-apple-system,sans-serif;
+background:var(--g50);color:var(--g900);}
+a{color:var(--navy);}
+.app{display:flex;min-height:100vh;width:100%;background:#fff;}
+.sidebar{width:260px;flex-shrink:0;background:#fff;padding:0;display:flex;flex-direction:column;height:100vh;
+overflow:hidden;border-right:1px solid var(--g200);position:sticky;top:0;align-self:flex-start;transition:left .2s;}
+.sidebar .brand{padding:16px 20px 14px;font-size:14px;font-weight:700;display:flex;flex-direction:column;gap:4px;
+border-bottom:1px solid var(--g200);margin-bottom:6px;text-decoration:none;color:inherit;cursor:pointer;flex-shrink:0;}
+.sidebar .brand-logo{height:28px;width:auto;object-fit:contain;object-position:left center;display:block;}
+.sidebar .brand small{display:block;font-weight:400;font-size:12px;color:var(--g500);margin-top:12px;}
+.sidebar nav{flex:1 1 auto;overflow-y:auto;overflow-x:hidden;padding:8px 8px 8px;}
+.sidebar .sec-label{padding:0 12px;margin:12px 0 8px;font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:#98A2B3;font-weight:600;}
+.sidebar .sec-label:first-child{margin-top:4px;}
+.sidebar nav a{display:flex;align-items:center;gap:12px;height:40px;padding:0 14px;margin:2px 0;border-radius:8px;
+font-size:14px;color:var(--g900);text-decoration:none;}
+.sidebar nav a .navicon{flex-shrink:0;color:var(--g500);}
+.sidebar nav a:hover{background:var(--g50);}
+.sidebar nav a.active{background:#E6EEF8;color:var(--navy);font-weight:600;}
+.sidebar nav a.active .navicon{color:var(--navy);}
+.sidebar-user{display:block;border-top:1px solid var(--g200);padding:10px 12px;margin:0;flex-shrink:0;position:relative;}
+.su-row{display:flex;align-items:center;gap:10px;cursor:pointer;min-width:0;}
+.su-avatar{width:36px;height:36px;border-radius:50%;background:var(--navy);color:#fff;display:flex;
+align-items:center;justify-content:center;font-size:13px;font-weight:600;flex-shrink:0;}
+.su-info{flex:1;min-width:0;display:flex;flex-direction:row;align-items:center;gap:8px;line-height:1.2;}
+.su-name{font-size:14px;font-weight:600;color:var(--g900);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.su-roletag{font-size:12px;background:#E6EEF8;color:var(--navy);padding:1px 7px;border-radius:8px;white-space:nowrap;flex-shrink:0;}
+.su-chevron{color:var(--g500);flex-shrink:0;}
+.su-menu{top:auto;bottom:60px;left:10px;right:10px;width:auto;padding:8px;}
+.su-menu a{display:block;padding:8px 10px;font-size:13px;color:var(--g900);text-decoration:none;border-radius:6px;}
+.su-menu a:hover{background:var(--g50);}
+.main{flex:1;padding:26px 32px 60px;min-width:0;}
+.topbar{display:flex;align-items:center;justify-content:space-between;padding:0 32px;height:56px;
+border-bottom:1px solid var(--g200);position:sticky;top:0;background:#fff;z-index:40;margin:-26px -32px 22px;gap:14px;}
+.hamburger{display:none;background:none;border:none;font-size:19px;cursor:pointer;color:var(--g900);padding:4px 6px;margin-right:4px;}
+.topbar .tb-title{font-size:15px;font-weight:600;color:var(--g900);flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.topbar .tb-actions{display:flex;align-items:center;gap:14px;position:relative;flex-shrink:0;}
+.tb-search{display:flex;align-items:center;gap:6px;background:var(--g50);border:1px solid var(--g200);border-radius:8px;
+padding:6px 10px;width:180px;}
+.tb-search input{border:none;background:none;outline:none;font-size:12.5px;font-family:inherit;width:100%;color:var(--g900);}
+.tb-bellbtn{position:relative;background:none;border:none;cursor:pointer;font-size:17px;padding:4px;line-height:1;}
+.tb-dot{position:absolute;top:0;right:0;width:7px;height:7px;background:#C0392B;border-radius:50%;display:none;}
+.tb-avatarbtn{width:30px;height:30px;border-radius:50%;background:var(--navy);color:#fff;border:none;
+cursor:pointer;font-size:13px;font-weight:600;flex-shrink:0;}
+.tb-panel{display:none;position:absolute;top:44px;right:0;background:#fff;border:1px solid var(--g200);
+border-radius:8px;box-shadow:0 8px 24px rgba(16,24,40,.16);z-index:50;}
+.tb-panel.open{display:block;}
+.tb-notifpanel{width:300px;padding:10px;}
+.tb-notifpanel .tn-head{display:flex;justify-content:space-between;align-items:center;font-size:12.5px;
+padding:4px 6px 8px;border-bottom:1px solid var(--g200);margin-bottom:6px;}
+.tb-notifpanel .tn-head a{font-size:11.5px;cursor:pointer;}
+.tb-notifitem{padding:8px 6px;border-radius:6px;font-size:12.5px;line-height:1.5;}
+.tb-notifitem:hover{background:var(--g50);}
+.tb-notifitem.unread{background:#EEF3FA;}
+.tb-notifitem .tn-t{color:var(--g500);font-size:11px;margin-top:2px;}
+.tb-avatarmenu{width:150px;padding:6px;}
+.tb-avatarmenu a{display:block;padding:8px 10px;font-size:13px;color:var(--g900);text-decoration:none;border-radius:6px;}
+.tb-avatarmenu a:hover{background:var(--g50);}
+.sidebar-backdrop{display:none;position:fixed;inset:0;background:rgba(16,24,40,.4);z-index:110;}
+.pagehead{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:16px;gap:16px;flex-wrap:wrap;}
+.pagehead h1{font-size:20px;margin:0;}
+.pagehead .desc{font-size:12.5px;color:var(--g500);margin-top:5px;line-height:1.6;}
+.btn{display:inline-block;background:var(--navy);color:#fff;border:none;padding:8px 14px;
+border-radius:6px;font-size:13px;cursor:pointer;text-decoration:none;white-space:nowrap;font-family:inherit;}
+.btn.orange{background:var(--orange);}
+.btn.teal{background:var(--teal);}
+.btn.ghost{background:#fff;border:1px solid var(--g200);color:var(--g900);}
+.btn.danger{background:#fff;border:1px solid #F0B4B4;color:#C0392B;}
+.btn:disabled{background:var(--g200)!important;color:var(--g500)!important;cursor:not-allowed!important;}
+.card{background:#fff;border:1px solid var(--g200);border-radius:12px;padding:18px;margin-bottom:16px;box-shadow:0 1px 3px rgba(16,24,40,.06);}
+.card h2{font-size:15px;margin:0 0 12px;}
+.tablewrap{overflow-x:auto;max-width:100%;}
+table{width:100%;border-collapse:collapse;font-size:13px;}
+th{text-align:left;background:var(--g50);color:var(--g500);font-weight:600;padding:10px 12px;
+border-bottom:1px solid var(--g200);white-space:nowrap;}
+td{padding:10px 12px;border-bottom:1px solid var(--g200);white-space:nowrap;}
+.badge{display:inline-block;padding:2px 9px;border-radius:10px;font-size:11.5px;font-weight:600;white-space:nowrap;}
+.badge.blue{background:#E7EEF8;color:var(--navy);}
+.badge.green{background:#E4F5EE;color:var(--teal);}
+.badge.orange{background:#FCE9DA;color:var(--orange);}
+.badge.grey{background:var(--g200);color:var(--g500);}
+.badge.red{background:#FBE7E7;color:#C0392B;}
+.note{font-size:12px;color:#7a5b1f;background:#FFF8EE;border:1px solid #F3DFB8;padding:9px 11px;border-radius:6px;}
+.formrow{margin-bottom:13px;}
+.formrow label{display:block;font-size:12.5px;color:var(--g500);margin-bottom:4px;}
+.formrow input,.formrow select,.formrow textarea{width:100%;padding:7px 10px;border:1px solid var(--g200);
+border-radius:6px;font-size:13px;box-sizing:border-box;font-family:inherit;}
+.small{font-size:12px;color:var(--g500);}
+.hint{font-size:11.5px;color:var(--g500);margin-top:3px;}
+.modal-mask{display:none;position:fixed;inset:0;background:rgba(16,24,40,.42);z-index:160;align-items:center;justify-content:center;}
+.modal-mask.open{display:flex;}
+.modal{background:#fff;border-radius:10px;width:460px;max-width:90vw;max-height:85vh;overflow:auto;padding:22px;}
+.modal.wide{width:640px;}
+.modal h3{margin-top:0;font-size:16px;}
+.toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(20px);
+background:#101828;color:#fff;padding:10px 20px;border-radius:8px;font-size:13px;
+opacity:0;pointer-events:none;transition:.2s;z-index:200;max-width:80vw;text-align:center;}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
+/* ---- HR 首頁專用 ---- */
+.enthead{display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:10px;margin-bottom:4px;}
+.enthead .entname{font-size:17px;font-weight:700;}
+.enthead .entperiod{font-size:12.5px;color:var(--g500);margin-top:3px;}
+.statgrid4{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin:14px 0 4px;}
+.statgrid2{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;}
+.statbox{border:1px solid var(--g200);border-radius:8px;padding:14px;position:relative;}
+.statbox .num{font-size:22px;font-weight:700;color:var(--navy);}
+.statbox .lbl{font-size:11.5px;color:var(--g500);margin-top:4px;}
+.statbox .sub-note{font-size:11px;color:var(--g500);margin-top:3px;}
+.statbox .static-tag{display:inline-block;margin-left:6px;font-size:10px;color:#98A2B3;font-weight:400;}
+.info-btn{position:absolute;top:8px;right:8px;background:none;border:none;padding:2px;cursor:pointer;color:var(--g500);line-height:0;}
+.info-btn svg{width:13px;height:13px;display:block;}
+.info-pop{display:none;position:absolute;top:26px;right:0;width:220px;background:#fff;border:1px solid var(--g200);
+border-radius:8px;box-shadow:0 8px 24px rgba(16,24,40,.16);padding:10px 12px;font-size:11.5px;color:var(--g900);
+line-height:1.6;z-index:35;text-align:left;font-weight:400;}
+.info-pop.open{display:block;}
+.pool-breakdown{margin-top:8px;font-size:11.5px;color:var(--g500);line-height:1.8;}
+.pool-breakdown b{color:var(--g900);font-weight:600;}
+.filterrow{display:flex;gap:12px;flex-wrap:wrap;align-items:flex-end;margin-bottom:6px;}
+.filterrow .ff{min-width:160px;flex:1;}
+.filterrow .ff label{display:block;font-size:11.5px;color:var(--g500);margin-bottom:4px;}
+.filterrow select{width:100%;padding:7px 10px;border:1px solid var(--g200);border-radius:6px;font-size:13px;font-family:inherit;background:#fff;}
+.chartgrid{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
+.charthead{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:8px;}
+.charthead .ctitle{font-size:13.5px;font-weight:600;}
+.charthead .cval{font-size:12.5px;color:var(--g500);}
+.concernlist{display:flex;flex-direction:column;gap:0;}
+.concernitem{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:11px 4px;
+border-bottom:1px dashed var(--g200);text-decoration:none;color:inherit;}
+.concernitem:last-child{border-bottom:none;}
+.concernitem:hover{background:var(--g50);}
+.concernitem .ci-main{display:flex;flex-direction:column;gap:2px;min-width:0;}
+.concernitem .ci-name{font-size:13.5px;font-weight:600;color:var(--g900);}
+.concernitem .ci-sub{font-size:12px;color:var(--g500);}
+.concernitem .ci-val{font-size:13px;font-weight:600;flex-shrink:0;}
+.concernitem .ci-arrow{color:var(--g500);flex-shrink:0;}
+.emptylist{padding:16px 4px;font-size:12.5px;color:var(--g500);text-align:center;}
+.fbsum-head{display:flex;justify-content:space-between;align-items:baseline;gap:10px;flex-wrap:wrap;margin-bottom:4px;}
+.fbsum-head h2{margin:0;}
+.fbsum-head a{font-size:12.5px;text-decoration:none;white-space:nowrap;}
+.fbsum-head a:hover{text-decoration:underline;}
+.fbsum-row{padding:10px 4px;border-bottom:1px dashed var(--g200);font-size:13px;}
+.fbsum-row:last-child{border-bottom:none;}
+.fbsum-meta{display:flex;justify-content:space-between;gap:10px;font-weight:600;margin-bottom:3px;}
+.fbsum-meta .fbsum-date{font-weight:400;color:var(--g500);font-size:12px;flex-shrink:0;}
+.fbsum-text{color:var(--g900);line-height:1.6;}
+/* ---- 期間篩選 chip（併入 m12 企業學習報告內容）---- */
+.chip-row{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px;}
+.chip{border:1px solid var(--g200);background:#fff;color:var(--g500);font-size:12.5px;font-weight:700;
+padding:7px 14px;border-radius:20px;cursor:pointer;font-family:inherit;}
+.chip.selected{border-color:var(--navy);background:#E6EEF8;color:var(--navy);}
+.periodnote{font-size:12px;color:var(--g500);margin-top:8px;}
+.statbox .delta{font-size:11px;font-weight:700;margin-top:4px;display:inline-flex;align-items:center;gap:2px;}
+.statbox .delta svg{width:11px;height:11px;}
+.statbox .delta.up{color:var(--teal);}
+.statbox .delta.down{color:#C0392B;}
+/* ---- 企業時數池卡（併入 m12）---- */
+.statbox.poolbox{background:#EAF6F2;border-color:#BEE6D9;}
+.statbox.poolbox .num{color:#075A45;}
+.statbox.poolbox .lbl{color:#0B6B52;}
+.orglink{font-size:12px;white-space:nowrap;}
+@media (max-width:1023px){
+.hamburger{display:inline-flex;}
+.sidebar{position:fixed;left:-260px;top:0;height:100vh;width:260px;z-index:120;}
+.sidebar.open{left:0;}
+.sidebar-backdrop.open{display:block;}
+.app{width:100%;}
+.main{padding:16px 16px 40px;}
+.topbar{padding:0 16px;margin:-16px -16px 18px;}
+.tb-search{display:none;}
+.statgrid4{grid-template-columns:1fr 1fr;}
+.statgrid2{grid-template-columns:1fr;}
+.chartgrid{grid-template-columns:1fr;}
+}
+
+</style>
+</head>
+<body>
+<div class="app">
+<div class="sidebar" id="sidebar">
+<a class="brand" href="h01_dashboard.html"><img class="brand-logo" src="../assets/tli-logo.svg" alt="TLI"><small data-i18n="brand.enterprisePortal">企業管理後台</small></a>
+<nav>
+<div class="sec-label" data-i18n="nav_h.groupLabel">企業管理</div>
+<a data-nav="h01" class="active" href="h01_dashboard.html"><svg class="navicon" width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="6" height="6" rx="1"/><rect x="11" y="3" width="6" height="6" rx="1"/><rect x="3" y="11" width="6" height="6" rx="1"/><rect x="11" y="11" width="6" height="6" rx="1"/></svg><span data-i18n="nav_h.h01">儀表板</span></a>
+<a data-nav="h02" href="h02_employees.html"><svg class="navicon" width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="7" cy="7" r="2.5"/><path d="M2.5 16c0-2.5 2-4 4.5-4s4.5 1.5 4.5 4"/><circle cx="14" cy="7.5" r="2"/><path d="M13 12.2c1.8.2 3.2 1.6 3.5 3.8"/></svg><span data-i18n="nav_h.h02">員工管理</span></a>
+<a data-nav="h03" href="h03_reports.html"><svg class="navicon" width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><line x1="4" y1="17" x2="4" y2="10"/><line x1="10" y1="17" x2="10" y2="5"/><line x1="16" y1="17" x2="16" y2="12"/></svg><span data-i18n="nav_h.h03">學習報告</span></a>
+<a data-nav="h05" href="h05_contract.html"><svg class="navicon" width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2h5l3 3v11a1 1 0 0 1-1 1H6a1 1 0 0 1-1-1V3a1 1 0 0 1 1-1z"/><path d="M11 2v3h3"/><line x1="7.5" y1="10" x2="12.5" y2="10"/><line x1="7.5" y1="13" x2="12.5" y2="13"/></svg><span data-i18n="nav_h.h05">合約與時數池</span></a>
+<a data-nav="h06" href="h06_appeals.html"><svg class="navicon" width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M10 2.3 16 4.5v4.3c0 4-2.4 6.8-6 8.2-3.6-1.4-6-4.2-6-8.2V4.5z"/><polyline points="7.2 9.8 9.2 11.8 13 7.8"/></svg><span data-i18n="nav_h.h06">請假與申訴審核</span></a>
+<a data-nav="h07" href="h07_teacher_comments.html"><svg class="navicon" width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M3 5.5a1.5 1.5 0 0 1 1.5-1.5h11A1.5 1.5 0 0 1 17 5.5v6A1.5 1.5 0 0 1 15.5 13H9l-3.5 3v-3H4.5A1.5 1.5 0 0 1 3 11.5z"/><line x1="6.5" y1="7" x2="13.5" y2="7"/><line x1="6.5" y1="9.5" x2="11" y2="9.5"/></svg><span data-i18n="nav_h.h07">老師評語</span></a>
+<a data-nav="h04" href="h04_api.html"><svg class="navicon" width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><polyline points="7 6 3 10 7 14"/><polyline points="13 6 17 10 13 14"/></svg><span data-i18n="nav_h.h04">資料串接</span></a>
+</nav>
+<div class="sidebar-user" id="sidebarUser">
+<div class="su-row" onclick="toggleSuMenu(event)"><span class="su-avatar">陳</span><span class="su-info"><span class="su-name">陳雅婷 Sarah Chen</span><span class="su-roletag" data-i18n="role.enterpriseAdmin">企業管理者</span></span>
+<svg class="su-chevron" width="14" height="14" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 8 10 12 14 8"/></svg></div>
+<div class="tb-panel su-menu" id="suMenu"><a href="javascript:void(0)" onclick="toast(TLI_I18N.t('功能建置中，敬請期待','This feature is under development'))" data-i18n="common.settings">個人設定</a><a href="../公開網站/p01_home.html" data-i18n="common.gotoWebsite">前往官網</a><a href="javascript:void(0)" onclick="doLogout()" data-i18n="common.logout">登出</a></div>
+</div>
+</div>
+
+<div class="main">
+<div class="topbar">
+<button class="hamburger" onclick="toggleSidebar()" aria-label="開啟選單" data-i18n-aria-label="aria.openMenu"><svg width="18" height="18" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="5.5" x2="17" y2="5.5"/><line x1="3" y1="10" x2="17" y2="10"/><line x1="3" y1="14.5" x2="17" y2="14.5"/></svg></button>
+<div class="tb-title" data-i18n="nav_h.h01">儀表板</div>
+<div class="tb-actions">
+<div class="tb-search"><svg width="15" height="15" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="8.5" cy="8.5" r="5.5"/><line x1="16.5" y1="16.5" x2="12.6" y2="12.6"/></svg><input type="text" placeholder="搜尋員工" data-i18n-placeholder="h01.searchEmp"></div>
+<button class="tb-bellbtn" onclick="toggleNotif(event)" aria-label="通知" data-i18n-aria-label="aria.notifications"><svg width="17" height="17" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M10 2.5c-2.2 0-4 1.8-4 4v2.3c0 .6-.2 1.2-.6 1.7L4 12.5h12l-1.4-2c-.4-.5-.6-1.1-.6-1.7V6.5c0-2.2-1.8-4-4-4z"/><path d="M8.2 15.5a1.8 1.8 0 0 0 3.6 0"/></svg><span class="tb-dot" id="tbDot"></span></button>
+<div class="tb-panel tb-notifpanel" id="notifPanel"></div>
+<button class="tb-avatarbtn" onclick="toggleAvatarMenu(event)" aria-label="使用者選單" data-i18n-aria-label="aria.userMenu">陳</button>
+<div class="tb-panel tb-avatarmenu" id="avatarMenu"><a href="javascript:void(0)" onclick="toast(TLI_I18N.t('功能建置中，敬請期待','This feature is under development'))" data-i18n="common.settings">個人設定</a><a href="../公開網站/p01_home.html" data-i18n="common.gotoWebsite">前往官網</a><a href="javascript:void(0)" onclick="doLogout()" data-i18n="common.logout">登出</a></div>
+</div>
+</div>
+<div class="sidebar-backdrop" id="sidebarBackdrop" onclick="closeSidebar()"></div>
+
+
+<div class="card">
+<div class="enthead">
+<div><div class="entname" id="entName">—</div><div class="entperiod" id="entPeriod">—</div></div>
+</div>
+<div class="chip-row" id="periodChips">
+<button class="chip selected" data-period="thisMonth" onclick="setPeriod('thisMonth',this)" data-i18n="h01.chipThisMonth">本月</button>
+<button class="chip" data-period="lastMonth" onclick="setPeriod('lastMonth',this)" data-i18n="h01.chipLastMonth">上月</button>
+<button class="chip" data-period="custom" onclick="setPeriod('custom',this)" data-i18n="h01.chipCustom">自訂區間</button>
+</div>
+<div class="customrange" id="customRangeWrap" style="display:none;gap:10px;align-items:flex-end;flex-wrap:wrap;margin-top:8px">
+<div style="display:flex;flex-direction:column;gap:3px"><label class="small" for="customStart" data-i18n="h01.lblRangeStart">起</label><input type="date" id="customStart" onchange="onCustomRangeChange()"></div>
+<div style="display:flex;flex-direction:column;gap:3px"><label class="small" for="customEnd" data-i18n="h01.lblRangeEnd">迄</label><input type="date" id="customEnd" onchange="onCustomRangeChange()"></div>
+<div class="small" id="customRangeHint" style="padding-bottom:4px"></div>
+</div>
+<div class="periodnote" id="periodNote">統計區間：2026/08/01－2026/08/28</div>
+<div class="statgrid4" id="kpiGrid" style="margin-top:14px"></div>
+<div class="statgrid2" id="kpiGrid2" style="margin-top:12px"></div>
+<div style="margin-top:12px"><a class="btn ghost" href="h03_reports.html#employees" data-i18n="h01.viewEmpDetail">查看員工明細</a></div>
+</div>
+
+<div class="card">
+<div class="filterrow">
+<div class="ff"><label data-i18n="h01.lblDept">部門</label><select id="fDept" onchange="onFilterChange()"><option value="" data-i18n="h01.optAllDept">全部部門</option></select></div>
+<div class="ff"><label data-i18n="h00.lblTimezone">廠區時區</label><select id="fSite" onchange="onFilterChange()"><option value="" data-i18n="h01.optAllSite">全部廠區</option></select></div>
+<a class="orglink" href="h05_contract.html#org" data-i18n="h01.manageOrgLink">管理部門與廠區</a>
+</div>
+</div>
+
+<div class="chartgrid">
+<div class="card">
+<div class="charthead"><span class="ctitle" data-i18n="h01.attTrendTitle">出席率趨勢</span><span class="cval" id="attTrendVal"></span></div>
+<div id="attChart"></div>
+</div>
+<div class="card">
+<div class="charthead"><span class="ctitle" data-i18n="h01.hoursTrendTitle">每週時數消耗</span><span class="cval" id="hoursTrendVal"></span></div>
+<div id="hoursChart"></div>
+</div>
+</div>
+
+<div class="card">
+<h2 data-i18n="h01.concernTitle">近期需關注</h2>
+<div class="concernlist" id="concernList"></div>
+</div>
+
+<div class="card">
+<div class="fbsum-head"><h2 data-i18n="h01.fbsumTitle">本期老師評語摘要（HR 可見層）</h2><a href="h07_teacher_comments.html" data-i18n="h01.viewAll">查看全部 ›</a></div>
+<div class="small" style="margin:-4px 0 10px" data-i18n="h01.fbsumNote">僅呈現老師評語中的 HR 可見層；學員可見層另存於會員區，不在此顯示。</div>
+<div id="feedbackSumList"></div>
+</div>
+
+</div>
+</div>
+
+<script src="../assets/_i18n_dict.js"></script>
+<script src="../assets/_i18n_dict_org.js"></script>
+<script src="../assets/_i18n.js"></script>
+<script>
+function seededRand(seed){ var x=Math.sin(seed*9301+49297)*233280; return x-Math.floor(x); }
+function addDays(baseStr, days){ var d=new Date(baseStr+'T00:00:00'); d.setDate(d.getDate()+days); return d.toISOString().slice(0,10); }
+function fmtNum(n){ return n.toLocaleString('zh-Hant'); }
+function T(zh, en){ return window.TLI_I18N ? TLI_I18N.t(zh, en) : zh; }
+
+/* ===== 企業與員工示範資料（與 h02、h03 共用同一組產生邏輯，確保跨頁資料一致） ===== */
+var ENTERPRISE_NAME = '範例半導體股份有限公司';
+var CONTRACT_START = '2026-01-01', CONTRACT_END = '2026-12-31';
+/* 部門／廠區改由企業自行維護（見 h05 合約頁「部門與廠區」分頁），此處為該設定的示範資料 */
+var ORG_SITES = [
+  {id:'tw', name:'台灣總部', tz:'UTC+8（台灣標準時間）'},
+  {id:'us', name:'美國廠區', tz:'UTC-7（美國西部時間）'},
+  {id:'jp', name:'日本廠區', tz:'UTC+9（日本標準時間）'}
+];
+var ORG_DEPTS = ['業務部','研發部','廠務部','人資部','製造部'];
+/* 姓名池與 h02、h03、h05、h07 使用同一份字面常數（不含「陳雅婷」，避免與登入中的 HR 本人撞名），
+   同一組演算法＋同一份常數，確保同一個 emp id 在各頁顯示同一個姓名 */
+var TW_NAMES = ['王建宏','林佳蓉','陳志明','張淑芬','李俊傑','黃詩涵','吳承翰','劉美玲','蔡文彬','許雅婷','郭柏翰','楊佩珊'];
+var US_NAMES = ['John Miller','Emily Tran','David Park','Rachel Kim','Michael Brown','Sophia Garcia','Kevin Lee','Laura Chen','Daniel Wright','Olivia Martinez','Brian Wu','Natalie Scott'];
+var JP_NAMES = ['田中 涼子','佐藤 健一','鈴木 美咲','高橋 大輔','伊藤 由美','渡辺 翔太','中村 直樹','小林 愛','加藤 拓也','山本 麻衣','斉藤 亮','松本 恵'];
+var NAME_POOLS = [TW_NAMES, US_NAMES, JP_NAMES];
+var FEEDBACK_POOL = [
+  '口語表達進步明顯，能主動用中文提問。',
+  '聽力理解穩定，建議加強生產線相關詞彙的口說練習。',
+  '出席穩定，作業按時繳交，發音仍需加強聲調。',
+  '本月因出差請假兩次，仍保持課前預習習慣。',
+  '閱讀理解進步快，寫作部分句型變化可以再豐富。',
+  '課堂互動積極，建議加強書面表達的用詞精準度。'
+];
+function makeEmployee(i){
+  var siteIdx = i % ORG_SITES.length;
+  var site = ORG_SITES[siteIdx];
+  var pool = NAME_POOLS[siteIdx];
+  var name = pool[Math.floor(i/ORG_SITES.length) % pool.length];
+  var r1=seededRand(i*7+11), r2=seededRand(i*11+13), r3=seededRand(i*13+17), r4=seededRand(i*17+19);
+  var dept = ORG_DEPTS[i % ORG_DEPTS.length];
+  var status = r1 < 0.92 ? '在學' : '停用';
+  var attendance = 55 + Math.floor(r2*45);
+  var hours = 20 + Math.floor(r3*140);
+  var emailName = name.toLowerCase().replace(/[^a-z]/g,'').slice(0,10);
+  var email = (emailName ? emailName : 'emp'+i) + '@example-semi.com';
+  return {
+    id:'emp'+i, name:name, email:email, dept:dept, site:site.name, tz:site.tz,
+    status:status, hours:hours, attendance:attendance,
+    joined: addDays('2026-01-01', Math.floor(r4*200)),
+    skills:{ listen:30+Math.floor(seededRand(i*3+2)*65), speak:30+Math.floor(seededRand(i*5+4)*65),
+             read:30+Math.floor(seededRand(i*9+6)*65), write:30+Math.floor(seededRand(i*15+8)*65) },
+    score:55+Math.floor(seededRand(i*19+10)*45),
+    feedback: FEEDBACK_POOL[i % FEEDBACK_POOL.length],
+    feedbackDate: addDays('2026-09-08', -Math.floor(seededRand(i*31+21)*21))
+  };
+}
+var EMP_COUNT = 26;
+var EMPLOYEES = []; for (var ii=0; ii<EMP_COUNT; ii++) EMPLOYEES.push(makeEmployee(ii));
+
+/* ===== 頁首：企業名稱與合約期間 ===== */
+document.getElementById('entName').textContent = ENTERPRISE_NAME;
+function renderEntPeriod(){ document.getElementById('entPeriod').textContent = T('合約期間：','Contract Period: ')+CONTRACT_START+' ～ '+CONTRACT_END; }
+renderEntPeriod();
+if (window.TLI_I18N) TLI_I18N.onRefresh(renderEntPeriod);
+(function initCustomRange(){
+  var sEl=document.getElementById('customStart'), eEl=document.getElementById('customEnd');
+  sEl.min=eEl.min=CONTRACT_START; sEl.max=eEl.max=CONTRACT_END;
+  sEl.value='2026-06-01'; eEl.value='2026-06-30';
+})();
+function renderRangeHint(){ document.getElementById('customRangeHint').textContent=T('可選範圍限合約期間內（','The selectable range is limited to the contract period (')+CONTRACT_START+' ～ '+CONTRACT_END+T('）。',').'); }
+renderRangeHint();
+if (window.TLI_I18N) TLI_I18N.onRefresh(renderRangeHint);
+
+/* ===== 篩選下拉：部門／廠區（選項讀取 ORG_DEPTS／ORG_SITES，企業可於合約頁自行維護） ===== */
+(function initFilterOptions(){
+  var dsel = document.getElementById('fDept');
+  ORG_DEPTS.forEach(function(d){ var o=document.createElement('option'); o.value=d; o.textContent=d; dsel.appendChild(o); });
+  var ssel = document.getElementById('fSite');
+  ORG_SITES.forEach(function(s){ var o=document.createElement('option'); o.value=s.id; o.textContent=s.name; ssel.appendChild(o); });
+})();
+
+/* ===== 期間篩選（併入 m12 企業學習報告：本月／上月／自訂區間，控制關鍵指標與出席率趨勢）===== */
+var ICON_UP='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 19V5M5 12l7-7 7 7"/></svg>';
+var ICON_DOWN='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M19 12l-7 7-7-7"/></svg>';
+var ICON_INFO='<svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="10" cy="10" r="8"/><line x1="10" y1="9.2" x2="10" y2="14"/><circle cx="10" cy="6.3" r="1" fill="currentColor" stroke="none"/></svg>';
+/* 期間關鍵指標：出勤率／本期消耗時數／在學人數／平均學習進度／評量平均分（含較上期增減），隨期間篩選變動；
+   本期消耗時數＝hours（上課）＋leaveDeduct（超額請假扣抵）＋absentDeduct（逾時取消／缺席扣抵），
+   與時數池同口徑，HR 可據此推算池子還能撐幾期；時數池（合約累計）見 POOL_DATA，不隨期間篩選變動 */
+var PERIOD_DATA = {
+  thisMonth:{
+    range:'2026/08/01－2026/08/28',
+    learners:34, learnersDelta:3, attendance:91, attendanceDelta:2,
+    hours:612, hoursDelta:48,
+    leaveDeduct:24, absentDeduct:8, consume:644, consumeDelta:50,
+    progress:68, progressDelta:5, avgScore:82, avgScoreDelta:1,
+    trend:[70,75,82,88,91,86], trendLabels:['第1週','第2週','第3週','第4週','第5週','第6週']
+  },
+  lastMonth:{
+    range:'2026/07/01－2026/07/31',
+    learners:31, learnersDelta:-2, attendance:89, attendanceDelta:-3,
+    hours:564, hoursDelta:-36,
+    leaveDeduct:18, absentDeduct:12, consume:594, consumeDelta:-36,
+    progress:63, progressDelta:2, avgScore:81, avgScoreDelta:-2,
+    trend:[65,70,74,80,85,89], trendLabels:['第1週','第2週','第3週','第4週','第5週']
+  },
+  custom:{
+    range:'2026/06/01－2026/06/30',
+    custom:true,
+    learners:29, learnersDelta:4, attendance:85, attendanceDelta:1,
+    hours:522, hoursDelta:54,
+    leaveDeduct:30, absentDeduct:6, consume:558, consumeDelta:54,
+    progress:58, progressDelta:6, avgScore:79, avgScoreDelta:3,
+    trend:[60,64,70,75,80,85], trendLabels:['第1週','第2週','第3週','第4週','第5週']
+  }
+};
+function periodLabelText(d){
+  var txt = T('統計區間：','Reporting period: ')+d.range;
+  if (d.custom) txt += T('（自訂'+(d.days!=null?'，共 '+d.days+' 天':'')+'）', ' (Custom'+(d.days!=null?', '+d.days+' days':'')+')');
+  return txt;
+}
+/* 企業時數池：依合約全期累計，不隨期間篩選變動；已用＝上課時數＋超額請假扣抵＋逾時取消／缺席扣抵；
+   保留＝合約預留未分配時數。已用／保留／餘額三個數字與 h05「合約與時數池」頁的 POOL_USED／POOL_RESERVED／
+   POOL_LEFT 對齊（皆源自同一份部門配額資料的加總，避免兩頁對不上帳）。 */
+var POOL_DATA = (function(){
+  var total=6000, classHours=3904, leaveDeduct=240, absentDeduct=96, reserved=320;
+  var used = classHours+leaveDeduct+absentDeduct;
+  var left = total-used-reserved;
+  return {total:total, classHours:classHours, leaveDeduct:leaveDeduct, absentDeduct:absentDeduct, reserved:reserved, used:used, left:left};
+})();
+var curPeriod='thisMonth';
+
+/* ===== 自訂區間 =====
+   起迄限制在合約期間內；各項指標依區間天數換算（以本月 28 天 / 612 上課小時為基準），
+   再用起迄字串當種子做小幅變化，讓不同區間得到不同但自洽的數字。
+   consume＝上課＋超額請假扣抵＋逾時取消／缺席扣抵，與時數池同口徑。 */
+function fmtDate(d){
+  return d.getFullYear()+'/'+('0'+(d.getMonth()+1)).slice(-2)+'/'+('0'+d.getDate()).slice(-2);
+}
+function customPeriodData(){
+  var sEl=document.getElementById('customStart'), eEl=document.getElementById('customEnd');
+  var start=sEl.value||CONTRACT_START, end=eEl.value||CONTRACT_END;
+  var sd=new Date(start+'T00:00:00'), ed=new Date(end+'T00:00:00');
+  var days=Math.max(1, Math.round((ed-sd)/86400000)+1);
+  var seed=0, str=start+end; for (var i=0;i<str.length;i++) seed+=str.charCodeAt(i)*(i+1);
+  var ratio=days/28;
+  var hours=Math.max(1, Math.round(612*ratio*(0.85+seededRand(seed)*0.3)));
+  var leaveDeduct=Math.round(hours*(0.03+seededRand(seed+1)*0.03));
+  var absentDeduct=Math.round(hours*(0.01+seededRand(seed+2)*0.015));
+  var consume=hours+leaveDeduct+absentDeduct;
+  var buckets=Math.min(6, Math.max(3, Math.ceil(days/7)));
+  var trend=[], labels=[], base=78+Math.floor(seededRand(seed+3)*10);
+  for (var t=0;t<buckets;t++){
+    trend.push(Math.min(99, base+Math.round(seededRand(seed+10+t)*12)));
+    labels.push('第'+(t+1)+'段');
+  }
+  return {
+    range:fmtDate(sd)+'－'+fmtDate(ed), custom:true, days:days,
+    learners:Math.max(1, Math.round(34*Math.min(1, ratio*0.9+0.2))),
+    learnersDelta:Math.floor(seededRand(seed+4)*7)-3,
+    attendance:80+Math.floor(seededRand(seed+5)*15),
+    attendanceDelta:Math.floor(seededRand(seed+6)*7)-3,
+    hours:hours, hoursDelta:Math.floor(seededRand(seed+7)*90)-40,
+    leaveDeduct:leaveDeduct, absentDeduct:absentDeduct,
+    consume:consume, consumeDelta:Math.floor(seededRand(seed+8)*90)-40,
+    progress:55+Math.floor(seededRand(seed+11)*25), progressDelta:Math.floor(seededRand(seed+12)*9)-3,
+    avgScore:76+Math.floor(seededRand(seed+13)*10), avgScoreDelta:Math.floor(seededRand(seed+14)*7)-3,
+    trend:trend, trendLabels:labels
+  };
+}
+function curData(){
+  return curPeriod==='custom' ? customPeriodData() : PERIOD_DATA[curPeriod];
+}
+function onCustomRangeChange(){
+  var sEl=document.getElementById('customStart'), eEl=document.getElementById('customEnd');
+  var hint=document.getElementById('customRangeHint');
+  if (sEl.value && eEl.value && sEl.value > eEl.value){
+    hint.textContent=T('起日不可晚於迄日，已自動對調。','The start date cannot be after the end date; the dates have been swapped automatically.');
+    var tmp=sEl.value; sEl.value=eEl.value; eEl.value=tmp;
+  } else {
+    renderRangeHint();
+  }
+  var d=curData();
+  document.getElementById('periodNote').textContent=periodLabelText(d);
+  renderKPI();
+  renderAttChart();
+}
+function setPeriod(key,btn){
+  curPeriod=key;
+  document.querySelectorAll('#periodChips .chip').forEach(function(c){c.classList.remove('selected');});
+  btn.classList.add('selected');
+  document.getElementById('customRangeWrap').style.display = (key==='custom' ? 'flex' : 'none');
+  if (key==='custom'){ onCustomRangeChange(); return; }
+  document.getElementById('periodNote').textContent = periodLabelText(PERIOD_DATA[key]);
+  renderKPI();
+  renderAttChart();
+}
+function toggleInfo(ev,id){
+  ev.stopPropagation();
+  document.querySelectorAll('.info-pop.open').forEach(function(p){ if (p.id!==id) p.classList.remove('open'); });
+  var el = document.getElementById(id);
+  if (el) el.classList.toggle('open');
+}
+document.addEventListener('click', function(){ document.querySelectorAll('.info-pop.open').forEach(function(p){ p.classList.remove('open'); }); });
+function infoBtnHtml(id, label, ruleText){
+  return '<button class="info-btn" onclick="toggleInfo(event,\''+id+'\')" aria-label="'+label+T('計算規則說明',' calculation rule')+'">'+ICON_INFO+'</button>'+
+    '<div class="info-pop" id="'+id+'">'+ruleText+'</div>';
+}
+function statCardHtml(id, label, value, delta, ruleText, subNote, goodIsUp){
+  goodIsUp = goodIsUp!==false;
+  var up = delta>=0;
+  var good = up===goodIsUp;
+  return '<div class="statbox">'+
+    infoBtnHtml(id, label, ruleText)+
+    '<div class="num">'+value+'</div><div class="lbl">'+label+'</div>'+
+    '<div class="delta '+(good?'up':'down')+'">'+(up?ICON_UP:ICON_DOWN)+' '+T('較上期','vs prior period')+' '+(up?'+':'')+delta+'</div>'+
+    (subNote ? '<div class="sub-note">'+subNote+'</div>' : '') +
+  '</div>';
+}
+function poolCardHtml(){
+  var p = POOL_DATA;
+  var ruleText = T('依合約全期累計計算，不隨期間篩選變動。已用＝上課時數＋超額請假扣抵＋逾時取消／缺席扣抵；保留為合約預留未分配時數，不計入已用；詳細部門領用情形見「合約與時數池」頁。',
+    'Calculated as a cumulative total over the full contract period; it does not change with the period filter. Used = class hours + excess-leave deduction + late-cancellation/absence deduction; Reserved is unallocated hours held back by contract and is not counted as used. See the "Contract & Hour Pool" page for the breakdown by department.');
+  return '<div class="statbox poolbox" data-pool-total="'+p.total+'" data-pool-left="'+p.left+'" data-pool-used="'+p.used+'" data-pool-reserved="'+p.reserved+'" data-pool-class="'+p.classHours+'" data-pool-leave="'+p.leaveDeduct+'" data-pool-absent="'+p.absentDeduct+'">'+
+    infoBtnHtml('info-pool',T('時數池餘額／總量','Hour Pool Balance／Total'),ruleText)+
+    '<div class="num">'+fmtNum(p.left)+' ／ '+fmtNum(p.total)+' '+T('小時','hrs')+'</div>'+
+    '<div class="lbl">'+T('時數池餘額／總量','Hour Pool Balance／Total')+'<span class="static-tag">'+T('合約累計，不隨期間變','Contract cumulative, unaffected by period')+'</span></div>'+
+    '<div class="pool-breakdown">'+
+      '<div>'+T('已用','Used')+' <b data-k="used">'+fmtNum(p.used)+'</b>（'+T('上課','class')+' '+fmtNum(p.classHours)+'｜'+T('超額請假扣抵','excess-leave deduction')+' '+fmtNum(p.leaveDeduct)+'｜'+T('逾時取消／缺席扣抵','late-cancel/absence deduction')+' '+fmtNum(p.absentDeduct)+'）</div>'+
+      '<div>'+T('保留','Reserved')+' <b data-k="reserved">'+fmtNum(p.reserved)+'</b></div>'+
+    '</div>'+
+  '</div>';
+}
+function renderKPI(){
+  var d = curData();
+  var activeAccountCount = EMPLOYEES.filter(function(e){ return e.status==='在學'; }).length;
+  document.getElementById('kpiGrid').innerHTML =
+    statCardHtml('info-attendance', T('出勤率','Attendance Rate'), d.attendance+'%', d.attendanceDelta+'%',
+      T('出勤率＝出席堂數 ÷（出席＋缺席＋逾時取消堂次），不含核准請假的堂次。','Attendance Rate = classes attended ÷ (attended + absent + late-cancelled classes), excluding approved-leave classes.')) +
+    statCardHtml('info-hours', T('本期消耗時數','Hours Consumed This Period'), fmtNum(d.consume)+' '+T('小時','hrs'), d.consumeDelta,
+      T('本期消耗時數＝期間內上課時數＋超額請假扣抵＋逾時取消／缺席扣抵，與時數池同口徑，可用來推算時數池還能撐幾期。',
+        'Hours Consumed This Period = class hours + excess-leave deduction + late-cancellation/absence deduction within the period, using the same basis as the hour pool, useful for estimating how many more periods the pool can cover.'),
+      T('其中上課 ','Of which class hours ')+fmtNum(d.hours)+T('｜超額請假 ','｜excess leave ')+fmtNum(d.leaveDeduct)+T('｜逾時取消／缺席 ','｜late-cancel/absence ')+fmtNum(d.absentDeduct),
+      false) +
+    poolCardHtml() +
+    statCardHtml('info-learners', T('在學人數','Active Learners'), activeAccountCount+' '+T('人','learners'), d.learnersDelta+' '+T('人','learners'),
+      T('在學人數＝目前狀態為在學的員工數（不含停用帳號），依「員工管理」名單即時計算，人數不會超過員工總數。','Active Learners = number of employees currently active (excluding deactivated accounts), calculated live from the "Employee Management" list; it will never exceed total headcount.'));
+  document.getElementById('kpiGrid2').innerHTML =
+    statCardHtml('info-progress', T('平均學習進度','Average Learning Progress'), d.progress+'%', d.progressDelta+'%',
+      T('平均學習進度＝已完成課程單元 ÷ 應完成單元。','Average Learning Progress = completed course units ÷ required units.')) +
+    statCardHtml('info-avgscore', T('評量平均分','Average Assessment Score'), d.avgScore+' '+T('分','pts'), d.avgScoreDelta+' '+T('分','pts'),
+      T('評量平均分＝期間內完成的課程評量平均分，依課程設定的滿分計算。','Average Assessment Score = average score of assessments completed in the period, based on each course\'s configured full marks.'));
+}
+
+function filterSeed(){
+  var d=document.getElementById('fDept').value, s=document.getElementById('fSite').value;
+  var str = d+'|'+s;
+  var seed=0; for (var i=0;i<str.length;i++) seed += str.charCodeAt(i)*(i+1);
+  return seed;
+}
+
+/* ===== 簡易 SVG 折線圖／柱狀圖（不依賴外部圖表庫） ===== */
+function buildLineChart(values, opts){
+  var w=opts.w||480, h=opts.h||150, pad=26;
+  var max=Math.max.apply(null, values), min=Math.min.apply(null, values);
+  var range=(max-min)||1;
+  var stepX=(w-pad*2)/(values.length-1);
+  var pts = values.map(function(v,i){
+    var x=pad+i*stepX, y=h-pad-((v-min)/range)*(h-pad*2);
+    return x.toFixed(1)+','+y.toFixed(1);
+  });
+  var circles = values.map(function(v,i){
+    var x=pad+i*stepX, y=h-pad-((v-min)/range)*(h-pad*2);
+    return '<circle cx="'+x.toFixed(1)+'" cy="'+y.toFixed(1)+'" r="3" fill="'+opts.color+'"></circle>';
+  }).join('');
+  return '<svg viewBox="0 0 '+w+' '+h+'" width="100%" height="'+h+'" preserveAspectRatio="xMidYMid meet" role="img" aria-label="'+opts.label+'">'+
+    '<line x1="'+pad+'" y1="'+(h-pad)+'" x2="'+(w-pad)+'" y2="'+(h-pad)+'" stroke="#E4E7EC" stroke-width="1"/>'+
+    '<polyline points="'+pts.join(' ')+'" fill="none" stroke="'+opts.color+'" stroke-width="2.2"/>'+circles+'</svg>';
+}
+function buildBarChart(values, opts){
+  var w=opts.w||480, h=opts.h||150, pad=26;
+  var max=Math.max.apply(null, values)||1, n=values.length, gap=8;
+  var barW=(w-pad*2-gap*(n-1))/n;
+  var bars='';
+  values.forEach(function(v,i){
+    var bh=(v/max)*(h-pad*2), x=pad+i*(barW+gap), y=h-pad-bh;
+    bars += '<rect x="'+x.toFixed(1)+'" y="'+y.toFixed(1)+'" width="'+barW.toFixed(1)+'" height="'+bh.toFixed(1)+'" rx="2" fill="'+opts.color+'"></rect>';
+  });
+  return '<svg viewBox="0 0 '+w+' '+h+'" width="100%" height="'+h+'" preserveAspectRatio="xMidYMid meet" role="img" aria-label="'+opts.label+'">'+
+    '<line x1="'+pad+'" y1="'+(h-pad)+'" x2="'+(w-pad)+'" y2="'+(h-pad)+'" stroke="#E4E7EC" stroke-width="1"/>'+bars+'</svg>';
+}
+function renderAttChart(){
+  var d = curData();
+  document.getElementById('attChart').innerHTML = buildLineChart(d.trend, {color:'#1B4E8C', label:T('出席率趨勢折線圖','Attendance rate trend line chart')});
+  document.getElementById('attTrendVal').textContent = T('本期 ','This period ')+d.trend[d.trend.length-1]+'%';
+}
+function renderHoursChart(){
+  var seed = filterSeed();
+  var hrs=[];
+  for (var w=0; w<8; w++){
+    hrs.push(60 + Math.floor(seededRand(seed+w*5+1)*180));
+  }
+  document.getElementById('hoursChart').innerHTML = buildBarChart(hrs, {color:'#0F9B79', label:T('每週時數消耗柱狀圖','Weekly hours consumed bar chart')});
+  document.getElementById('hoursTrendVal').textContent = T('本週 ','This week ')+fmtNum(hrs[hrs.length-1])+' '+T('小時','hrs');
+}
+
+/* ===== 近期需關注 ===== */
+var PENDING_APPEALS_COUNT = 3;
+var PENDING_LEAVE_COUNT = 2; /* 與 h06「請假核准」分頁待核准件數對應（示範資料） */
+function renderConcernList(pool){
+  var low = EMPLOYEES.filter(function(e){ return e.status==='在學' && e.attendance < 70; })
+    .sort(function(a,b){ return a.attendance-b.attendance; }).slice(0,3);
+  var items = [];
+  if (PENDING_LEAVE_COUNT > 0){
+    items.push('<a class="concernitem" href="h06_appeals.html">'+
+      '<span class="ci-main"><span class="ci-name">'+T('待核准請假 ','Leave pending approval: ')+PENDING_LEAVE_COUNT+' '+T('件','item(s)')+'</span><span class="ci-sub">'+T('合約設定需 HR 核准，未核准前請假不生效','Per contract settings, HR approval is required; leave does not take effect until approved')+'</span></span>'+
+      '<span class="ci-val" style="color:var(--orange)">'+PENDING_LEAVE_COUNT+' '+T('件','item(s)')+'</span>'+
+      '<span class="ci-arrow"><svg width="16" height="16" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><polyline points="7 4 13 10 7 16"/></svg></span></a>');
+  }
+  if (PENDING_APPEALS_COUNT > 0){
+    items.push('<a class="concernitem" href="h06_appeals.html">'+
+      '<span class="ci-main"><span class="ci-name">'+T('待覆核申訴 ','Appeals pending review: ')+PENDING_APPEALS_COUNT+' '+T('件','item(s)')+'</span><span class="ci-sub">'+T('員工對缺席扣時數提出申訴，待 HR 或顧問覆核','Employees have appealed an absence hour deduction, pending review by HR or an advisor')+'</span></span>'+
+      '<span class="ci-val" style="color:var(--orange)">'+PENDING_APPEALS_COUNT+' '+T('件','item(s)')+'</span>'+
+      '<span class="ci-arrow"><svg width="16" height="16" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><polyline points="7 4 13 10 7 16"/></svg></span></a>');
+  }
+  items = items.concat(low.map(function(e){
+    return '<a class="concernitem" href="h03_reports.html?emp='+e.id+'">'+
+      '<span class="ci-main"><span class="ci-name">'+e.name+'</span><span class="ci-sub">'+e.dept+'｜'+e.site+'</span></span>'+
+      '<span class="ci-val" style="color:#C0392B">'+T('出勤率 ','Attendance ')+e.attendance+'%</span>'+
+      '<span class="ci-arrow"><svg width="16" height="16" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><polyline points="7 4 13 10 7 16"/></svg></span></a>';
+  }));
+  var daysLeft = 8 + Math.floor(seededRand(filterSeed()+9)*30);
+  if (pool.left / pool.total < 0.4){
+    items.push('<a class="concernitem" href="h05_contract.html#pool">'+
+      '<span class="ci-main"><span class="ci-name">'+T('企業時數池即將用完','The enterprise hour pool is running low')+'</span><span class="ci-sub">'+T('依目前消耗速度估算','Estimated based on the current consumption rate')+'</span></span>'+
+      '<span class="ci-val" style="color:var(--orange)">'+T('約 ','About ')+daysLeft+T(' 天後用完',' day(s) remaining')+'</span>'+
+      '<span class="ci-arrow"><svg width="16" height="16" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><polyline points="7 4 13 10 7 16"/></svg></span></a>');
+  }
+  document.getElementById('concernList').innerHTML = items.length ? items.join('') : '<div class="emptylist">'+T('目前沒有需要關注的項目','Nothing needs attention right now')+'</div>';
+}
+
+/* ===== 本期老師評語摘要（HR 可見層）：取最近 5 筆 ===== */
+function renderFeedbackSummary(){
+  var withFeedback = EMPLOYEES.filter(function(e){ return e.feedback; })
+    .sort(function(a,b){ return b.feedbackDate.localeCompare(a.feedbackDate); })
+    .slice(0,5);
+  var html = withFeedback.map(function(e){
+    return '<div class="fbsum-row">'+
+      '<div class="fbsum-meta"><span>'+e.name+'</span><span class="fbsum-date">'+e.feedbackDate+'</span></div>'+
+      '<div class="fbsum-text">'+e.feedback+'</div></div>';
+  }).join('');
+  document.getElementById('feedbackSumList').innerHTML = html || '<div class="emptylist">'+T('本期尚無老師評語','No teacher comments for this period yet')+'</div>';
+}
+
+function onFilterChange(){
+  renderHoursChart();
+  renderConcernList(POOL_DATA);
+  var d = document.getElementById('fDept'), s = document.getElementById('fSite');
+  toast(T('已套用篩選：','Filter applied: ')+(d.value||T('全部部門','All Departments'))+' · '+(s.value?s.options[s.selectedIndex].text:T('全部廠區','All Sites')));
+}
+function initDashboard(){
+  renderKPI();
+  renderAttChart();
+  renderHoursChart();
+  renderConcernList(POOL_DATA);
+  renderFeedbackSummary();
+}
+
+/* ===== 共用：側欄／頂欄／通知／登出／toast ===== */
+function toggleSidebar(){ document.getElementById('sidebar').classList.toggle('open'); document.getElementById('sidebarBackdrop').classList.toggle('open'); }
+function closeSidebar(){ document.getElementById('sidebar').classList.remove('open'); document.getElementById('sidebarBackdrop').classList.remove('open'); }
+function toggleSuMenu(ev){ ev.stopPropagation(); closePanel('notifPanel'); closePanel('avatarMenu'); document.getElementById('suMenu').classList.toggle('open'); }
+function closePanel(id){ var el=document.getElementById(id); if (el) el.classList.remove('open'); }
+document.addEventListener('click', function(){ closePanel('suMenu'); closePanel('notifPanel'); closePanel('avatarMenu'); });
+/* ===== 通知中心：即時事件清單（示範畫面，資料為模擬數字） =====
+   涵蓋事件類型：員工請假送出／申訴送出／免扣次數用完／時數池餘額低／對帳待確認 */
+var NOTIFS = [
+  {tzh:'王小明已送出請假申請，待 HR 核准', ten:'Wang Xiaoming has submitted a leave request, pending HR approval', time:'10 分鐘前', timeEn:'10 minutes ago', unread:true, link:'h06_appeals.html?tab=leave&status=pending'},
+  {tzh:'林雅婷對缺席扣時數判定提出申訴，待覆核', ten:'Lin Yating has appealed an absence hour deduction, pending review', time:'1 小時前', timeEn:'1 hour ago', unread:true, link:'h06_appeals.html?tab=appeal&status=pending'},
+  {tzh:'陳建宏本月免扣次數已用完，下次請假將直接記缺席扣時數', ten:'Chen Jianhong has used up this month\'s no-deduction allowance; the next leave will be recorded as an absence deduction', time:'今天 08:40', timeEn:'Today 08:40', unread:true, link:'h03_reports.html'},
+  {tzh:'企業時數池餘額低於門檻（門檻由合約參數設定），請留意領用速度', ten:'The enterprise hour pool balance is below the threshold (set by contract parameters); please monitor the consumption rate', time:'昨天', timeEn:'Yesterday', unread:false, link:'h05_contract.html'},
+  {tzh:'本期時數對帳待確認，請至合約頁核對用量', ten:'This period\'s hour reconciliation is pending confirmation; please check usage on the contract page', time:'2 天前', timeEn:'2 days ago', unread:false, link:'h05_contract.html'}
+];
+function renderNotifPanel(){
+  var panel = document.getElementById('notifPanel'); if (!panel) return;
+  var unread = NOTIFS.filter(function(n){return n.unread;}).length;
+  var dot = document.getElementById('tbDot'); if (dot) dot.style.display = unread ? 'block' : 'none';
+  panel.innerHTML = '<div class="tn-head"><span>'+T('通知（','Notifications (')+unread+T(' 則未讀）',' unread)')+'</span>'+
+    '<span><a href="javascript:void(0)" onclick="markAllRead(event)">'+T('全部標為已讀','Mark All as Read')+'</a></span></div>'+
+    NOTIFS.map(function(n){ return '<a href="'+n.link+'" class="tb-notifitem'+(n.unread?' unread':'')+'" style="display:block;text-decoration:none;color:inherit">'+T(n.tzh, n.ten)+'<div class="tn-t">'+T(n.time, n.timeEn)+'</div></a>'; }).join('');
+}
+function markAllRead(ev){ if (ev) ev.stopPropagation(); NOTIFS.forEach(function(n){n.unread=false;}); renderNotifPanel(); }
+function toggleNotif(ev){ ev.stopPropagation(); closePanel('avatarMenu'); closePanel('suMenu'); var p=document.getElementById('notifPanel'); p.classList.toggle('open'); if (p.classList.contains('open')) renderNotifPanel(); }
+function toggleAvatarMenu(ev){ ev.stopPropagation(); closePanel('notifPanel'); closePanel('suMenu'); document.getElementById('avatarMenu').classList.toggle('open'); }
+function doLogout(){ location.href = '../公開網站/p07_login_register.html'; }
+function toast(msg){
+  var el = document.getElementById('toastEl');
+  if (!el){ el=document.createElement('div'); el.id='toastEl'; el.className='toast'; document.body.appendChild(el); }
+  el.textContent = msg; el.classList.add('show');
+  clearTimeout(window._toastTimer);
+  window._toastTimer = setTimeout(function(){ el.classList.remove('show'); }, 2400);
+}
+if (window.TLI_I18N){
+  TLI_I18N.onRefresh(renderKPI);
+  TLI_I18N.onRefresh(renderAttChart);
+  TLI_I18N.onRefresh(renderHoursChart);
+  TLI_I18N.onRefresh(function(){ renderConcernList(POOL_DATA); });
+  TLI_I18N.onRefresh(renderFeedbackSummary);
+  TLI_I18N.onRefresh(renderNotifPanel);
+  TLI_I18N.onRefresh(renderEntPeriod);
+  TLI_I18N.onRefresh(renderRangeHint);
+  TLI_I18N.onRefresh(function(){ document.getElementById('periodNote').textContent = periodLabelText(curData()); });
+  TLI_I18N.init();
+} else {
+  renderEntPeriod();
+  renderRangeHint();
+  initDashboard();
+  document.getElementById('periodNote').textContent = periodLabelText(curData());
+  renderNotifPanel();
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,608 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>TLI Hub 教師端－階段考</title>
+<style>
+:root{
+  --c-primary:#1B4E8C;--c-primary-dark:#123A68;--c-accent:#E8792B;--c-accent-dark:#CF691F;--c-secondary:#0F9B79;
+  --c-bg:#F5F7FA;--c-border:#E4E7EC;--c-muted:#667085;--c-text:#101828;
+  --radius:12px;--radius-sm:8px;--shadow:0 1px 3px rgba(16,24,40,.08),0 1px 2px rgba(16,24,40,.04);--shadow-lg:0 8px 24px rgba(16,24,40,.16);
+  --topbar-h:52px;--bottomnav-h:64px;
+}
+*{box-sizing:border-box;}
+html,body{margin:0;padding:0;}
+body{font-family:"Noto Sans TC","Microsoft JhengHei",system-ui,-apple-system,"Segoe UI",sans-serif;background:var(--c-bg);color:var(--c-text);line-height:1.55;font-size:15px;-webkit-tap-highlight-color:transparent;}
+a{color:inherit;text-decoration:none;}
+img,svg{display:block;}
+button{font-family:inherit;}
+button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible{outline:2px solid var(--c-primary);outline-offset:2px;}
+.app{min-height:100vh;position:relative;}
+.topbar{position:sticky;top:0;z-index:60;height:var(--topbar-h);background:#fff;border-bottom:1px solid var(--c-border);display:flex;align-items:center;justify-content:space-between;padding:0 14px;gap:10px;}
+.topbar-left{display:flex;align-items:center;gap:8px;min-width:0;}
+.topbar-logo-wrap{width:26px;height:22px;overflow:hidden;position:relative;flex:none;}
+.topbar-logo-wrap img{position:absolute;left:0;top:0;height:22px;width:auto;max-width:none;}
+.topbar-title{font-size:16.5px;font-weight:700;color:var(--c-text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.topbar-actions{display:flex;align-items:center;gap:6px;position:relative;}
+.bell-btn{position:relative;width:32px;height:32px;border-radius:50%;border:1px solid var(--c-border);background:#fff;cursor:pointer;display:flex;align-items:center;justify-content:center;color:var(--c-muted);}
+.bell-btn svg{width:16px;height:16px;}
+.bell-btn .dot{position:absolute;top:5px;right:6px;width:7px;height:7px;border-radius:50%;background:var(--c-accent);border:1.5px solid #fff;}
+.bell-panel{display:none;position:absolute;right:0;top:40px;width:264px;background:#fff;border:1px solid var(--c-border);border-radius:var(--radius-sm);box-shadow:var(--shadow-lg);padding:6px 0;z-index:90;}
+.bell-panel.open{display:block;}
+.bell-panel h4{margin:0;padding:8px 14px 6px;font-size:12.5px;color:var(--c-muted);font-weight:700;}
+.bell-item{padding:9px 14px;font-size:12.5px;border-top:1px solid var(--c-border);display:flex;gap:8px;}
+.bell-item .b-dot{width:6px;height:6px;border-radius:50%;background:var(--c-accent);margin-top:5px;flex:none;}
+.bell-item p{margin:0;color:var(--c-text);}
+.bell-item span{color:var(--c-muted);font-size:11px;}
+.side-nav{display:none;}
+@media(min-width:1024px){
+  .side-nav{display:flex;flex-direction:column;position:fixed;left:0;top:0;bottom:0;width:310px;background:#fff;border-right:1px solid var(--c-border);padding:18px 12px;z-index:50;}
+  .side-role{padding:0 10px 14px;margin-bottom:10px;border-bottom:1px solid var(--c-border);}
+.side-role strong{display:block;font-size:14px;color:var(--c-primary);font-weight:700;}
+.side-role span{display:block;font-size:12px;color:var(--c-muted);margin-top:2px;}
+.side-brand{display:flex;align-items:center;padding:0 8px 18px;}
+  .side-brand img{height:28px;width:auto;}
+  .side-link{display:flex;align-items:center;gap:10px;padding:10px 10px;border-radius:8px;font-size:14px;font-weight:600;color:var(--c-muted);margin-bottom:2px;}
+  .side-link svg{width:19px;height:19px;flex:none;}
+  .side-link.active{background:#E6EEF8;color:var(--c-primary);}
+  .side-link:hover:not(.active){background:var(--c-bg);}
+  .app.has-side .topbar{margin-left:310px;}
+  .app.has-side .content{margin-left:310px;}
+}
+.bottom-nav{position:fixed;left:0;right:0;bottom:0;z-index:70;background:#fff;border-top:1px solid var(--c-border);display:flex;height:var(--bottomnav-h);padding-bottom:env(safe-area-inset-bottom,0);box-shadow:0 -2px 10px rgba(16,24,40,.06);}
+.bottom-nav a{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;font-size:11px;color:var(--c-muted);font-weight:600;min-height:44px;}
+.bottom-nav a svg{width:22px;height:22px;}
+.bottom-nav a.active{color:var(--c-primary);}
+@media(min-width:1024px){.bottom-nav{display:none;}}
+.content{max-width:960px;margin:0 auto;padding:18px 16px calc(var(--bottomnav-h) + 24px);}
+@media(min-width:1024px){.content{padding:26px 32px 40px;}}
+.page-sub{color:var(--c-muted);font-size:13px;margin:0 0 18px;}
+.card{background:#fff;border:1px solid var(--c-border);border-radius:var(--radius);box-shadow:var(--shadow);padding:16px;}
+.card + .card{margin-top:12px;}
+.muted{color:var(--c-muted);}
+.small{font-size:12px;}
+.banner{border-radius:var(--radius);padding:12px 14px;margin-bottom:14px;font-size:13px;line-height:1.7;}
+.banner-info{background:#E6EEF8;color:var(--c-primary-dark);border:1px solid #C7DAF0;}
+.banner-info b{color:var(--c-primary);}
+.banner-info ul{margin:6px 0 0 18px;padding:0;}
+.top-controls{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;flex-wrap:wrap;gap:10px;}
+.repeat-toggle{display:flex;align-items:center;gap:8px;font-size:13px;font-weight:700;}
+.switch{position:relative;width:42px;height:24px;flex:none;}
+.switch input{opacity:0;width:0;height:0;}
+.switch .track{position:absolute;inset:0;background:var(--c-border);border-radius:20px;transition:.15s;cursor:pointer;}
+.switch .track::after{content:"";position:absolute;width:18px;height:18px;left:3px;top:3px;background:#fff;border-radius:50%;transition:.15s;box-shadow:0 1px 2px rgba(0,0,0,.2);}
+.switch input:checked + .track{background:var(--c-secondary);}
+.switch input:checked + .track::after{transform:translateX(18px);}
+/* ---------- 時段格（教師端專用，沿用共用色票／圓角） ---------- */
+.legend{display:flex;gap:14px;font-size:11.5px;color:var(--c-muted);margin-bottom:14px;flex-wrap:wrap;}
+.legend span{display:inline-flex;align-items:center;gap:5px;}
+.legend i{width:11px;height:11px;border-radius:3px;display:inline-block;border:1px solid var(--c-border);}
+.legend .open{background:rgba(15,155,121,.25);border-color:var(--c-secondary);}
+.legend .closed{background:#fff;}
+.legend .locked{background:var(--c-primary);border-color:var(--c-primary);}
+.legend .flexmark{background:#7C3AED;border-color:#7C3AED;}
+.legend .chatmark{background:#BE185D;border-color:#BE185D;}
+.grid-wrap{overflow-x:auto;}
+.avail-grid{display:grid;grid-template-columns:74px repeat(7,1fr);gap:4px;min-width:680px;}
+.gcell{font-size:11px;color:var(--c-muted);display:flex;align-items:center;justify-content:center;padding:6px 2px;text-align:center;}
+.gcell.dowhead{font-weight:700;color:var(--c-text);}
+.slot-cell{height:34px;border-radius:var(--radius-sm);border:1px solid var(--c-border);background:#fff;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:#98A2B3;position:relative;}
+.slot-cell.open{background:rgba(15,155,121,.22);border-color:var(--c-secondary);color:#0B6B52;}
+.slot-cell.locked{background:var(--c-primary);border-color:var(--c-primary);color:#fff;cursor:pointer;}
+.slot-cell.flexmark::after{content:"";position:absolute;top:3px;right:3px;width:7px;height:7px;border-radius:50%;background:#7C3AED;}
+.slot-cell.chatmark::before{content:"";position:absolute;bottom:3px;right:3px;width:7px;height:7px;border-radius:50%;background:#BE185D;}
+.slot-cell.repeatuntil{border-style:dashed;}
+.gcell.rowlabel{cursor:pointer;border-radius:6px;padding:4px 2px;flex-direction:column;line-height:1.3;}
+.gcell.rowlabel:hover{background:var(--c-bg);color:var(--c-primary);font-weight:700;}
+.toast{position:fixed;left:50%;bottom:calc(var(--bottomnav-h) + 18px);transform:translateX(-50%);background:#101828;color:#fff;padding:10px 20px;border-radius:20px;font-size:13px;font-weight:700;z-index:120;box-shadow:var(--shadow-lg);white-space:nowrap;}
+.toast.hidden{display:none;}
+@media(min-width:1024px){.toast{bottom:24px;}}
+/* ---------- B2B 雙時區刻度／海外學員可約區間（v2 新增） ---------- */
+.demo-tag{font-size:10.5px;color:#98A2B3;font-weight:400;}
+.plant-row{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;margin-bottom:12px;}
+.plant-row .pr-label{font-size:12px;color:var(--c-muted);font-weight:700;}
+.plant-select{border:1px solid var(--c-border);border-radius:6px;padding:7px 9px;font-size:12.5px;background:#fff;color:var(--c-text);font-family:inherit;}
+.rt-taipei{font-weight:700;color:var(--c-text);}
+.rt-local{font-size:9px;color:var(--c-muted);margin-top:1px;white-space:normal;word-break:break-word;line-height:1.25;}
+.rt-local .cross-day{color:var(--c-accent-dark);font-weight:700;display:block;}
+.legend .overseas-swatch{background:#fff;position:relative;overflow:hidden;}
+.legend .overseas-swatch::before{content:"";position:absolute;inset:0;background:repeating-linear-gradient(45deg,rgba(124,58,237,.35) 0 3px,transparent 3px 6px);}
+.slot-cell.overseas-hl{position:relative;}
+.slot-cell.overseas-hl::before{content:"";position:absolute;inset:0;border-radius:inherit;background:repeating-linear-gradient(45deg,rgba(124,58,237,.22) 0 3px,transparent 3px 6px);pointer-events:none;}
+/* ---------- 按鈕（補齊：原檔缺 .btn 定義，儲存鍵原本無樣式） ---------- */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;border:none;border-radius:var(--radius-sm);padding:11px 18px;font-size:14px;font-weight:700;cursor:pointer;font-family:inherit;transition:background .15s;min-height:44px;}
+.btn-primary{background:var(--c-primary);color:#fff;}
+.btn-primary:hover{background:var(--c-primary-dark);}
+.btn-outline{background:#fff;border:1px solid var(--c-border);color:var(--c-text);}
+.btn-outline:hover{background:var(--c-bg);}
+.btn-danger{background:#fff;border:1px solid #F5B0A6;color:#B42318;}
+.btn-danger:hover{background:#FBE5E1;}
+.btn:disabled{background:var(--c-border)!important;color:#98A2B3!important;cursor:not-allowed;border-color:var(--c-border)!important;}
+.btn-block{width:100%;}
+/* ---------- 階段考：建立／編輯小表單（v2 新增） ---------- */
+.hidden{display:none!important;}
+.sheet-overlay{position:fixed;inset:0;background:rgba(16,24,40,.45);z-index:100;display:flex;align-items:flex-end;justify-content:center;}
+.sheet-overlay.hidden{display:none;}
+.sheet{background:#fff;width:100%;max-width:460px;border-radius:18px 18px 0 0;padding:18px 18px calc(18px + env(safe-area-inset-bottom,0));max-height:86vh;overflow-y:auto;animation:sheetUp .18s ease-out;}
+@keyframes sheetUp{from{transform:translateY(16px);opacity:.6;}to{transform:translateY(0);opacity:1;}}
+.sheet-handle{width:36px;height:4px;background:var(--c-border);border-radius:4px;margin:0 auto 14px;}
+.sheet h3{margin:0 0 4px;font-size:16px;}
+@media(min-width:640px){.sheet-overlay{align-items:center;}.sheet{border-radius:16px;}}
+.sheet-sec{margin-bottom:14px;}
+.sheet-sec .lbl{font-size:12px;font-weight:700;color:var(--c-muted);margin-bottom:6px;}
+.field-input,.field-select{width:100%;border:1px solid var(--c-border);border-radius:var(--radius-sm);padding:10px 12px;font-size:14px;font-family:inherit;color:var(--c-text);background:#fff;}
+.field-static{font-size:13px;color:var(--c-muted);background:var(--c-bg);border-radius:var(--radius-sm);padding:9px 12px;}
+.stack{display:flex;flex-direction:column;gap:10px;}
+/* ---------- 階段考列表（v2 新增） ---------- */
+.session-card{border:1px solid var(--c-border);border-radius:var(--radius-sm);padding:12px;}
+.session-card + .session-card{margin-top:8px;}
+.session-card .s-top{display:flex;justify-content:space-between;gap:8px;align-items:flex-start;}
+.session-card .s-title{font-weight:700;font-size:14px;}
+.session-card .s-meta{font-size:12px;color:var(--c-muted);margin-top:4px;line-height:1.7;}
+.session-card .s-actions{display:flex;gap:8px;margin-top:10px;}
+.session-card .s-actions button{flex:1;}
+.session-empty{font-size:13px;color:var(--c-muted);padding:6px 0;}
+/* ---------- 面向權益群組徽章（20260910f 新增） ---------- */
+.aud-badge{display:inline-block;padding:2px 9px;border-radius:20px;font-size:11px;font-weight:700;white-space:nowrap;background:var(--c-bg);color:var(--c-muted);border:1px solid var(--c-border);}
+.aud-badge.all{background:#E4F5F0;color:#0B6B52;border-color:#BFE6D8;}
+.aud-badge.ent{background:#E6EEF8;color:var(--c-primary);border-color:#C7DAF0;}
+.aud-badge.inst{background:#FCEBDC;color:var(--c-accent-dark);border-color:#F3D3B0;}
+/* ---------- 介紹狀態小標籤（20260910j 新增：草稿／已發佈） ---------- */
+.status-chip{display:inline-block;padding:2px 9px;border-radius:20px;font-size:11px;font-weight:700;white-space:nowrap;margin-left:6px;}
+.status-chip.draft{background:var(--c-bg);color:var(--c-muted);border:1px solid var(--c-border);}
+.status-chip.published{background:#E4F5F0;color:#0B6B52;border:1px solid #BFE6D8;}
+/* ---------- 頁內次層分頁籤（segment，底線式） ---------- */
+.page-tabs{display:flex;gap:4px;border-bottom:1px solid var(--c-border);margin:0 0 16px;overflow-x:auto;}
+.page-tab{padding:9px 14px;font-size:13.5px;font-weight:700;color:var(--c-muted);border-bottom:2px solid transparent;white-space:nowrap;}
+.page-tab.active{color:var(--c-primary);border-color:var(--c-primary);}
+/* ---------- t11 專用：場次清單、抽屜 ---------- */
+.filter-row{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-bottom:12px;}
+.filter-row .field-input{flex:1 1 200px;min-width:0;}
+.filter-row .field-select{flex:0 1 150px;width:auto;}
+.list-tbl{width:100%;border-collapse:collapse;font-size:13px;}
+.list-tbl th{text-align:left;font-size:12px;color:var(--c-muted);font-weight:700;padding:8px 10px;border-bottom:1px solid var(--c-border);white-space:nowrap;}
+.list-tbl td{padding:10px;border-bottom:1px solid var(--c-border);vertical-align:middle;}
+.list-tbl tr:last-child td{border-bottom:none;}
+.list-tbl .tt{font-weight:700;}
+.list-tbl .num{white-space:nowrap;}
+.list-tbl .acts{white-space:nowrap;text-align:right;}
+.btn-sm{padding:6px 12px;min-height:34px;font-size:12.5px;}
+.badge{display:inline-block;padding:2px 9px;border-radius:20px;font-size:11px;font-weight:700;white-space:nowrap;}
+.badge-ok{background:#E4F5F0;color:#0B6B52;}
+.badge-warn{background:#FCEBDC;color:var(--c-accent-dark);}
+.badge-muted{background:var(--c-bg);color:var(--c-muted);border:1px solid var(--c-border);}
+.more-wrap{text-align:center;margin-top:12px;}
+.head-row{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:12px;flex-wrap:wrap;}
+.head-row h2{margin:0;font-size:15px;}
+.page-tab{background:none;border:none;border-bottom:2px solid transparent;cursor:pointer;font-family:inherit;}
+.page-tab.active{border-bottom-color:var(--c-primary);}
+.drawer-ov{position:fixed;inset:0;background:rgba(16,24,40,.45);z-index:100;display:flex;justify-content:flex-end;}
+.drawer-ov.hidden{display:none;}
+.drawer{background:#fff;width:100%;max-width:400px;height:100%;overflow-y:auto;padding:18px;box-shadow:var(--shadow-lg);animation:drIn .18s ease-out;}
+@keyframes drIn{from{transform:translateX(24px);opacity:.6;}to{transform:none;opacity:1;}}
+.drawer h3{margin:0 0 4px;font-size:16px;}
+.rost{margin:0 0 14px;padding:0;list-style:none;font-size:13.5px;}
+.rost li{display:flex;justify-content:space-between;gap:8px;padding:8px 0;border-bottom:1px solid var(--c-border);}
+@media(max-width:767px){
+  .list-tbl thead{display:none;}
+  .list-tbl,.list-tbl tbody,.list-tbl tr,.list-tbl td{display:block;width:100%;}
+  .list-tbl tr{border:1px solid var(--c-border);border-radius:var(--radius-sm);padding:10px;margin-bottom:8px;}
+  .list-tbl td{border:none;padding:2px 0;}
+  .list-tbl td[data-l]::before{content:attr(data-l)"：";color:var(--c-muted);font-size:12px;}
+  .list-tbl .acts{text-align:left;margin-top:8px;display:flex;gap:8px;}
+  .list-tbl .acts .btn{flex:1;}
+}
+/* ---------- t12 階段考專用 ---------- */
+.seg{display:flex;gap:16px;flex-wrap:wrap;}
+.seg label{display:inline-flex;align-items:center;gap:6px;font-size:13.5px;cursor:pointer;}
+.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
+@media(max-width:767px){.form-grid{grid-template-columns:1fr;}}
+.form-grid .full{grid-column:1/-1;}
+.fl{font-size:12px;font-weight:700;color:var(--c-muted);margin-bottom:6px;display:block;}
+.fl .req{color:#B42318;margin-left:2px;}
+.hint{font-size:12px;color:var(--c-muted);margin-top:6px;line-height:1.6;}
+.note-bar{background:#EAF2FB;border:1px solid #C7DAF0;color:var(--c-primary-dark);border-radius:var(--radius-sm);padding:10px 12px;font-size:13px;line-height:1.6;margin-bottom:14px;}
+.q-card{border:1px solid var(--c-border);border-radius:var(--radius-sm);padding:12px;background:#fff;}
+.q-card + .q-card{margin-top:10px;}
+.q-head{display:flex;justify-content:space-between;align-items:center;gap:8px;margin-bottom:10px;flex-wrap:wrap;}
+.q-head b{font-size:13.5px;}
+.q-head .q-ctl{display:flex;gap:8px;align-items:center;flex-wrap:wrap;}
+.q-card textarea.field-input{min-height:64px;resize:vertical;}
+.opt-row{display:flex;align-items:center;gap:8px;margin-top:8px;}
+.opt-row input[type=radio]{flex:none;}
+.opt-row .field-input{flex:1;min-width:0;}
+.status-chip{margin-left:0;}
+.pager{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-top:12px;flex-wrap:wrap;}
+.pager .pg-btns{display:flex;gap:6px;flex-wrap:wrap;}
+.pager .pg{min-width:36px;padding:6px 10px;border:1px solid var(--c-border);border-radius:var(--radius-sm);background:#fff;font-size:12.5px;font-weight:700;cursor:pointer;font-family:inherit;color:var(--c-muted);min-height:34px;}
+.pager .pg.active{background:var(--c-primary);border-color:var(--c-primary);color:#fff;}
+.pager .pg:disabled{opacity:.45;cursor:not-allowed;}
+.kv{display:flex;justify-content:space-between;gap:12px;padding:9px 0;border-bottom:1px solid var(--c-border);font-size:13.5px;}
+.kv span:first-child{color:var(--c-muted);flex:none;}
+.kv span:last-child{text-align:right;}
+.dr-head{display:flex;justify-content:space-between;align-items:flex-start;gap:10px;margin-bottom:12px;}
+.tbl-empty{text-align:center;padding:30px 12px;color:var(--c-muted);font-size:13px;}
+.row-click{cursor:pointer;}
+.row-click:hover td{background:#FAFBFC;}
+.set-bar{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-bottom:14px;}
+.set-bar .field-select{flex:1 1 220px;width:auto;min-width:0;}
+.total-line{font-size:13px;color:var(--c-muted);margin:12px 0;}
+</style>
+</head>
+<body>
+<div class="app has-side">
+  <nav class="side-nav" aria-label="主導覽" data-i18n-aria-label="tstud.mainNavAriaLabel">
+    <div class="side-brand"><a href="../公開網站/p01_home.html" aria-label="回官網" data-i18n-aria-label="nav_t.backToWebsite"><img src="../assets/tli-logo.svg" alt="TLI"></a></div>
+    <div class="side-role"><strong>林老師</strong><span><span data-i18n="today.profile.role">TLI 中心教師</span> · <span data-i18n="today.profile.city">台北</span></span></div>
+    <a class="side-link" href="t01_today.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11l9-8 9 8"/><path d="M5 10v10a1 1 0 001 1h3v-6h6v6h3a1 1 0 001-1V10"/></svg><span data-i18n="nav_t.today">今天</span></a>
+    <a class="side-link" href="t02_schedule.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg><span data-i18n="nav_t.schedule">課表</span></a>
+    <a class="side-link" href="t03_lesson_record.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 4-7 8-7s8 3 8 7"/></svg><span data-i18n="nav_t.lessonRecord">課後紀錄與回饋</span></a>
+    <a class="side-link" href="t07_students.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg><span data-i18n="nav_t.students">學生</span></a>
+    <a class="side-link" href="t04_availability.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18M12 14v6M9 17h6"/></svg><span data-i18n="nav_t.availability">時段與薪資</span></a>
+    <a class="side-link" href="t11_lounge_sessions.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H8l-5 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg><span data-en="Mandarin Lounge">Mandarin Lounge</span></a>
+    <a class="side-link active" href="t12_stage_exams.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 5H7a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-2"/><rect x="9" y="3" width="6" height="4" rx="1"/><path d="M9 14l2 2 4-4"/></svg><span data-en="Stage Exams">階段考</span></a>
+    <a class="side-link" href="../公開網站/p01_home.html" style="margin-top:auto;"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg><span data-i18n="nav_t.backToWebsite">回官網</span></a>
+  </nav>
+
+  <header class="topbar">
+    <div class="topbar-left"><a class="topbar-logo-wrap" href="../公開網站/p01_home.html" aria-label="回官網" data-i18n-aria-label="nav_t.backToWebsite"><img src="../assets/tli-logo.svg" alt="TLI"></a><div class="topbar-title" data-en="Stage Exams">階段考</div></div>
+    <div class="topbar-actions">
+      <button class="bell-btn" onclick="toggleBell()" aria-label="通知" data-i18n-aria-label="common.notifications">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8a6 6 0 10-12 0c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.7 21a2 2 0 01-3.4 0"/></svg>
+        <span class="dot"></span>
+      </button>
+      <div class="bell-panel" id="bellPanel">
+        <h4 data-i18n="common.notifications">通知</h4>
+        <div class="bell-item"><span class="b-dot"></span><div><p data-en="Some students have completed 12 lessons and are waiting for a certificate.">有學生已完成 12 課，證書待核發</p><span data-i18n="teacher.notif.today">今天</span></div></div>
+      </div>
+    </div>
+  </header>
+
+  <main class="content">
+    <p class="page-sub" style="margin:0 0 14px;" data-en="TLI material has fixed exam content; custom courses use questions you write. Stage exams are optional, and a student who does not take one is still recorded.">TLI 教材有固定考試內容，客製化課程由你自訂題目。階段考非強制，學生未參加也會留下紀錄。</p>
+
+    <div class="page-tabs" role="tablist" aria-label="頁內切換">
+      <button type="button" class="page-tab active" id="tabStatus" role="tab" aria-selected="true" onclick="setTab('status')" data-en="Results">作答狀況</button>
+      <button type="button" class="page-tab" id="tabAssign" role="tab" aria-selected="false" onclick="setTab('assign')" data-en="Assign">指派階段考</button>
+      <button type="button" class="page-tab" id="tabCustom" role="tab" aria-selected="false" onclick="setTab('custom')" data-en="Custom questions">自訂題目</button>
+    </div>
+
+    <!-- ===== 作答狀況 ===== -->
+    <section id="panelStatus">
+      <div class="filter-row">
+        <input type="search" class="field-input" id="qSearch" placeholder="搜尋學生姓名或課次" aria-label="搜尋" oninput="pageNo=1;renderStatus()">
+        <select class="field-select" id="fStatus" aria-label="狀態" onchange="pageNo=1;renderStatus()"></select>
+        <select class="field-select" id="fSrc" aria-label="題目來源" onchange="pageNo=1;renderStatus()"></select>
+        <select class="field-select" id="fSort" aria-label="排序" onchange="renderStatus()"></select>
+      </div>
+      <div class="card" style="padding:6px 12px;">
+        <table class="list-tbl" id="statusTbl"></table>
+        <div class="tbl-empty hidden" id="statusEmpty"></div>
+      </div>
+      <div class="pager" id="pager"></div>
+    </section>
+
+    <!-- ===== 指派階段考 ===== -->
+    <section id="panelAssign" class="hidden">
+      <div class="card">
+        <div class="head-row"><h2 data-en="Assign a stage exam">指派階段考給學生</h2></div>
+        <div class="form-grid">
+          <div class="full"><span class="fl"><span data-en="Assign to">指派對象</span><span class="req">*</span></span>
+            <div class="seg"><label><input type="radio" name="aTarget" value="student" checked onchange="syncAssign()"> <span data-en="A student">單一學生</span></label><label><input type="radio" name="aTarget" value="class" onchange="syncAssign()"> <span data-en="A class">整個班級</span></label></div></div>
+          <div class="full"><span class="fl" id="aWhoLbl">選擇學生<span class="req">*</span></span><select class="field-select" id="aWho" style="width:100%;" aria-label="指派對象"></select><div class="hint hidden" id="aClassHint"></div></div>
+          <div class="full"><span class="fl"><span data-en="Course type">課程類型</span><span class="req">*</span></span>
+            <div class="seg"><label><input type="radio" name="aSrc" value="tli" checked onchange="syncAssign()"> <span data-en="TLI material (fixed exam)">TLI 教材（固定考試內容）</span></label><label><input type="radio" name="aSrc" value="custom" onchange="syncAssign()"> <span data-en="Custom course (my own questions)">客製化課程（自訂題目）</span></label></div></div>
+          <div id="aRangeBox"><span class="fl"><span data-en="Applicable lessons">適用課次</span><span class="req">*</span></span><select class="field-select" id="aRange" style="width:100%;" aria-label="適用課次"></select><div class="hint" data-en="Choose the lessons the student has just completed. Content is fixed by TLI.">選學生剛上完的課次，考試內容由 TLI 固定。</div></div>
+          <div id="aSetBox" class="hidden"><span class="fl"><span data-en="Custom question set">自訂題目</span><span class="req">*</span></span><select class="field-select" id="aSet" style="width:100%;" aria-label="自訂題目"></select><div class="hint" id="aSetHint"></div></div>
+          <div><span class="fl"><span data-en="Due date">作答期限</span><span class="req">*</span></span><input type="date" class="field-input" id="aDue" aria-label="作答期限"></div>
+        </div>
+        <div class="note-bar" style="margin:16px 0 0;" data-en="A stage exam is optional for students. If a student does not take it, the record is kept as Did not take.">階段考非強制，學生可自行決定是否參加；未參加的學生會記為「未參加」並保留紀錄。</div>
+        <div style="display:flex;gap:10px;margin-top:16px;flex-wrap:wrap;">
+          <button type="button" class="btn btn-primary" id="btnAssign" onclick="doAssign()" data-en="Assign">指派</button>
+          <button type="button" class="btn btn-outline" onclick="resetAssign()" data-en="Clear form">清除重填</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== 自訂題目 ===== -->
+    <section id="panelCustom" class="hidden">
+      <div class="note-bar" data-en="For custom courses only. TLI material uses fixed questions and cannot be edited here.">此處只用於客製化課程。TLI 教材的題目由 TLI 固定，不能在這裡修改。</div>
+      <div class="set-bar">
+        <select class="field-select" id="setPick" aria-label="題目組" onchange="pickSet(this.value)"></select>
+        <button type="button" class="btn btn-outline btn-sm" onclick="newSet()" data-en="+ New question set">＋ 新增題目組</button>
+      </div>
+      <div class="card">
+        <div class="head-row"><h2 id="setTitleH" data-en="Edit question set">編輯題目組</h2><span id="setChip"></span></div>
+        <div class="form-grid">
+          <div class="full"><span class="fl"><span data-en="Set name">題目組名稱</span><span class="req">*</span></span><input type="text" class="field-input" id="setName" placeholder="例如：企業華語客製課程・階段考（三）" maxlength="60" oninput="curSet.name=this.value"></div>
+          <div><span class="fl"><span data-en="Pass mark">及格分數</span></span><input type="number" class="field-input" id="setPass" min="0" max="100" value="70" oninput="curSet.pass=Number(this.value)"></div>
+          <div><span class="fl"><span data-en="Total points">總配分</span></span><div class="field-static" id="setTotal">0</div></div>
+        </div>
+        <div id="qList" style="margin-top:16px;"></div>
+        <div style="margin-top:12px;"><button type="button" class="btn btn-outline btn-sm" onclick="addQuestion()" data-en="+ Add question">＋ 新增題目</button></div>
+        <div style="display:flex;gap:10px;margin-top:18px;flex-wrap:wrap;">
+          <button type="button" class="btn btn-outline" onclick="saveSet('draft')" data-en="Save draft">儲存草稿</button>
+          <button type="button" class="btn btn-primary" onclick="saveSet('pub')" data-en="Publish">發布</button>
+        </div>
+        <div class="hint" data-en="A published set can be chosen when assigning a custom-course stage exam.">發布後，才能在「指派階段考」選用這組題目。</div>
+      </div>
+    </section>
+  </main>
+
+  <nav class="bottom-nav">
+    <a href="t01_today.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11l9-8 9 8"/><path d="M5 10v10a1 1 0 001 1h3v-6h6v6h3a1 1 0 001-1V10"/></svg><span data-i18n="nav_t.today">今天</span></a>
+    <a href="t02_schedule.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg><span data-i18n="nav_t.schedule">課表</span></a>
+    <a href="t03_lesson_record.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 4-7 8-7s8 3 8 7"/></svg><span data-i18n="nav_t.lessonRecord">課後紀錄與回饋</span></a>
+    <a href="t07_students.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg><span data-i18n="nav_t.students">學生</span></a>
+    <a href="t04_availability.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18M12 14v6M9 17h6"/></svg><span data-i18n="nav_t.availability">時段與薪資</span></a>
+    <a href="t11_lounge_sessions.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H8l-5 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg><span data-en="Lounge">Lounge</span></a>
+    <a href="t12_stage_exams.html" class="active"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 5H7a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-2"/><rect x="9" y="3" width="6" height="4" rx="1"/><path d="M9 14l2 2 4-4"/></svg><span data-en="Exams">階段考</span></a>
+  </nav>
+</div>
+
+<div class="drawer-ov hidden" id="drOv" onclick="if(event.target===this) closeDrawer()">
+  <aside class="drawer" role="dialog" aria-modal="true" aria-label="階段考紀錄" id="drawer"></aside>
+</div>
+<div class="toast hidden" id="toast"></div>
+
+<script src="../assets/_i18n_dict.js"></script>
+<script src="../assets/_i18n_dict_teacher.js"></script>
+<script src="../assets/_i18n.js"></script>
+<script>
+function tt(zh,en){ return window.TLI_I18N ? TLI_I18N.t(zh,en) : zh; }
+function $(i){ return document.getElementById(i); }
+function esc(s){ return String(s==null?'':s).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];}); }
+/* 班級老師（?rid=）不開放此頁，導回「我的班級」；此頁只給 TLI 中心教師 */
+if(/[?&]rid=/.test(location.search)){ location.replace('t08_my_classes.html'+location.search.replace(/[?&]view=1[ab]/,'').replace(/^&/,'?')); }
+function toggleBell(){ $('bellPanel').classList.toggle('open'); }
+document.addEventListener('click',function(e){ if(!e.target.closest('.bell-btn')&&!e.target.closest('.bell-panel')) $('bellPanel').classList.remove('open'); });
+var toastTimer=null;
+function showToast(msg){ var t=$('toast'); t.textContent=msg; t.classList.remove('hidden'); clearTimeout(toastTimer); toastTimer=setTimeout(function(){t.classList.add('hidden');},2400); }
+document.addEventListener('keydown',function(e){ if(e.key==='Escape') closeDrawer(); });
+
+/* ================= 示範資料 ================= */
+var TODAY='2026-10-13', PASS=70, PAGE_SIZE=8;
+var STUDENTS=[{id:'wang',name:'王小明'},{id:'chen',name:'陳雅婷'},{id:'zhou',name:'周文正'},{id:'lin',name:'林詩涵'},{id:'zhang',name:'張家豪'},{id:'li',name:'李佳融'},{id:'huang',name:'黃思穎'},{id:'wu',name:'吳冠廷'}];
+var CLASSES=[{id:'k1',name:'中級 2 小組班',members:['chen','zhou']},{id:'k2',name:'初級 3 小組班',members:['zhang','li','wu']},{id:'k3',name:'初級 2 小組班',members:['huang','lin']}];
+var RANGES=['第 1–12 課','第 13–24 課','第 25–36 課','第 37–48 課'];
+function rangeEn(r){ return r.replace('第 ','Lessons ').replace(' 課','').replace('–','-'); }
+function sname(id){ return STUDENTS.filter(function(s){return s.id===id;})[0].name; }
+/* 自訂題目組：status 為 draft／pub */
+var SETS=[
+  {id:'cs1',name:'企業華語客製課程・階段考（一）',status:'pub',pass:70,qs:[
+    {t:'single',text:'「麻煩您」這句話主要用來表達什麼？',opts:['命令','請求','拒絕','道謝'],ans:1,pts:25},
+    {t:'single',text:'會議開始前，下列哪一句最適合用來打招呼？',opts:['久仰大名','再見','謝謝你','對不起'],ans:0,pts:25},
+    {t:'fill',text:'請完成句子：我今天要「＿＿」會議紀錄。',ans:'整理',pts:25},
+    {t:'tf',text:'「請多指教」可以用在第一次見面的場合。',ans:true,pts:25}]},
+  {id:'cs2',name:'企業華語客製課程・階段考（二）',status:'pub',pass:70,qs:[
+    {t:'single',text:'客戶要求延後交貨，你最適合怎麼回覆？',opts:['我知道了，我會跟團隊確認','不行','隨便','我不知道'],ans:0,pts:50},
+    {t:'fill',text:'請完成句子：請您在週五以前「＿＿」報價單。',ans:'回覆',pts:50}]},
+  {id:'cs3',name:'企業華語客製課程・階段考（三）',status:'draft',pass:70,qs:[
+    {t:'single',text:'「麻煩您確認一下」屬於哪一種語氣？',opts:['禮貌請求','命令','責備','玩笑'],ans:0,pts:50}]}
+];
+/* 作答紀錄：src 為 tli／custom；status 為 pending 待作答／taken 已作答／absent 未參加；cert 為 issued 已發／due 待發（該範圍 12 課已完成）／na 不適用；證書與階段考是否參加、通過無關 */
+var RECS=[
+ {id:1,sid:'wang',src:'tli',range:'第 1–12 課',status:'taken',due:'2026-09-05',done:'2026-09-02',score:86,cert:'issued'},
+ {id:2,sid:'wang',src:'tli',range:'第 13–24 課',status:'pending',due:'2026-10-28',cert:'na'},
+ {id:3,sid:'chen',src:'tli',range:'第 1–12 課',status:'taken',due:'2026-09-01',done:'2026-08-28',score:91,cert:'issued'},
+ {id:4,sid:'chen',src:'tli',range:'第 13–24 課',status:'absent',due:'2026-10-05',cert:'na'},
+ {id:5,sid:'zhou',src:'tli',range:'第 1–12 課',status:'taken',due:'2026-09-18',done:'2026-09-15',score:64,cert:'due'},
+ {id:6,sid:'zhou',src:'tli',range:'第 13–24 課',status:'pending',due:'2026-10-30',cert:'na'},
+ {id:7,sid:'lin',src:'tli',range:'第 1–12 課',status:'taken',due:'2026-10-10',done:'2026-10-08',score:78,cert:'due'},
+ {id:8,sid:'zhang',src:'tli',range:'第 1–12 課',status:'absent',due:'2026-09-20',cert:'due'},
+ {id:9,sid:'li',src:'tli',range:'第 1–12 課',status:'taken',due:'2026-10-02',done:'2026-09-30',score:88,cert:'issued'},
+ {id:10,sid:'huang',src:'tli',range:'第 1–12 課',status:'pending',due:'2026-10-25',cert:'na'},
+ {id:11,sid:'wu',src:'tli',range:'第 1–12 課',status:'taken',due:'2026-10-12',done:'2026-10-11',score:72,cert:'due'},
+ {id:12,sid:'lin',src:'custom',setId:'cs1',status:'taken',due:'2026-09-10',done:'2026-09-08',score:75,cert:'na'},
+ {id:13,sid:'huang',src:'custom',setId:'cs2',status:'pending',due:'2026-10-18',cert:'na'},
+ {id:14,sid:'wang',src:'custom',setId:'cs1',status:'absent',due:'2026-09-12',cert:'na'},
+ {id:15,sid:'chen',src:'custom',setId:'cs1',status:'taken',due:'2026-09-10',done:'2026-09-09',score:90,cert:'na'},
+ {id:16,sid:'zhou',src:'custom',setId:'cs1',status:'taken',due:'2026-09-10',done:'2026-09-10',score:66,cert:'na'},
+ {id:17,sid:'zhang',src:'tli',range:'第 13–24 課',status:'pending',due:'2026-11-05',cert:'na'},
+ {id:18,sid:'li',src:'tli',range:'第 13–24 課',status:'taken',due:'2026-10-09',done:'2026-10-07',score:95,cert:'due'},
+ {id:19,sid:'wu',src:'custom',setId:'cs2',status:'pending',due:'2026-10-18',cert:'na'},
+ {id:20,sid:'lin',src:'tli',range:'第 13–24 課',status:'absent',due:'2026-10-02',cert:'na'}
+];
+var nextId=21;
+function setById(id){ return SETS.filter(function(s){return s.id===id;})[0]; }
+function rangeText(r){ return r.src==='tli' ? tt(r.range,rangeEn(r.range)) : (setById(r.setId)?setById(r.setId).name:'—'); }
+function srcText(src){ return src==='tli' ? tt('TLI 教材固定題','TLI material (fixed)') : tt('老師自訂','Teacher-defined'); }
+function statusBadge(s){ return s==='taken' ? '<span class="badge badge-ok">'+tt('已作答','Taken')+'</span>' : s==='pending' ? '<span class="badge badge-warn">'+tt('待作答','Pending')+'</span>' : '<span class="badge badge-muted">'+tt('未參加','Did not take')+'</span>'; }
+function certText(c){ return c==='issued' ? tt('已發','Issued') : c==='due' ? tt('待發','To issue') : tt('不適用','N/A'); }
+function certBadge(c){ return c==='issued' ? '<span class="badge badge-ok">'+certText(c)+'</span>' : c==='due' ? '<span class="badge badge-warn">'+certText(c)+'</span>' : '<span class="small muted">'+certText(c)+'</span>'; }
+function scoreText(r){ return r.status==='taken' ? r.score+tt(' 分',' pts') : '－'; }
+
+/* ================= 作答狀況：搜尋＋篩選＋排序＋分頁 ================= */
+var pageNo=1;
+function initFilters(){
+  var cs=$('fStatus').value, cr=$('fSrc').value, so=$('fSort').value;
+  $('fStatus').innerHTML='<option value="">'+tt('全部狀態','All statuses')+'</option><option value="pending">'+tt('待作答','Pending')+'</option><option value="taken">'+tt('已作答','Taken')+'</option><option value="absent">'+tt('未參加','Did not take')+'</option>';
+  $('fSrc').innerHTML='<option value="">'+tt('全部題目來源','All question sources')+'</option><option value="tli">'+tt('TLI 教材固定題','TLI material (fixed)')+'</option><option value="custom">'+tt('老師自訂','Teacher-defined')+'</option>';
+  $('fSort').innerHTML='<option value="due">'+tt('排序：期限近到遠','Sort: due date')+'</option><option value="score">'+tt('排序：分數高到低','Sort: score, high to low')+'</option><option value="name">'+tt('排序：學生姓名','Sort: student name')+'</option>';
+  $('fStatus').value=cs; $('fSrc').value=cr; if(so) $('fSort').value=so;
+  $('qSearch').placeholder=tt('搜尋學生姓名或課次','Search student or lessons');
+}
+function filtered(){
+  var q=$('qSearch').value.trim().toLowerCase(), fs=$('fStatus').value, fr=$('fSrc').value, so=$('fSort').value;
+  var list=RECS.filter(function(r){
+    if(fs && r.status!==fs) return false;
+    if(fr && r.src!==fr) return false;
+    if(q && (sname(r.sid)+' '+rangeText(r)).toLowerCase().indexOf(q)<0) return false;
+    return true;
+  });
+  list.sort(function(a,b){
+    if(so==='score') return (b.score==null?-1:b.score)-(a.score==null?-1:a.score);
+    if(so==='name') return sname(a.sid).localeCompare(sname(b.sid),'zh-Hant');
+    return a.due<b.due?-1:a.due>b.due?1:0;
+  });
+  return list;
+}
+function renderStatus(){
+  var list=filtered(), pages=Math.max(1,Math.ceil(list.length/PAGE_SIZE));
+  if(pageNo>pages) pageNo=pages;
+  var rows=list.slice((pageNo-1)*PAGE_SIZE,pageNo*PAGE_SIZE);
+  $('statusTbl').innerHTML=list.length?('<thead><tr><th>'+tt('學生','Student')+'</th><th>'+tt('課次範圍','Lessons')+'</th><th>'+tt('狀態','Status')+'</th><th>'+tt('分數','Score')+'</th><th>'+tt('證書','Certificate')+'</th><th></th></tr></thead><tbody>'+rows.map(function(r){
+    return '<tr class="row-click" onclick="openDrawer('+r.id+')"><td data-l="'+tt('學生','Student')+'"><span class="tt">'+esc(sname(r.sid))+'</span></td>'+
+      '<td data-l="'+tt('課次範圍','Lessons')+'">'+esc(rangeText(r))+'<div class="small muted">'+srcText(r.src)+'</div></td>'+
+      '<td data-l="'+tt('狀態','Status')+'">'+statusBadge(r.status)+'</td>'+
+      '<td class="num" data-l="'+tt('分數','Score')+'">'+scoreText(r)+'</td>'+
+      '<td data-l="'+tt('證書','Certificate')+'">'+certBadge(r.cert)+'</td>'+
+      '<td class="acts"><button type="button" class="btn btn-outline btn-sm" onclick="event.stopPropagation();openDrawer('+r.id+')">'+tt('查看','View')+'</button></td></tr>';
+  }).join('')+'</tbody>'):'';
+  $('statusEmpty').classList.toggle('hidden',list.length>0);
+  $('statusEmpty').textContent=tt('沒有符合條件的紀錄。調整搜尋或篩選條件再試一次。','No matching records. Adjust the search or filters and try again.');
+  var btns='<button type="button" class="pg" '+(pageNo<=1?'disabled':'')+' onclick="goPage('+(pageNo-1)+')">'+tt('上一頁','Prev')+'</button>';
+  for(var i=1;i<=pages;i++) btns+='<button type="button" class="pg'+(i===pageNo?' active':'')+'" onclick="goPage('+i+')">'+i+'</button>';
+  btns+='<button type="button" class="pg" '+(pageNo>=pages?'disabled':'')+' onclick="goPage('+(pageNo+1)+')">'+tt('下一頁','Next')+'</button>';
+  $('pager').innerHTML=list.length?('<span class="small muted">'+tt('共 '+list.length+' 筆','Total '+list.length)+'</span><div class="pg-btns">'+btns+'</div>'):'';
+}
+function goPage(n){ pageNo=n; renderStatus(); }
+
+/* ================= 右側抽屜：單筆紀錄 ================= */
+var drId=null;
+function recById(id){ return RECS.filter(function(r){return r.id===id;})[0]; }
+function openDrawer(id){
+  drId=id; var r=recById(id); if(!r) return;
+  var rows='<div class="kv"><span>'+tt('課次範圍','Lessons')+'</span><span>'+esc(rangeText(r))+'</span></div>'+
+    '<div class="kv"><span>'+tt('題目來源','Question source')+'</span><span>'+srcText(r.src)+'</span></div>'+
+    '<div class="kv"><span>'+tt('作答期限','Due date')+'</span><span>'+r.due+'</span></div>'+
+    (r.status==='taken'?'<div class="kv"><span>'+tt('作答日期','Taken on')+'</span><span>'+r.done+'</span></div><div class="kv"><span>'+tt('分數','Score')+'</span><span>'+r.score+tt(' 分（及格 '+PASS+' 分）',' pts (pass mark '+PASS+')')+'</span></div><div class="kv"><span>'+tt('結果','Result')+'</span><span>'+(r.score>=PASS?tt('通過','Passed'):tt('未通過','Not passed'))+'</span></div>':'')+
+    '<div class="kv"><span>'+tt('證書','Certificate')+'</span><span>'+certBadge(r.cert)+'</span></div>';
+  var examNote = r.status==='absent' ? tt('階段考非強制，此學生未參加，紀錄會保留。','The stage exam is optional. This student did not take it, and the record is kept.')
+    : r.status==='pending' ? tt('學生尚未作答，期限前可隨時作答。','The student has not taken it yet and can do so before the due date.')
+    : tt('階段考成績列在成績單。','The stage exam score is listed on the transcript.');
+  var certNote = r.cert==='due' ? tt('證書依課次核發，與階段考結果無關。此範圍課次已完成，證書待核發。','Certificates follow lesson completion, not exam results. These lessons are complete and the certificate is waiting to be issued.')
+    : r.cert==='issued' ? tt('證書已核發。','The certificate has been issued.')
+    : (r.src==='custom' ? tt('客製化課程不核發階段考證書。','Custom courses do not issue a stage exam certificate.') : tt('證書待此範圍 12 課完成後核發，與階段考結果無關。','The certificate is issued once these 12 lessons are completed, regardless of exam results.'));
+  var note = examNote+' '+certNote;
+  var acts='';
+  if(r.status==='pending') acts+='<button type="button" class="btn btn-primary btn-block" onclick="remind('+r.id+')">'+tt('提醒學生作答','Remind student')+'</button>';
+  if(r.cert==='due') acts+='<button type="button" class="btn btn-primary btn-block" onclick="issueCert('+r.id+')">'+tt('核發證書','Issue certificate')+'</button>';
+  if(r.status==='taken') acts+='<button type="button" class="btn btn-outline btn-block" onclick="showToast(tt(\'成績單已下載\',\'Transcript downloaded\'))">'+tt('下載成績單','Download transcript')+'</button>';
+  $('drawer').innerHTML='<div class="dr-head"><div><h3>'+esc(sname(r.sid))+'</h3><div class="small muted">'+tt('階段考紀錄','Stage exam record')+'</div></div>'+statusBadge(r.status)+'</div>'+rows+
+    '<p class="small muted" style="margin:12px 0 16px;line-height:1.7;">'+note+'</p><div class="stack">'+acts+'<button type="button" class="btn btn-outline btn-block" onclick="closeDrawer()">'+tt('關閉','Close')+'</button></div>';
+  $('drOv').classList.remove('hidden');
+}
+function closeDrawer(){ $('drOv').classList.add('hidden'); drId=null; }
+function remind(id){ var r=recById(id); showToast(tt('已通知 '+sname(r.sid)+'，請於期限內作答','Notified '+sname(r.sid)+' to take the exam by the due date')); closeDrawer(); }
+function issueCert(id){ var r=recById(id); r.cert='issued'; showToast(tt('已核發證書給 '+sname(r.sid),'Certificate issued to '+sname(r.sid))); openDrawer(id); renderStatus(); }
+
+/* ================= 頁籤 ================= */
+function setTab(n){
+  [['status','tabStatus','panelStatus'],['assign','tabAssign','panelAssign'],['custom','tabCustom','panelCustom']].forEach(function(a){
+    $(a[1]).classList.toggle('active',a[0]===n); $(a[1]).setAttribute('aria-selected',a[0]===n?'true':'false'); $(a[2]).classList.toggle('hidden',a[0]!==n);
+  });
+  if(n==='assign') syncAssign();
+}
+
+/* ================= 指派階段考 ================= */
+function val(name){ var e=document.querySelector('input[name="'+name+'"]:checked'); return e?e.value:''; }
+function syncAssign(){
+  var tg=val('aTarget'), src=val('aSrc');
+  var cur=$('aWho').value;
+  $('aWhoLbl').innerHTML=(tg==='student'?tt('選擇學生','Choose a student'):tt('選擇班級','Choose a class'))+'<span class="req">*</span>';
+  $('aWho').innerHTML='<option value="">'+tt('請選擇','Please select')+'</option>'+(tg==='student'
+    ? STUDENTS.map(function(s){return '<option value="'+s.id+'">'+s.name+'</option>';}).join('')
+    : CLASSES.map(function(c){return '<option value="'+c.id+'">'+c.name+tt('（'+c.members.length+' 人）',' ('+c.members.length+' students)')+'</option>';}).join(''));
+  if(cur && $('aWho').querySelector('option[value="'+cur+'"]')) $('aWho').value=cur;
+  $('aRangeBox').classList.toggle('hidden',src!=='tli'); $('aSetBox').classList.toggle('hidden',src!=='custom');
+  var rv=$('aRange').value;
+  $('aRange').innerHTML='<option value="">'+tt('請選擇','Please select')+'</option>'+RANGES.map(function(r){return '<option value="'+r+'">'+tt(r,rangeEn(r))+'</option>';}).join('');
+  if(rv) $('aRange').value=rv;
+  var sv=$('aSet').value, pubs=SETS.filter(function(s){return s.status==='pub';});
+  $('aSet').innerHTML='<option value="">'+tt('請選擇','Please select')+'</option>'+pubs.map(function(s){return '<option value="'+s.id+'">'+esc(s.name)+'</option>';}).join('');
+  if(sv) $('aSet').value=sv;
+  $('aSetHint').innerHTML=pubs.length?tt('只列出已發布的題目組。要新增或修改，請到「自訂題目」。','Only published sets are listed. To add or edit one, go to Custom questions.'):tt('目前沒有已發布的題目組，請先到「自訂題目」建立並發布。','No published set yet. Create and publish one under Custom questions first.');
+  var hint=$('aClassHint');
+  if(tg==='class' && $('aWho').value){ var c=CLASSES.filter(function(x){return x.id===$('aWho').value;})[0]; hint.textContent=tt('將指派給：'+c.members.map(sname).join('、'),'Will be assigned to: '+c.members.map(sname).join(', ')); hint.classList.remove('hidden'); } else hint.classList.add('hidden');
+  if(!$('aDue').value) $('aDue').value='2026-10-31';
+}
+$('aWho').addEventListener('change',syncAssign);
+function resetAssign(){
+  document.querySelector('input[name="aTarget"][value="student"]').checked=true; document.querySelector('input[name="aSrc"][value="tli"]').checked=true;
+  $('aWho').value=''; $('aRange').value=''; $('aSet').value=''; $('aDue').value='2026-10-31'; syncAssign(); showToast(tt('已清除表單','Form cleared'));
+}
+function doAssign(){
+  var tg=val('aTarget'), src=val('aSrc'), who=$('aWho').value, due=$('aDue').value, rg=$('aRange').value, st=$('aSet').value;
+  if(!who){ showToast(tt('請選擇指派對象','Please choose who to assign to')); return; }
+  if(src==='tli' && !rg){ showToast(tt('請選擇適用課次','Please choose the applicable lessons')); return; }
+  if(src==='custom' && !st){ showToast(tt('請選擇自訂題目組','Please choose a custom question set')); return; }
+  if(!due){ showToast(tt('請填寫作答期限','Please enter a due date')); return; }
+  if(due<TODAY){ showToast(tt('作答期限不可早於今天','The due date cannot be earlier than today')); return; }
+  var ids = tg==='student' ? [who] : CLASSES.filter(function(c){return c.id===who;})[0].members;
+  ids.forEach(function(sid){ RECS.push({id:nextId++,sid:sid,src:src,range:src==='tli'?rg:undefined,setId:src==='custom'?st:undefined,status:'pending',due:due,cert:'na'}); });
+  showToast(tt('已指派給 '+ids.length+' 位學生','Assigned to '+ids.length+' student(s)'));
+  $('fStatus').value='pending'; $('fSrc').value=''; $('qSearch').value=''; pageNo=1; setTab('status'); renderStatus();
+}
+
+/* ================= 自訂題目編輯 ================= */
+var curSet=null, TYPE_LBL={single:['單選題','Single choice'],fill:['填空題','Fill in the blank'],tf:['是非題','True / False']};
+function copySet(s){ return JSON.parse(JSON.stringify(s)); }
+function renderSetPick(){
+  $('setPick').innerHTML=SETS.map(function(s){ return '<option value="'+s.id+'">'+esc(s.name)+'（'+(s.status==='pub'?tt('已發布','Published'):tt('草稿','Draft'))+'）</option>'; }).join('');
+  if(curSet) $('setPick').value=curSet.id;
+}
+function pickSet(id){ curSet=copySet(setById(id)); renderSet(); }
+function newSet(){
+  var id='cs'+(SETS.length+1+Math.floor(Math.random()*1000));
+  SETS.push({id:id,name:'',status:'draft',pass:70,qs:[{t:'single',text:'',opts:['','','',''],ans:0,pts:10}]});
+  curSet=copySet(SETS[SETS.length-1]); renderSetPick(); renderSet(); showToast(tt('已新增空白題目組，請填寫後儲存','Blank set added. Fill it in and save.'));
+}
+function renderSet(){
+  $('setName').value=curSet.name; $('setPass').value=curSet.pass;
+  $('setChip').innerHTML=curSet.status==='pub'?'<span class="badge badge-ok">'+tt('已發布','Published')+'</span>':'<span class="badge badge-muted">'+tt('草稿','Draft')+'</span>';
+  $('qList').innerHTML=curSet.qs.length?curSet.qs.map(qHtml).join(''):'<div class="tbl-empty">'+tt('還沒有題目。按「新增題目」開始。','No questions yet. Press Add question to start.')+'</div>';
+  updTotal();
+}
+function qHtml(q,i){
+  var body='';
+  if(q.t==='single'){
+    body='<div class="fl">'+tt('選項（點圓鈕設定正確答案）','Options (select the radio for the correct answer)')+'</div>'+q.opts.map(function(o,k){ return '<div class="opt-row"><input type="radio" name="ans'+i+'" '+(q.ans===k?'checked':'')+' onchange="curSet.qs['+i+'].ans='+k+'" aria-label="'+tt('正確答案','Correct answer')+'"><input type="text" class="field-input" value="'+esc(o)+'" placeholder="'+tt('選項 ','Option ')+(k+1)+'" oninput="curSet.qs['+i+'].opts['+k+']=this.value"></div>'; }).join('');
+  } else if(q.t==='fill'){
+    body='<span class="fl">'+tt('標準答案','Correct answer')+'</span><input type="text" class="field-input" value="'+esc(q.ans)+'" oninput="curSet.qs['+i+'].ans=this.value">';
+  } else {
+    body='<span class="fl">'+tt('正確答案','Correct answer')+'</span><div class="seg"><label><input type="radio" name="tf'+i+'" '+(q.ans===true?'checked':'')+' onchange="curSet.qs['+i+'].ans=true"> '+tt('對','True')+'</label><label><input type="radio" name="tf'+i+'" '+(q.ans===false?'checked':'')+' onchange="curSet.qs['+i+'].ans=false"> '+tt('錯','False')+'</label></div>';
+  }
+  return '<div class="q-card"><div class="q-head"><b>'+tt('第 '+(i+1)+' 題','Question '+(i+1))+'</b><div class="q-ctl"><select class="field-select" style="width:auto;" aria-label="'+tt('題型','Type')+'" onchange="changeType('+i+',this.value)">'+Object.keys(TYPE_LBL).map(function(k){return '<option value="'+k+'"'+(q.t===k?' selected':'')+'>'+tt(TYPE_LBL[k][0],TYPE_LBL[k][1])+'</option>';}).join('')+'</select>'+
+    '<label class="small muted" style="display:inline-flex;align-items:center;gap:4px;">'+tt('配分','Points')+'<input type="number" class="field-input" style="width:70px;padding:6px 8px;" min="1" max="100" value="'+q.pts+'" oninput="curSet.qs['+i+'].pts=Number(this.value);updTotal()"></label>'+
+    '<button type="button" class="btn btn-danger btn-sm" onclick="delQuestion('+i+')">'+tt('刪除題目','Delete')+'</button></div></div>'+
+    '<span class="fl">'+tt('題目','Question')+'</span><textarea class="field-input" oninput="curSet.qs['+i+'].text=this.value" placeholder="'+tt('輸入題目內容','Enter the question')+'">'+esc(q.text)+'</textarea><div style="margin-top:10px;">'+body+'</div></div>';
+}
+function changeType(i,t){
+  var q=curSet.qs[i]; q.t=t;
+  if(t==='single'){ q.opts=q.opts&&q.opts.length?q.opts:['','','','']; q.ans=0; } else if(t==='fill'){ q.ans=''; } else { q.ans=true; }
+  renderSet();
+}
+function addQuestion(){ curSet.qs.push({t:'single',text:'',opts:['','','',''],ans:0,pts:10}); renderSet(); showToast(tt('已新增一題','Question added')); }
+function delQuestion(i){ curSet.qs.splice(i,1); renderSet(); showToast(tt('已刪除題目','Question deleted')); }
+function updTotal(){ var n=0; curSet.qs.forEach(function(q){ n+=(Number(q.pts)||0); }); $('setTotal').textContent=n+tt(' 分',' pts'); }
+function validateSet(){
+  if(!curSet.name.trim()) return tt('請填寫題目組名稱','Please enter a set name');
+  if(!curSet.qs.length) return tt('至少要有一題才能發布','Add at least one question before publishing');
+  for(var i=0;i<curSet.qs.length;i++){
+    var q=curSet.qs[i];
+    if(!q.text.trim()) return tt('第 '+(i+1)+' 題尚未填寫題目','Question '+(i+1)+' has no text');
+    if(q.t==='single' && q.opts.some(function(o){return !o.trim();})) return tt('第 '+(i+1)+' 題的選項請填滿','Fill in all options of question '+(i+1));
+    if(q.t==='fill' && !String(q.ans).trim()) return tt('第 '+(i+1)+' 題尚未填寫標準答案','Question '+(i+1)+' has no correct answer');
+  }
+  return '';
+}
+function saveSet(mode){
+  if(mode==='pub'){ var err=validateSet(); if(err){ showToast(err); return; } }
+  else if(!curSet.name.trim()){ showToast(tt('請先填寫題目組名稱','Please enter a set name first')); return; }
+  curSet.status = mode==='pub' ? 'pub' : (curSet.status==='pub'?'pub':'draft');
+  if(mode==='draft' && curSet.status==='pub'){ curSet.status='draft'; }
+  var idx=SETS.map(function(s){return s.id;}).indexOf(curSet.id); SETS[idx]=copySet(curSet);
+  renderSetPick(); renderSet();
+  showToast(mode==='pub'?tt('已發布，可在「指派階段考」選用','Published. You can now choose it when assigning.'):tt('草稿已儲存','Draft saved'));
+}
+
+/* ================= 初始化 ================= */
+function renderAll(){ initFilters(); renderStatus(); syncAssign(); renderSetPick(); if(curSet) renderSet(); if(drId) openDrawer(drId); }
+curSet=copySet(SETS[2]);
+renderAll(); $('setPick').value=curSet.id;
+if(window.TLI_I18N){ TLI_I18N.onRefresh(renderAll); TLI_I18N.init(); }
+</script>
+</body>
+</html>

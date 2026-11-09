@@ -1,0 +1,346 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>TLI Connect 會員區－學習儀表板</title>
+<style>
+:root{
+  --c-primary:#1B4E8C;--c-primary-dark:#123A68;--c-accent:#E8792B;--c-accent-dark:#CF691F;--c-secondary:#0F9B79;
+  --c-bg:#F5F7FA;--c-border:#E4E7EC;--c-muted:#667085;--c-text:#101828;
+  --radius:12px;--radius-sm:8px;--shadow:0 1px 3px rgba(16,24,40,.08),0 1px 2px rgba(16,24,40,.04);--shadow-lg:0 8px 24px rgba(16,24,40,.16);
+  --topbar-h:52px;--bottomnav-h:64px;
+}
+*{box-sizing:border-box;}
+html,body{margin:0;padding:0;overflow-x:hidden;}
+body{font-family:"Noto Sans TC","Microsoft JhengHei",system-ui,-apple-system,"Segoe UI",sans-serif;background:var(--c-bg);color:var(--c-text);line-height:1.55;font-size:15px;-webkit-tap-highlight-color:transparent;}
+a{color:inherit;text-decoration:none;}
+img,svg{display:block;}
+button{font-family:inherit;}
+button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible{outline:2px solid var(--c-primary);outline-offset:2px;}
+.app{min-height:100vh;position:relative;}
+.topbar{position:sticky;top:0;z-index:60;height:var(--topbar-h);background:#fff;border-bottom:1px solid var(--c-border);display:flex;align-items:center;justify-content:space-between;padding:0 14px;gap:10px;}
+.topbar-left{display:flex;align-items:center;gap:8px;min-width:0;}
+.topbar-logo-wrap{width:26px;height:22px;overflow:hidden;position:relative;flex:none;}
+.topbar-logo-wrap img{position:absolute;left:0;top:0;height:22px;width:auto;max-width:none;}
+.topbar-title{font-size:16.5px;font-weight:700;color:var(--c-text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.topbar-actions{display:flex;align-items:center;gap:6px;position:relative;}
+.bell-btn{position:relative;width:32px;height:32px;border-radius:50%;border:1px solid var(--c-border);background:#fff;cursor:pointer;display:flex;align-items:center;justify-content:center;color:var(--c-muted);}
+.bell-btn svg{width:16px;height:16px;}
+.bell-btn .dot{position:absolute;top:5px;right:6px;width:7px;height:7px;border-radius:50%;background:var(--c-accent);border:1.5px solid #fff;}
+.bell-panel{display:none;position:absolute;right:0;top:40px;width:264px;background:#fff;border:1px solid var(--c-border);border-radius:var(--radius-sm);box-shadow:var(--shadow-lg);padding:6px 0;z-index:90;}
+.bell-panel.open{display:block;}
+.bell-panel h4{margin:0;padding:8px 14px 6px;font-size:12.5px;color:var(--c-muted);font-weight:700;}
+.bell-item{padding:9px 14px;font-size:12.5px;border-top:1px solid var(--c-border);display:flex;gap:8px;}
+.bell-item .b-dot{width:6px;height:6px;border-radius:50%;background:var(--c-accent);margin-top:5px;flex:none;}
+.bell-item p{margin:0;color:var(--c-text);}
+.bell-item span{color:var(--c-muted);font-size:11px;}
+.side-nav{display:none;}
+@media(min-width:1024px){
+  .side-nav{display:flex;flex-direction:column;position:fixed;left:0;top:0;bottom:0;width:310px;background:#fff;border-right:1px solid var(--c-border);padding:18px 12px;z-index:50;overflow-y:auto;}
+  .side-brand{display:flex;align-items:center;padding:0 8px 18px;}
+  .side-brand img{height:28px;width:auto;}
+  .side-identity{padding:0 8px 14px;margin-bottom:6px;font-size:12.5px;font-weight:700;color:var(--c-text);border-bottom:1px solid var(--c-border);}
+  .side-link{display:flex;align-items:center;gap:10px;padding:10px 10px;border-radius:8px;font-size:14px;font-weight:600;color:var(--c-muted);margin-bottom:2px;}
+  .side-link svg{width:19px;height:19px;flex:none;}
+  .side-link.active{background:#E6EEF8;color:var(--c-primary);}
+  .side-link:hover:not(.active){background:var(--c-bg);}
+  .app.has-side .topbar{margin-left:310px;}
+  .app.has-side .content{margin-left:310px;}
+}
+.bottom-nav{position:fixed;left:0;right:0;bottom:0;z-index:70;background:#fff;border-top:1px solid var(--c-border);display:flex;height:var(--bottomnav-h);padding-bottom:env(safe-area-inset-bottom,0);box-shadow:0 -2px 10px rgba(16,24,40,.06);}
+.bottom-nav a{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;font-size:10.5px;color:var(--c-muted);font-weight:600;min-height:44px;}
+.bottom-nav a svg{width:20px;height:20px;}
+.bottom-nav a.active{color:var(--c-primary);}
+@media(min-width:1024px){.bottom-nav{display:none;}}
+.content{max-width:840px;margin:0 auto;padding:18px 16px calc(var(--bottomnav-h) + 24px);}
+@media(min-width:1024px){.content{padding:26px 32px 40px;}}
+.page-h{font-size:19px;font-weight:700;margin:2px 0 4px;}
+.page-sub{color:var(--c-muted);font-size:13px;margin:0 0 18px;}
+.section-title{font-size:15px;font-weight:700;margin:22px 0 12px;}
+.section-title.first{margin-top:4px;}
+.card{background:#fff;border:1px solid var(--c-border);border-radius:var(--radius);box-shadow:var(--shadow);padding:16px;}
+.card + .card{margin-top:12px;}
+.muted{color:var(--c-muted);}
+.small{font-size:12px;}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;border:none;border-radius:var(--radius-sm);padding:11px 18px;font-size:14px;font-weight:700;cursor:pointer;font-family:inherit;transition:background .15s;min-height:44px;}
+.btn-primary{background:var(--c-primary);color:#fff;}
+.btn-primary:hover{background:var(--c-primary-dark);}
+.btn-accent{background:var(--c-accent);color:#fff;}
+.btn-accent:hover{background:var(--c-accent-dark);}
+.btn-outline{background:#fff;border:1px solid var(--c-border);color:var(--c-text);}
+.btn-outline:hover{background:var(--c-bg);}
+.btn:disabled{background:var(--c-border)!important;color:#98A2B3!important;cursor:not-allowed;}
+.btn-sm{padding:7px 12px;font-size:12.5px;min-height:36px;}
+.badge{display:inline-block;padding:2px 9px;border-radius:20px;font-size:11.5px;font-weight:700;white-space:nowrap;}
+.badge-info{background:#E6EEF8;color:var(--c-primary);}
+.badge-warn{background:#FCEBDC;color:var(--c-accent-dark);}
+.badge-ok{background:#E4F5F0;color:#0B6B52;}
+.badge-muted{background:var(--c-border);color:var(--c-muted);}
+.badge-danger{background:#FBEAEA;color:#B42318;}
+.badge-invite{background:#F3E8FD;color:#6B21A8;}
+.noshow-line{color:#B42318;margin:0 0 12px;font-size:12.5px;display:flex;gap:6px;align-items:flex-start;}
+.noshow-line svg{flex:none;margin-top:1px;}
+.hidden{display:none!important;}
+.banner{border-radius:var(--radius);padding:12px 14px;margin-bottom:14px;font-size:13px;display:flex;gap:9px;align-items:flex-start;}
+.banner-info{background:#E6EEF8;color:var(--c-primary-dark);border:1px solid #C7DAF0;}
+.banner svg{flex:none;margin-top:1px;}
+.list-row{display:flex;align-items:center;gap:12px;padding:12px 0;border-top:1px solid var(--c-border);}
+.list-row:first-child{border-top:none;padding-top:0;}
+.list-row .icon-box{width:38px;height:38px;border-radius:9px;background:var(--c-bg);display:flex;align-items:center;justify-content:center;flex:none;color:var(--c-primary);}
+.list-row .icon-box svg{width:18px;height:18px;}
+.list-row .body{flex:1;min-width:0;}
+.list-row .body h4{margin:0;font-size:13.5px;font-weight:700;}
+.list-row .body p{margin:2px 0 0;font-size:12px;color:var(--c-muted);}
+.list-row .trail{flex:none;text-align:right;display:flex;flex-direction:column;align-items:flex-end;gap:6px;}
+.mytab-row{display:flex;gap:8px;margin-bottom:12px;flex-wrap:wrap;}
+.mytab-btn{background:#fff;border:1px solid var(--c-border);border-radius:20px;padding:7px 14px;font-size:12.5px;font-family:inherit;color:var(--c-text);cursor:pointer;}
+.mytab-btn.active{background:var(--c-primary);color:#fff;border-color:var(--c-primary);}
+.mybucket-label{font-size:11.5px;color:var(--c-muted);font-weight:700;margin:14px 0 6px;}
+.mybucket-label:first-child{margin-top:0;}
+.toast{position:fixed;left:50%;bottom:calc(var(--bottomnav-h) + 18px);transform:translateX(-50%);background:#101828;color:#fff;padding:10px 20px;border-radius:20px;font-size:13px;font-weight:700;z-index:120;box-shadow:var(--shadow-lg);white-space:nowrap;max-width:88vw;overflow:hidden;text-overflow:ellipsis;}
+.toast.hidden{display:none;}
+@media(min-width:1024px){.toast{bottom:24px;}}
+.content{max-width:960px;}
+.sheet-overlay{position:fixed;inset:0;background:rgba(16,24,40,.45);z-index:110;display:flex;align-items:flex-end;justify-content:center;}
+.sheet-overlay.hidden{display:none;}
+.sheet{background:#fff;width:100%;max-width:480px;border-radius:18px 18px 0 0;padding:18px;max-height:86vh;overflow-y:auto;}
+@media(min-width:640px){.sheet-overlay{align-items:center;}.sheet{border-radius:16px;}}
+.sheet h3{margin:0 0 6px;font-size:16px;}
+.dash-head{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;flex-wrap:wrap;margin-bottom:14px;}
+.dash-head .page-sub{margin:0;}
+.dash-actions{display:flex;gap:8px;flex-wrap:wrap;}
+.ctx-line{display:flex;gap:6px 18px;flex-wrap:wrap;font-size:12.5px;color:var(--c-muted);margin-top:6px;}
+.ctx-line b{color:var(--c-text);font-weight:700;}
+.kpi-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:12px;}
+@media(max-width:820px){.kpi-grid{grid-template-columns:repeat(2,1fr);}}
+.kpi{background:#fff;border:1px solid var(--c-border);border-radius:var(--radius);box-shadow:var(--shadow);padding:14px 16px;min-width:0;}
+.kpi .k-label{font-size:12px;color:var(--c-muted);font-weight:700;}
+.kpi .k-val{font-size:26px;font-weight:700;margin-top:4px;line-height:1.2;}
+.kpi .k-val small{font-size:13px;font-weight:600;color:var(--c-muted);margin-left:3px;}
+.kpi .k-sub{font-size:11.5px;color:var(--c-muted);margin-top:4px;}
+.kpi .progress{margin-top:8px;}
+.progress{height:8px;border-radius:6px;background:var(--c-border);overflow:hidden;}
+.progress>div{height:100%;background:var(--c-primary);border-radius:6px;}
+.progress.ok>div{background:var(--c-secondary);}
+.progress.warn>div{background:var(--c-accent);}
+.two-col{display:grid;grid-template-columns:3fr 2fr;gap:12px;align-items:start;}
+@media(max-width:900px){.two-col{grid-template-columns:1fr;}}
+.two-col .card+.card{margin-top:0;}
+.card h3.ct{margin:0 0 12px;font-size:15px;}
+.unit-row{padding:10px 0;border-top:1px solid var(--c-border);}
+.unit-row:first-of-type{border-top:none;padding-top:0;}
+.unit-top{display:flex;justify-content:space-between;gap:10px;align-items:center;margin-bottom:6px;font-size:13.5px;font-weight:700;}
+.unit-top .u-n{min-width:0;overflow-wrap:anywhere;}
+.unit-meta{display:flex;justify-content:space-between;font-size:11.5px;color:var(--c-muted);margin-top:4px;}
+.empty-box{text-align:center;padding:26px 12px;color:var(--c-muted);font-size:13px;}
+.lg-next{background:var(--c-bg);border-radius:var(--radius-sm);padding:10px 12px;margin-top:12px;font-size:12.5px;}
+.lg-next b{display:block;font-size:13.5px;margin-bottom:2px;}
+.lg-actions{display:flex;gap:8px;margin-top:12px;flex-wrap:wrap;}
+.print-only{display:none;}
+@media print{
+  .side-nav,.topbar,.bottom-nav,.dash-actions,.lg-actions,.tli-i18n-switch,.no-print{display:none!important;}
+  .app.has-side .content{margin-left:0!important;}
+  body{background:#fff;}
+  .card,.kpi{box-shadow:none;break-inside:avoid;}
+  .print-only{display:block;margin-bottom:12px;font-size:13px;}
+}
+</style>
+</head>
+<body>
+<div class="app has-side">
+  <nav class="side-nav" aria-label="主導覽" data-i18n-aria-label="member.nav.aria">
+    <div class="side-brand"><a href="../公開網站/p01_home.html" aria-label="TLI 官網" data-i18n-aria-label="member.logoAria"><img src="../assets/tli-logo.svg" alt="TLI"></a></div>
+    <div class="side-identity">Emma Johnson｜<span data-i18n="member.role.student">學員</span></div>
+    <a class="side-link" href="m01_home.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11l9-8 9 8"/><path d="M5 10v10a1 1 0 001 1h3v-6h6v6h3a1 1 0 001-1V10"/></svg><span data-i18n="member.nav.home">首頁</span></a>
+    <a class="side-link" href="m02_booking.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18M12 14v6M9 17h6"/></svg><span data-i18n="member.nav.booking">預約與報名</span></a>
+    <a class="side-link" href="m03_schedule.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg><span data-i18n="member.nav.schedule">課表</span></a>
+    <a class="side-link" href="m08_self_paced.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 3h6a4 4 0 014 4v14a3 3 0 00-3-3H2z"/><path d="M22 3h-6a4 4 0 00-4 4v14a3 3 0 013-3h7z"/></svg><span data-i18n="member.nav.learning">學習</span></a>
+    <a class="side-link active" href="m18_learning_dashboard.html" aria-current="page"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="4" y1="20" x2="20" y2="20"/><rect x="5" y="11" width="3" height="7" rx="1"/><rect x="10.5" y="6" width="3" height="12" rx="1"/><rect x="16" y="9" width="3" height="9" rx="1"/></svg><span data-en="Learning Dashboard">學習儀表板</span></a>
+    <a class="side-link" href="m20_transcripts.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 3H7a2 2 0 00-2 2v14a2 2 0 002 2h10a2 2 0 002-2V8z"/><path d="M14 3v5h5"/><path d="M9 13h6M9 17h6"/></svg><span data-en="Transcripts">成績單</span></a>
+    <a class="side-link" href="m19_certificates.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="9" r="6"/><path d="M8.5 14.5L7 22l5-3 5 3-1.5-7.5"/></svg><span data-en="Certificates">結業證書</span></a>
+    <a class="side-link" href="m04_course_detail.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="5" width="20" height="14" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/><line x1="6" y1="15" x2="10" y2="15"/></svg><span data-i18n="member.nav.myPlan">我的方案</span></a>
+    <a class="side-link" href="m07_profile.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 4-7 8-7s8 3 8 7"/></svg><span data-i18n="member.nav.me">我的</span></a>
+    <a class="side-link" href="../公開網站/p01_home.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg><span data-i18n="member.nav.backToSite">回官網</span></a>
+  </nav>
+
+  <header class="topbar">
+    <div class="topbar-left"><a class="topbar-logo-wrap" href="../公開網站/p01_home.html" aria-label="TLI 官網" data-i18n-aria-label="member.logoAria"><img src="../assets/tli-logo.svg" alt="TLI"></a><div class="topbar-title" data-en="Learning Dashboard">學習儀表板</div></div>
+    <div class="topbar-actions">
+      <button class="bell-btn" onclick="toggleBell()" aria-label="通知" data-i18n-aria-label="member.notifications">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8a6 6 0 10-12 0c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.7 21a2 2 0 01-3.4 0"/></svg>
+        <span class="dot"></span>
+      </button>
+      <div class="bell-panel" id="bellPanel">
+        <h4 data-i18n="member.notifications">通知</h4>
+        <div class="bell-item"><span class="b-dot"></span><div><p data-i18n="m07.notif.tzUpdated">你的上課時區設定已更新</p><span><span data-i18n="member.today">今天</span> 09:20</span></div></div>
+      </div>
+    </div>
+  </header>
+
+  <main class="content">
+    <div class="print-only" id="printHead"></div>
+    <div class="dash-head">
+      <div>
+        <div class="page-h" data-en="Learning Dashboard">學習儀表板</div>
+        <p class="page-sub" id="dashSub"></p>
+        <div class="ctx-line" id="ctxLine"></div>
+      </div>
+      <div class="dash-actions">
+        <button type="button" class="btn btn-outline btn-sm" id="btnCsv"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg><span data-en="Download report (CSV)">下載報告（CSV）</span></button>
+        <button type="button" class="btn btn-primary btn-sm" id="btnPrint"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 01-2-2v-5a2 2 0 012-2h16a2 2 0 012 2v5a2 2 0 01-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg><span data-en="Print / save as PDF">列印／存成 PDF</span></button>
+      </div>
+    </div>
+
+    <div class="banner banner-info hidden" id="emptyBanner">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+      <div><span data-en="You have not started the self-paced course yet. Your progress and study time will show here after your first lesson.">你還沒開始自學課程，完成第一課後，進度與學習時數會顯示在這裡。</span> <a href="m08_self_paced.html" style="text-decoration:underline;font-weight:700;" data-en="Start learning">開始學習</a></div>
+    </div>
+
+    <div class="kpi-grid" id="kpiGrid"></div>
+
+    <div class="two-col">
+      <div class="card">
+        <div class="flex-between" style="margin-bottom:12px;">
+          <h3 class="ct" style="margin:0;" data-en="Progress by unit">各單元進度</h3>
+          <a class="btn btn-outline btn-sm no-print" href="m08_self_paced.html" data-en="Continue learning">繼續學習</a>
+        </div>
+        <div id="unitList"></div>
+      </div>
+      <div>
+        <div class="card" id="loungeCard"></div>
+        <div class="card" style="margin-top:12px;">
+          <h3 class="ct" data-en="Recent activity">最近學習</h3>
+          <div id="recentList"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="sheet-overlay hidden" id="cancelOverlay" onclick="if(event.target===this)closeCancel()">
+      <div class="sheet">
+        <h3 data-en="Cancel this session?">取消這場預約？</h3>
+        <p class="muted small" id="cancelDetail" style="margin:0 0 14px;"></p>
+        <div class="stack" style="display:flex;flex-direction:column;gap:8px;">
+          <button type="button" class="btn btn-primary" id="cancelOk" data-en="Cancel session">取消預約</button>
+          <button type="button" class="btn btn-outline" onclick="closeCancel()" data-en="Keep it">保留預約</button>
+        </div>
+      </div>
+    </div>
+
+  </main>
+
+  <nav class="bottom-nav">
+    <a href="m01_home.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11l9-8 9 8"/><path d="M5 10v10a1 1 0 001 1h3v-6h6v6h3a1 1 0 001-1V10"/></svg><span data-i18n="member.nav.home">首頁</span></a>
+    <a href="m02_booking.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18M12 14v6M9 17h6"/></svg><span data-i18n="member.nav.booking">預約與報名</span></a>
+    <a href="m03_schedule.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg><span data-i18n="member.nav.schedule">課表</span></a>
+    <a href="m08_self_paced.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 3h6a4 4 0 014 4v14a3 3 0 00-3-3H2z"/><path d="M22 3h-6a4 4 0 00-4 4v14a3 3 0 013-3h7z"/></svg><span data-i18n="member.nav.learning">學習</span></a>
+    <a href="m07_profile.html" ><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 4-7 8-7s8 3 8 7"/></svg><span data-i18n="member.nav.me">我的</span></a>
+  </nav>
+</div>
+
+<div class="toast hidden" id="toast"></div>
+<script>window.TLI_I18N_PAGE_LANGS=['zh-TW','zh-CN','en','ja','de'];</script>
+<script src="../assets/_shared_masters.js"></script>
+<script src="../assets/_i18n_dict.js"></script>
+<script src="../assets/_i18n_dict_member.js"></script>
+<script src="../assets/_i18n_dict_ja.js"></script>
+<script src="../assets/_i18n_dict_de.js"></script>
+<script src="_project_learning.js"></script>
+<script src="../assets/_i18n.js"></script>
+<script>
+var PL = TLI_PL, T = PL.T, U = PL.me();
+function $(i){ return document.getElementById(i); }
+function showToast(msg){ var t=$('toast'); t.textContent=msg; t.classList.remove('hidden'); clearTimeout(window._tt); window._tt=setTimeout(function(){ t.classList.add('hidden'); },2400); }
+function toggleBell(){ var b=$('bellPanel'); if(b) b.classList.toggle('open'); }
+function barCls(p){ return p>=100?' ok':(p<25?' warn':''); }
+function statusBadge(u){ return u.pct>=100 ? '<span class="badge badge-ok">'+T('已完成','Completed')+'</span>' : (u.done>0 ? '<span class="badge badge-info">'+T('進行中','In progress')+'</span>' : '<span class="badge badge-muted">'+T('未開始','Not started')+'</span>'); }
+
+var P = PL.progress(U.rid), LG = PL.lounge(U.rid, U.perMonth);
+var NEXT = null;
+
+function nextBooking(){
+  var arr = PL.myBookings(U.rid).filter(function(b){ return b.status==='booked' && b.utc > PL.nowUtc; }).sort(function(a,b){ return a.utc-b.utc; });
+  return arr[0] || null;
+}
+function typeLbl(t){ return T('團體場次（6–10 人）','Group session (6–10)'); }
+
+function render(){
+  P = PL.progress(U.rid); LG = PL.lounge(U.rid, U.perMonth); NEXT = nextBooking();
+  /* 抬頭 */
+  $('dashSub').textContent = U.mode==='project'
+    ? T('依你的班級統計，資料每次學習後更新。','Based on your class. Updated after every study session.')
+    : T('你的自學課程與會話練習概況。','Your self-paced course and speaking practice at a glance.');
+  var ctx = [];
+  ctx.push('<span>'+T('學員：','Student: ')+'<b>'+PL.esc(U.name)+'</b></span>');
+  if(U.mode==='project'){
+    ctx.push('<span>'+T('單位：','Institution: ')+'<b>'+PL.esc(U.partnerName)+'</b></span>');
+    ctx.push('<span>'+T('班級：','Class: ')+'<b>'+PL.esc(U.className)+'</b></span>');
+    ctx.push('<span>'+T('老師：','Teacher: ')+'<b>'+PL.esc(U.teacherName)+'</b></span>');
+  }
+  ctx.push('<span>'+T('課程：','Course: ')+'<b>'+PL.esc(PL.courseName())+'</b></span>');
+  $('ctxLine').innerHTML = ctx.join('');
+  $('printHead').innerHTML = '<b>TLI Connect '+T('學習報告','Learning Report')+'</b>　'+PL.esc(U.name)+'　'+PL.today;
+  $('emptyBanner').classList.toggle('hidden', P.started);
+
+  /* KPI */
+  var lgPct = LG.quota ? Math.round(LG.used/LG.quota*100) : 0;
+  $('kpiGrid').innerHTML =
+    '<div class="kpi"><div class="k-label">'+T('自學完成率','Course completion')+'</div><div class="k-val">'+P.pct+'<small>%</small></div><div class="progress'+barCls(P.pct)+'"><div style="width:'+P.pct+'%"></div></div></div>'+
+    '<div class="kpi"><div class="k-label">'+T('累計學習時數','Total study time')+'</div><div class="k-val">'+P.hours+'<small>'+T('小時','hrs')+'</small></div><div class="k-sub">'+(P.last ? T('最後學習 ','Last study ')+PL.mdLabel(P.last.date)+' '+P.last.time : T('尚無學習紀錄','No study yet'))+'</div></div>'+
+    '<div class="kpi"><div class="k-label">'+T('已完成課數','Lessons completed')+'</div><div class="k-val">'+P.done+'<small>／'+P.total+'</small></div><div class="k-sub">'+T('共 8 個單元','8 units in total')+'</div></div>'+
+    '<div class="kpi"><div class="k-label">'+T('Mandarin Lounge 本月剩餘','Mandarin Lounge left this month')+'</div><div class="k-val">'+LG.remaining+'<small>／'+LG.quota+' '+T('次','sessions')+'</small></div><div class="progress'+(LG.remaining===0?' warn':' ok')+'"><div style="width:'+lgPct+'%"></div></div></div>';
+
+  /* 單元 */
+  $('unitList').innerHTML = P.units.map(function(u,i){
+    return '<div class="unit-row"><div class="unit-top"><span class="u-n">'+T('單元 ','Unit ')+(i+1)+'　'+PL.esc(T(u.zh,u.en))+'</span>'+statusBadge(u)+'</div>'+
+      '<div class="progress'+barCls(u.pct)+'"><div style="width:'+u.pct+'%"></div></div>'+
+      '<div class="unit-meta"><span>'+T('已完成 ','Done ')+u.done+'／'+u.lessons+T(' 課',' lessons')+'</span><span>'+u.pct+'%</span></div></div>';
+  }).join('');
+
+  /* 最近學習 */
+  $('recentList').innerHTML = P.recent.length ? P.recent.map(function(r){
+    return '<div class="list-row"><div class="icon-box"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><polygon points="10 8 16 12 10 16 10 8" fill="currentColor" stroke="none"/></svg></div>'+
+      '<div class="body"><h4>'+PL.esc(T(r.zh,r.en))+T('　第 ','  Lesson ')+r.lesson+T(' 課','')+'</h4><p>'+PL.mdLabel(r.date)+' '+PL.wd(r.date)+'・'+r.minutes+T(' 分鐘',' min')+'</p></div></div>';
+  }).join('') : '<div class="empty-box">'+T('還沒有學習紀錄。','No study activity yet.')+'</div>';
+
+  /* Lounge */
+  var h = '<h3 class="ct">Mandarin Lounge</h3>'+
+    '<div class="flex-between" style="margin-bottom:6px;"><span class="small muted">'+T('本月已預約／額度','Booked this month / quota')+'</span><b>'+LG.used+'／'+LG.quota+'</b></div>'+
+    '<div class="progress'+(LG.remaining===0?' warn':' ok')+'"><div style="width:'+lgPct+'%"></div></div>'+
+    '<div class="small muted" style="margin-top:8px;">'+T('累計參加／預約 ','Total joined or booked ')+LG.term+T(' 場',' sessions')+'</div>';
+  if(LG.remaining===0){ h += '<div class="banner banner-warn" style="margin:12px 0 0;">'+T('本月額度已用完，下個月才能再預約。','Your monthly quota is used up. You can book again next month.')+'</div>'; }
+  if(NEXT){
+    h += '<div class="lg-next"><b>'+T('下一場','Next session')+'</b>'+PL.mdLabel(NEXT.date)+' '+PL.wd(NEXT.date)+' '+NEXT.time+'・'+typeLbl(NEXT.type)+'・'+PL.toolName(NEXT.tool)+'<br>'+PL.esc(NEXT.teacher)+(NEXT.topic?'・'+PL.esc(T(NEXT.topic,NEXT.topicEn)):'')+'</div>';
+  }
+  h += '<div class="lg-actions"><a class="btn btn-primary btn-sm" href="m14_chat_booking.html">'+T('預約 Lounge','Book Lounge')+'</a>'+
+       (NEXT && PL.cancellable(NEXT) ? '<button type="button" class="btn btn-outline btn-sm" onclick="openCancel()">'+T('取消這場','Cancel this session')+'</button>' : '')+'</div>';
+  $('loungeCard').innerHTML = h;
+}
+function openCancel(){ if(!NEXT) return; $('cancelDetail').textContent = PL.mdLabel(NEXT.date)+' '+NEXT.time+'・'+typeLbl(NEXT.type)+'　'+T('取消後本月額度會退回。','Your quota is returned after cancelling.'); $('cancelOverlay').classList.remove('hidden'); }
+function closeCancel(){ $('cancelOverlay').classList.add('hidden'); }
+$('cancelOk').addEventListener('click', function(){ if(NEXT && PL.cancel(NEXT.id)){ closeCancel(); render(); showToast(T('已取消預約，額度已退回','Session cancelled and quota returned')); } });
+
+/* 匯出 */
+$('btnCsv').addEventListener('click', function(){
+  var rows = [[T('TLI Connect 學習報告','TLI Connect Learning Report')],[T('學員','Student'),U.name],[T('Email','Email'),U.email]];
+  if(U.mode==='project'){ rows.push([T('單位','Institution'),U.partnerName],[T('班級','Class'),U.className],[T('老師','Teacher'),U.teacherName]); }
+  rows.push([T('課程','Course'),PL.courseName()],[T('報告日期','Report date'),PL.today],[],
+    [T('自學完成率','Completion'),P.pct+'%'],[T('累計學習時數（小時）','Study hours'),P.hours],[T('已完成課數','Lessons done'),P.done+'/'+P.total],
+    [T('Mandarin Lounge 本月已用','Lounge used this month'),LG.used+'/'+LG.quota],[T('Mandarin Lounge 累計場次','Lounge total'),LG.term],[],
+    [T('單元','Unit'),T('已完成課數','Done'),T('總課數','Lessons'),T('完成率','Rate')]);
+  P.units.forEach(function(u,i){ rows.push([(i+1)+' '+T(u.zh,u.en),u.done,u.lessons,u.pct+'%']); });
+  PL.download('learning_report_'+U.name.replace(/\s+/g,'_')+'_'+PL.today+'.csv', PL.csv(rows));
+  showToast(T('學習報告已下載','Report downloaded'));
+});
+$('btnPrint').addEventListener('click', function(){ window.print(); });
+document.addEventListener('keydown', function(e){ if(e.key==='Escape') closeCancel(); });
+document.addEventListener('click', function(e){ if(!e.target.closest('.bell-btn')&&!e.target.closest('.bell-panel')){ var b=$('bellPanel'); if(b) b.classList.remove('open'); } });
+
+TLI_I18N.onRefresh(render);
+render();
+TLI_I18N.init();
+PL.xl(document);
+
+</script>
+</body>
+</html>

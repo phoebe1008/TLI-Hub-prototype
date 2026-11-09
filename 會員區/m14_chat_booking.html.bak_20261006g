@@ -1,0 +1,420 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>TLI Connect 會員區－Mandarin Lounge</title>
+<style>
+:root{
+  --c-primary:#1B4E8C;--c-primary-dark:#123A68;--c-accent:#E8792B;--c-accent-dark:#CF691F;--c-secondary:#0F9B79;
+  --c-bg:#F5F7FA;--c-border:#E4E7EC;--c-muted:#667085;--c-text:#101828;
+  --radius:12px;--radius-sm:8px;--shadow:0 1px 3px rgba(16,24,40,.08),0 1px 2px rgba(16,24,40,.04);--shadow-lg:0 8px 24px rgba(16,24,40,.16);
+  --topbar-h:52px;--bottomnav-h:64px;
+}
+*{box-sizing:border-box;}
+html,body{margin:0;padding:0;overflow-x:hidden;}
+body{font-family:"Noto Sans TC","Microsoft JhengHei",system-ui,-apple-system,"Segoe UI",sans-serif;background:var(--c-bg);color:var(--c-text);line-height:1.55;font-size:15px;-webkit-tap-highlight-color:transparent;}
+a{color:inherit;text-decoration:none;}
+img,svg{display:block;}
+button{font-family:inherit;}
+button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible{outline:2px solid var(--c-primary);outline-offset:2px;}
+.app{min-height:100vh;position:relative;}
+.topbar{position:sticky;top:0;z-index:60;height:var(--topbar-h);background:#fff;border-bottom:1px solid var(--c-border);display:flex;align-items:center;justify-content:space-between;padding:0 14px;gap:10px;}
+.topbar-left{display:flex;align-items:center;gap:8px;min-width:0;}
+.topbar-logo-wrap{width:26px;height:22px;overflow:hidden;position:relative;flex:none;}
+.topbar-logo-wrap img{position:absolute;left:0;top:0;height:22px;width:auto;max-width:none;}
+.topbar-title{font-size:16.5px;font-weight:700;color:var(--c-text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.topbar-actions{display:flex;align-items:center;gap:6px;position:relative;}
+.bell-btn{position:relative;width:32px;height:32px;border-radius:50%;border:1px solid var(--c-border);background:#fff;cursor:pointer;display:flex;align-items:center;justify-content:center;color:var(--c-muted);}
+.bell-btn svg{width:16px;height:16px;}
+.bell-btn .dot{position:absolute;top:5px;right:6px;width:7px;height:7px;border-radius:50%;background:var(--c-accent);border:1.5px solid #fff;}
+.bell-panel{display:none;position:absolute;right:0;top:40px;width:264px;background:#fff;border:1px solid var(--c-border);border-radius:var(--radius-sm);box-shadow:var(--shadow-lg);padding:6px 0;z-index:90;}
+.bell-panel.open{display:block;}
+.bell-panel h4{margin:0;padding:8px 14px 6px;font-size:12.5px;color:var(--c-muted);font-weight:700;}
+.bell-item{padding:9px 14px;font-size:12.5px;border-top:1px solid var(--c-border);display:flex;gap:8px;}
+.bell-item .b-dot{width:6px;height:6px;border-radius:50%;background:var(--c-accent);margin-top:5px;flex:none;}
+.bell-item p{margin:0;color:var(--c-text);}
+.bell-item span{color:var(--c-muted);font-size:11px;}
+.side-nav{display:none;}
+@media(min-width:1024px){
+  .side-nav{display:flex;flex-direction:column;position:fixed;left:0;top:0;bottom:0;width:310px;background:#fff;border-right:1px solid var(--c-border);padding:18px 12px;z-index:50;overflow-y:auto;}
+  .side-brand{display:flex;align-items:center;padding:0 8px 18px;}
+  .side-brand img{height:28px;width:auto;}
+  .side-identity{padding:0 8px 14px;margin-bottom:6px;font-size:12.5px;font-weight:700;color:var(--c-text);border-bottom:1px solid var(--c-border);}
+  .side-link{display:flex;align-items:center;gap:10px;padding:10px 10px;border-radius:8px;font-size:14px;font-weight:600;color:var(--c-muted);margin-bottom:2px;}
+  .side-link svg{width:19px;height:19px;flex:none;}
+  .side-link.active{background:#E6EEF8;color:var(--c-primary);}
+  .side-link:hover:not(.active){background:var(--c-bg);}
+  .app.has-side .topbar{margin-left:310px;}
+  .app.has-side .content{margin-left:310px;}
+}
+.bottom-nav{position:fixed;left:0;right:0;bottom:0;z-index:70;background:#fff;border-top:1px solid var(--c-border);display:flex;height:var(--bottomnav-h);padding-bottom:env(safe-area-inset-bottom,0);box-shadow:0 -2px 10px rgba(16,24,40,.06);}
+.bottom-nav a{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;font-size:10.5px;color:var(--c-muted);font-weight:600;min-height:44px;}
+.bottom-nav a svg{width:20px;height:20px;}
+.bottom-nav a.active{color:var(--c-primary);}
+@media(min-width:1024px){.bottom-nav{display:none;}}
+.content{max-width:840px;margin:0 auto;padding:18px 16px calc(var(--bottomnav-h) + 24px);}
+@media(min-width:1024px){.content{padding:26px 32px 40px;}}
+.page-h{font-size:19px;font-weight:700;margin:2px 0 4px;}
+.page-sub{color:var(--c-muted);font-size:13px;margin:0 0 18px;}
+.section-title{font-size:15px;font-weight:700;margin:22px 0 12px;}
+.section-title.first{margin-top:4px;}
+.card{background:#fff;border:1px solid var(--c-border);border-radius:var(--radius);box-shadow:var(--shadow);padding:16px;}
+.card + .card{margin-top:12px;}
+.muted{color:var(--c-muted);}
+.small{font-size:12px;}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;border:none;border-radius:var(--radius-sm);padding:11px 18px;font-size:14px;font-weight:700;cursor:pointer;font-family:inherit;transition:background .15s;min-height:44px;}
+.btn-primary{background:var(--c-primary);color:#fff;}
+.btn-primary:hover{background:var(--c-primary-dark);}
+.btn-accent{background:var(--c-accent);color:#fff;}
+.btn-accent:hover{background:var(--c-accent-dark);}
+.btn-outline{background:#fff;border:1px solid var(--c-border);color:var(--c-text);}
+.btn-outline:hover{background:var(--c-bg);}
+.btn:disabled{background:var(--c-border)!important;color:#98A2B3!important;cursor:not-allowed;}
+.btn-sm{padding:7px 12px;font-size:12.5px;min-height:36px;}
+.badge{display:inline-block;padding:2px 9px;border-radius:20px;font-size:11.5px;font-weight:700;white-space:nowrap;}
+.badge-info{background:#E6EEF8;color:var(--c-primary);}
+.badge-warn{background:#FCEBDC;color:var(--c-accent-dark);}
+.badge-ok{background:#E4F5F0;color:#0B6B52;}
+.badge-muted{background:var(--c-border);color:var(--c-muted);}
+.badge-danger{background:#FBEAEA;color:#B42318;}
+.badge-invite{background:#F3E8FD;color:#6B21A8;}
+.noshow-line{color:#B42318;margin:0 0 12px;font-size:12.5px;display:flex;gap:6px;align-items:flex-start;}
+.noshow-line svg{flex:none;margin-top:1px;}
+.hidden{display:none!important;}
+.banner{border-radius:var(--radius);padding:12px 14px;margin-bottom:14px;font-size:13px;display:flex;gap:9px;align-items:flex-start;}
+.banner-info{background:#E6EEF8;color:var(--c-primary-dark);border:1px solid #C7DAF0;}
+.banner svg{flex:none;margin-top:1px;}
+.list-row{display:flex;align-items:center;gap:12px;padding:12px 0;border-top:1px solid var(--c-border);}
+.list-row:first-child{border-top:none;padding-top:0;}
+.list-row .icon-box{width:38px;height:38px;border-radius:9px;background:var(--c-bg);display:flex;align-items:center;justify-content:center;flex:none;color:var(--c-primary);}
+.list-row .icon-box svg{width:18px;height:18px;}
+.list-row .body{flex:1;min-width:0;}
+.list-row .body h4{margin:0;font-size:13.5px;font-weight:700;}
+.list-row .body p{margin:2px 0 0;font-size:12px;color:var(--c-muted);}
+.list-row .trail{flex:none;text-align:right;display:flex;flex-direction:column;align-items:flex-end;gap:6px;}
+.mytab-row{display:flex;gap:8px;margin-bottom:12px;flex-wrap:wrap;}
+.mytab-btn{background:#fff;border:1px solid var(--c-border);border-radius:20px;padding:7px 14px;font-size:12.5px;font-family:inherit;color:var(--c-text);cursor:pointer;}
+.mytab-btn.active{background:var(--c-primary);color:#fff;border-color:var(--c-primary);}
+.mybucket-label{font-size:11.5px;color:var(--c-muted);font-weight:700;margin:14px 0 6px;}
+.mybucket-label:first-child{margin-top:0;}
+.toast{position:fixed;left:50%;bottom:calc(var(--bottomnav-h) + 18px);transform:translateX(-50%);background:#101828;color:#fff;padding:10px 20px;border-radius:20px;font-size:13px;font-weight:700;z-index:120;box-shadow:var(--shadow-lg);white-space:nowrap;max-width:88vw;overflow:hidden;text-overflow:ellipsis;}
+.toast.hidden{display:none;}
+@media(min-width:1024px){.toast{bottom:24px;}}
+.content{max-width:840px;}
+.nav-segment{display:flex;gap:4px;border-bottom:1px solid var(--c-border);margin:0 0 16px;overflow-x:auto;}
+.nav-segment-link{padding:9px 14px;font-size:13.5px;font-weight:700;color:var(--c-muted);white-space:nowrap;border-bottom:2px solid transparent;flex:none;}
+.nav-segment-link.active{color:var(--c-primary);border-color:var(--c-primary);}
+.nav-segment-link:hover:not(.active){color:var(--c-text);}
+.sheet-overlay{position:fixed;inset:0;background:rgba(16,24,40,.45);z-index:110;display:flex;align-items:flex-end;justify-content:center;}
+.sheet-overlay.hidden{display:none;}
+.sheet{background:#fff;width:100%;max-width:480px;border-radius:18px 18px 0 0;padding:18px;max-height:88vh;overflow-y:auto;}
+@media(min-width:640px){.sheet-overlay{align-items:center;}.sheet{border-radius:16px;}}
+.sheet h3{margin:0 0 6px;font-size:16px;}
+.quota-card .q-top{display:flex;justify-content:space-between;align-items:flex-end;gap:10px;flex-wrap:wrap;}
+.quota-card .q-big{font-size:28px;font-weight:700;line-height:1.1;}
+.quota-card .q-big small{font-size:13px;color:var(--c-muted);font-weight:600;margin-left:4px;}
+.progress{height:8px;border-radius:6px;background:var(--c-border);overflow:hidden;margin-top:10px;}
+.progress>div{height:100%;background:var(--c-secondary);border-radius:6px;}
+.progress.warn>div{background:var(--c-accent);}
+.q-meta{display:flex;gap:6px 16px;flex-wrap:wrap;font-size:12.5px;color:var(--c-muted);margin-top:10px;}
+.q-meta b{color:var(--c-text);}
+.banner-warn{background:#FCEBDC;color:#9A4A0F;border:1px solid #F5CBA1;}
+.next-box{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;}
+.next-box h4{margin:0 0 3px;font-size:14.5px;}
+.next-box p{margin:0;font-size:12.5px;color:var(--c-muted);}
+.tool-bar{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin:14px 0 10px;}
+.tool-bar input[type=search]{flex:1;min-width:150px;border:1px solid var(--c-border);border-radius:var(--radius-sm);padding:9px 11px;font-size:13.5px;font-family:inherit;min-height:40px;}
+.select-sm{border:1px solid var(--c-border);border-radius:var(--radius-sm);padding:8px 10px;font-size:13px;font-family:inherit;background:#fff;min-height:40px;}
+.mytab-row{display:flex;gap:8px;margin-bottom:10px;flex-wrap:wrap;}
+.date-strip{display:flex;gap:8px;overflow-x:auto;padding-bottom:6px;margin-bottom:8px;}
+.date-strip::-webkit-scrollbar{height:0;}
+.dchip{flex:none;min-width:62px;text-align:center;padding:8px 10px;border-radius:var(--radius-sm);border:1px solid var(--c-border);background:#fff;font-size:12.5px;font-weight:700;cursor:pointer;font-family:inherit;color:var(--c-text);}
+.dchip small{display:block;font-weight:500;color:var(--c-muted);font-size:11px;}
+.dchip.on{border-color:var(--c-primary);background:#E6EEF8;color:var(--c-primary);}
+.sess{display:flex;gap:12px;align-items:center;padding:13px 0;border-top:1px solid var(--c-border);}
+.sess:first-child{border-top:none;padding-top:2px;}
+.sess .s-time{flex:none;width:92px;}
+.sess .s-time b{display:block;font-size:15px;}
+.sess .s-time span{font-size:11.5px;color:var(--c-muted);}
+.sess .s-body{flex:1;min-width:0;}
+.sess .s-body h4{margin:0 0 3px;font-size:13.5px;overflow-wrap:anywhere;}
+.sess .s-body p{margin:0;font-size:12px;color:var(--c-muted);}
+.sess .s-act{flex:none;text-align:right;display:flex;flex-direction:column;gap:6px;align-items:flex-end;}
+@media(max-width:520px){
+  .sess{flex-wrap:wrap;}
+  .sess .s-time{width:auto;flex:none;}
+  .sess .s-body{flex:1 1 150px;}
+  .sess .s-act{flex:1 0 100%;flex-direction:row;justify-content:space-between;align-items:center;}
+}
+.badge-grp{background:#F3E8FD;color:#6B21A8;}
+.badge-full{background:#FBEAEA;color:#B42318;}
+.opt-line{display:flex;gap:10px;align-items:center;padding:10px 12px;border:1.5px solid var(--c-border);border-radius:var(--radius-sm);cursor:pointer;font-size:13.5px;margin-top:8px;}
+.opt-line.on{border-color:var(--c-primary);background:#F7FAFF;}
+.opt-line input{width:18px;height:18px;flex:none;}
+.dl{display:grid;grid-template-columns:auto 1fr;gap:6px 14px;font-size:13px;margin:12px 0;}
+.dl dt{color:var(--c-muted);}
+.dl dd{margin:0;font-weight:600;}
+.empty-box{text-align:center;padding:22px 12px;color:var(--c-muted);font-size:13px;}
+</style>
+</head>
+<body>
+<div class="app has-side">
+  <nav class="side-nav" aria-label="主導覽" data-i18n-aria-label="member.nav.aria">
+    <div class="side-brand"><a href="../公開網站/p01_home.html" aria-label="TLI 官網" data-i18n-aria-label="member.logoAria"><img src="../assets/tli-logo.svg" alt="TLI"></a></div>
+    <div class="side-identity">Emma Johnson｜<span data-i18n="member.role.student">學員</span></div>
+    <a class="side-link" href="m01_home.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11l9-8 9 8"/><path d="M5 10v10a1 1 0 001 1h3v-6h6v6h3a1 1 0 001-1V10"/></svg><span data-i18n="member.nav.home">首頁</span></a>
+    <a class="side-link active" href="m02_booking.html" aria-current="page"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18M12 14v6M9 17h6"/></svg><span data-i18n="member.nav.booking">預約與報名</span></a>
+    <a class="side-link" href="m03_schedule.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg><span data-i18n="member.nav.schedule">課表</span></a>
+    <a class="side-link" href="m08_self_paced.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 3h6a4 4 0 014 4v14a3 3 0 00-3-3H2z"/><path d="M22 3h-6a4 4 0 00-4 4v14a3 3 0 013-3h7z"/></svg><span data-i18n="member.nav.learning">學習</span></a>
+    <a class="side-link" href="m18_learning_dashboard.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="4" y1="20" x2="20" y2="20"/><rect x="5" y="11" width="3" height="7" rx="1"/><rect x="10.5" y="6" width="3" height="12" rx="1"/><rect x="16" y="9" width="3" height="9" rx="1"/></svg><span data-en="Learning Dashboard">學習儀表板</span></a>
+    <a class="side-link" href="m19_certificates.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="9" r="6"/><path d="M8.5 14.5L7 22l5-3 5 3-1.5-7.5"/></svg><span data-en="Certificates">結業證書</span></a>
+    <a class="side-link" href="m04_course_detail.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="5" width="20" height="14" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/><line x1="6" y1="15" x2="10" y2="15"/></svg><span data-i18n="member.nav.myPlan">我的方案</span></a>
+    <a class="side-link" href="m07_profile.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 4-7 8-7s8 3 8 7"/></svg><span data-i18n="member.nav.me">我的</span></a>
+    <a class="side-link" href="../公開網站/p01_home.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg><span data-i18n="member.nav.backToSite">回官網</span></a>
+  </nav>
+
+  <header class="topbar">
+    <div class="topbar-left"><a class="topbar-logo-wrap" href="../公開網站/p01_home.html" aria-label="TLI 官網" data-i18n-aria-label="member.logoAria"><img src="../assets/tli-logo.svg" alt="TLI"></a><div class="topbar-title" data-en="Mandarin Lounge">Mandarin Lounge</div></div>
+    <div class="topbar-actions">
+      <button class="bell-btn" onclick="toggleBell()" aria-label="通知" data-i18n-aria-label="member.notifications">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8a6 6 0 10-12 0c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.7 21a2 2 0 01-3.4 0"/></svg>
+        <span class="dot"></span>
+      </button>
+      <div class="bell-panel" id="bellPanel">
+        <h4 data-i18n="member.notifications">通知</h4>
+        <div class="bell-item"><span class="b-dot"></span><div><p data-i18n="m07.notif.tzUpdated">你的上課時區設定已更新</p><span><span data-i18n="member.today">今天</span> 09:20</span></div></div>
+      </div>
+    </div>
+  </header>
+
+  <main class="content">
+    <nav class="nav-segment" aria-label="次選單">
+      <a class="nav-segment-link" href="m02_booking.html" data-en="Group and event enrollment">團體與活動報名</a>
+      <a class="nav-segment-link active" href="m14_chat_booking.html">Mandarin Lounge</a>
+      <a class="nav-segment-link" href="m10_events.html" data-en="Events">活動</a>
+    </nav>
+
+    <div class="page-h">Mandarin Lounge</div>
+    <p class="page-sub" data-en="A 30-minute speaking session with a teacher. Choose one-on-one, or join a group of 6 to 10 learners. A monthly quota applies.">30 分鐘的口說練習，與老師一對一，或加入 6–10 人的團體場次。每月有預約額度。</p>
+
+    <div class="card quota-card" id="quotaCard"></div>
+    <div class="banner banner-warn hidden" id="quotaBanner" style="margin-top:12px;">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex:none;margin-top:1px;"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+      <div id="quotaBannerText"></div>
+    </div>
+
+    <div class="section-title" data-en="My next session">我的下一場</div>
+    <div class="card" id="nextCard"></div>
+
+    <div class="section-title" data-en="Available sessions">可預約場次</div>
+    <div class="mytab-row" id="typeTabs"></div>
+    <div class="date-strip" id="dateStrip"></div>
+    <div class="tool-bar">
+      <input type="search" id="q" data-en-ph="Search teacher or topic" placeholder="搜尋老師或主題" aria-label="搜尋">
+      <select class="select-sm" id="sortSel" aria-label="排序"></select>
+      <label class="small muted" style="display:flex;align-items:center;gap:6px;"><input type="checkbox" id="onlyOpen"><span data-en="Open seats only">只看有名額</span></label>
+    </div>
+    <div class="card"><div id="sessList"></div>
+      <div style="text-align:center;margin-top:10px;"><button type="button" class="btn btn-outline btn-sm hidden" id="moreBtn" data-en="Show more">顯示更多</button></div>
+    </div>
+
+    <div class="section-title" data-en="My bookings">我的預約</div>
+    <div class="card">
+      <div class="mytab-row" id="myTabs"></div>
+      <div id="myList"></div>
+    </div>
+
+    <div class="sheet-overlay hidden" id="ov" onclick="if(event.target===this)closeSheet()">
+      <div class="sheet" id="sheetBody"></div>
+    </div>
+
+  </main>
+
+  <nav class="bottom-nav">
+    <a href="m01_home.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11l9-8 9 8"/><path d="M5 10v10a1 1 0 001 1h3v-6h6v6h3a1 1 0 001-1V10"/></svg><span data-i18n="member.nav.home">首頁</span></a>
+    <a href="m02_booking.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18M12 14v6M9 17h6"/></svg><span data-i18n="member.nav.booking">預約與報名</span></a>
+    <a href="m03_schedule.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg><span data-i18n="member.nav.schedule">課表</span></a>
+    <a href="m08_self_paced.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 3h6a4 4 0 014 4v14a3 3 0 00-3-3H2z"/><path d="M22 3h-6a4 4 0 00-4 4v14a3 3 0 013-3h7z"/></svg><span data-i18n="member.nav.learning">學習</span></a>
+    <a href="m07_profile.html" ><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 4-7 8-7s8 3 8 7"/></svg><span data-i18n="member.nav.me">我的</span></a>
+  </nav>
+</div>
+
+<div class="toast hidden" id="toast"></div>
+<script>window.TLI_I18N_PAGE_LANGS=['zh-TW','zh-CN','en','ja','de'];</script>
+<script src="../assets/_shared_masters.js"></script>
+<script src="../assets/_i18n_dict.js"></script>
+<script src="../assets/_i18n_dict_member.js"></script>
+<script src="../assets/_i18n_dict_ja.js"></script>
+<script src="../assets/_i18n_dict_de.js"></script>
+<script src="_project_learning.js"></script>
+<script src="../assets/_i18n.js"></script>
+<script>
+var PL = TLI_PL, T = PL.T, U = PL.me();
+function $(i){ return document.getElementById(i); }
+function showToast(msg){ var t=$('toast'); t.textContent=msg; t.classList.remove('hidden'); clearTimeout(window._tt); window._tt=setTimeout(function(){ t.classList.add('hidden'); },2600); }
+function toggleBell(){ var b=$('bellPanel'); if(b) b.classList.toggle('open'); }
+var SESS = [], state = {type:'all', date:'all', sort:'time', q:'', open:false, shown:12, my:'up'};
+
+function tzName(){ return U.mode==='project' ? T('亞利桑那時間（UTC-7）','Arizona time (UTC-7)') : T('台北時間','Taipei time'); }
+function endTime(t){ var p=t.split(':'); var m=(+p[0])*60+(+p[1])+30; return PL.pad(Math.floor(m/60)%24)+':'+PL.pad(m%60); }
+function typeName(t){ return t==='group' ? T('團體','Group') : T('一對一','1-on-1'); }
+function timeBlock(x){
+  var h='<b>'+x.time+'</b><span>'+T('到 ','to ')+endTime(x.time)+'</span>';
+  return h;
+}
+function dateLabel(d){ return PL.mdLabel(d)+' '+PL.wd(d); }
+function secondTz(x){ return U.mode==='project' ? T('台北 ','Taipei ')+PL.mdLabel(x.tpDate)+' '+x.tpTime : ''; }
+
+function refreshData(){ SESS = PL.sessionsFor(U); }
+function lg(){ return PL.lounge(U.rid, U.perMonth); }
+
+function renderQuota(){
+  var L = lg(), pct = L.quota ? Math.round(L.used/L.quota*100) : 0;
+  $('quotaCard').innerHTML =
+    '<div class="q-top"><div><div class="small muted" style="font-weight:700;">'+T('本月剩餘預約次數','Sessions left this month')+'（'+L.month.replace('-','/')+'）</div>'+
+    '<div class="q-big">'+L.remaining+'<small>／ '+L.quota+' '+T('次','sessions')+'</small></div></div>'+
+    '<div class="small muted" style="text-align:right;">'+T('已預約 ','Booked ')+L.used+T(' 次',' sessions')+'<br>'+T('取消預約會退回額度','Cancelling returns the quota')+'</div></div>'+
+    '<div class="progress'+(L.remaining===0?' warn':'')+'"><div style="width:'+pct+'%"></div></div>'+
+    '<div class="q-meta"><span>'+T('視訊工具：','Video: ')+'<b>'+PL.toolName(U.tool)+'</b></span><span>'+T('時間顯示：','Times shown in: ')+'<b>'+tzName()+'</b></span>'+
+    (U.mode==='project' ? '<span>'+T('額度由 ','Quota set by ')+'<b>'+PL.esc(U.partnerName)+'</b>'+T(' 專案設定','')+'</span>' : '')+'</div>';
+  $('quotaBanner').classList.toggle('hidden', L.remaining>0);
+  $('quotaBannerText').textContent = T('本月預約額度已用完，無法再預約新場次。取消既有預約可以退回額度，或等下個月重新計算。','Your monthly quota is used up, so you cannot book new sessions. Cancel an existing booking to get a session back, or wait for next month.');
+}
+
+function myUpcoming(){ return PL.myBookings(U.rid).filter(function(b){ return b.status==='booked' && b.utc>PL.nowUtc; }).sort(function(a,b){ return a.utc-b.utc; }); }
+function enterHref(b){ return 'm16_classroom.html?lesson='+encodeURIComponent(b.id)+'&type=chat&state=before'; }
+function renderNext(){
+  var n = myUpcoming()[0];
+  if(!n){ $('nextCard').innerHTML = '<div class="empty-box">'+T('目前沒有預約的場次。從下方挑一個時段預約。','No session booked yet. Pick a time below.')+'</div>'; return; }
+  $('nextCard').innerHTML = '<div class="next-box"><div><h4>'+dateLabel(n.date)+' '+n.time+'–'+endTime(n.time)+'</h4><p>'+typeName(n.type)+'・'+PL.toolName(n.tool)+'・'+PL.esc(n.teacher)+(n.topic?'・'+PL.esc(T(n.topic,n.topicEn)):'')+(U.mode==='project'?'<br>'+T('台北 ','Taipei ')+PL.mdLabel(n.tpDate)+' '+n.tpTime:'')+'</p></div>'+
+    '<div style="display:flex;gap:8px;flex-wrap:wrap;"><a class="btn btn-primary btn-sm" href="'+enterHref(n)+'">'+T('進入教室','Enter classroom')+'</a>'+(PL.cancellable(n)?'<button type="button" class="btn btn-outline btn-sm" onclick="askCancel(\''+n.id+'\')">'+T('取消預約','Cancel')+'</button>':'')+'</div></div>';
+}
+
+function renderTabs(){
+  var tabs = [['all',T('全部','All')],['solo',T('一對一','1-on-1')],['group',T('團體（6–10 人）','Group (6–10)')]];
+  $('typeTabs').innerHTML = tabs.map(function(t){ return '<button type="button" class="mytab-btn'+(state.type===t[0]?' active':'')+'" data-t="'+t[0]+'">'+t[1]+'</button>'; }).join('');
+  $('typeTabs').querySelectorAll('button').forEach(function(b){ b.onclick=function(){ state.type=b.dataset.t; state.shown=12; renderList(); renderTabs(); }; });
+  /* 日期列：有場次的日期 */
+  var days = []; SESS.forEach(function(s){ if(days.indexOf(s.date)<0) days.push(s.date); });
+  var h = '<button type="button" class="dchip'+(state.date==='all'?' on':'')+'" data-d="all">'+T('全部日期','All dates')+'<small>'+SESS.length+T(' 場',' sessions')+'</small></button>';
+  days.slice(0,16).forEach(function(d){ h += '<button type="button" class="dchip'+(state.date===d?' on':'')+'" data-d="'+d+'">'+PL.mdLabel(d)+'<small>'+PL.wd(d)+'</small></button>'; });
+  $('dateStrip').innerHTML = h;
+  $('dateStrip').querySelectorAll('button').forEach(function(b){ b.onclick=function(){ state.date=b.dataset.d; state.shown=12; renderTabs(); renderList(); }; });
+  var sel=$('sortSel'); var cur=state.sort;
+  sel.innerHTML = '<option value="time">'+T('依時間','By time')+'</option><option value="seats">'+T('依剩餘名額','By open seats')+'</option>'; sel.value=cur;
+}
+
+function filtered(){
+  var q = state.q.toLowerCase();
+  var a = SESS.filter(function(s){
+    if(state.type!=='all' && s.type!==state.type) return false;
+    if(state.date!=='all' && s.date!==state.date) return false;
+    if(state.open && s.full) return false;
+    if(q){ var hay=(s.teacher+' '+(s.topic||'')+' '+(s.topicEn||'')).toLowerCase(); if(hay.indexOf(q)<0) return false; }
+    return true;
+  });
+  if(state.sort==='seats'){ a.sort(function(x,y){ return (y.left-x.left) || (x.utc-y.utc); }); }
+  return a;
+}
+function actionHtml(s){
+  var L = lg(), remainingForMonth = PL.lounge(U.rid, U.perMonth, s.date.slice(0,7)).remaining;
+  if(s.mineBooking) return '<span class="badge badge-ok">'+T('已預約','Booked')+'</span><button type="button" class="btn btn-outline btn-sm" onclick="askCancel(\''+s.mineBooking.id+'\')"'+(PL.cancellable(s.mineBooking)?'':' disabled')+'>'+T('取消','Cancel')+'</button>';
+  if(s.full) return '<span class="badge badge-full">'+T('已額滿','Full')+'</span>';
+  if(remainingForMonth<=0) return '<button type="button" class="btn btn-primary btn-sm" disabled>'+T('額度已用完','Quota used up')+'</button>';
+  return '<button type="button" class="btn btn-primary btn-sm" onclick="openBook(\''+s.id+'\')">'+T('預約','Book')+'</button>';
+}
+function renderList(){
+  var a = filtered(), shown = a.slice(0, state.shown);
+  $('sessList').innerHTML = shown.length ? shown.map(function(s){
+    var title = s.type==='group' ? PL.esc(T(s.topic,s.topicEn)) : T('一對一會話練習','One-on-one speaking practice');
+    var seat = s.type==='group' ? '・'+(s.full ? T('名額已滿','No seats left') : T('剩 ','Seats left: ')+s.left+T(' ／ 上限 ',' / max ')+s.cap+T(' 人','')) : '';
+    return '<div class="sess"><div class="s-time">'+timeBlock(s)+'<span style="display:block;">'+dateLabel(s.date)+'</span></div>'+
+      '<div class="s-body"><h4>'+title+' <span class="badge '+(s.type==='group'?'badge-grp':'badge-info')+'">'+typeName(s.type)+'</span></h4><p>'+PL.esc(s.teacher)+'・30 '+T('分鐘','min')+'・'+PL.toolName(s.tool)+seat+'</p>'+(U.mode==='project'?'<p>'+secondTz(s)+'</p>':'')+'</div>'+
+      '<div class="s-act">'+actionHtml(s)+'</div></div>';
+  }).join('') : '<div class="empty-box">'+T('沒有符合條件的場次。調整日期或篩選看看。','No sessions match. Try another date or filter.')+'</div>';
+  $('moreBtn').classList.toggle('hidden', a.length<=state.shown);
+}
+
+/* 我的預約 */
+function myRecords(){
+  var bs = PL.myBookings(U.rid);
+  var up = bs.filter(function(b){ return b.status==='booked' && b.utc>PL.nowUtc; });
+  var cn = bs.filter(function(b){ return b.status==='cancelled'; });
+  var dn = PL.seedHistory(U.rid);
+  return { up:up.sort(function(a,b){return a.utc-b.utc;}), done:dn, cancel:cn };
+}
+function renderMy(){
+  var R = myRecords();
+  var tabs=[['up',T('即將進行','Upcoming'),R.up.length],['done',T('已完成','Completed'),R.done.length],['cancel',T('已取消','Cancelled'),R.cancel.length]];
+  $('myTabs').innerHTML = tabs.map(function(t){ return '<button type="button" class="mytab-btn'+(state.my===t[0]?' active':'')+'" data-t="'+t[0]+'">'+t[1]+'（'+t[2]+'）</button>'; }).join('');
+  $('myTabs').querySelectorAll('button').forEach(function(b){ b.onclick=function(){ state.my=b.dataset.t; renderMy(); }; });
+  var list = R[state.my];
+  $('myList').innerHTML = list.length ? list.map(function(b){
+    var tzs = b.tpDate ? '' : '';
+    var acts = '';
+    if(state.my==='up'){ acts = '<a class="btn btn-primary btn-sm" href="'+enterHref(b)+'">'+T('進入教室','Enter')+'</a>'+(PL.cancellable(b)?'<button type="button" class="btn btn-outline btn-sm" onclick="askCancel(\''+b.id+'\')">'+T('取消','Cancel')+'</button>':'<span class="small muted">'+T('開始前 2 小時內不可取消','Cannot cancel within 2 hours')+'</span>'); }
+    else if(state.my==='done'){ acts = '<span class="badge badge-ok">'+T('已完成','Completed')+'</span>'; }
+    else { acts = '<span class="badge badge-muted">'+T('已取消','Cancelled')+'</span>'; }
+    return '<div class="sess"><div class="s-time"><b>'+b.time+'</b><span>'+dateLabel(b.date)+'</span></div><div class="s-body"><h4>'+(b.type==='group'?PL.esc(T(b.topic||'日常對話：自我介紹',b.topicEn||'Everyday Talk: Self-introduction')):T('一對一會話練習','One-on-one speaking practice'))+' <span class="badge '+(b.type==='group'?'badge-grp':'badge-info')+'">'+typeName(b.type)+'</span></h4><p>'+PL.esc(b.teacher)+'・'+PL.toolName(b.tool)+'</p></div><div class="s-act">'+acts+'</div></div>';
+  }).join('') : '<div class="empty-box">'+T('這裡還沒有紀錄。','Nothing here yet.')+'</div>';
+}
+
+/* 預約確認 */
+var CUR = null;
+function openBook(id){
+  CUR = SESS.filter(function(s){ return s.id===id; })[0]; if(!CUR) return;
+  var s = CUR, solo = s.type==='solo';
+  var h = '<h3>'+T('確認預約','Confirm booking')+'</h3>'+
+    '<dl class="dl"><dt>'+T('時間','Time')+'</dt><dd>'+dateLabel(s.date)+' '+s.time+'–'+endTime(s.time)+'（30 '+T('分鐘','min')+'）</dd>'+
+    (U.mode==='project'?'<dt>'+T('台北時間','Taipei')+'</dt><dd>'+PL.mdLabel(s.tpDate)+' '+s.tpTime+'</dd>':'')+
+    '<dt>'+T('型態','Type')+'</dt><dd>'+typeName(s.type)+(solo?'':'（6–10 '+T('人','learners')+'）')+'</dd>'+
+    '<dt>'+T('老師','Teacher')+'</dt><dd>'+PL.esc(s.teacher)+'</dd>'+
+    (solo?'':'<dt>'+T('主題','Topic')+'</dt><dd>'+PL.esc(T(s.topic,s.topicEn))+'</dd><dt>'+T('名額','Seats')+'</dt><dd>'+T('剩 ','Left ')+s.left+T(' ／ 上限 ',' / max ')+s.cap+'</dd>')+
+    '<dt>'+T('本月額度','Quota')+'</dt><dd>'+T('預約後剩 ','After booking: ')+(PL.lounge(U.rid,U.perMonth,s.date.slice(0,7)).remaining-1)+T(' 次',' left')+'</dd></dl>';
+  if(solo){
+    h += '<div class="small muted" style="font-weight:700;">'+T('視訊工具','Video tool')+'</div>'+
+      ['teams','zoom'].map(function(t,i){ return '<label class="opt-line'+((t===s.tool)?' on':'')+'"><input type="radio" name="tool" value="'+t+'"'+((t===s.tool)?' checked':'')+'>'+PL.toolName(t)+(t===U.tool?' <span class="small muted">'+T('（預設）','(default)')+'</span>':'')+'</label>'; }).join('');
+  } else {
+    h += '<div class="small muted">'+T('視訊工具：','Video tool: ')+'<b style="color:var(--c-text);">'+PL.toolName(s.tool)+'</b></div>';
+  }
+  h += '<div class="small muted" style="margin:12px 0;">'+T('預約成功後，開始前 2 小時以前都可以取消，額度會退回。','You can cancel up to 2 hours before the start and the quota is returned.')+'</div>'+
+    '<div style="display:flex;flex-direction:column;gap:8px;"><button type="button" class="btn btn-primary" onclick="confirmBook()">'+T('確認預約','Confirm booking')+'</button><button type="button" class="btn btn-outline" onclick="closeSheet()">'+T('先不要','Not now')+'</button></div>';
+  $('sheetBody').innerHTML = h; $('ov').classList.remove('hidden');
+  $('sheetBody').querySelectorAll('.opt-line input').forEach(function(r){ r.onchange=function(){ $('sheetBody').querySelectorAll('.opt-line').forEach(function(l){ l.classList.toggle('on', l.querySelector('input').checked); }); }; });
+}
+function confirmBook(){
+  var r = $('sheetBody').querySelector('input[name=tool]:checked');
+  var res = PL.book(U, CUR, {tool: r ? r.value : null});
+  closeSheet();
+  if(res.ok){ showToast(T('預約完成，本月額度已扣 1 次','Booked. One session deducted from this month’s quota')); }
+  else {
+    var m = {quota:T('本月預約額度已用完','Your monthly quota is used up'), dup:T('你已預約這個場次','You already booked this session'), full:T('這場名額已滿','This session is full'), clash:T('這個時段你已有其他預約','You already have a booking at this time')};
+    showToast(m[res.code]||T('無法預約','Could not book'));
+  }
+  renderAll();
+}
+function askCancel(id){
+  var b = PL.bookings().filter(function(x){ return x.id===id; })[0]; if(!b) return;
+  $('sheetBody').innerHTML = '<h3>'+T('取消這場預約？','Cancel this booking?')+'</h3><p class="small muted" style="margin:0 0 14px;">'+dateLabel(b.date)+' '+b.time+'・'+typeName(b.type)+'・'+PL.esc(b.teacher)+'<br>'+T('取消後本月額度退回 1 次。','One session is returned to your monthly quota.')+'</p>'+
+    '<div style="display:flex;flex-direction:column;gap:8px;"><button type="button" class="btn btn-primary" onclick="doCancel(\''+id+'\')">'+T('取消預約','Cancel booking')+'</button><button type="button" class="btn btn-outline" onclick="closeSheet()">'+T('保留預約','Keep it')+'</button></div>';
+  $('ov').classList.remove('hidden');
+}
+function doCancel(id){ var ok = PL.cancel(id); closeSheet(); showToast(ok ? T('已取消預約，額度已退回','Cancelled. Quota returned') : T('無法取消','Could not cancel')); renderAll(); }
+function closeSheet(){ $('ov').classList.add('hidden'); }
+
+function renderAll(){ refreshData(); renderQuota(); renderNext(); renderTabs(); renderList(); renderMy(); PL.xl(document); }
+$('q').addEventListener('input', function(){ state.q=this.value.trim(); state.shown=12; renderList(); });
+$('sortSel').addEventListener('change', function(){ state.sort=this.value; renderList(); });
+$('onlyOpen').addEventListener('change', function(){ state.open=this.checked; state.shown=12; renderList(); });
+$('moreBtn').addEventListener('click', function(){ state.shown+=12; renderList(); });
+document.addEventListener('keydown', function(e){ if(e.key==='Escape') closeSheet(); });
+document.addEventListener('click', function(e){ if(!e.target.closest('.bell-btn')&&!e.target.closest('.bell-panel')){ var b=$('bellPanel'); if(b) b.classList.remove('open'); } });
+TLI_I18N.onRefresh(renderAll);
+renderAll();
+TLI_I18N.init();
+PL.xl(document);
+
+</script>
+</body>
+</html>

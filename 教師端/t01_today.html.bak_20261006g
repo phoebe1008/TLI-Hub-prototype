@@ -1,0 +1,617 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>TLI Hub 教師端－今日</title>
+<style>
+:root{
+  --c-primary:#1B4E8C;--c-primary-dark:#123A68;--c-accent:#E8792B;--c-accent-dark:#CF691F;--c-secondary:#0F9B79;
+  --c-bg:#F5F7FA;--c-border:#E4E7EC;--c-muted:#667085;--c-text:#101828;
+  --radius:12px;--radius-sm:8px;--shadow:0 1px 3px rgba(16,24,40,.08),0 1px 2px rgba(16,24,40,.04);--shadow-lg:0 8px 24px rgba(16,24,40,.16);
+  --topbar-h:52px;--bottomnav-h:64px;
+}
+*{box-sizing:border-box;}
+html,body{margin:0;padding:0;}
+body{font-family:"Noto Sans TC","Microsoft JhengHei",system-ui,-apple-system,"Segoe UI",sans-serif;background:var(--c-bg);color:var(--c-text);line-height:1.55;font-size:15px;-webkit-tap-highlight-color:transparent;}
+a{color:inherit;text-decoration:none;}
+img,svg{display:block;}
+button{font-family:inherit;}
+button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible{outline:2px solid var(--c-primary);outline-offset:2px;}
+.app{min-height:100vh;position:relative;}
+.topbar{position:sticky;top:0;z-index:60;height:var(--topbar-h);background:#fff;border-bottom:1px solid var(--c-border);display:flex;align-items:center;justify-content:space-between;padding:0 14px;gap:10px;}
+.topbar-left{display:flex;align-items:center;gap:8px;min-width:0;}
+.topbar-logo-wrap{width:26px;height:22px;overflow:hidden;position:relative;flex:none;}
+.topbar-logo-wrap img{position:absolute;left:0;top:0;height:22px;width:auto;max-width:none;}
+.topbar-title{font-size:16.5px;font-weight:700;color:var(--c-text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.topbar-actions{display:flex;align-items:center;gap:6px;position:relative;}
+.bell-btn{position:relative;width:32px;height:32px;border-radius:50%;border:1px solid var(--c-border);background:#fff;cursor:pointer;display:flex;align-items:center;justify-content:center;color:var(--c-muted);}
+.bell-btn svg{width:16px;height:16px;}
+.bell-btn .dot{position:absolute;top:5px;right:6px;width:7px;height:7px;border-radius:50%;background:var(--c-accent);border:1.5px solid #fff;}
+.bell-panel{display:none;position:absolute;right:0;top:40px;width:264px;background:#fff;border:1px solid var(--c-border);border-radius:var(--radius-sm);box-shadow:var(--shadow-lg);padding:6px 0;z-index:90;}
+.bell-panel.open{display:block;}
+.bell-panel h4{margin:0;padding:8px 14px 6px;font-size:12.5px;color:var(--c-muted);font-weight:700;}
+.bell-item{padding:9px 14px;font-size:12.5px;border-top:1px solid var(--c-border);display:flex;gap:8px;}
+.bell-item .b-dot{width:6px;height:6px;border-radius:50%;background:var(--c-accent);margin-top:5px;flex:none;}
+.bell-item p{margin:0;color:var(--c-text);}
+.bell-item span{color:var(--c-muted);font-size:11px;}
+.side-nav{display:none;}
+@media(min-width:1024px){
+  .side-nav{display:flex;flex-direction:column;position:fixed;left:0;top:0;bottom:0;width:310px;background:#fff;border-right:1px solid var(--c-border);padding:18px 12px;z-index:50;}
+  .side-role{padding:0 10px 14px;margin-bottom:10px;border-bottom:1px solid var(--c-border);}
+.side-role strong{display:block;font-size:14px;color:var(--c-primary);font-weight:700;}
+.side-role span{display:block;font-size:12px;color:var(--c-muted);margin-top:2px;}
+.side-role span span{display:inline;}
+.side-brand{display:flex;align-items:center;padding:0 8px 18px;}
+  .side-brand img{height:28px;width:auto;}
+  .side-link{display:flex;align-items:center;gap:10px;padding:10px 10px;border-radius:8px;font-size:14px;font-weight:600;color:var(--c-muted);margin-bottom:2px;}
+  .side-link svg{width:19px;height:19px;flex:none;}
+  .side-link.active{background:#E6EEF8;color:var(--c-primary);}
+  .side-link:hover:not(.active){background:var(--c-bg);}
+  .app.has-side .topbar{margin-left:310px;}
+  .app.has-side .content{margin-left:310px;}
+}
+.bottom-nav{position:fixed;left:0;right:0;bottom:0;z-index:70;background:#fff;border-top:1px solid var(--c-border);display:flex;height:var(--bottomnav-h);padding-bottom:env(safe-area-inset-bottom,0);box-shadow:0 -2px 10px rgba(16,24,40,.06);}
+.bottom-nav a{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;font-size:11px;color:var(--c-muted);font-weight:600;min-height:44px;}
+.bottom-nav a svg{width:22px;height:22px;}
+.bottom-nav a.active{color:var(--c-primary);}
+@media(min-width:1024px){.bottom-nav{display:none;}}
+.content{max-width:960px;margin:0 auto;padding:18px 16px calc(var(--bottomnav-h) + 24px);}
+@media(min-width:1024px){.content{padding:26px 32px 40px;}}
+.page-h{font-size:19px;font-weight:700;margin:2px 0 4px;}
+.page-sub{color:var(--c-muted);font-size:13px;margin:0 0 18px;}
+.section-title{font-size:15px;font-weight:700;margin:24px 0 12px;}
+.section-title.first{margin-top:4px;}
+.card{background:#fff;border:1px solid var(--c-border);border-radius:var(--radius);box-shadow:var(--shadow);padding:16px;}
+.card + .card{margin-top:12px;}
+.grid-3{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;}
+.flex-between{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;}
+.stack{display:flex;flex-direction:column;gap:10px;}
+.muted{color:var(--c-muted);}
+.small{font-size:12px;}
+.divider{border:none;border-top:1px solid var(--c-border);margin:14px 0;}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;border:none;border-radius:var(--radius-sm);padding:11px 18px;font-size:14px;font-weight:700;cursor:pointer;font-family:inherit;transition:background .15s;min-height:44px;}
+.btn-primary{background:var(--c-primary);color:#fff;}
+.btn-primary:hover{background:var(--c-primary-dark);}
+.btn-outline{background:#fff;border:1px solid var(--c-border);color:var(--c-text);}
+.btn-outline:hover{background:var(--c-bg);}
+.btn-ghost{background:none;color:var(--c-muted);}
+.btn:disabled{background:var(--c-border)!important;color:#98A2B3!important;cursor:not-allowed;border-color:var(--c-border)!important;}
+.btn-block{width:100%;}
+.badge{display:inline-block;padding:2px 9px;border-radius:20px;font-size:11.5px;font-weight:700;white-space:nowrap;}
+.badge-info{background:#E6EEF8;color:var(--c-primary);}
+.badge-warn{background:#FCEBDC;color:var(--c-accent-dark);}
+.badge-ok{background:#E4F5F0;color:#0B6B52;}
+.badge-muted{background:var(--c-border);color:var(--c-muted);}
+.badge-onetoone{background:#FCEBDC;color:var(--c-accent-dark);}
+.badge-flex{background:#F0E9FC;color:#6D28D9;}
+.next-class-card .nc-top{display:flex;justify-content:space-between;align-items:flex-start;gap:10px;margin-bottom:10px;}
+.countdown{font-size:12.5px;color:var(--c-accent-dark);font-weight:700;background:#FCEBDC;padding:3px 9px;border-radius:20px;white-space:nowrap;font-variant-numeric:tabular-nums;}
+.nc-meta{display:flex;flex-direction:column;gap:4px;margin:10px 0 14px;font-size:13px;color:var(--c-muted);}
+.nc-meta strong{color:var(--c-text);}
+/* ---------- 今日時間軸（教師端專用，沿用共用色票／圓角） ---------- */
+.timeline{display:flex;flex-direction:column;gap:0;}
+.tl-item{display:flex;gap:12px;padding:14px 0;border-bottom:1px solid var(--c-border);}
+.tl-item:last-child{border-bottom:none;}
+.tl-time{width:48px;flex-shrink:0;font-size:13px;font-weight:700;color:var(--c-muted);padding-top:2px;}
+.tl-dot{width:10px;height:10px;border-radius:50%;margin-top:6px;flex-shrink:0;}
+.tl-dot.done{background:var(--c-secondary);}
+.tl-dot.pending{background:var(--c-accent);}
+.tl-dot.upcoming{background:var(--c-border);}
+.tl-body{flex:1;min-width:0;}
+.tl-title{font-size:14px;font-weight:700;}
+.tl-sub{font-size:12px;color:var(--c-muted);margin-top:2px;}
+.tl-action{margin-top:6px;font-size:12px;font-weight:700;color:var(--c-accent-dark);display:inline-flex;align-items:center;gap:4px;}
+.tl-action.ok{color:#0B6B52;}
+.tl-item{cursor:pointer;}
+.stat-card{cursor:pointer;}
+/* ---------- sheet / modal（沿用會員區共用樣式） ---------- */
+.hidden{display:none!important;}
+.sheet-overlay{position:fixed;inset:0;background:rgba(16,24,40,.45);z-index:100;display:flex;align-items:flex-end;justify-content:center;}
+.sheet-overlay.hidden{display:none;}
+.sheet{background:#fff;width:100%;max-width:480px;border-radius:18px 18px 0 0;padding:18px 18px calc(18px + env(safe-area-inset-bottom,0));max-height:86vh;overflow-y:auto;animation:sheetUp .18s ease-out;}
+@keyframes sheetUp{from{transform:translateY(16px);opacity:.6;}to{transform:translateY(0);opacity:1;}}
+.sheet-handle{width:36px;height:4px;background:var(--c-border);border-radius:4px;margin:0 auto 14px;}
+.sheet h3{margin:0 0 4px;font-size:16px;}
+@media(min-width:640px){.sheet-overlay{align-items:center;}.sheet{border-radius:16px;}}
+.sheet-note{font-size:13px;color:var(--c-text);background:var(--c-bg);padding:10px 12px;border-radius:var(--radius-sm);line-height:1.6;}
+.sheet-sec{margin-bottom:16px;}
+.sheet-sec .lbl{font-size:12px;font-weight:700;color:var(--c-muted);margin-bottom:6px;}
+.stack{display:flex;flex-direction:column;gap:10px;}
+.toast{position:fixed;left:50%;bottom:calc(var(--bottomnav-h) + 18px);transform:translateX(-50%);background:#101828;color:#fff;padding:10px 20px;border-radius:20px;font-size:13px;font-weight:700;z-index:120;box-shadow:var(--shadow-lg);white-space:nowrap;}
+.toast.hidden{display:none;}
+@media(min-width:1024px){.toast{bottom:24px;}}
+/* ---------- 等候室放行 / 出席紀錄（教師端專用） ---------- */
+.wait-list{display:flex;flex-direction:column;gap:6px;}
+.wait-row{display:flex;justify-content:space-between;align-items:center;gap:10px;background:var(--c-bg);padding:8px 10px;border-radius:var(--radius-sm);font-size:13.5px;}
+.wait-row .w-btn{border:1px solid var(--c-primary);background:#fff;color:var(--c-primary);font-size:12px;font-weight:700;padding:6px 12px;border-radius:20px;cursor:pointer;font-family:inherit;min-height:32px;}
+.wait-row .w-btn.admitted{border-color:var(--c-secondary);color:#0B6B52;background:#E4F5F0;cursor:default;}
+.attend-list{display:flex;flex-direction:column;gap:4px;}
+.attend-row{display:flex;justify-content:space-between;font-size:12.5px;color:var(--c-text);}
+.attend-row span:last-child{color:#0B6B52;font-weight:700;}
+</style>
+</head>
+<body>
+<div class="app has-side">
+  <nav class="side-nav" aria-label="主導覽">
+    <div class="side-brand"><a href="../公開網站/p01_home.html" aria-label="回官網"><img src="../assets/tli-logo.svg" alt="TLI"></a></div>
+    <div class="side-role"><strong>林老師</strong><span><span data-i18n="today.profile.role">TLI 中心教師</span> · <span data-i18n="today.profile.city">台北</span></span></div>
+    <a class="side-link active" href="t01_today.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11l9-8 9 8"/><path d="M5 10v10a1 1 0 001 1h3v-6h6v6h3a1 1 0 001-1V10"/></svg><span data-i18n="nav_t.today">今天</span></a>
+    <a class="side-link" href="t02_schedule.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg><span data-i18n="nav_t.schedule">課表</span></a>
+    <a class="side-link" href="t03_lesson_record.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 4-7 8-7s8 3 8 7"/></svg><span data-i18n="nav_t.lessonRecord">課後紀錄與回饋</span></a>
+    <a class="side-link" href="t07_students.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg><span data-i18n="nav_t.students">學生</span></a>
+    <a class="side-link" href="t04_availability.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18M12 14v6M9 17h6"/></svg><span data-i18n="nav_t.availability">時段與薪資</span></a>
+    <a class="side-link" href="../公開網站/p01_home.html" style="margin-top:auto;"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg><span data-i18n="nav_t.backToWebsite">回官網</span></a>
+  </nav>
+
+  <header class="topbar">
+    <div class="topbar-left"><a class="topbar-logo-wrap" href="../公開網站/p01_home.html" aria-label="回官網"><img src="../assets/tli-logo.svg" alt="TLI"></a><div class="topbar-title" data-i18n="nav_t.today">今日</div></div>
+    <div class="topbar-actions">
+      <button class="bell-btn" onclick="toggleBell()" aria-label="通知">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8a6 6 0 10-12 0c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.7 21a2 2 0 01-3.4 0"/></svg>
+        <span class="dot"></span>
+      </button>
+      <div class="bell-panel" id="bellPanel">
+        <h4 data-i18n="common.notifications">通知</h4>
+        <div class="bell-item"><span class="b-dot"></span><div><p data-i18n="t01.notif1.text">顧問黃小姐已核准你上週三的代課申請</p><span data-i18n="t01.notif1.time">10 分鐘前</span></div></div>
+        <div class="bell-item"><span class="b-dot"></span><div><p data-i18n="t01.notif2.text">陳雅婷（10:30 小組班）已確認出席</p><span data-i18n="t01.notif2.time">1 小時前</span></div></div>
+        <div class="bell-item"><span class="b-dot"></span><div><p data-i18n="t01.notif3.text">本月時數表已產生，可至「時數與薪資」查看</p><span data-i18n="t01.notif3.time">昨天</span></div></div>
+      </div>
+    </div>
+  </header>
+
+  <main class="content">
+    <p class="page-sub" style="margin-top:2px;"><span data-i18n="today.greeting.prefix">早安，</span>林老師<span data-i18n="today.greeting.suffix">，這是你今天的課程概況。</span></p>
+
+    <div class="card next-class-card">
+      <div class="nc-top">
+        <div>
+          <span class="badge badge-info" data-i18n="badge.nextClass">下一堂課</span>
+          <span class="badge badge-onetoone" data-i18n="badge.oneToOne">一對一（預約制）</span>
+          <h3 style="margin:8px 0 2px;font-size:16px;">王小明<span data-i18n="today.suffix.individualClass">・個人班</span></h3>
+        </div>
+        <span class="countdown" id="countdown">--:--</span>
+      </div>
+      <div class="nc-meta">
+        <span><strong data-i18n="label.level">級別：</strong>中級 2</span>
+        <span><strong data-i18n="label.location">地點：</strong>士林校區・A203</span>
+        <span><strong data-i18n="label.duration">時長：</strong><span data-i18n="today.value.duration50">50 分鐘</span></span>
+        <span class="small" id="cd-status">尚未開放進教室（開課前 15 分鐘開放）</span>
+      </div>
+      <div class="flex-between" style="gap:10px;">
+        <button class="btn btn-primary btn-block" id="enterBtn" disabled onclick="openEnterModal()" data-i18n="btn.enterClassroom">開啟線上教室</button>
+        <button class="btn btn-outline" onclick="openStudentNote()" data-i18n="btn.viewStudentNote">查看學生筆記</button>
+      </div>
+    </div>
+
+    <div class="card" style="cursor:pointer;margin-top:12px;" onclick="location.href='t05_leave_sub.html'">
+      <div class="flex-between">
+        <div>
+          <div style="font-size:14px;font-weight:700;" data-i18n="section.leaveSub">請假與代課</div>
+          <div class="small muted" style="margin-top:2px;" data-i18n="desc.leaveSub">臨時要請假或找代課，點這裡快速申請</div>
+        </div>
+        <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color:var(--c-muted);flex-shrink:0;"><polyline points="9 18 15 12 9 6"/></svg>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="section-title" data-i18n="section.todayTimeline">今日時間軸</div>
+      <div class="timeline" id="timeline">
+        <div class="tl-item" onclick="openTlDetail('L1')">
+          <div class="tl-time">09:00</div>
+          <div class="tl-dot" id="dot-L1"></div>
+          <div class="tl-body">
+            <div class="tl-title">王小明 <span class="badge badge-onetoone" data-i18n="badge.oneToOne">一對一（預約制）</span></div>
+            <div class="tl-sub">中級 2・<span data-i18n="today.status.completed">已上完</span></div>
+            <a class="tl-action" id="action-L1" href="t03_lesson_record.html?lesson=L1" onclick="event.stopPropagation()">寫回饋 →</a>
+          </div>
+        </div>
+        <div class="tl-item" onclick="openTlDetail('L2')">
+          <div class="tl-time">10:30</div>
+          <div class="tl-dot" id="dot-L2"></div>
+          <div class="tl-body">
+            <div class="tl-title">中級小組班（3 人）<span class="badge badge-flex" data-i18n="badge.flexGroup">彈性團體直播班（團體）</span></div>
+            <div class="tl-sub">陳雅婷、周文正、林詩涵・<span data-i18n="today.status.completed">已上完</span></div>
+            <a class="tl-action" id="action-L2" href="t03_lesson_record.html?lesson=L2" onclick="event.stopPropagation()">寫回饋 →</a>
+          </div>
+        </div>
+        <div class="tl-item" onclick="openTlDetail('NEXT')">
+          <div class="tl-time">now</div>
+          <div class="tl-dot upcoming"></div>
+          <div class="tl-body">
+            <div class="tl-title">王小明 <span class="badge badge-onetoone" data-i18n="badge.oneToOne">一對一（預約制）</span><span data-i18n="today.status.upcoming">・即將開始</span></div>
+            <div class="tl-sub" data-i18n="today.note.seeNextClassAbove">見上方「下一堂課」</div>
+          </div>
+        </div>
+        <div class="tl-item" onclick="openTlDetail('L4')">
+          <div class="tl-time">15:00</div>
+          <div class="tl-dot upcoming"></div>
+          <div class="tl-body">
+            <div class="tl-title">學期班 Lv.5–8 <span class="badge badge-flex" data-i18n="badge.flexGroup">彈性團體直播班（團體）</span></div>
+            <div class="tl-sub">羅斯福校區・<span data-i18n="today.status.notStarted">尚未開始</span>・<span data-i18n="today.rule.seniorTeacherFirst">首堂由資深教師任教（規則：教師滿 600 小時以上）</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card" id="feedbackPendingCard" style="cursor:pointer;margin-top:12px;" onclick="goFeedbackPending()">
+      <div class="flex-between">
+        <div>
+          <div style="font-size:14px;font-weight:700;"><span data-i18n="section.feedbackPending">學員回饋待回應</span> <span id="feedbackPendingCount">1</span><span data-i18n="today.unit.count"> 筆</span></div>
+          <div class="small muted" style="margin-top:2px;" data-i18n="desc.feedbackPending">學員已在課後回饋留言，尚待你回覆</div>
+        </div>
+        <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color:var(--c-muted);flex-shrink:0;"><polyline points="9 18 15 12 9 6"/></svg>
+      </div>
+    </div>
+
+    <div class="section-title" data-i18n="section.weekCard">本週小卡</div>
+    <div class="grid-3">
+      <div class="card stat-card" style="text-align:center;padding:14px 10px;" onclick="location.href='t02_schedule.html'">
+        <div style="font-size:22px;font-weight:700;color:var(--c-primary);">14</div>
+        <div class="small muted" style="margin-top:4px;" data-i18n="stat.hoursTaught">已授堂數</div>
+      </div>
+      <div class="card stat-card" style="text-align:center;padding:14px 10px;" onclick="goPending()">
+        <div style="font-size:22px;font-weight:700;color:var(--c-primary);" id="pendingCount">2</div>
+        <div class="small muted" style="margin-top:4px;" data-i18n="stat.pendingFeedback">待寫回饋</div>
+      </div>
+      <div class="card stat-card" style="text-align:center;padding:14px 10px;" onclick="location.href='t06_hours_pay.html'">
+        <div style="font-size:22px;font-weight:700;color:var(--c-primary);">38.5</div>
+        <div class="small muted" style="margin-top:4px;" data-i18n="stat.monthHours">本月時數</div>
+      </div>
+    </div>
+  </main>
+
+  <nav class="bottom-nav">
+    <a href="t01_today.html" class="active"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11l9-8 9 8"/><path d="M5 10v10a1 1 0 001 1h3v-6h6v6h3a1 1 0 001-1V10"/></svg><span data-i18n="nav_t.today">今天</span></a>
+    <a href="t02_schedule.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg><span data-i18n="nav_t.schedule">課表</span></a>
+    <a href="t03_lesson_record.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 4-7 8-7s8 3 8 7"/></svg><span data-i18n="nav_t.lessonRecord">課後紀錄與回饋</span></a>
+    <a href="t07_students.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg><span data-i18n="nav_t.students">學生</span></a>
+    <a href="t04_availability.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18M12 14v6M9 17h6"/></svg><span data-i18n="nav_t.availability">時段與薪資</span></a>
+  </nav>
+</div>
+
+<div class="sheet-overlay hidden" id="enterOverlay" onclick="if(event.target===this) closeEnterModal()">
+  <div class="sheet">
+    <div class="sheet-handle"></div>
+    <h3 data-i18n="modal.enterClassroom">開啟線上教室</h3>
+    <div class="sheet-sec" style="margin-top:12px;">
+      <div class="lbl" data-i18n="label.lesson">課堂</div>
+      <div class="sheet-note">王小明<span data-i18n="today.suffix.individualClass">・個人班</span>・中級 2・士林校區 A203</div>
+    </div>
+    <div class="sheet-sec">
+      <div class="lbl" data-i18n="label.roomStatus">教室狀態</div>
+      <div class="sheet-note" id="roomLockStatus">教室已建立（每堂唯一會議）</div>
+    </div>
+    <div class="sheet-sec">
+      <div class="flex-between" style="margin-bottom:6px;">
+        <div class="lbl" style="margin-bottom:0;"><span data-i18n="label.waitingRoom">等候室：名單</span> <span id="waitTotal">0</span>／<span data-i18n="label.waitCount">等候</span> <span id="waitCount">0</span></div>
+        <button class="w-btn" id="admitAllBtn" style="border-color:var(--c-border);color:var(--c-muted);" onclick="admitAll()" data-i18n="btn.admitAll">全部放行</button>
+      </div>
+      <div class="wait-list" id="waitList"></div>
+    </div>
+    <div class="sheet-sec" style="margin-bottom:0;">
+      <div class="sheet-note small" data-i18n="note.studentEntry">學生只能從會員區驗證後進入，連結不可轉傳。</div>
+    </div>
+    <div class="stack" style="margin-top:16px;">
+      <button class="btn btn-outline btn-block" id="lockMeetingBtn" onclick="lockMeeting()" data-i18n="btn.lockMeeting">鎖定會議</button>
+      <button class="btn btn-primary btn-block" onclick="confirmEnterClassroom()" data-i18n="btn.enterAsHost">進入教室（主持人）</button>
+      <button class="btn btn-outline btn-block" onclick="closeEnterModal()" data-i18n="common.cancel">取消</button>
+    </div>
+    <p class="small muted" style="text-align:center;margin-top:10px;" data-i18n="note.attendanceAuto">出席將自動寫回系統</p>
+  </div>
+</div>
+
+<div class="sheet-overlay hidden" id="noteOverlay" onclick="if(event.target===this) this.classList.add('hidden')">
+  <div class="sheet">
+    <div class="sheet-handle"></div>
+    <h3 data-i18n="modal.studentNote">學生筆記</h3>
+    <div class="sheet-sec" style="margin-top:12px;">
+      <div class="lbl" data-i18n="label.student">學生</div>
+      <div class="sheet-note">王小明・中級 2</div>
+    </div>
+    <div class="sheet-sec">
+      <div class="lbl" data-i18n="label.lastRecord">上次紀錄</div>
+      <div class="sheet-note">08/24（一）09:00–09:50・《NPC》第 5 冊 第 3 課</div>
+    </div>
+    <div class="sheet-sec">
+      <div class="lbl" data-i18n="label.level2">程度</div>
+      <div class="sheet-note"><span data-i18n="today.rubric.listen">聽</span> 4／<span data-i18n="today.rubric.speak">說</span> 4／<span data-i18n="today.rubric.read">讀</span> 4／<span data-i18n="today.rubric.write">寫</span> 3<span data-i18n="today.rubric.scoreNote">（1–5 分，上次課後評分）</span></div>
+    </div>
+    <div class="sheet-sec" style="margin-bottom:0;">
+      <div class="lbl" data-i18n="label.remarks">備註</div>
+      <div class="sheet-note">上次練習「把」字句造句，發音需加強聲調；內部備註：課堂反應積極，可加快進度。</div>
+    </div>
+    <button class="btn btn-outline btn-block" style="margin-top:16px;" onclick="document.getElementById('noteOverlay').classList.add('hidden')" data-i18n="common.close">關閉</button>
+  </div>
+</div>
+
+<div class="sheet-overlay hidden" id="tlOverlay" onclick="if(event.target===this) this.classList.add('hidden')">
+  <div class="sheet">
+    <div class="sheet-handle"></div>
+    <h3 id="tlTitle" data-i18n="modal.lessonDetail">課堂詳情</h3>
+    <div class="sheet-sec" style="margin-top:12px;">
+      <div class="lbl" data-i18n="label.timeLocation">時間・地點</div>
+      <div class="sheet-note" id="tlMeta">—</div>
+    </div>
+    <div class="sheet-sec">
+      <div class="lbl" data-i18n="common.status">狀態</div>
+      <div class="sheet-note" id="tlStatus">—</div>
+    </div>
+    <div class="sheet-sec hidden" id="tlFlexSec">
+      <div class="lbl" data-i18n="label.flexGroupInfo">彈性團體直播班資訊</div>
+      <div class="sheet-note" id="tlFlexInfo">—</div>
+    </div>
+    <div class="sheet-sec hidden" id="tlAttendSec" style="margin-bottom:0;">
+      <div class="lbl" data-i18n="label.attendanceRecord">出席紀錄（系統自動記錄）</div>
+      <div class="attend-list" id="tlAttendList"></div>
+    </div>
+    <div class="stack" style="margin-top:16px;">
+      <a class="btn btn-primary btn-block hidden" id="tlActionBtn" href="#">寫回饋</a>
+      <button class="btn btn-outline btn-block" onclick="document.getElementById('tlOverlay').classList.add('hidden')" data-i18n="common.close">關閉</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast hidden" id="toast"></div>
+
+<script src="../assets/_i18n_dict.js"></script>
+<script src="../assets/_i18n_dict_teacher.js"></script>
+<script src="../assets/_i18n.js"></script>
+<script>
+function toggleBell(){document.getElementById('bellPanel').classList.toggle('open');}
+document.addEventListener('click',function(e){
+  if(!e.target.closest('.bell-btn')&&!e.target.closest('.bell-panel'))document.getElementById('bellPanel').classList.remove('open');
+});
+
+// 下一堂倒數（示範：以頁面載入時間 +8 分鐘 為上課時間，讓「進教室」在 15 分鐘規則內為可點擊狀態）
+var lessonStart = new Date(Date.now() + 8*60*1000);
+function pad(n){return String(n).padStart(2,'0');}
+function tick(){
+  var now = new Date();
+  var diff = lessonStart - now;
+  var enterEl = document.getElementById('enterBtn');
+  var statusEl = document.getElementById('cd-status');
+  var cdEl = document.getElementById('countdown');
+  var t = window.TLI_I18N ? TLI_I18N.t : function(zh){return zh;};
+  if(diff <= 0){
+    cdEl.textContent = t('上課中','Class in Progress');
+    statusEl.textContent = t('可進入教室','You can enter the classroom');
+    enterEl.disabled = false;
+  }else{
+    var totalSec = Math.floor(diff/1000);
+    var m = Math.floor(totalSec/60), s = totalSec%60;
+    cdEl.textContent = pad(m)+':'+pad(s);
+    if(diff <= 15*60*1000){
+      statusEl.textContent = t('可進入教室','You can enter the classroom');
+      enterEl.disabled = false;
+    }else{
+      statusEl.textContent = t('尚未開放進教室（開課前 15 分鐘開放）','Classroom not yet open (opens 15 minutes before class starts)');
+      enterEl.disabled = true;
+    }
+  }
+}
+tick();
+setInterval(tick,1000);
+if (window.TLI_I18N) TLI_I18N.onRefresh(tick);
+
+// 等候室名單（示範：3 位進入嘗試，其中 1 位 Email 與訂課紀錄不符，僅能拒絕）
+var WAIT_ROSTER = [];
+var admitted = {};
+var rejected = {};
+var meetingLocked = false;
+function renderWaitList(){
+  var total = WAIT_ROSTER.length;
+  var waiting = WAIT_ROSTER.filter(function(s){return !admitted[s.name] && !rejected[s.name];}).length;
+  document.getElementById('waitTotal').textContent = total;
+  document.getElementById('waitCount').textContent = waiting;
+  var list = document.getElementById('waitList');
+  list.innerHTML = '';
+  WAIT_ROSTER.forEach(function(s){
+    var row = document.createElement('div');
+    row.className = 'wait-row';
+    var t = window.TLI_I18N ? TLI_I18N.t : function(zh){return zh;};
+    var statusText = admitted[s.name] ? t('已放行','Admitted') : (rejected[s.name] ? t('已拒絕','Rejected') : t('等候中','Waiting'));
+    var badge = s.matched
+      ? '<span class="badge badge-ok" style="margin-left:6px;">'+t('Email 相符','Email Matched')+'</span>'
+      : '<span class="badge" style="margin-left:6px;background:#FBE5E1;color:#B42318;">'+t('非名單','Not on Roster')+'</span>';
+    row.innerHTML = '<span>'+s.name+'・'+statusText+badge+'</span>';
+    var btn = document.createElement('button');
+    if(s.matched){
+      var isIn = !!admitted[s.name];
+      btn.className = 'w-btn'+(isIn?' admitted':'');
+      btn.textContent = isIn ? t('已放行','Admitted') : t('放行','Admit');
+      btn.disabled = isIn || meetingLocked;
+      btn.onclick = function(){ admitted[s.name] = true; renderWaitList(); };
+    }else{
+      var isOut = !!rejected[s.name];
+      btn.className = 'w-btn'+(isOut?' admitted':'');
+      if(!isOut){ btn.style.borderColor='#F5B0A6'; btn.style.color='#B42318'; }
+      btn.textContent = isOut ? t('已拒絕','Rejected') : t('拒絕','Reject');
+      btn.disabled = isOut || meetingLocked;
+      btn.onclick = function(){ rejected[s.name] = true; renderWaitList(); };
+    }
+    row.appendChild(btn);
+    list.appendChild(row);
+  });
+}
+if (window.TLI_I18N) TLI_I18N.onRefresh(renderWaitList);
+function admitAll(){
+  if(meetingLocked) return;
+  WAIT_ROSTER.forEach(function(s){ if(s.matched) admitted[s.name] = true; });
+  renderWaitList();
+  showToast(TLI_I18N.t('已全部放行（名單相符者）','All admitted (matched roster only)'));
+}
+function updateRoomLockUI(){
+  var t = window.TLI_I18N ? TLI_I18N.t : function(zh){return zh;};
+  document.getElementById('roomLockStatus').textContent = meetingLocked
+    ? t('已鎖定，課中無人可再進入','Locked — no one can enter during class')
+    : t('教室已建立（每堂唯一會議）','Room created (unique meeting per class)');
+  document.getElementById('lockMeetingBtn').textContent = meetingLocked
+    ? t('已鎖定會議','Meeting Locked')
+    : t('鎖定會議','Lock Meeting');
+}
+if (window.TLI_I18N) TLI_I18N.onRefresh(updateRoomLockUI);
+function lockMeeting(){
+  if(meetingLocked) return;
+  meetingLocked = true;
+  updateRoomLockUI();
+  document.getElementById('lockMeetingBtn').disabled = true;
+  document.getElementById('admitAllBtn').disabled = true;
+  renderWaitList();
+  showToast(TLI_I18N.t('會議已鎖定，課中無人可再進入','Meeting locked — no one can enter during class'));
+}
+function openEnterModal(){
+  if(document.getElementById('enterBtn').disabled) return;
+  WAIT_ROSTER = [
+    {name:'王小明', matched:true},
+    {name:'陳雅婷', matched:true},
+    {name:TLI_I18N ? TLI_I18N.t('訪客帳號（Email 未登記）','Guest Account (Email not registered)') : '訪客帳號（Email 未登記）', matched:false}
+  ];
+  admitted = {};
+  rejected = {};
+  meetingLocked = false;
+  updateRoomLockUI();
+  document.getElementById('lockMeetingBtn').disabled = false;
+  document.getElementById('admitAllBtn').disabled = false;
+  renderWaitList();
+  document.getElementById('enterOverlay').classList.remove('hidden');
+}
+function closeEnterModal(){
+  document.getElementById('enterOverlay').classList.add('hidden');
+}
+/* ESC 鍵關閉目前開啟中的 sheet-overlay */
+document.addEventListener('keydown', function(e){
+  if (e.key !== 'Escape') return;
+  document.querySelectorAll('.sheet-overlay').forEach(function(el){ el.classList.add('hidden'); });
+});
+function confirmEnterClassroom(){
+  closeEnterModal();
+  localStorage.setItem('tli_teacher_attend_NEXT', JSON.stringify(WAIT_ROSTER.map(function(s){return {name:s.name, in:!!admitted[s.name]};})));
+  showToast(TLI_I18N.t('已進入線上教室（主持人），出席將自動寫回系統','Entered the online classroom (host) — attendance will be recorded automatically'));
+}
+function openStudentNote(){
+  document.getElementById('noteOverlay').classList.remove('hidden');
+}
+
+/* TL_DETAIL 內容含需隨語言切換的結構文字（班型後綴／狀態），改成函式在開啟當下才組字串，
+   確保讀到的是「當時」的語言，而不是頁面剛載入（可能還沒 init）時的預設繁中。*/
+function getTlDetail(id){
+  var t = TLI_I18N.t;
+  switch(id){
+    case 'L1': return {title:'王小明'+t('・個人班','・Individual Class'), meta:'09:00–09:50・中級 2・士林校區 A203', status:t('已上完','Completed'), recordId:'L1', mode:'onetoone',
+        attendance:[{name:'王小明', clock:'09:00'}]};
+    case 'L2': return {title:'中級小組班（3 人）', meta:'10:30–11:20・陳雅婷、周文正、林詩涵・士林校區 A203', status:t('已上完','Completed'), recordId:'L2', mode:'flex',
+        flexInfo:'入班名單：3 位・本期第 6／12 堂・教材單元：《NPC》第 5 冊 第 2 課',
+        attendance:[{name:'陳雅婷', clock:'10:31'},{name:'周文正', clock:'10:29'},{name:'林詩涵', clock:'10:33'}]};
+    case 'NEXT': return {title:'王小明'+t('・個人班・即將開始','・Individual Class・Starting Soon'), meta:t('見上方「下一堂課」','See "Next Class" above')+'・中級 2・士林校區 A203', status:t('尚未開始（依 15 分鐘規則開放進教室）','Not started yet (classroom opens per the 15-minute rule)'), mode:'onetoone'};
+    case 'L4': return {title:'學期班 Lv.5–8', meta:'15:00・羅斯福校區', status:t('尚未開始','Not Started')+'・'+t('首堂由資深教師任教（規則：教師滿 600 小時以上）','First class taught by a senior teacher (rule: teacher must have accumulated 600+ hours).'), mode:'flex',
+        flexInfo:'入班名單：12 位・本期第 1／12 堂・教材單元：《NICD》第 1 冊 第 1 課'};
+  }
+}
+var currentTlId = null;
+function openTlDetail(id){
+  currentTlId = id;
+  renderTlDetailBody(id);
+  document.getElementById('tlOverlay').classList.remove('hidden');
+}
+function refreshTlDetailIfOpen(){
+  if(currentTlId && !document.getElementById('tlOverlay').classList.contains('hidden')) renderTlDetailBody(currentTlId);
+}
+if (window.TLI_I18N) TLI_I18N.onRefresh(refreshTlDetailIfOpen);
+function renderTlDetailBody(id){
+  var d = getTlDetail(id);
+  document.getElementById('tlTitle').textContent = d.title;
+  document.getElementById('tlMeta').textContent = d.meta;
+  var recordDone = d.recordId ? (localStorage.getItem('tli_teacher_record_'+d.recordId) === '1') : false;
+  document.getElementById('tlStatus').textContent = d.recordId ? (d.status + '・' + (recordDone ? TLI_I18N.t('已完成回饋','Feedback Completed') : TLI_I18N.t('待寫回饋','Feedback Pending'))) : d.status;
+  var actionBtn = document.getElementById('tlActionBtn');
+  if(d.recordId && !recordDone){
+    actionBtn.classList.remove('hidden');
+    actionBtn.href = 't03_lesson_record.html?lesson='+d.recordId;
+    actionBtn.textContent = TLI_I18N.t('寫回饋','Write Feedback');
+  }else{
+    actionBtn.classList.add('hidden');
+  }
+  var flexSec = document.getElementById('tlFlexSec');
+  if(d.flexInfo){
+    document.getElementById('tlFlexInfo').textContent = d.flexInfo;
+    flexSec.classList.remove('hidden');
+  }else{
+    flexSec.classList.add('hidden');
+  }
+  var attendSec = document.getElementById('tlAttendSec');
+  var attendList = document.getElementById('tlAttendList');
+  var attendData = d.attendance;
+  if(id === 'NEXT'){
+    var stored = localStorage.getItem('tli_teacher_attend_NEXT');
+    if(stored){
+      attendData = JSON.parse(stored).map(function(r){return {name:r.name, time:(r.in?TLI_I18N.t('已放行進入・已出席','Admitted · Present'):TLI_I18N.t('未放行・缺席','Not Admitted · Absent'))};});
+    }
+  }
+  if(attendData && attendData.length){
+    attendList.innerHTML = '';
+    attendData.forEach(function(a){
+      var row = document.createElement('div');
+      row.className = 'attend-row';
+      var timeText = a.clock ? (a.clock+' '+TLI_I18N.t('進入・已出席','Entered · Present')) : a.time;
+      row.innerHTML = '<span>'+a.name+'</span><span>'+timeText+'</span>';
+      attendList.appendChild(row);
+    });
+    attendSec.classList.remove('hidden');
+  }else{
+    attendSec.classList.add('hidden');
+  }
+}
+
+/* 學員回饋待回應：直達該堂的回饋對話串並聚焦回覆框，20260910m 新增 */
+function goFeedbackPending(){
+  location.href = 't03_lesson_record.html?lesson=L10';
+}
+function goPending(){
+  var ids=['L1','L2'];
+  for(var i=0;i<ids.length;i++){
+    if(localStorage.getItem('tli_teacher_record_'+ids[i]) !== '1'){
+      location.href = 't03_lesson_record.html?lesson='+ids[i];
+      return;
+    }
+  }
+  showToast(TLI_I18N.t('目前沒有待寫的回饋','No feedback pending right now'));
+}
+
+var toastTimer=null;
+function showToast(msg){
+  var t=document.getElementById('toast');
+  t.textContent=msg;
+  t.classList.remove('hidden');
+  clearTimeout(toastTimer);
+  toastTimer=setTimeout(function(){t.classList.add('hidden');},2400);
+}
+
+// 課後紀錄完成狀態（依 localStorage 判斷紅點是否消除）
+function refreshLessonDots(){
+  var ids=['L1','L2'];
+  var pending=0;
+  ids.forEach(function(id){
+    var done = localStorage.getItem('tli_teacher_record_'+id) === '1';
+    var dot = document.getElementById('dot-'+id);
+    var action = document.getElementById('action-'+id);
+    if(done){
+      dot.className='tl-dot done';
+      action.textContent=TLI_I18N.t('已完成回饋','Feedback Completed');
+      action.classList.add('ok');
+      action.removeAttribute('href');
+      action.style.cursor='default';
+    }else{
+      dot.className='tl-dot pending';
+      action.textContent=TLI_I18N.t('寫回饋','Write Feedback')+' →';
+      pending++;
+    }
+  });
+  document.getElementById('pendingCount').textContent = pending;
+}
+refreshLessonDots();
+if (window.TLI_I18N) TLI_I18N.onRefresh(refreshLessonDots);
+if (window.TLI_I18N) TLI_I18N.init();
+</script>
+</body>
+</html>

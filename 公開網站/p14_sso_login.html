@@ -1,0 +1,173 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<title>SSO 登入｜TLI Connect</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<!--
+  SSO 登入流程示範（專案合作學生）
+  網址帶 auth_token（SSO 驗證結果）：p14_sso_login.html?auth_token=...&sid=pr12&acct=ma03
+  流程：
+   1. 驗證 auth_token（本原型只檢查有帶值；正式由後端驗證簽章與效期，規則待確認）
+   2. 首次登入：顯示服務條款與隱私權政策，勾選同意並記錄（帳號、時間）；確認後才進學員首頁
+   3. 再次登入：已有同意紀錄就直接進學員首頁，免再勾選
+   4. 學員首頁：../會員區/m01_home.html?sid=pr12&acct=ma03
+  同意紀錄存在 localStorage（key: tliSsoConsent），僅供原型示範。
+  頁面右下角「重設示範」可清除同意紀錄，重新體驗首次登入。
+-->
+<style>
+:root{--navy:#1B4E8C;--orange:#E8792B;--teal:#0F9B79;--g50:#F5F7FA;--g200:#E4E7EC;--g500:#667085;--g900:#101828;}
+*{box-sizing:border-box;}
+html,body{overflow-x:hidden;}
+body{margin:0;font-family:"Noto Sans TC","Microsoft JhengHei",system-ui,-apple-system,sans-serif;background:var(--g50);color:var(--g900);min-height:100vh;}
+a{color:var(--navy);}
+.wrap{max-width:600px;margin:0 auto;padding:32px 20px 60px;}
+.topmark{display:flex;align-items:center;gap:10px;justify-content:center;margin-bottom:22px;}
+.topmark img{height:30px;}
+.topmark span{font-size:13px;color:var(--g500);border-left:1px solid var(--g200);padding-left:10px;}
+.card{background:#fff;border:1px solid var(--g200);border-radius:14px;padding:30px;box-shadow:0 1px 3px rgba(16,24,40,.06);}
+h1.sth{font-size:17px;margin:0 0 4px;}
+.stdesc{font-size:12.5px;color:var(--g500);margin-bottom:18px;line-height:1.6;}
+.ctx{background:var(--g50);border:1px solid var(--g200);border-radius:10px;padding:4px 14px;margin-bottom:18px;}
+.ctx-row{display:flex;justify-content:space-between;gap:14px;padding:9px 0;border-top:1px solid var(--g200);font-size:13px;}
+.ctx-row:first-child{border-top:none;}
+.ctx-row span:first-child{color:var(--g500);flex:none;}
+.ctx-row span:last-child{font-weight:600;text-align:right;min-width:0;overflow-wrap:anywhere;}
+.callout{display:flex;gap:10px;background:#E6EEF8;border-radius:10px;padding:12px 14px;font-size:12.5px;line-height:1.7;color:#123a68;margin-bottom:16px;}
+.checkbox-label{display:flex;align-items:flex-start;gap:8px;font-size:12.5px;line-height:1.6;cursor:pointer;}
+.checkbox-label input{margin-top:3px;flex:none;width:16px;height:16px;}
+.checkbox-label a{font-weight:600;}
+.errmsg{font-size:12px;color:#C0392B;margin-top:5px;display:none;}
+.errmsg.show{display:block;}
+.btnrow{display:flex;justify-content:flex-end;gap:10px;margin-top:24px;}
+.btn{display:inline-block;background:var(--navy);color:#fff;border:none;padding:10px 20px;border-radius:6px;font-size:13.5px;cursor:pointer;text-decoration:none;white-space:nowrap;font-family:inherit;}
+.btn.orange{background:var(--orange);}
+.btn:disabled{background:var(--g200);color:var(--g500);cursor:not-allowed;}
+.pane{display:none;}
+.pane.on{display:block;}
+.center{text-align:center;padding:14px 4px 4px;}
+.icon{width:56px;height:56px;border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 14px;}
+.icon.ok{background:#E4F5EE;}
+.icon.bad{background:#FBE7E7;}
+.ttl{font-size:17px;font-weight:700;margin-bottom:6px;}
+.dsc{font-size:13px;color:var(--g500);line-height:1.7;margin-bottom:16px;}
+.spin{width:28px;height:28px;border:3px solid var(--g200);border-top-color:var(--navy);border-radius:50%;animation:sp .8s linear infinite;margin:0 auto 14px;}
+@keyframes sp{to{transform:rotate(360deg)}}
+.tokenbox{font-family:ui-monospace,Consolas,monospace;font-size:11.5px;background:var(--g50);border:1px dashed var(--g200);border-radius:8px;padding:8px 10px;color:var(--g500);overflow-wrap:anywhere;margin-bottom:16px;}
+.modal-overlay{position:fixed;inset:0;background:rgba(16,24,40,.45);display:none;align-items:center;justify-content:center;z-index:300;padding:20px;}
+.modal-overlay.show{display:flex;}
+.modal-box{background:#fff;border-radius:12px;max-width:520px;width:100%;max-height:80vh;display:flex;flex-direction:column;box-shadow:0 8px 24px rgba(16,24,40,.14);}
+.modal-head{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:16px 20px;border-bottom:1px solid var(--g200);}
+.modal-head h3{font-size:15px;font-weight:800;margin:0;}
+.modal-x{background:none;border:none;cursor:pointer;color:var(--g500);font-size:20px;line-height:1;}
+.modal-body{padding:18px 20px;overflow-y:auto;font-size:13px;color:var(--g500);line-height:1.8;}
+.modal-body h4{font-size:13.5px;color:var(--g900);margin:14px 0 6px;}
+.modal-body h4:first-child{margin-top:0;}
+.modal-body p{margin:0 0 8px;}
+.modal-foot{padding:14px 20px;border-top:1px solid var(--g200);text-align:right;}
+.demobox{margin-top:20px;border-top:1px dashed var(--g200);padding-top:12px;font-size:12px;color:var(--g500);display:flex;flex-wrap:wrap;gap:6px 14px;}
+</style>
+</head>
+<body>
+<div class="wrap">
+<div class="topmark"><img src="../assets/tli-logo.svg" alt="TLI"><span>SSO 登入</span></div>
+<div class="card">
+
+  <!-- 1. 驗證中 -->
+  <div class="pane on" id="paneVerify"><div class="center"><div class="spin"></div><div class="ttl">正在驗證 SSO 登入…</div><div class="dsc">請稍候，驗證完成後會自動繼續。</div></div></div>
+
+  <!-- 2. 首次登入：同意條款 -->
+  <div class="pane" id="paneConsent">
+    <h1 class="sth">完成登入前，請先同意條款</h1>
+    <div class="ctx" id="ctx"></div>
+    <label class="checkbox-label"><input type="checkbox" id="fAgree"><span>我已閱讀並同意<a href="#" onclick="openTerms();return false;">服務條款與隱私權政策</a></span></label>
+    <div class="errmsg" id="errAgree">請先同意服務條款與隱私權政策。</div>
+    <div class="btnrow"><button class="btn orange" id="btnConfirm">確認並進入學員首頁</button></div>
+  </div>
+
+  <!-- 3. 已同意過：直接進入 -->
+  <div class="pane" id="paneGo"><div class="center"><div class="icon ok"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#0F9B79" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></div><div class="ttl">登入成功</div><div class="dsc" id="goDesc">你已同意過條款，正在前往學員首頁…</div><a class="btn" id="goLink" href="#">立即前往學員首頁</a></div></div>
+
+  <!-- 4. auth_token 無效 -->
+  <div class="pane" id="paneBad"><div class="center"><div class="icon bad"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#C0392B" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg></div><div class="ttl">SSO 驗證未通過</div><div class="dsc" id="badDesc">網址缺少有效的 auth_token，無法登入。請回到學校的入口重新登入。</div></div></div>
+
+  <div class="demobox">
+    <a href="#" id="resetDemo">重設示範（清除同意紀錄，重新體驗首次登入）</a>
+    <a href="p14_sso_login.html?sid=pr12&amp;acct=ma03">不帶 auth_token 開啟（看驗證失敗）</a>
+  </div>
+</div>
+</div>
+
+<div class="modal-overlay" id="termsModal">
+  <div class="modal-box">
+    <div class="modal-head"><h3>服務條款與隱私權政策</h3><button class="modal-x" onclick="closeTerms()" aria-label="關閉">&times;</button></div>
+    <div class="modal-body">
+      <h4>服務條款</h4>
+      <p>本服務由 TLI 中華語文研習所提供，帳號僅供登記之學生或教師本人使用。學習內容與 Mandarin Lounge 會話場次，依學校與 TLI 的專案合作安排提供。</p>
+      <h4>隱私權政策</h4>
+      <p>我們蒐集姓名、Email、班級與學習紀錄，僅用於課程營運、帳號驗證與必要通知。你的老師可以看到所授班級的學習時數與進度。</p>
+    </div>
+    <div class="modal-foot"><button type="button" class="btn" onclick="closeTerms()">我已閱讀</button></div>
+  </div>
+</div>
+
+<script src="../assets/_shared_masters.js"></script>
+<script>
+/* 條款文字沿用 p13_activate.html（同一份服務條款與隱私權政策） */
+var DEFAULT_SID = 'pr12', DEFAULT_ACCT = 'ma03';
+var CONSENT_KEY = 'tliSsoConsent';
+function $(i){ return document.getElementById(i); }
+function qs(k){ try{ return new URLSearchParams(location.search).get(k) || ''; }catch(e){ return ''; } }
+function esc(s){ return String(s == null ? '' : s).replace(/[&<>"]/g, function(c){ return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]; }); }
+function openTerms(){ $('termsModal').classList.add('show'); }
+function closeTerms(){ $('termsModal').classList.remove('show'); }
+function showPane(id){ document.querySelectorAll('.pane').forEach(function(p){ p.classList.toggle('on', p.id === id); }); }
+function readConsent(){ try{ return JSON.parse(localStorage.getItem(CONSENT_KEY) || '{}'); }catch(e){ return {}; } }
+function writeConsent(m){ try{ localStorage.setItem(CONSENT_KEY, JSON.stringify(m)); }catch(e){} }
+function nowStr(){ var d = new Date(), p = function(n){ return (n < 10 ? '0' : '') + n; }; return d.getFullYear() + '-' + p(d.getMonth()+1) + '-' + p(d.getDate()) + ' ' + p(d.getHours()) + ':' + p(d.getMinutes()); }
+
+var token = qs('auth_token'), sid = qs('sid') || DEFAULT_SID, acctId = qs('acct') || DEFAULT_ACCT;
+var A = (TLI_MASTERS.memberAccounts || []).filter(function(a){ return a.id === acctId; })[0] || null;
+var HOME = '../會員區/m01_home.html?sid=' + encodeURIComponent(sid) + '&acct=' + encodeURIComponent(acctId);
+
+
+function ctxHtml(){
+  var rows = [['姓名', A ? A.name : acctId], ['Email', A && A.email ? A.email : '—']];
+  return rows.map(function(r){ return '<div class="ctx-row"><span>' + esc(r[0]) + '</span><span>' + esc(r[1]) + '</span></div>'; }).join('');
+}
+function enterHome(){
+  try{ sessionStorage.setItem('tliAcct', acctId); sessionStorage.setItem('tliLoggedIn', '1'); }catch(e){}
+  location.href = HOME;
+}
+function init(){
+  /* 1. 驗證 auth_token（原型：只檢查有帶值；正式由後端驗證，簽章／效期規則待確認） */
+  setTimeout(function(){
+    if (!token || !A){
+      $('badDesc').textContent = !token ? '網址缺少有效的 auth_token，無法登入。請回到學校的入口重新登入。' : '找不到這個帳號，請回到學校的入口重新登入。';
+      showPane('paneBad'); return;
+    }
+    var rec = readConsent()[acctId];
+    if (rec){   /* 3. 再次登入：已同意過，直接進首頁 */
+      $('goLink').href = HOME;
+      $('goDesc').textContent = '你已於 ' + rec.at + ' 同意條款，正在前往學員首頁…';
+      showPane('paneGo'); setTimeout(enterHome, 1200); return;
+    }
+    $('ctx').innerHTML = ctxHtml();   /* 2. 首次登入：同意條款 */
+    showPane('paneConsent');
+  }, 700);
+}
+$('btnConfirm').addEventListener('click', function(){
+  var ok = $('fAgree').checked;
+  $('errAgree').classList.toggle('show', !ok);
+  if (!ok) return;
+  var m = readConsent(); m[acctId] = {at: nowStr(), terms: '服務條款與隱私權政策'}; writeConsent(m);   // 記錄同意（帳號、時間）
+  enterHome();
+});
+$('goLink').addEventListener('click', function(e){ e.preventDefault(); enterHome(); });
+$('resetDemo').addEventListener('click', function(e){
+  e.preventDefault(); var m = readConsent(); delete m[acctId]; writeConsent(m); location.reload();
+});
+init();
+</script>
+</body>
+</html>

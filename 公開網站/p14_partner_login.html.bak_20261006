@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title data-i18n="fr.p14.metaTitle">TLI Connect｜合作機構學員登入</title>
+<meta name="description" content="透過合作機構參加課程的學員，請由此登入 TLI Connect 學習平台。">
+<style>
+:root{
+  --c-primary:#1B4E8C;
+  --c-primary-dark:#123A66;
+  --c-accent:#E8792B;
+  --c-accent-dark:#CF691F;
+  --c-secondary:#0F9B79;
+  --c-bg:#F5F7FA;
+  --c-border:#E4E7EC;
+  --c-muted:#667085;
+  --c-text:#101828;
+  --radius:14px;
+  --shadow:0 1px 3px rgba(16,24,40,.06);
+}
+*{box-sizing:border-box;}
+html,body{margin:0;padding:0;overflow-x:hidden;}
+body{font-family:"Noto Sans TC","Microsoft JhengHei",system-ui,-apple-system,"Segoe UI",sans-serif;background:var(--c-bg);color:var(--c-text);line-height:1.7;font-size:16px;}
+a{color:inherit;text-decoration:none;}
+img{max-width:100%;display:block;}
+ul{margin:0;padding:0;list-style:none;}
+h1,h2,h3,p{margin:0;}
+
+/* 站台頁首：TLI Connect 單一品牌，本頁為機構外部連結導入，不放行銷主導覽 */
+.site-header{background:#fff;border-bottom:1px solid var(--c-border);padding:14px 24px;display:flex;align-items:center;justify-content:center;}
+.brand{display:flex;align-items:center;gap:9px;}
+.brand img{height:28px;width:auto;display:block;}
+.brand-name{font-size:16px;font-weight:800;color:var(--c-primary);letter-spacing:.2px;}
+
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;border:none;border-radius:6px;padding:10px 20px;font-size:14px;font-weight:700;cursor:pointer;font-family:inherit;transition:background .15s;white-space:nowrap;}
+.btn-primary{background:var(--c-primary);color:#fff;}
+.btn-primary:hover{background:var(--c-primary-dark);}
+.btn-outline{background:#fff;border:1px solid var(--c-border);color:var(--c-text);}
+.btn-outline:hover{background:var(--c-bg);}
+.btn-block{width:100%;}
+
+main{max-width:1040px;margin:0 auto;padding:56px 24px 80px;display:flex;justify-content:center;}
+.auth-wrap{width:100%;max-width:420px;}
+.auth-head{text-align:center;margin-bottom:20px;}
+.auth-head h1{font-size:22px;font-weight:800;margin-bottom:8px;}
+.auth-head p{font-size:13.5px;color:var(--c-muted);}
+
+/* 機構識別區：依 ?tenant= 顯示該機構名稱與 logo 位置 */
+.partner-identity{display:flex;align-items:center;gap:12px;background:#fff;border:1px solid var(--c-border);border-radius:var(--radius);padding:14px 16px;margin-bottom:20px;}
+.partner-mark{flex:none;display:flex;}
+.partner-name{font-size:15px;font-weight:800;}
+.partner-hint{font-size:12px;color:var(--c-muted);margin-top:2px;}
+
+.generic-tip{color:#667085;font-size:13px;margin-bottom:20px;line-height:1.7;}
+.hidden{display:none!important;}
+
+.auth-card{background:#fff;border:1px solid var(--c-border);border-radius:var(--radius);box-shadow:var(--shadow);padding:28px;}
+
+.field{margin-bottom:16px;}
+.field label{display:block;font-size:13px;font-weight:600;margin-bottom:6px;}
+.field input{width:100%;border:1px solid var(--c-border);border-radius:6px;padding:10px 12px;font-size:14px;font-family:inherit;color:var(--c-text);}
+.field input:focus{outline:2px solid var(--c-primary);outline-offset:1px;}
+.field input.invalid{border-color:#D92D20;}
+.field-error{display:none;font-size:12px;color:#D92D20;margin-top:5px;line-height:1.5;}
+.field-error.show{display:block;}
+
+.switch-note{text-align:center;font-size:12.5px;color:var(--c-muted);margin-top:16px;line-height:1.7;}
+
+.site-footer{background:#101828;color:#7C879A;padding:24px;text-align:center;font-size:12px;}
+
+.toast{position:fixed;left:50%;bottom:28px;transform:translateX(-50%) translateY(20px);background:#101828;color:#fff;font-size:13.5px;padding:12px 20px;border-radius:8px;box-shadow:0 8px 24px rgba(16,24,40,.16);opacity:0;pointer-events:none;transition:opacity .2s,transform .2s;z-index:100;max-width:90vw;text-align:center;}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
+</style>
+</head>
+<body>
+
+<header class="site-header">
+  <a class="brand" href="p01_home.html" aria-label="TLI Connect">
+    <img src="../assets/tli-logo.svg" alt="TLI">
+    <span class="brand-name">TLI Connect</span>
+  </a>
+</header>
+
+<main>
+  <div class="auth-wrap">
+    <div class="auth-head">
+      <h1 data-i18n="fr.p14.title">合作機構學員登入</h1>
+      <p data-i18n="fr.p14.sub">透過合作機構參加課程的學員請由此登入</p>
+    </div>
+
+    <!-- 依 URL 參數 ?tenant= 顯示對應機構名稱與 logo 位置；示範 tenant=global-study -->
+    <div class="partner-identity hidden" id="partnerIdentity">
+      <span class="partner-mark" id="partnerMark" aria-hidden="true"></span>
+      <div>
+        <div class="partner-name" id="partnerName"></div>
+        <div class="partner-hint" data-i18n="fr.p14.partnerHint">機構學員專屬登入通道</div>
+      </div>
+    </div>
+
+    <!-- 沒帶 tenant 參數，或參數非已知機構時顯示通用提示，不提供登入表單 -->
+    <p class="generic-tip" id="genericNotice" data-i18n="fr.p14.genericNotice">此頁需透過合作機構提供的專屬連結進入，才能顯示正確的登入通道。請使用機構提供的專屬連結。</p>
+
+    <div class="auth-card hidden" id="loginCard">
+      <form id="partnerLoginForm" novalidate onsubmit="return handlePartnerLogin(event)">
+        <div class="field">
+          <label data-i18n="fr.p14.labelEmail">Email</label>
+          <input type="email" id="pLoginEmail" placeholder="請輸入 Email" data-i18n-placeholder="fr.p14.phEmail" oninput="clearPartnerFieldError('pLoginEmail')">
+          <div class="field-error" id="err_pLoginEmail" data-i18n="fr.p14.errEmail">請輸入 Email</div>
+        </div>
+        <div class="field">
+          <label data-i18n="fr.p14.labelPassword">密碼</label>
+          <input type="password" id="pLoginPassword" placeholder="請輸入密碼" data-i18n-placeholder="fr.p14.phPassword" oninput="clearPartnerFieldError('pLoginPassword')">
+          <div class="field-error" id="err_pLoginPassword" data-i18n="fr.p14.errPassword">請輸入密碼</div>
+        </div>
+        <button type="submit" class="btn btn-primary btn-block" data-i18n="fr.f03.submitBtn">登入</button>
+      </form>
+      <!-- 經銷／合作機構學員由機構提供名單建檔，不提供自行註冊入口 -->
+      <div class="switch-note" data-i18n="fr.p14.noRegisterNote">帳號由合作機構為您建立，如無法登入請聯繫該機構窗口協助處理。</div>
+    </div>
+  </div>
+</main>
+
+<footer class="site-footer">TLI Connect</footer>
+
+<div class="toast" id="toast"></div>
+
+<script src="../assets/_shared_masters.js"></script>
+<script src="../assets/_i18n_dict.js"></script>
+<script src="../assets/_i18n_dict_fr_front.js"></script>
+<script src="../assets/_i18n.js"></script>
+<script>
+function T(zh,en){ return window.TLI_I18N ? TLI_I18N.t(zh,en) : zh; }
+function showToast(msg){
+  var t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  clearTimeout(window._toastTimer);
+  window._toastTimer = setTimeout(function(){ t.classList.remove('show'); }, 2200);
+}
+
+/* ===================== 機構（租戶）資料 ===================== */
+/* 示範一家：環球遊學顧問（日本），與會員區 m01c/m03c 經銷學生示範資料同名 */
+var PARTNER_TENANTS = {
+  'global-study': {
+    markColor: '#0F9B79',
+    markText: 'GS'
+  }
+};
+var currentTenant = null;
+var currentTenantKey = null;
+
+function getTenantParam(){
+  try{
+    var params = new URLSearchParams(window.location.search);
+    return params.get('tenant');
+  }catch(e){ return null; }
+}
+
+function renderPartnerMark(color, text){
+  var el = document.getElementById('partnerMark');
+  el.innerHTML = '<svg width="40" height="40" viewBox="0 0 40 40"><circle cx="20" cy="20" r="19" fill="' + color + '"/><text x="20" y="25.5" font-family="Arial, sans-serif" font-size="13" font-weight="800" fill="#fff" text-anchor="middle">' + text + '</text></svg>';
+}
+
+function renderPartnerName(){
+  var nameEl = document.getElementById('partnerName');
+  if (!nameEl || !currentTenant) return;
+  nameEl.textContent = T('環球遊學顧問（日本）', 'Global Study Consultants (Japan)');
+}
+
+function initTenant(){
+  var tenantKey = getTenantParam();
+  var tenant = tenantKey ? PARTNER_TENANTS[tenantKey] : null;
+  currentTenant = tenant;
+  currentTenantKey = tenantKey;
+
+  if(tenant){
+    document.getElementById('partnerIdentity').classList.remove('hidden');
+    document.getElementById('genericNotice').classList.add('hidden');
+    document.getElementById('loginCard').classList.remove('hidden');
+    renderPartnerMark(tenant.markColor, tenant.markText);
+    renderPartnerName();
+  } else {
+    document.getElementById('partnerIdentity').classList.add('hidden');
+    document.getElementById('genericNotice').classList.remove('hidden');
+    document.getElementById('loginCard').classList.add('hidden');
+  }
+}
+
+/* ===================== 表單驗證（空送出擋下） ===================== */
+function clearPartnerFieldError(id){
+  var el = document.getElementById(id);
+  var err = document.getElementById('err_' + id);
+  el.classList.remove('invalid');
+  if(err) err.classList.remove('show');
+}
+function handlePartnerLogin(e){
+  if(e && e.preventDefault) e.preventDefault();
+  var email = document.getElementById('pLoginEmail');
+  var pw = document.getElementById('pLoginPassword');
+  var ok = true;
+  if(!email.value.trim()){
+    email.classList.add('invalid');
+    document.getElementById('err_pLoginEmail').classList.add('show');
+    ok = false;
+  }
+  if(!pw.value.trim()){
+    pw.classList.add('invalid');
+    document.getElementById('err_pLoginPassword').classList.add('show');
+    ok = false;
+  }
+  if(!ok) return false;
+  /* 示範用途：任意輸入即視為登入成功，導向經銷學生首頁 m01c */
+  try{ sessionStorage.setItem('tliLoggedIn', '1'); }catch(err){}
+  window.location.href = '../會員區/m01c_home_reseller.html';
+  return false;
+}
+
+/* ===================== 介面語系（20260929 改為共用模組）：
+   本頁示範機構為經銷夥伴「環球遊學顧問」（partners.p11），切換器只列該夥伴總部開放的語系 ===================== */
+function restrictPartnerLocales(){
+  if (!window.TLI_I18N || !window.TLI_MASTERS) return;
+  var p = TLI_MASTERS.partners.find(function(x){ return x.name.indexOf('環球遊學顧問') >= 0; }) || {};
+  var allowed = (p.uiLocales && p.uiLocales.length) ? p.uiLocales : ['zh-TW','zh-CN','en'];
+  document.querySelectorAll('.tli-i18n-opt').forEach(function(btn){
+    if (allowed.indexOf(btn.getAttribute('data-lang')) === -1) btn.style.display = 'none';
+  });
+  if (allowed.indexOf(TLI_I18N.currentLang()) === -1) TLI_I18N.apply(allowed[0]);
+}
+
+if (window.TLI_I18N) TLI_I18N.init();
+restrictPartnerLocales();
+initTenant();
+if (window.TLI_I18N) TLI_I18N.onRefresh(renderPartnerName);
+</script>
+
+</body>
+</html>

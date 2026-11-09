@@ -1,0 +1,1218 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<title>測驗管理｜TLI Hub 管理後台</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+:root{--navy:#1B4E8C;--navy-dark:#123a68;--orange:#E8792B;--teal:#0F9B79;
+--g50:#F5F7FA;--g200:#E4E7EC;--g500:#667085;--g900:#101828;}
+*{box-sizing:border-box;}
+body{margin:0;font-family:"Noto Sans TC","Microsoft JhengHei",system-ui,-apple-system,sans-serif;
+background:var(--g50);color:var(--g900);}
+a{color:var(--navy);}
+.app{display:flex;min-height:100vh;width:100%;background:#fff;}
+.sidebar{width:260px;flex-shrink:0;background:#fff;color:var(--g900);padding:18px 0;
+border-right:1px solid var(--g200);display:flex;flex-direction:column;transition:width .15s;
+position:sticky;top:0;height:100vh;align-self:flex-start;}
+.sidebar .brand{padding:0 20px 14px;font-size:14px;font-weight:700;display:flex;flex-direction:column;gap:4px;
+border-bottom:1px solid var(--g200);margin-bottom:6px;text-decoration:none;color:inherit;cursor:pointer;}
+.sidebar .brand-logo{height:28px;width:auto;display:block;}
+.sidebar .brand small{display:block;font-weight:400;font-size:12px;color:var(--g500);margin-top:0;text-transform:uppercase;letter-spacing:.04em;}
+.sidebar nav{flex:1 1 auto;overflow-y:auto;}
+.sidebar nav a,.sidebar nav span.disabled{display:flex;align-items:center;gap:10px;padding:9px 20px;font-size:13.5px;
+color:var(--g900);text-decoration:none;position:relative;}
+.sidebar nav a .navicon{flex-shrink:0;color:var(--g500);}
+.sidebar nav a:hover{background:var(--g50);}
+.sidebar nav a.active{background:#E6EEF8;color:var(--navy);font-weight:600;}
+.sidebar nav a.active .navicon{color:var(--navy);}
+.sidebar .sec-label{padding:16px 20px 4px;font-size:10.5px;color:var(--g500);letter-spacing:.08em;text-transform:uppercase;font-weight:600;}
+.main{flex:1;padding:26px 32px 60px;min-width:0;}
+.pagehead{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:18px;gap:16px;}
+.pagehead h1{font-size:20px;margin:0;}
+.pagehead .desc{font-size:12.5px;color:var(--g500);margin-top:5px;line-height:1.6;}
+.btn{display:inline-block;background:var(--navy);color:#fff;border:none;padding:8px 14px;
+border-radius:6px;font-size:13px;cursor:pointer;text-decoration:none;white-space:nowrap;font-family:inherit;}
+.btn.orange{background:var(--orange);}
+.btn.ghost{background:#fff;border:1px solid var(--g200);color:var(--g900);}
+.btn.sm{padding:5px 10px;font-size:12px;}
+.btn:disabled,.btn.isdisabled{background:var(--g200)!important;color:var(--g500)!important;
+cursor:not-allowed!important;}
+/* ---- 右側詳情抽屜 ---- */
+.drawer-mask{display:none;position:fixed;inset:0;background:rgba(16,24,40,.35);z-index:150;}
+.drawer-mask.open{display:block;}
+.drawer{position:fixed;top:0;right:0;height:100vh;width:460px;max-width:92vw;background:#fff;
+box-shadow:-8px 0 24px rgba(16,24,40,.18);z-index:151;transform:translateX(100%);transition:transform .2s;
+display:flex;flex-direction:column;}
+.drawer.open{transform:translateX(0);}
+.drawer-head{padding:18px 20px;border-bottom:1px solid var(--g200);display:flex;justify-content:space-between;align-items:flex-start;flex-shrink:0;}
+.drawer-head h2{font-size:16px;margin:0 0 4px;}
+.drawer-close{background:none;border:none;font-size:20px;cursor:pointer;color:var(--g500);line-height:1;padding:2px 6px;}
+.drawer-close:hover{color:var(--g900);}
+.drawer-body{flex:1;overflow-y:auto;padding:16px 20px 40px;}
+.card,.listpanel{background:#fff;border:1px solid var(--g200);border-radius:12px;padding:18px;margin-bottom:16px;box-shadow:0 1px 3px rgba(16,24,40,.06);}
+.card h2,.listpanel h2{font-size:15px;margin:0 0 12px;}
+.tablewrap,.cal-wrap{overflow-x:auto;max-width:100%;}
+table{width:100%;border-collapse:collapse;font-size:13px;}
+th{text-align:left;background:var(--g50);color:var(--g500);font-weight:600;padding:10px 12px;
+border-bottom:1px solid var(--g200);white-space:nowrap;}
+td{padding:10px 12px;border-bottom:1px solid var(--g200);}
+tr.rowlink{cursor:pointer;}
+tr.rowlink:hover{background:#F8FAFD;}
+.badge{display:inline-block;padding:2px 9px;border-radius:10px;font-size:11.5px;font-weight:600;white-space:nowrap;}
+.badge.blue{background:#E7EEF8;color:var(--navy);}
+.badge.green{background:#E4F5EE;color:var(--teal);}
+.badge.orange{background:#FCE9DA;color:var(--orange);}
+.badge.grey{background:var(--g200);color:var(--g500);}
+.filterbar{display:flex;gap:14px;flex-wrap:wrap;align-items:center;margin-bottom:14px;}
+.tb-search{display:flex;align-items:center;gap:6px;background:var(--g50);border:1px solid var(--g200);border-radius:8px;
+padding:6px 10px;}
+.tb-search input{border:none;background:none;outline:none;font-size:12.5px;font-family:inherit;width:100%;color:var(--g900);}
+.modal-mask{display:none;position:fixed;inset:0;background:rgba(16,24,40,.42);z-index:100;
+align-items:center;justify-content:center;}
+.modal-mask.open{display:flex;}
+.modal{background:#fff;border-radius:10px;width:520px;max-width:92vw;max-height:88vh;
+overflow:auto;padding:22px;}
+.modal h3{margin-top:0;font-size:16px;}
+.formrow{margin-bottom:13px;}
+.formrow label{display:block;font-size:12.5px;color:var(--g500);margin-bottom:4px;}
+.req{color:#C00000;margin-left:2px;}
+.formrow input,.formrow select{width:100%;padding:7px 10px;border:1px solid var(--g200);
+border-radius:6px;font-size:13px;box-sizing:border-box;font-family:inherit;}
+.note{font-size:12px;color:#7a5b1f;background:#FFF8EE;border:1px solid #F3DFB8;padding:9px 11px;
+border-radius:6px;}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
+.kv{display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px dashed var(--g200);font-size:13px;gap:10px;}
+.kv span:first-child{color:var(--g500);}
+.small{font-size:12px;color:var(--g500);}
+.hint{font-size:11.5px;color:var(--g500);margin-top:3px;}
+.desc{font-size:12.5px;color:var(--g500);line-height:1.6;}
+.sidebar-user{padding:14px 20px 16px;border-top:1px solid var(--g200);margin-top:6px;display:flex;align-items:center;gap:10px;position:relative;}
+.sidebar-user .su-avatar{width:32px;height:32px;border-radius:50%;background:var(--navy);color:#fff;display:flex;
+align-items:center;justify-content:center;font-size:13px;font-weight:600;flex-shrink:0;}
+.sidebar .su-logout{display:block;margin:6px 20px 4px;font-size:12px;color:var(--navy);text-decoration:none;}
+.topbar{display:flex;align-items:center;justify-content:space-between;padding:0 32px;height:56px;
+border-bottom:1px solid var(--g200);position:sticky;top:0;background:#fff;z-index:40;margin:-26px -32px 22px;gap:14px;}
+.hamburger{display:none;background:none;border:none;font-size:19px;cursor:pointer;color:var(--g900);padding:4px 6px;margin-right:4px;}
+.topbar .tb-title{font-size:15px;font-weight:600;color:var(--g900);flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.topbar .tb-actions{display:flex;align-items:center;gap:14px;position:relative;flex-shrink:0;}
+.tb-search{width:180px;}
+.tb-searchicon{font-size:12px;color:var(--g500);}
+.tb-bellbtn{position:relative;background:none;border:none;cursor:pointer;font-size:17px;padding:4px;line-height:1;}
+.tb-dot{position:absolute;top:0;right:0;width:7px;height:7px;background:#C0392B;border-radius:50%;display:none;}
+.tb-avatarbtn{width:30px;height:30px;border-radius:50%;background:var(--navy);color:#fff;border:none;
+cursor:pointer;font-size:13px;font-weight:600;flex-shrink:0;}
+.tb-panel{display:none;position:absolute;top:44px;right:0;background:#fff;border:1px solid var(--g200);
+border-radius:8px;box-shadow:0 8px 24px rgba(16,24,40,.16);z-index:50;}
+.tb-panel.open{display:block;}
+.tb-notifpanel{width:300px;padding:10px;}
+.tb-notifpanel .tn-head{display:flex;justify-content:space-between;align-items:center;font-size:12.5px;
+padding:4px 6px 8px;border-bottom:1px solid var(--g200);margin-bottom:6px;}
+.tb-notifpanel .tn-head a{font-size:11.5px;cursor:pointer;}
+.tb-notifitem{padding:8px 6px;border-radius:6px;font-size:12.5px;line-height:1.5;}
+.tb-notifitem:hover{background:var(--g50);}
+.tb-notifitem.unread{background:#EEF3FA;}
+.tb-notifitem .tn-t{color:var(--g500);font-size:11px;margin-top:2px;}
+.tb-avatarmenu{width:150px;padding:6px;}
+.tb-avatarmenu a{display:block;padding:8px 10px;font-size:13px;color:var(--g900);text-decoration:none;border-radius:6px;}
+.tb-avatarmenu a:hover{background:var(--g50);}
+.toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(20px);
+background:#101828;color:#fff;padding:10px 20px;border-radius:8px;font-size:13px;
+opacity:0;pointer-events:none;transition:.2s;z-index:200;}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
+.sidebar-backdrop{display:none;position:fixed;inset:0;background:rgba(16,24,40,.4);z-index:110;}
+.su-clickarea{display:flex;align-items:center;gap:10px;cursor:pointer;min-width:0;}
+.su-info{flex:1;min-width:0;}
+.su-name,.su-unit{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.su-menu a{display:block;padding:8px 10px;font-size:13px;color:var(--g900);text-decoration:none;border-radius:6px;}
+.su-menu a:hover{background:var(--g50);}
+.sidebar-user .su-info{display:flex;flex-direction:column;line-height:1.5;}
+.sidebar-user .su-name{font-size:13px;font-weight:600;color:var(--g900);}
+.sidebar-user .su-roletag{font-size:10.5px;background:#E6EEF8;color:var(--navy);padding:0 6px;border-radius:8px;display:inline-block;width:fit-content;white-space:nowrap;}
+.sidebar-user .su-unit{font-size:11px;color:var(--g500);}
+.su-menu{top:auto;bottom:64px;left:14px;right:14px;}
+/* ---- RWD ---- */
+@media (max-width:1279px) and (min-width:1024px){
+  .sidebar{width:72px;}
+  .sidebar .navtext{position:absolute;left:100%;top:50%;transform:translateY(-50%);background:#fff;
+    border:1px solid var(--g200);border-radius:6px;padding:6px 10px;font-size:12.5px;white-space:nowrap;
+    box-shadow:0 4px 12px rgba(16,24,40,.12);opacity:0;pointer-events:none;transition:opacity .12s;margin-left:6px;color:var(--g900);}
+  .sidebar nav a:hover .navtext{opacity:1;}
+  .sidebar .brand{align-items:center;overflow:hidden;}
+  .sidebar .brand-logo{max-width:100%;width:32px;height:28px;object-fit:cover;object-position:left center;flex-shrink:0;}
+  .sidebar .brand-text{display:none;}
+  .sidebar .brand small{display:none;}
+  .sidebar-user{justify-content:center;}
+  .sidebar-user .navtext{display:none;}
+  .sidebar .su-logout{text-align:center;}
+}
+@media (max-width:1023px){
+  .hamburger{display:inline-flex;}
+  .sidebar{position:fixed;left:-260px;top:0;height:100vh;width:260px;z-index:120;transition:left .2s;}
+  .sidebar.open{left:0;}
+  .sidebar-backdrop.open{display:block;}
+  .app{width:100%;}
+  .main{padding:16px 16px 40px;}
+  .topbar{padding:0 16px;margin:-16px -16px 18px;}
+  .tb-search{display:none;}
+  .drawer{width:100%;max-width:100%;}
+}
+</style>
+<style>
+/* ==== 側欄改版 20260826f：呼吸感間距／分段收合／底部卡收攏（與全站其他頁一致） ==== */
+#sidebar{padding:0;display:flex;flex-direction:column;height:100vh;overflow:hidden;}
+#sidebar .brand{padding:16px 20px 14px;}
+#sidebar .brand-logo{height:28px;width:auto;object-fit:contain;object-position:left center;}
+#sidebar .brand small{margin-top:12px;font-size:12px;color:var(--g500);text-transform:none;letter-spacing:0;font-weight:400;}
+#sidebar .brand-text{display:none;}
+#sidebar nav{flex:1 1 auto;overflow-y:auto;overflow-x:hidden;padding:4px 8px 8px;scrollbar-width:thin;}
+#sidebar nav::-webkit-scrollbar{width:6px;}
+#sidebar nav::-webkit-scrollbar-thumb{background:var(--g200);border-radius:3px;}
+#sidebar nav a,#sidebar nav span.disabled{align-items:center;gap:12px;height:40px;padding:0 14px;margin:2px 0;border-radius:8px;font-size:14px;}
+#sidebar .navgroup .sec-label{display:flex;align-items:center;justify-content:space-between;gap:6px;padding:0 12px;margin:20px 0 8px;font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:#98A2B3;font-weight:600;}
+#sidebar .navgroup:first-child .sec-label{margin-top:8px;}
+#sidebar .sec-toggle{background:none;border:none;padding:2px;margin:0;cursor:pointer;color:var(--g500);display:flex;align-items:center;line-height:1;flex-shrink:0;}
+#sidebar .sec-toggle svg{transition:transform .15s;display:block;}
+#sidebar .navgroup.collapsed .sec-toggle svg{transform:rotate(-90deg);}
+#sidebar .navgroup-items{overflow:hidden;}
+#sidebar .navgroup.collapsed .navgroup-items{display:none;}
+#sidebar .sidebar-user{display:block;border-top:1px solid var(--g200);padding:10px 12px;margin:0;flex-shrink:0;position:relative;}
+#sidebar .su-row{display:flex;align-items:center;gap:10px;cursor:pointer;min-width:0;}
+#sidebar .su-row .su-avatar{flex-shrink:0;width:36px;height:36px;}
+#sidebar .su-row .su-info{flex:1;min-width:0;display:flex;flex-direction:row;align-items:center;gap:8px;line-height:1.2;}
+#sidebar .su-row .su-name{font-size:14px;font-weight:600;color:var(--g900);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+#sidebar .su-row .su-roletag{font-size:12px;background:#E6EEF8;color:var(--navy);padding:1px 7px;border-radius:8px;white-space:nowrap;flex-shrink:0;}
+#sidebar .su-row .su-chevron{color:var(--g500);flex-shrink:0;}
+#sidebar .su-menu{top:auto;bottom:60px;left:10px;right:10px;width:auto;padding:8px;}
+@media (max-width:1279px) and (min-width:1024px){
+  #sidebar{width:72px;}
+  #sidebar .navgroup .sec-label{display:none;}
+  #sidebar .su-row{justify-content:center;}
+  #sidebar .su-menu{left:64px;right:auto;bottom:10px;width:210px;}
+}
+@media (max-width:1023px){
+  #sidebar{width:260px;}
+}
+html,body{overflow-x:hidden;}
+.app{display:flex;min-height:100vh;width:100%;max-width:none;background:#fff;}
+.main{flex:1;padding:26px 32px 60px;min-width:0;}
+.topbar{padding:0 32px;}
+.pagehead{padding:0;}
+.card,.listpanel{border-radius:12px;box-shadow:0 1px 3px rgba(16,24,40,.06);}
+@media (max-width:1023px){
+.app{width:100%;}
+.main{padding:16px 16px 40px;}
+.topbar{padding:0 16px;}
+}
+</style>
+<style>
+/* ==== 20260927p 新增：測驗管理專用樣式 ==== */
+.chipgroup{display:flex;gap:6px;flex-wrap:wrap;}
+.fchip{padding:5px 12px;border-radius:14px;border:1px solid var(--g200);background:#fff;font-size:12.5px;cursor:pointer;font-family:inherit;}
+.fchip.phase2{cursor:not-allowed;color:var(--g500);background:var(--g50);}
+.fchip.phase2 .badge{margin-left:2px;}
+.fchip.active{background:var(--navy);color:#fff;border-color:var(--navy);}
+.sectiontitle{font-size:13px;font-weight:600;margin:16px 0 8px;color:var(--g900);}
+.sectiontitle:first-child{margin-top:0;}
+.boundchip{display:inline-block;background:#E7EEF8;color:var(--navy);border-radius:10px;padding:2px 9px;font-size:11.5px;margin:0 4px 4px 0;white-space:normal;}
+.pickrow{display:flex;align-items:center;gap:8px;padding:6px 2px;border-bottom:1px dashed var(--g200);font-size:13px;}
+.pickrow:last-child{border-bottom:none;}
+.pickrow .pname{flex:1;}
+.pickbox{max-height:220px;overflow-y:auto;border:1px solid var(--g200);border-radius:8px;padding:6px 10px;margin-top:6px;}
+.statgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:8px;}
+.statbox{background:#fff;border:1px solid var(--g200);border-radius:8px;padding:10px 12px;text-align:center;}
+.statbox .num{font-size:20px;font-weight:700;color:var(--navy);}
+.statbox .lbl{font-size:11.5px;color:var(--g500);margin-top:2px;}
+.manage-link{font-size:12px;color:#6b7280;text-decoration:none;margin-left:8px}
+.ww-embed-wrap{position:relative;width:100%;padding-top:52%;border:1px solid var(--g200);border-radius:8px;overflow:hidden;background:var(--g50);margin-top:6px;}
+.ww-embed-wrap iframe{position:absolute;inset:0;width:100%;height:100%;border:0;}
+</style>
+</head>
+<body>
+<div class="app">
+<div class="sidebar" id="sidebar"><a class="brand" href="../顧問工作台/c01_today.html"><img class="brand-logo" src="../assets/tli-logo.svg" alt="TLI"><small class="navtext" data-i18n="brand.adminPortal">管理後台</small></a><nav><div class="navgroup" data-group="sales"><div class="sec-label" onclick="toggleNavGroup(event,'sales')"><span class="navtext" data-i18n="nav.group.sales">銷售</span><button type="button" class="sec-toggle navtext" onclick="toggleNavGroup(event,'sales')" aria-label="收合銷售" data-i18n-aria-label="aria.collapseSales"><svg width="12" height="12" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 8 10 12 14 8"/></svg></button></div><div class="navgroup-items"><a data-nav="a21" href="a21_projects.html"><svg class="navicon" width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="14" height="13" rx="2"/><line x1="3" y1="8" x2="17" y2="8"/><line x1="7" y1="12" x2="13" y2="12"/><line x1="7" y1="14.6" x2="11" y2="14.6"/></svg><span class="navtext" data-i18n="nav.a21">專案設定</span></a><a data-nav="a04" href="a04_packages.html"><svg class="navicon" width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="7" width="14" height="10" rx="1"/><path d="M3 7l7-4 7 4"/><line x1="10" y1="7" x2="10" y2="17"/></svg><span class="navtext" data-i18n="nav.a04">銷售方案</span></a><a data-nav="a05" href="a05_orders.html"><svg class="navicon" width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 2h10v16l-2-1.3L11 18l-2-1.3L7 18l-2-1.3V2z"/><line x1="7.5" y1="6" x2="12.5" y2="6"/><line x1="7.5" y1="9" x2="12.5" y2="9"/></svg><span class="navtext" data-i18n="nav.a05">訂單</span></a><a data-nav="a20" href="a20_agents.html"><svg class="navicon" width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="6.5" cy="6" r="2.3"/><path d="M2.5 16c0-2.6 1.8-4.3 4-4.3s4 1.7 4 4.3"/><circle cx="14.5" cy="8.5" r="1.8"/><path d="M17.3 16c0-1.9-1.3-3.4-2.8-3.4"/><path d="M9 6l3-1.5"/></svg><span class="navtext" data-i18n="nav.a20">合作夥伴</span></a></div></div><div class="navgroup" data-group="customer"><div class="sec-label" onclick="toggleNavGroup(event,'customer')"><span class="navtext" data-i18n="nav.group.customer">客戶</span><button type="button" class="sec-toggle navtext" onclick="toggleNavGroup(event,'customer')" aria-label="收合客戶" data-i18n-aria-label="aria.collapseCustomer"><svg width="12" height="12" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 8 10 12 14 8"/></svg></button></div><div class="navgroup-items"><a data-nav="a01" href="a01_member_rules.html"><svg class="navicon" width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="10" cy="6.5" r="3"/><path d="M4 17c0-3 2.7-5 6-5s6 2 6 5"/></svg><span class="navtext" data-i18n="nav.a01">會員管理</span></a><a data-nav="a19" href="a19_b2b_enterprise.html"><svg class="navicon" width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="3.5" y="3" width="7" height="14" rx="1"/><rect x="10.5" y="7.5" width="6" height="9.5" rx="1"/><line x1="5.5" y1="6" x2="7.5" y2="6"/><line x1="5.5" y1="9" x2="7.5" y2="9"/><line x1="5.5" y1="12" x2="7.5" y2="12"/><line x1="12.5" y1="10.5" x2="14.5" y2="10.5"/><line x1="12.5" y1="13.5" x2="14.5" y2="13.5"/></svg><span class="navtext" data-i18n="nav.a19">組織客戶</span></a><a data-nav="a14" href="a14_feedback.html"><svg class="navicon" width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M3 4h14a1 1 0 0 1 1 1v8a1 1 0 0 1-1 1H8l-4 3v-3H3a1 1 0 0 1-1-1V5a1 1 0 0 1 1-1z"/></svg><span class="navtext" data-i18n="nav.a14">學員回饋</span></a></div></div><div class="navgroup" data-group="teaching"><div class="sec-label" onclick="toggleNavGroup(event,'teaching')"><span class="navtext" data-i18n="nav.group.teaching">教學</span><button type="button" class="sec-toggle navtext" onclick="toggleNavGroup(event,'teaching')" aria-label="收合教學" data-i18n-aria-label="aria.collapseTeaching"><svg width="12" height="12" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 8 10 12 14 8"/></svg></button></div><div class="navgroup-items"><a data-nav="a02" href="a02_products.html"><svg class="navicon" width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6l7-3.5L17 6v8l-7 3.5L3 14V6z"/><path d="M3 6l7 3.5L17 6"/><line x1="10" y1="9.5" x2="10" y2="17.5"/></svg><span class="navtext" data-i18n="nav.a02">產品管理</span></a><a data-nav="a10" href="a10_teachers.html"><svg class="navicon" width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="2.5" y="6.5" width="15" height="9.5" rx="1.5"/><path d="M7 6.5V5a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2v1.5"/><line x1="2.5" y1="10.5" x2="17.5" y2="10.5"/></svg><span class="navtext" data-i18n="nav.a10">老師管理</span></a><a data-nav="a18" href="a18_resource_library.html"><svg class="navicon" width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><ellipse cx="10" cy="4.5" rx="7" ry="2.5"/><path d="M3 4.5v5c0 1.4 3.1 2.5 7 2.5s7-1.1 7-2.5v-5"/><path d="M3 9.5v5c0 1.4 3.1 2.5 7 2.5s7-1.1 7-2.5v-5"/></svg><span class="navtext" data-i18n="nav.a18">資源庫</span></a><a data-nav="a16" href="a16_events.html"><svg class="navicon" width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="14" height="13" rx="1.5"/><line x1="3" y1="8" x2="17" y2="8"/><line x1="6.5" y1="2" x2="6.5" y2="5.5"/><line x1="13.5" y1="2" x2="13.5" y2="5.5"/><circle cx="10" cy="12.3" r="2"/></svg><span class="navtext" data-i18n="nav.a16">活動管理</span></a><a data-nav="a22" class="active" href="a22_quizzes.html"><svg class="navicon" width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="2.5" width="12" height="15" rx="1.5"/><path d="M7 7l1.5 1.5L11 6"/><line x1="12.5" y1="7.5" x2="14" y2="7.5"/><path d="M7 12l1.5 1.5L11 11"/><line x1="12.5" y1="12.5" x2="14" y2="12.5"/></svg><span class="navtext" data-i18n="nav.a22">測驗管理</span></a></div></div><div class="navgroup" data-group="finance"><div class="sec-label" onclick="toggleNavGroup(event,'finance')"><span class="navtext" data-i18n="nav.group.finance">財務</span><button type="button" class="sec-toggle navtext" onclick="toggleNavGroup(event,'finance')" aria-label="收合財務" data-i18n-aria-label="aria.collapseFinance"><svg width="12" height="12" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 8 10 12 14 8"/></svg></button></div><div class="navgroup-items"><a data-nav="a23" href="a23_payment_gateways.html"><svg class="navicon" width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="2.5" y="5" width="15" height="10" rx="1.5"/><line x1="2.5" y1="8.5" x2="17.5" y2="8.5"/><circle cx="13.5" cy="12" r="1.2"/></svg><span class="navtext" data-i18n="nav.a23">收款與發票</span></a><a data-nav="a24" href="a24_partner_settlement.html"><svg class="navicon" width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="2.5" y="4" width="15" height="12" rx="1.5"/><line x1="6" y1="8" x2="14" y2="8"/><line x1="6" y1="11" x2="11" y2="11"/><path d="M12.5 13.5l1.2 1.2 2.3-2.4"/></svg><span class="navtext" data-i18n="nav.a24">結算與對帳</span></a><a data-nav="a07" href="a07_reports.html"><svg class="navicon" width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><line x1="4" y1="17" x2="4" y2="10"/><line x1="10" y1="17" x2="10" y2="5"/><line x1="16" y1="17" x2="16" y2="12"/></svg><span class="navtext" data-i18n="nav.a07">營運報表</span></a></div></div><div class="navgroup" data-group="system"><div class="sec-label" onclick="toggleNavGroup(event,'system')"><span class="navtext" data-i18n="nav.group.system">系統</span><button type="button" class="sec-toggle navtext" onclick="toggleNavGroup(event,'system')" aria-label="收合系統" data-i18n-aria-label="aria.collapseSystem"><svg width="12" height="12" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 8 10 12 14 8"/></svg></button></div><div class="navgroup-items"><a data-nav="a17" href="a17_master_data.html"><svg class="navicon" width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><line x1="4" y1="5" x2="16" y2="5"/><circle cx="8" cy="5" r="1.6"/><line x1="4" y1="10" x2="16" y2="10"/><circle cx="13" cy="10" r="1.6"/><line x1="4" y1="15" x2="16" y2="15"/><circle cx="10" cy="15" r="1.6"/></svg><span class="navtext" data-i18n="nav.a17">基礎資料設定</span></a><a data-nav="a09" href="a09_permissions_notify.html"><svg class="navicon" width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M10 2l6.5 2.5v5C16.5 14 13.8 17 10 18c-3.8-1-6.5-4-6.5-8.5v-5L10 2z"/></svg><span class="navtext" data-i18n="nav.a09">權限管理</span></a><a data-nav="a15" href="a15_notifications.html"><svg class="navicon" width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M10 2.5c-2.2 0-4 1.8-4 4v2.3c0 .6-.2 1.2-.6 1.7L4 12.5h12l-1.4-2c-.4-.5-.6-1.1-.6-1.7V6.5c0-2.2-1.8-4-4-4z"/><path d="M8.2 15.5a1.8 1.8 0 0 0 3.6 0"/></svg><span class="navtext" data-i18n="nav.a15">通知管理</span></a><a data-nav="a08" href="a08_content_cms.html"><svg class="navicon" width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="2.5" y="3" width="15" height="14" rx="1.5"/><line x1="8" y1="3" x2="8" y2="17"/></svg><span class="navtext" data-i18n="nav.a08">內容管理</span></a></div></div></nav><div class="sidebar-user" id="sidebarUser"><div class="su-row" onclick="toggleSuMenu(event)"><span class="su-avatar" id="suAvatar">王</span><span class="navtext su-info"><span class="su-name" id="suName">王大明</span><span class="su-roletag" id="suRoleTag" data-i18n="role.hqAdmin">總公司管理者</span></span><svg class="navtext su-chevron" width="14" height="14" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 8 10 12 14 8"/></svg></div><div class="tb-panel su-menu" id="suMenu"><a href="javascript:void(0)" onclick="toast('功能建置中，敬請期待')" data-i18n="common.settings">個人設定</a><a href="../公開網站/p01_home.html" data-i18n="common.gotoWebsite">前往官網</a><a href="../顧問工作台/c01_today.html" data-i18n="nav_ext.consultantWorkbench">前往顧問工作台</a><a href="javascript:void(0)" onclick="doLogout()" data-i18n="common.logout">登出</a></div></div></div><div class="main"><div class="topbar"><button class="hamburger" onclick="toggleSidebar()" aria-label="開啟選單" data-i18n-aria-label="common.openMenu"><svg class="navicon" width="18" height="18" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="5.5" x2="17" y2="5.5"/><line x1="3" y1="10" x2="17" y2="10"/><line x1="3" y1="14.5" x2="17" y2="14.5"/></svg></button><div class="tb-title" data-i18n="nav.a22">測驗管理</div><div class="tb-actions"><div class="tb-search"><svg class="navicon" width="15" height="15" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="8.5" cy="8.5" r="5.5"/><line x1="16.5" y1="16.5" x2="12.6" y2="12.6"/></svg><input type="text" placeholder="搜尋" data-i18n-placeholder="search.genericPlaceholder"></div><button class="tb-bellbtn" onclick="toggleNotif(event)" aria-label="通知" data-i18n-aria-label="common.notifications"><svg class="navicon" width="17" height="17" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M10 2.5c-2.2 0-4 1.8-4 4v2.3c0 .6-.2 1.2-.6 1.7L4 12.5h12l-1.4-2c-.4-.5-.6-1.1-.6-1.7V6.5c0-2.2-1.8-4-4-4z"/><path d="M8.2 15.5a1.8 1.8 0 0 0 3.6 0"/></svg><span class="tb-dot" id="tbDot"></span></button><div class="tb-panel tb-notifpanel" id="notifPanel"></div><button class="tb-avatarbtn" onclick="toggleAvatarMenu(event)" aria-label="使用者選單" data-i18n-aria-label="common.userMenu">王</button><div class="tb-panel tb-avatarmenu" id="avatarMenu"><a href="javascript:void(0)" onclick="toast('功能建置中，敬請期待')" data-i18n="common.settings">個人設定</a><a href="../公開網站/p01_home.html" data-i18n="common.gotoWebsite">前往官網</a><a href="javascript:void(0)" onclick="doLogout()" data-i18n="common.logout">登出</a></div></div></div><div class="sidebar-backdrop" id="sidebarBackdrop" onclick="closeSidebar()"></div>
+<div class="pagehead">
+<div><h1 data-i18n="nav.a22">測驗管理</h1><div class="desc" id="quizHeadDesc">從資源庫的題目庫抽題組成測驗，再綁定到自學課程的單元；學員在會員區「線上測驗」作答。單元要綁哪一份測驗，請到「產品管理 → 課程內容」設定；這裡只管理測驗本身與題目。</div></div>
+<button class="btn" id="btnCreateQuiz" onclick="openCreateQuizModal()">＋ 建立測驗</button>
+</div>
+
+<div class="listpanel">
+<div class="filterbar">
+<div class="tb-search" style="width:240px"><svg class="navicon" width="14" height="14" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="8.5" cy="8.5" r="5.5"/><line x1="16.5" y1="16.5" x2="12.6" y2="12.6"/></svg><input type="text" id="qzSearch" placeholder="搜尋測驗名稱" oninput="renderQuizList()"></div>
+<div class="chipgroup" id="qzTypeChips"></div>
+<div class="chipgroup" id="qzStatusChips"></div>
+<select id="qzSort" onchange="renderQuizList()" aria-label="排序" style="padding:6px 8px;border:1px solid var(--g200);border-radius:8px;font-size:12.5px;font-family:inherit"><option value="" id="qzSortOpt0">排序：預設</option><option value="name" id="qzSortOpt1">名稱</option><option value="type" id="qzSortOpt2">類型</option><option value="count" id="qzSortOpt3">作答人數（多到少）</option></select>
+</div>
+<div class="tablewrap"><table id="quizTable"></table></div>
+<div id="quizEmpty" class="note" style="display:none;margin-top:10px">找不到符合條件的測驗。</div>
+</div>
+
+</div>
+</div>
+
+<div class="modal-mask" id="createModalMask" onclick="if(event.target===this) closeCreateQuizModal()">
+<div class="modal">
+<div style="display:flex;justify-content:space-between;align-items:flex-start"><h3 id="cqModalTitle">建立測驗</h3><button type="button" onclick="closeCreateQuizModal()" aria-label="關閉" style="background:none;border:none;font-size:20px;line-height:1;color:var(--g500);cursor:pointer;padding:2px 6px">×</button></div>
+<div class="hint" style="margin-bottom:10px"><span class="req">*</span> <span data-i18n="common.required">為必填</span></div>
+<div class="formrow"><label id="lblCqSource">建置方式<span class="req">*</span></label>
+<label class="small" style="margin-right:14px;display:inline-flex;align-items:center;gap:5px"><input type="radio" name="cq_source" value="self" checked onchange="onCqSourceChange()"> <span id="lblCqSourceSelf">平台自建</span></label>
+<label class="small" style="display:inline-flex;align-items:center;gap:5px"><input type="radio" name="cq_source" value="wordwall" onchange="onCqSourceChange()"> Wordwall</label>
+</div>
+<div class="formrow"><label id="lblCqName">測驗名稱<span class="req">*</span></label><input type="text" id="cq_name" placeholder="例如：第 9 單元：機場延伸會話・單元測驗"></div>
+<div class="grid2">
+<div class="formrow"><label id="lblCqType">類型<span class="req">*</span></label><select id="cq_type" onchange="syncCqType()"><option value="">請選擇</option><option value="程度測驗">程度測驗</option><option value="隨堂單元考">隨堂單元考</option><option value="階段考">階段考</option><optgroup label="檢定模擬考（第二階段）" id="cqOptgrpP2"><option disabled data-p2="HSK 模擬考">HSK 模擬考（第二階段）</option><option disabled data-p2="TOCFL 模擬考">TOCFL 模擬考（第二階段）</option><option disabled data-p2="CPT 模擬考">CPT 模擬考（第二階段）</option></optgroup></select><div class="hint" style="margin-top:4px" id="cqP2Hint">檢定模擬考 <span class="badge grey">第二階段</span> 目前不可建立</div></div>
+<div class="formrow" id="cq_passscoreRow"><label id="lblCqPassscore">及格分數（0–100）<span class="req">*</span></label><input type="number" id="cq_passscore" min="0" max="100" value="60"></div>
+</div>
+<div id="cq_plSection" style="display:none">
+<div class="formrow"><label id="lblCqLang">教學語言<span class="req">*</span></label><select id="cq_lang"></select></div>
+<div class="note" id="notePlCq">程度測驗為會員限定，學生登入後自主測驗；結果依等級體系（Lv.1–Lv.9）對應建議等級，成績報告送顧問作諮詢參考，不設及格分數。</div>
+</div>
+<div id="cq_stageSection" style="display:none">
+<div class="grid2">
+<div class="formrow"><label id="lblCqExamSrc">題目來源<span class="req">*</span></label><select id="cq_examSrc" onchange="syncCqType()"><option value="tli" id="optExamTli">TLI 教材固定題</option><option value="custom" id="optExamCustom">老師自訂</option></select></div>
+<div class="formrow" id="cq_lessonRow"><label id="lblCqLesson">適用課次<span class="req">*</span></label><div style="display:flex;align-items:center;gap:6px"><span id="lblCqLessonPre">第</span><input type="number" id="cq_lessonFrom" min="1" style="width:80px" value="1"><span>～</span><input type="number" id="cq_lessonTo" min="1" style="width:80px" value="12"><span id="lblCqLessonSuf">課</span></div></div>
+</div>
+<div class="hint" id="hintCqStage" style="margin-bottom:10px">TLI 教材有固定考試內容，上完適用課次後由老師請學生參加；客製化課程沒有固定內容，由老師在教師端自訂題目。階段考非強制，學生未參加也會留下紀錄。</div>
+</div>
+<div id="cq_certSection" style="display:none">
+<div class="hint" id="hintCqCert" style="margin-bottom:10px">證書依課次核發，由系統於學生完成每 12 課時產生，與階段考是否參加或通過無關；階段考成績只列在成績單。</div>
+</div>
+<div id="cq_trSection" style="display:none">
+<div class="formrow"><label id="lblCqTrTpl">成績單範本</label><select id="cq_trTpl"></select></div>
+</div>
+<div id="cq_selfSection">
+<div class="formrow"><label id="lblCqTimelimit">時間限制（分鐘，留白為不限時）</label><input type="number" id="cq_timelimit" min="1" placeholder="不限時"></div>
+<div class="formrow"><label id="lblCqProduct">預設綁定的自學課程（選填；正式綁定請到「產品管理 → 課程內容」設定）<span id="cq_productManageLink"></span></label><select id="cq_product"><option value="">不指定</option></select></div>
+<div class="sectiontitle" style="display:flex;justify-content:space-between;align-items:baseline"><span id="stQuestionBankLabel">從題目庫挑題<span class="req">*</span></span><a class="manage-link" id="lnkManageQuestions" style="margin-left:0" href="a18_resource_library.html?tab=questions" target="_blank">管理題目 →</a></div>
+<div class="hint" style="margin:-4px 0 10px" id="hintQuestionSource">題目來自資源庫的題目庫；可依等級與主題篩選後勾選。</div>
+<div class="formrow"><label id="lblLevelFilter">依等級篩選<span id="cq_levelManageLink"></span></label><div class="chipgroup" id="cq_levelChips"></div></div>
+<div class="formrow"><label id="lblTopicFilter">依主題篩選</label><div class="chipgroup" id="cq_topicChips"></div></div>
+<div class="pickbox" id="cq_questionPicker"></div>
+<div class="hint" id="cq_pickedHint" style="margin:6px 0 12px">已選 0 題</div>
+<div style="margin-bottom:10px"><button type="button" class="btn ghost sm" id="btnCqNewQuestion" onclick="toggleCqNewQuestionForm()">＋ 新增題目到題目庫</button> <span class="hint" id="hintCqNewQuestion">新增的題目會存入資源庫的題目庫，可供其他測驗重複使用</span></div>
+<div id="cq_newQuestionForm" style="display:none;border:1px dashed var(--g200);border-radius:8px;padding:10px;margin-bottom:12px"></div>
+<div class="formrow"><label id="lblCqOrder">題目順序</label>
+<label class="small" style="margin-right:14px;display:inline-flex;align-items:center;gap:5px"><input type="radio" name="cq_order" value="固定" checked> <span id="lblCqOrderFixed">固定順序</span></label>
+<label class="small" style="display:inline-flex;align-items:center;gap:5px"><input type="radio" name="cq_order" value="隨機"> <span id="lblCqOrderRandom">隨機出題</span></label>
+</div>
+</div>
+<div id="cq_wwSection" style="display:none">
+<div class="formrow"><label id="lblCqWwurl">Wordwall 連結<span class="req">*</span></label><input type="text" id="cq_wwurl" placeholder="https://wordwall.net/tc/resource/..." oninput="document.getElementById('cq_wwPreview').innerHTML=renderWwPreview(this.value)"></div>
+<div class="formrow"><div id="cq_wwPreview">貼上連結後會在這裡預覽</div></div>
+<div class="formrow"><label id="lblCqWwUnits">綁定的課程單元（可複選，選填；此活動之後可再綁其他單元重複使用）</label><div class="chipgroup" id="cq_wwUnitChips"></div></div>
+<div class="note" style="margin-top:4px" id="noteWwCq">Wordwall 用嵌入連結，平台只記錄是否開啟過，個別作答與分數不會回寫學習紀錄。</div>
+</div>
+<div style="text-align:right;margin-top:10px">
+<button class="btn ghost" data-i18n="common.cancel" onclick="closeCreateQuizModal()">取消</button>
+<button class="btn" id="btnSubmitCreateQuiz" onclick="submitCreateQuiz()">建立測驗</button>
+</div>
+</div>
+</div>
+
+<div class="drawer-mask" id="quizDrawerMask" onclick="closeQuizDrawer()"></div>
+<div class="drawer" id="quizDrawer">
+<div class="drawer-head">
+<div><h2 id="qd_name">—</h2><div class="small" id="qd_sub">—</div></div>
+<button class="drawer-close" onclick="closeQuizDrawer()" aria-label="關閉" data-i18n-aria-label="common.close">×</button>
+</div>
+<div class="drawer-body" id="qd_body"></div>
+</div>
+
+<script src="../assets/_shared_masters.js"></script>
+<script src="../assets/_i18n_dict.js"></script>
+<script src="../assets/_i18n_dict_admin.js"></script>
+<script src="../assets/_i18n.js"></script>
+<script>
+/* ================= 題目庫（示範，對齊資源庫 a18 題目庫的欄位設計） =================
+   等級篩選改接主檔 TLI_MASTERS.levelSystems.ranges（依教學語言分級的等級體系目前僅中文已建立，
+   ranges 為跨語言共用的等級範圍表，可直接拿來當題目等級篩選的分組依據，不用另外寫死）；
+   QUESTION_BANK 每題原本的細顆粒度 level 文字（如 Lv.1–2）保留供摘要顯示，
+   另外算出 levelRangeId 對應到主檔的等級分組，篩選 chip 用這個欄位比對。 */
+function parseLvNum(s){
+  if (!s) return null;
+  if (/Lv\.H/.test(s)) return 99;
+  var m = /Lv\.(\d+)/.exec(s);
+  return m ? parseInt(m[1],10) : null;
+}
+function rangeIdForLevelText(levelText){
+  var n = parseLvNum(levelText);
+  if (n===null) return null;
+  var ranges = TLI_MASTERS.levelSystems.ranges;
+  for (var i=0;i<ranges.length;i++){
+    var r = ranges[i], from = parseLvNum(r.levelFrom), to = parseLvNum(r.levelTo);
+    if (from!==null && to!==null && n>=from && n<=to) return r.id;
+  }
+  return null;
+}
+function rangeLabel(r){
+  return (r.levelFrom===r.levelTo ? r.levelFrom : r.levelFrom+'–'+r.levelTo) + '（'+r.name+'）';
+}
+var QLEVELS = TLI_MASTERS.levelSystems.ranges.map(function(r){ return {id:r.id, label:rangeLabel(r)}; });
+var QTOPICS = ['機場入境','校園生活','商務會議','電話聯繫','Email書信','產品簡報','價格協商','口說複習','一般','文化'];
+/* 題型（20260929 擴充，共 7 種；客戶反映原本只有選擇題「太陽春、不夠生動」，
+   新增題目時可選下列任一題型，題庫列表與篩選也帶題型欄） */
+var QUESTION_TYPES = ['單選','多選','填空','配對','排序','問答','聽力'];
+/* 題型／主題內部值一律維持繁體中文（跨頁篩選與資料比對用），畫面顯示才透過 TLI_I18N.t() 換語言 */
+var QUESTION_TYPE_EN = {'單選':'Single Choice','多選':'Multiple Choice','填空':'Fill in the Blank','配對':'Matching','排序':'Ordering','問答':'Short Answer','聽力':'Listening'};
+function qtypeShortLabel(t){ return TLI_I18N.t(t, QUESTION_TYPE_EN[t] || t); }
+var TOPIC_EN = {'機場入境':'Airport Arrival','校園生活':'Campus Life','商務會議':'Business Meetings','電話聯繫':'Phone Contact','Email書信':'Email Correspondence','產品簡報':'Product Presentation','價格協商':'Price Negotiation','口說複習':'Speaking Review','一般':'General','文化':'Culture'};
+function topicLabel(t){ return TLI_I18N.t(t, TOPIC_EN[t] || t); }
+var QUESTION_BANK = [
+ {id:'q1', summary:'選出正確的入境問候用語', qtype:'單選', level:'Lv.1–2', topic:'機場入境'},
+ {id:'q2', summary:'聽力：機場廣播內容理解', qtype:'聽力', level:'Lv.1–2', topic:'機場入境'},
+ {id:'q3', summary:'填空：完成入境問候句', qtype:'填空', level:'Lv.1–2', topic:'機場入境'},
+ {id:'q4', summary:'選出正確的校園設施名稱', qtype:'單選', level:'Lv.1–2', topic:'校園生活'},
+ {id:'q5', summary:'多選：符合情境的打招呼回應', qtype:'多選', level:'Lv.1–2', topic:'校園生活'},
+ {id:'q6', summary:'聽力：宿舍公告內容理解', qtype:'聽力', level:'Lv.1–2', topic:'校園生活'},
+ {id:'q7', summary:'選出正確的會議開場用語', qtype:'單選', level:'Lv.3–4', topic:'商務會議'},
+ {id:'q8', summary:'填空：會議議程句型', qtype:'填空', level:'Lv.3–4', topic:'商務會議'},
+ {id:'q9', summary:'多選：適當的會議禮貌用語', qtype:'多選', level:'Lv.3–4', topic:'商務會議'},
+ {id:'q10', summary:'選出正確的電話應對用語', qtype:'單選', level:'Lv.3–4', topic:'電話聯繫'},
+ {id:'q11', summary:'聽力：電話留言重點擷取', qtype:'聽力', level:'Lv.3–4', topic:'電話聯繫'},
+ {id:'q12', summary:'填空：轉接電話句型', qtype:'填空', level:'Lv.3–4', topic:'電話聯繫'},
+ {id:'q13', summary:'選出正確的書信開頭用語', qtype:'單選', level:'Lv.5–6', topic:'Email書信'},
+ {id:'q14', summary:'填空：書信結尾敬語', qtype:'填空', level:'Lv.5–6', topic:'Email書信'},
+ {id:'q15', summary:'多選：正式書信常見錯誤', qtype:'多選', level:'Lv.5–6', topic:'Email書信'},
+ {id:'q16', summary:'選出正確的簡報開場句型', qtype:'單選', level:'Lv.5–6', topic:'產品簡報'},
+ {id:'q17', summary:'聽力：簡報內容重點理解', qtype:'聽力', level:'Lv.5–6', topic:'產品簡報'},
+ {id:'q18', summary:'填空：簡報過渡語句', qtype:'填空', level:'Lv.5–6', topic:'產品簡報'},
+ {id:'q19', summary:'選出正確的議價用語', qtype:'單選', level:'Lv.7–8', topic:'價格協商'},
+ {id:'q20', summary:'多選：適當的讓步表達方式', qtype:'多選', level:'Lv.7–8', topic:'價格協商'},
+ {id:'q21', summary:'填空：完成議價句子', qtype:'填空', level:'Lv.7–8', topic:'價格協商'},
+ {id:'q22', summary:'選出正確的語調符號', qtype:'單選', level:'Lv.7–8', topic:'口說複習'},
+ {id:'q23', summary:'聽力：綜合對話理解測驗', qtype:'聽力', level:'Lv.7–8', topic:'口說複習'},
+ {id:'q24', summary:'多選：正確的口說總複習重點', qtype:'多選', level:'Lv.7–8', topic:'口說複習'},
+ {id:'q25', summary:'選出正確的量詞用法（一___書）', qtype:'單選', level:'Lv.1–2', topic:'一般'},
+ {id:'q26', summary:'填空：時間詞排序', qtype:'填空', level:'Lv.3–4', topic:'一般'},
+ {id:'q27', summary:'多選：符合情境的邀約回應方式', qtype:'多選', level:'Lv.5–6', topic:'一般'},
+ {id:'q28', summary:'聽力：新聞短文理解', qtype:'聽力', level:'Lv.7–8', topic:'一般'},
+ {id:'q29', summary:'選出正確的節慶稱呼', qtype:'單選', level:'Lv.3–4', topic:'文化'},
+ {id:'q30', summary:'填空：完成諺語佳句', qtype:'填空', level:'Lv.5–6', topic:'文化'},
+ {id:'q31', summary:'配對：情境與適當回應對應', qtype:'配對', level:'Lv.3–4', topic:'商務會議'},
+ {id:'q32', summary:'排序：將對話句子排出正確順序', qtype:'排序', level:'Lv.1–2', topic:'機場入境'},
+ {id:'q33', summary:'問答：簡述你會如何應對此情境', qtype:'問答', level:'Lv.5–6', topic:'產品簡報'}
+];
+QUESTION_BANK.forEach(function(q){ q.levelRangeId = rangeIdForLevelText(q.level); });
+function findQuestion(id){ return QUESTION_BANK.find(function(q){return q.id===id;}); }
+/* ================= 新增題目到題目庫（20260929 新增，配合題型擴充） ================= */
+function nextQuestionId(){
+  var maxN = QUESTION_BANK.reduce(function(m,q){ var mm=/(\d+)$/.exec(q.id); var n=mm?parseInt(mm[1],10):0; return Math.max(m,n); }, 0);
+  return 'q'+(maxN+1);
+}
+function addQuestionToBank(qtype, summary, levelRangeId, topic){
+  var q = {id:nextQuestionId(), summary:summary, qtype:qtype, level:'', topic:topic||'一般', levelRangeId:levelRangeId||null};
+  QUESTION_BANK.push(q);
+  return q;
+}
+
+/* ================= 測驗清單（示範資料）================= */
+/* 8 份綁到自學課程單元的單元測驗；產品清單改接主檔 TLI_MASTERS.products，篩 categoryId==='c_selfpace'
+   （自學課程分類，見 a17／a02），unitId／unitTitle 對齊 a03 課程內容分頁的示範單元 */
+var SELFPACE_PRODUCTS = TLI_MASTERS.products.filter(function(p){ return p.categoryId==='c_selfpace'; });
+function findSelfpaceProduct(id){ return SELFPACE_PRODUCTS.find(function(p){return p.id===id;}) || null; }
+function boundUnit(unitN, unitTitle){
+  var prod = findSelfpaceProduct('skuC05');
+  return {productId:'skuC05', productName: prod ? prod.name : '', unitId:'u'+unitN, unitTitle:unitTitle};
+}
+/* 自學課程單元清單（供 Wordwall 資源多對多綁定用的 chip 選單；標題對齊 a03 課程內容分頁的示範單元） */
+var SELFPACE_UNITS = [
+ {id:'u1', title:'第 1 單元：機場入境與問候'},
+ {id:'u2', title:'第 2 單元：校園生活會話'},
+ {id:'u3', title:'第 3 單元：商務會議開場'},
+ {id:'u4', title:'第 4 單元：電話聯繫用語'},
+ {id:'u5', title:'第 5 單元：Email 商務書信'},
+ {id:'u6', title:'第 6 單元：產品簡報練習'},
+ {id:'u7', title:'第 7 單元：價格協商情境'},
+ {id:'u8', title:'第 8 單元：期中口說總複習'}
+];
+function findSpUnit(id){ return SELFPACE_UNITS.find(function(u){return u.id===id;}) || null; }
+function unitChipLabel(id){
+  var u = findSpUnit(id), prod = findSelfpaceProduct('skuC05');
+  return u ? ((prod?prod.name:'')+' › '+u.title) : id;
+}
+function isValidWwUrl(u){ return /^https?:\/\/.+/i.test(String(u||'').trim()); }
+/* 預覽用 iframe 一律用 srcdoc 顯示佔位示意，不對外發出真實連線（原型示範用，避免依賴外部網路）；
+   連結格式驗證仍照常判斷，格式不對就顯示「無法載入，請確認連結」。 */
+function wwPlaceholderDoc(url){
+  return '<html><body style="margin:0;height:100vh;display:flex;align-items:center;justify-content:center;' +
+    'font-family:system-ui,-apple-system,sans-serif;color:#667085;font-size:13px;text-align:center;' +
+    'padding:12px;box-sizing:border-box;background:#F5F7FA"><div>'+TLI_I18N.t('Wordwall 活動預覽','Wordwall activity preview')+'<br>'+escHtml(url)+'</div></body></html>';
+}
+function renderWwPreview(url){
+  url = String(url||'').trim();
+  if (!url) return '<div class="small" style="padding:8px 2px">'+TLI_I18N.t('貼上連結後會在這裡預覽','Paste a link to preview it here')+'</div>';
+  if (!isValidWwUrl(url)) return '<div class="note">'+TLI_I18N.t('無法載入，請確認連結','Unable to load; please check the link')+'</div>';
+  return '<div class="ww-embed-wrap"><iframe srcdoc="'+escAttr(wwPlaceholderDoc(url))+'" title="'+TLI_I18N.t('Wordwall 活動預覽','Wordwall activity preview')+'"></iframe></div>';
+}
+function sourceBadgeHtml(s){
+  return s==='wordwall' ? '<span class="badge orange">Wordwall</span>' : '<span class="badge grey">'+TLI_I18N.t('平台自建','Self-built')+'</span>';
+}
+/* ================= 測驗清單（示範資料）=================
+   20260929 調整：新增「建置方式」欄位，平台自建（source:'self'）與 Wordwall（source:'wordwall'）並存，兩種都能新增與管理。
+   20260929 曾下架分級測驗（2026-10-05 客戶會議已恢復為一階段 B 程度測驗，見 m11／a22）；當時移除原「分級測驗」用途的示範測驗（qz_level01）與其類型選項；
+   自建測驗（單元測驗／期末測驗）與 Wordwall 來源不受影響。
+   Wordwall 活動是可重複引用的資源（客戶原話：「上架後可以隨著章節排定使用，不用每次重新製作」），
+   用 unitIds（可綁多個單元）取代自建測驗原本一對一的 boundUnits，綁定直接在本頁編輯。
+   Wordwall 用嵌入連結，無法把個人作答狀況帶回平台，只記錄「是否開啟過」，不提供及格率。 */
+var QUIZZES = [
+ {id:'qz_u1', name:'第 1 單元：機場入境與問候・單元測驗', qtype:'隨堂單元考', source:'self', passScore:60, timeLimit:5, order:'固定', status:'已發布',
+  boundUnits:[boundUnit(1,'第 1 單元：機場入境與問候')], questionIds:['q1','q2','q3'], stats:{count:182, avg:84, passRate:'92%'}},
+ {id:'qz_u2', name:'第 2 單元：校園生活會話・單元測驗', qtype:'隨堂單元考', source:'self', passScore:60, timeLimit:5, order:'固定', status:'已發布',
+  boundUnits:[boundUnit(2,'第 2 單元：校園生活會話')], questionIds:['q4','q5','q6'], stats:{count:175, avg:81, passRate:'88%'}},
+ {id:'qz_u3', name:'第 3 單元：商務會議開場・單元測驗', qtype:'隨堂單元考', source:'self', passScore:60, timeLimit:6, order:'固定', status:'已發布',
+  boundUnits:[boundUnit(3,'第 3 單元：商務會議開場')], questionIds:['q7','q8','q9'], stats:{count:160, avg:79, passRate:'85%'}},
+ {id:'qz_u4', name:'第 4 單元：電話聯繫用語・單元測驗', qtype:'隨堂單元考', source:'self', passScore:60, timeLimit:5, order:'固定', status:'已發布',
+  boundUnits:[boundUnit(4,'第 4 單元：電話聯繫用語')], questionIds:['q10','q11','q12'], stats:{count:150, avg:83, passRate:'90%'}},
+ {id:'qz_u5', name:'第 5 單元：Email 商務書信・單元測驗', qtype:'隨堂單元考', source:'self', passScore:60, timeLimit:6, order:'固定', status:'已發布',
+  boundUnits:[boundUnit(5,'第 5 單元：Email 商務書信')], questionIds:['q13','q14','q15'], stats:{count:140, avg:77, passRate:'81%'}},
+ {id:'qz_u6', name:'第 6 單元：產品簡報練習・單元測驗', qtype:'隨堂單元考', source:'self', passScore:60, timeLimit:6, order:'固定', status:'已發布',
+  boundUnits:[boundUnit(6,'第 6 單元：產品簡報練習')], questionIds:['q16','q17','q18'], stats:{count:120, avg:80, passRate:'86%'}},
+ {id:'qz_u7', name:'第 7 單元：價格協商情境・單元測驗', qtype:'隨堂單元考', source:'self', passScore:60, timeLimit:6, order:'固定', status:'已發布',
+  boundUnits:[boundUnit(7,'第 7 單元：價格協商情境')], questionIds:['q19','q20','q21'], stats:{count:110, avg:75, passRate:'79%'}},
+ {id:'qz_u8', name:'第 8 單元：期中口說總複習・單元測驗', qtype:'隨堂單元考', source:'self', passScore:60, timeLimit:8, order:'固定', status:'已發布',
+  boundUnits:[boundUnit(8,'第 8 單元：期中口說總複習')], questionIds:['q22','q23','q24'], stats:{count:95, avg:82, passRate:'89%'}},
+ {id:'qz_draft01', name:'TLI 教材 第 13–24 課階段考（草稿）', qtype:'階段考', source:'self', examSource:'tli', lessonFrom:13, lessonTo:24, passScore:70, timeLimit:30, order:'隨機', status:'草稿', certIssue:true, certTemplate:'標準課程證書（中英雙語）',
+  boundUnits:[], questionIds:['q2','q5','q8','q11','q14','q17','q20','q23','q27','q29'], stats:{count:0, avg:null, passRate:null}},
+ {id:'qz_ww01', name:'機場情境互動練習（Wordwall・配對遊戲）', qtype:'隨堂單元考', source:'wordwall', url:'https://wordwall.net/tc/resource/78412358/airport-matching',
+  unitIds:['u1','u8'], status:'已發布', stats:{count:64, avg:91}},
+ {id:'qz_ww02', name:'商務會話綜合練習（Wordwall・隨機轉盤）', qtype:'隨堂單元考', source:'wordwall', url:'https://wordwall.net/tc/resource/78412359/business-wheel',
+  unitIds:['u3','u4','u7'], status:'已發布', stats:{count:48, avg:87}}
+,
+ {id:'qz_pl_zh', name:'中文程度測驗（官網常駐入口）', qtype:'程度測驗', source:'self', passScore:null, timeLimit:null, order:'固定', status:'已發布', lang:'zh',
+  boundUnits:[], questionIds:['q25','q2','q26','q10','q11','q13','q17','q23','q28','q20'], stats:{count:236, avg:5.4, passRate:null}},
+ {id:'qz_pl_en', name:'英語程度測驗（官網常駐入口）', qtype:'程度測驗', source:'self', passScore:null, timeLimit:null, order:'固定', status:'已發布', lang:'en',
+  boundUnits:[], questionIds:['q25','q2','q26','q10','q11','q13','q17','q23','q28','q20'], stats:{count:118, avg:5.1, passRate:null}},
+ {id:'qz_fin01', name:'TLI 教材 第 1–12 課階段考', qtype:'階段考', source:'self', examSource:'tli', lessonFrom:1, lessonTo:12, passScore:70, timeLimit:15, order:'固定', status:'已發布', certIssue:true, certTemplate:'標準課程證書（中英雙語）',
+  boundUnits:[], questionIds:['q7','q8','q9','q13','q14','q16','q19','q21','q22'], stats:{count:57, avg:82, passRate:'84%'}},
+ {id:'qz_stg01', name:'企業華語客製課程・階段考（老師自訂題）', qtype:'階段考', source:'self', examSource:'custom', lessonFrom:null, lessonTo:null, passScore:70, timeLimit:15, order:'固定', status:'已發布', certIssue:false, certTemplate:'',
+  boundUnits:[], questionIds:['q10','q11','q12','q15','q17','q18'], stats:{count:41, avg:79, passRate:'80%'}}
+];
+var CERT_TEMPLATES = ['標準課程證書（繁中）','標準課程證書（中英雙語）','客製課程證書（可加企業標誌）'];
+var CERT_TEMPLATES_EN = {'標準課程證書（繁中）':'Standard course certificate (Traditional Chinese)','標準課程證書（中英雙語）':'Standard course certificate (bilingual Chinese/English)','客製課程證書（可加企業標誌）':'Custom course certificate (company logo optional)'};
+var TRANSCRIPT_TEMPLATES = ['程度測驗成績單（各項得分、建議等級）','課程成績單（單元明細、課程平均）'];
+var TRANSCRIPT_TEMPLATES_EN = {'程度測驗成績單（各項得分、建議等級）':'Placement test transcript (section scores, suggested level)','課程成績單（單元明細、課程平均）':'Course transcript (unit detail, course average)'};
+function trTplLabel(x){ return TLI_I18N.t(x, TRANSCRIPT_TEMPLATES_EN[x]||x); }
+/* 程度測驗、隨堂單元考綁成績單範本；階段考綁證書範本（兩者是不同東西）；證書每 12 課核發一張，與階段考是否參加、通過無關 */
+function defaultTrTpl(qtype){ return qtype==='程度測驗' ? TRANSCRIPT_TEMPLATES[0] : (qtype==='隨堂單元考' ? TRANSCRIPT_TEMPLATES[1] : ''); }
+function trTplOptions(sel){ return TRANSCRIPT_TEMPLATES.map(function(t){ return '<option value="'+t+'"'+(sel===t?' selected':'')+'>'+trTplLabel(t)+'</option>'; }).join(''); }
+function certTplLabel(x){ return TLI_I18N.t(x, CERT_TEMPLATES_EN[x]||x); }
+QUIZZES.forEach(function(q){ if(!q.transcriptTemplate && q.qtype!=='階段考') q.transcriptTemplate = defaultTrTpl(q.qtype); });
+var QUIZ_NAME_EN = {'中文程度測驗（官網常駐入口）':'Chinese Placement Test (permanent website entry)','英語程度測驗（官網常駐入口）':'English Placement Test (permanent website entry)','TLI 教材 第 1–12 課階段考':'TLI Material Lessons 1-12 Stage Exam','TLI 教材 第 13–24 課階段考（草稿）':'TLI Material Lessons 13-24 Stage Exam (draft)','企業華語客製課程・階段考（老師自訂題）':'Corporate Chinese Custom Course - Stage Exam (teacher-defined)'};
+function quizNameLabel(n){ return TLI_I18N.t(n, QUIZ_NAME_EN[n]||n); }
+var LANG_EN_A22 = {'中文':'Chinese','英文':'English','日文':'Japanese','韓文':'Korean','德文':'German','法文':'French','台語':'Taiwanese','上海話':'Shanghainese','廣東話':'Cantonese'};
+function langLabelA22(n){ return TLI_I18N.t(n, LANG_EN_A22[n]||n); }
+
+function escHtml(s){ return String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+function escAttr(s){ return escHtml(s).replace(/"/g,'&quot;'); }
+function statusBadgeHtml(s){
+  if (s==='已發布') return '<span class="badge green">'+TLI_I18N.t('已發布','Published')+'</span>';
+  if (s==='草稿') return '<span class="badge grey">'+TLI_I18N.t('草稿','Draft')+'</span>';
+  return '<span class="badge grey">'+escHtml(s)+'</span>';
+}
+function boundSummaryHtml(q){
+  if (q.source==='wordwall'){
+    if (!q.unitIds || !q.unitIds.length) return '<span class="small">'+TLI_I18N.t('未綁定單元','No unit bound')+'</span>';
+    return q.unitIds.map(function(uid){ return '<span class="boundchip">'+escHtml(unitChipLabel(uid))+'</span>'; }).join('');
+  }
+  if (!q.boundUnits.length) return '<span class="small">'+TLI_I18N.t('未綁定單元','No unit bound')+'</span>';
+  return q.boundUnits.map(function(b){ return '<span class="boundchip">'+escHtml(b.productName)+' › '+escHtml(b.unitTitle)+'</span>'; }).join('');
+}
+
+/* ================= 列表：搜尋／類型／狀態篩選 ================= */
+var TYPE_OPTIONS = ['程度測驗','隨堂單元考','階段考'];
+var TYPE_EN = {'程度測驗':'Placement Test','隨堂單元考':'Quiz / Unit Test','階段考':'Stage Exam'};
+function examSrcLabel(v){ return v==='custom' ? TLI_I18N.t('老師自訂','Teacher-defined') : TLI_I18N.t('TLI 教材固定題','TLI material (fixed)'); }
+function lessonRangeLabel(q){ return (q.qtype==='階段考' && q.lessonFrom && q.lessonTo) ? TLI_I18N.t('第 '+q.lessonFrom+'–'+q.lessonTo+' 課','Lessons '+q.lessonFrom+'-'+q.lessonTo) : '—'; }
+function stageSrcCell(q){ return q.qtype==='階段考' ? examSrcLabel(q.examSource||'tli') : '—'; }
+var PHASE2_TYPES = ['HSK 模擬考','TOCFL 模擬考','CPT 模擬考'];
+var PHASE2_EN = {'HSK 模擬考':'HSK Mock Exam','TOCFL 模擬考':'TOCFL Mock Exam','CPT 模擬考':'CPT Mock Exam'};
+function p2Label(n){ return TLI_I18N.t(n, PHASE2_EN[n]||n); }
+var STATUS_OPTIONS = ['已發布','草稿'];
+var qzFilters = {type:[], status:[]};
+function qtypeLabel(t){ return TLI_I18N.t(t, TYPE_EN[t]||t); }
+function qstatusLabel(s){ return s==='已發布' ? TLI_I18N.t('已發布','Published') : TLI_I18N.t('草稿','Draft'); }
+function renderFilterChips(){
+  document.getElementById('qzTypeChips').innerHTML = '<span class="small" style="margin-right:2px">'+TLI_I18N.t('類型：','Type:')+'</span>' + TYPE_OPTIONS.map(function(t){
+    return '<button type="button" class="fchip'+(qzFilters.type.indexOf(t)>-1?' active':'')+'" onclick="toggleQzFilter(\'type\',\''+t+'\')">'+qtypeLabel(t)+'</button>';
+  }).join('');
+  document.getElementById('qzTypeChips').innerHTML += PHASE2_TYPES.map(function(t){
+    return '<span class="fchip phase2" title="'+TLI_I18N.t('第二階段開放，目前不可建立','Opens in phase 2; cannot be created yet')+'">'+p2Label(t)+' <span class="badge grey">'+TLI_I18N.t('第二階段','Phase 2')+'</span></span>';
+  }).join('');
+  document.getElementById('qzStatusChips').innerHTML = '<span class="small" style="margin-right:2px">'+TLI_I18N.t('狀態：','Status:')+'</span>' + STATUS_OPTIONS.map(function(s){
+    return '<button type="button" class="fchip'+(qzFilters.status.indexOf(s)>-1?' active':'')+'" onclick="toggleQzFilter(\'status\',\''+s+'\')">'+qstatusLabel(s)+'</button>';
+  }).join('');
+}
+function toggleQzFilter(key, val){
+  var arr = qzFilters[key];
+  var idx = arr.indexOf(val);
+  if (idx>-1) arr.splice(idx,1); else arr.push(val);
+  renderFilterChips();
+  renderQuizList();
+}
+function renderQuizList(){
+  var term = (document.getElementById('qzSearch').value||'').trim().toLowerCase();
+  var rows = QUIZZES.filter(function(q){
+    if (term && q.name.toLowerCase().indexOf(term)===-1) return false;
+    if (qzFilters.type.length && qzFilters.type.indexOf(q.qtype)===-1) return false;
+    if (qzFilters.status.length && qzFilters.status.indexOf(q.status)===-1) return false;
+    return true;
+  });
+  var sortBy = (document.getElementById('qzSort')||{}).value;
+  if (sortBy==='name') rows.sort(function(a,b){ return a.name.localeCompare(b.name,'zh-Hant'); });
+  if (sortBy==='type') rows.sort(function(a,b){ return TYPE_OPTIONS.indexOf(a.qtype)-TYPE_OPTIONS.indexOf(b.qtype); });
+  if (sortBy==='count') rows.sort(function(a,b){ return ((b.stats&&b.stats.count)||0)-((a.stats&&a.stats.count)||0); });
+  var t = document.getElementById('quizTable');
+  if (!rows.length){
+    t.innerHTML = '';
+    document.getElementById('quizEmpty').style.display = 'block';
+    return;
+  }
+  document.getElementById('quizEmpty').style.display = 'none';
+  t.innerHTML = '<tr><th>'+TLI_I18N.t('測驗名稱','Quiz Name')+'</th><th>'+TLI_I18N.t('來源','Source')+'</th><th>'+TLI_I18N.t('題數','Questions')+'</th><th>'+TLI_I18N.t('及格分數','Pass Score')+'</th><th>'+TLI_I18N.t('綁定的課程單元','Bound Units')+'</th><th>'+TLI_I18N.t('類型','Type')+'</th><th>'+TLI_I18N.t('題目來源','Question Source')+'</th><th>'+TLI_I18N.t('適用課次','Applicable Lessons')+'</th><th>'+TLI_I18N.t('狀態','Status')+'</th><th></th></tr>' +
+    rows.map(function(q){
+      var qCountCell = q.source==='wordwall' ? '<span class="small">'+TLI_I18N.t('Wordwall 提供','Provided by Wordwall')+'</span>' : TLI_I18N.t(q.questionIds.length+' 題', q.questionIds.length+' question(s)');
+      var passCell = q.qtype==='程度測驗' ? '<span class="small">'+TLI_I18N.t('依等級對應','Mapped to level')+'</span>' : q.source==='wordwall' ? '<span class="small">'+TLI_I18N.t('完成即記錄','Recorded on completion')+'</span>' : (q.passScore!=null?TLI_I18N.t(q.passScore+' 分', q.passScore+' pts'):'—') + (q.qtype==='階段考'&&q.certIssue?' <span class="badge green">'+TLI_I18N.t('發證書','Certificate')+'</span>':'');
+      return '<tr class="rowlink" onclick="openQuizDrawer(\''+q.id+'\')"><td>'+escHtml(quizNameLabel(q.name))+'</td><td>'+sourceBadgeHtml(q.source)+'</td><td>'+qCountCell+'</td><td>'+passCell+'</td><td>'+boundSummaryHtml(q)+'</td><td><span class="badge blue">'+qtypeLabel(q.qtype)+'</span></td><td>'+stageSrcCell(q)+'</td><td>'+lessonRangeLabel(q)+'</td><td>'+statusBadgeHtml(q.status)+'</td><td><button class="btn ghost sm" onclick="event.stopPropagation();openQuizDrawer(\''+q.id+'\')">'+TLI_I18N.t('詳情','Details')+'</button></td></tr>';
+    }).join('');
+}
+renderFilterChips();
+renderQuizList();
+
+/* ================= 語系：頁面專屬靜態骨架文字（不透過 data-i18n／字典，直接用 TLI_I18N.t() 內嵌翻譯，
+   避免新增 key 需要合併進共用字典檔）================= */
+function applyStaticI18nA22(){
+  document.getElementById('quizHeadDesc').textContent = TLI_I18N.t(
+    '從資源庫的題目庫抽題組成測驗，再綁定到自學課程的單元；學員在會員區「線上測驗」作答。單元要綁哪一份測驗，請到「產品管理 → 課程內容」設定；這裡只管理測驗本身與題目。',
+    'Assemble quizzes by drawing questions from the resource library\'s question bank, then bind them to self-paced course units; students take them under "Online Quiz" in the member area. To bind a unit to a quiz, go to "Product Management → Course Content"; this page only manages the quizzes and questions themselves.'
+  );
+  document.getElementById('btnCreateQuiz').textContent = TLI_I18N.t('＋ 建立測驗','+ Create Quiz');
+  document.getElementById('qzSearch').placeholder = TLI_I18N.t('搜尋測驗名稱','Search quiz name');
+  document.getElementById('quizEmpty').textContent = TLI_I18N.t('找不到符合條件的測驗。','No quizzes match the selected criteria.');
+  document.getElementById('cqModalTitle').textContent = TLI_I18N.t('建立測驗','Create Quiz');
+  document.getElementById('lblCqSource').innerHTML = TLI_I18N.t('建置方式','Build Method') + '<span class="req">*</span>';
+  document.getElementById('lblCqSourceSelf').textContent = TLI_I18N.t('平台自建','Self-built');
+  document.getElementById('lblCqName').innerHTML = TLI_I18N.t('測驗名稱','Quiz Name') + '<span class="req">*</span>';
+  document.getElementById('cq_name').placeholder = TLI_I18N.t('例如：第 9 單元：機場延伸會話・單元測驗','e.g. Unit 9: Extended Airport Conversation - Unit Quiz');
+  document.getElementById('lblCqType').innerHTML = TLI_I18N.t('類型','Type') + '<span class="req">*</span>';
+  document.querySelector('#cq_type option[value=""]').textContent = TLI_I18N.t('請選擇','Please select');
+  TYPE_OPTIONS.forEach(function(t){ var o=document.querySelector('#cq_type option[value="'+t+'"]'); if(o) o.textContent = qtypeLabel(t); });
+  document.getElementById('lblCqPassscore').innerHTML = TLI_I18N.t('及格分數（0–100）','Pass Score (0–100)') + '<span class="req">*</span>';
+  document.getElementById('lblCqTimelimit').textContent = TLI_I18N.t('時間限制（分鐘，留白為不限時）','Time Limit (minutes, blank for unlimited)');
+  document.getElementById('cq_timelimit').placeholder = TLI_I18N.t('不限時','Unlimited time');
+  document.getElementById('lblCqProduct').childNodes[0].nodeValue = TLI_I18N.t('預設綁定的自學課程（選填；正式綁定請到「產品管理 → 課程內容」設定）','Default self-paced course to bind (optional; configure actual binding in "Product Management → Course Content")');
+  document.querySelector('#cq_product option[value=""]').textContent = TLI_I18N.t('不指定','Not specified');
+  document.getElementById('stQuestionBankLabel').innerHTML = TLI_I18N.t('從題目庫挑題','Pick Questions from Question Bank') + '<span class="req">*</span>';
+  document.getElementById('lnkManageQuestions').textContent = TLI_I18N.t('管理題目 →','Manage Questions →');
+  document.getElementById('hintQuestionSource').textContent = TLI_I18N.t('題目來自資源庫的題目庫；可依等級與主題篩選後勾選。','Questions come from the resource library\'s question bank; filter by level and topic before selecting.');
+  document.getElementById('lblLevelFilter').childNodes[0].nodeValue = TLI_I18N.t('依等級篩選','Filter by Level');
+  document.getElementById('lblTopicFilter').textContent = TLI_I18N.t('依主題篩選','Filter by Topic');
+  document.getElementById('btnCqNewQuestion').textContent = TLI_I18N.t('＋ 新增題目到題目庫','+ Add New Question to Bank');
+  document.getElementById('hintCqNewQuestion').textContent = TLI_I18N.t('新增的題目會存入資源庫的題目庫，可供其他測驗重複使用','Newly added questions are stored in the resource library\'s question bank and can be reused by other quizzes');
+  document.getElementById('lblCqOrder').textContent = TLI_I18N.t('題目順序','Question Order');
+  document.getElementById('lblCqOrderFixed').textContent = TLI_I18N.t('固定順序','Fixed order');
+  document.getElementById('lblCqOrderRandom').textContent = TLI_I18N.t('隨機出題','Random order');
+  document.getElementById('lblCqWwurl').innerHTML = TLI_I18N.t('Wordwall 連結','Wordwall Link') + '<span class="req">*</span>';
+  document.getElementById('lblCqWwUnits').textContent = TLI_I18N.t('綁定的課程單元（可複選，選填；此活動之後可再綁其他單元重複使用）','Bound course units (multi-select, optional; this activity can be re-bound to other units later for reuse)');
+  document.getElementById('noteWwCq').textContent = TLI_I18N.t('Wordwall 用嵌入連結，平台只記錄是否開啟過，個別作答與分數不會回寫學習紀錄。','Wordwall uses an embedded link; the platform only records whether it was opened. Individual answers and scores are not written back to learning records.');
+  document.getElementById('btnSubmitCreateQuiz').textContent = TLI_I18N.t('建立測驗','Create Quiz');
+  [['qzSortOpt0','排序：預設','Sort: Default'],['qzSortOpt1','名稱','Name'],['qzSortOpt2','類型','Type'],['qzSortOpt3','作答人數（多到少）','Respondents (high to low)']].forEach(function(a){ document.getElementById(a[0]).textContent = TLI_I18N.t(a[1],a[2]); });
+  document.getElementById('qzSort').setAttribute('aria-label', TLI_I18N.t('排序','Sort'));
+  document.getElementById('cqOptgrpP2').setAttribute('label', TLI_I18N.t('檢定模擬考（第二階段）','Certification mock exams (phase 2)'));
+  document.querySelectorAll('#cqOptgrpP2 option').forEach(function(o){ var n=o.getAttribute('data-p2'); o.textContent = p2Label(n) + TLI_I18N.t('（第二階段）',' (phase 2)'); });
+  document.getElementById('cqP2Hint').innerHTML = TLI_I18N.t('檢定模擬考','Certification mock exams')+' <span class="badge grey">'+TLI_I18N.t('第二階段','Phase 2')+'</span> '+TLI_I18N.t('目前不可建立','cannot be created yet');
+  document.getElementById('lblCqLang').innerHTML = TLI_I18N.t('教學語言','Teaching Language') + '<span class="req">*</span>';
+  document.getElementById('notePlCq').textContent = TLI_I18N.t('程度測驗為會員限定，學生登入後自主測驗；結果依等級體系（Lv.1–Lv.9）對應建議等級，成績報告送顧問作諮詢參考，不設及格分數。','The placement test is members only; students sign in and take it on their own. Results map to a suggested level under the level system (Lv.1–Lv.9), and the score report goes to a consultant as a reference for advising. There is no pass score.');
+  document.getElementById('lblCqExamSrc').innerHTML = TLI_I18N.t('題目來源','Question Source') + '<span class="req">*</span>';
+  document.getElementById('optExamTli').textContent = examSrcLabel('tli'); document.getElementById('optExamCustom').textContent = examSrcLabel('custom');
+  document.getElementById('lblCqLesson').innerHTML = TLI_I18N.t('適用課次','Applicable Lessons') + '<span class="req">*</span>';
+  document.getElementById('lblCqLessonPre').textContent = TLI_I18N.t('第','Lessons'); document.getElementById('lblCqLessonSuf').textContent = TLI_I18N.t('課','');
+  document.getElementById('hintCqStage').textContent = TLI_I18N.t('TLI 教材有固定考試內容，上完適用課次後由老師請學生參加；客製化課程沒有固定內容，由老師在教師端自訂題目。階段考非強制，學生未參加也會留下紀錄。','TLI material has fixed exam content; after the applicable lessons the teacher invites the student to take it. Custom courses have no fixed content; the teacher writes the questions in the teacher portal. The stage exam is optional, and a student who does not take it is still recorded.');
+  document.getElementById('hintCqCert').textContent = TLI_I18N.t('證書依課次核發，由系統於學生完成每 12 課時產生，與階段考是否參加或通過無關；階段考成績只列在成績單。','Certificates follow lesson completion: the system generates one when a student completes every 12 lessons, whether or not the student takes or passes the stage exam. Stage exam scores appear only on the transcript.');
+  document.getElementById('lblCqTrTpl').textContent = TLI_I18N.t('成績單範本','Transcript Template');
+  var cqLangSel = document.getElementById('cq_lang'), cqLangVal = cqLangSel.value;
+  cqLangSel.innerHTML = TLI_MASTERS.teachLangs.filter(function(l){return l.enabled;}).map(function(l){ return '<option value="'+l.id+'">'+langLabelA22(l.name)+'</option>'; }).join(''); cqLangSel.value = cqLangVal;
+  var cqPreviewEl = document.getElementById('cq_wwPreview');
+  if (cqPreviewEl) cqPreviewEl.innerHTML = renderWwPreview(document.getElementById('cq_wwurl') ? document.getElementById('cq_wwurl').value : '');
+  document.getElementById('cq_pickedHint').textContent = TLI_I18N.t('已選 '+cqPicked.length+' 題', cqPicked.length+' selected');
+  /* 若建立測驗 modal 目前開著，篩選 chip／挑題清單也要重繪 */
+  if (document.getElementById('createModalMask').classList.contains('open')){
+    renderCqLevelChips(); renderCqTopicChips(); renderCqQuestionPicker(); renderCqWwUnitChips();
+  }
+  /* 若測驗詳情抽屜目前開著，內容也要重繪 */
+  if (document.getElementById('quizDrawer').classList.contains('open') && currentQuizId){
+    var curQ = findQuiz(currentQuizId);
+    if (curQ){
+      document.getElementById('qd_name').textContent = curQ.name;
+      document.getElementById('qd_sub').innerHTML = quizSubHtml(curQ);
+      renderQuizDrawerBody(curQ);
+    }
+  }
+}
+/* ================= 建立測驗 modal ================= */
+var cqLevelFilter = [], cqTopicFilter = [], cqPicked = [], cqWwUnitIds = [];
+function renderCqProductOptions(){
+  document.getElementById('cq_product').innerHTML = '<option value="">'+TLI_I18N.t('不指定','Not specified')+'</option>' +
+    TLI_MASTERS.options('products', {filter:function(p){return p.categoryId==='c_selfpace';}});
+  document.getElementById('cq_productManageLink').innerHTML = TLI_MASTERS.manageLink('products');
+  document.getElementById('cq_levelManageLink').innerHTML = TLI_MASTERS.manageLink('levelSystems');
+}
+function onCqSourceChange(){
+  var v = document.querySelector('input[name="cq_source"]:checked').value;
+  document.getElementById('cq_selfSection').style.display = v==='self' ? 'block' : 'none';
+  document.getElementById('cq_wwSection').style.display = v==='wordwall' ? 'block' : 'none';
+  syncCqType();
+}
+function syncCqType(){
+  var src = document.querySelector('input[name="cq_source"]:checked').value;
+  var t = document.getElementById('cq_type').value;
+  document.getElementById('cq_passscoreRow').style.display = (src==='self' && t!=='程度測驗') ? 'block' : 'none';
+  document.getElementById('cq_plSection').style.display = (t==='程度測驗') ? 'block' : 'none';
+  document.getElementById('cq_stageSection').style.display = (t==='階段考' && src==='self') ? 'block' : 'none';
+  document.getElementById('cq_lessonRow').style.display = document.getElementById('cq_examSrc').value==='tli' ? 'block' : 'none';
+  document.getElementById('cq_certSection').style.display = (t==='階段考' && src==='self') ? 'block' : 'none';
+  var trBox = document.getElementById('cq_trSection'), trSel = document.getElementById('cq_trTpl');
+  trBox.style.display = ((t==='程度測驗' || t==='隨堂單元考') && src==='self') ? 'block' : 'none';
+  if (t==='程度測驗' || t==='隨堂單元考'){ trSel.innerHTML = trTplOptions(trSel.dataset.t===t ? trSel.value : defaultTrTpl(t)); trSel.dataset.t = t; }
+}
+function renderCqWwUnitChips(){
+  document.getElementById('cq_wwUnitChips').innerHTML = SELFPACE_UNITS.map(function(u){
+    return '<button type="button" class="fchip'+(cqWwUnitIds.indexOf(u.id)>-1?' active':'')+'" onclick="toggleCqWwUnit(\''+u.id+'\')">'+escHtml(u.title)+'</button>';
+  }).join('');
+}
+function toggleCqWwUnit(id){
+  var idx = cqWwUnitIds.indexOf(id);
+  if (idx>-1) cqWwUnitIds.splice(idx,1); else cqWwUnitIds.push(id);
+  renderCqWwUnitChips();
+}
+function openCreateQuizModal(){
+  cqLevelFilter = []; cqTopicFilter = []; cqPicked = []; cqWwUnitIds = [];
+  document.getElementById('cq_name').value = '';
+  document.getElementById('cq_type').value = '';
+  document.getElementById('cq_lang').innerHTML = TLI_MASTERS.teachLangs.filter(function(l){return l.enabled;}).map(function(l){ return '<option value="'+l.id+'">'+langLabelA22(l.name)+'</option>'; }).join('');
+  document.getElementById('cq_examSrc').value = 'tli'; document.getElementById('cq_lessonFrom').value = '1'; document.getElementById('cq_lessonTo').value = '12';
+  document.getElementById('cq_trTpl').dataset.t = '';
+  document.getElementById('cq_passscore').value = '60';
+  document.getElementById('cq_timelimit').value = '';
+  document.getElementById('cq_wwurl').value = '';
+  document.getElementById('cq_wwPreview').innerHTML = renderWwPreview('');
+  renderCqProductOptions();
+  document.getElementById('cq_product').value = '';
+  Array.prototype.forEach.call(document.querySelectorAll('input[name="cq_source"]'), function(r){ r.checked = (r.value==='self'); });
+  Array.prototype.forEach.call(document.querySelectorAll('input[name="cq_order"]'), function(r){ r.checked = (r.value==='固定'); });
+  renderCqLevelChips(); renderCqTopicChips(); renderCqQuestionPicker(); renderCqWwUnitChips();
+  document.getElementById('cq_newQuestionForm').style.display = 'none';
+  onCqSourceChange();
+  document.getElementById('createModalMask').classList.add('open');
+}
+function closeCreateQuizModal(){ document.getElementById('createModalMask').classList.remove('open'); }
+/* ---- 新增題目到題目庫（20260929 新增；題型下拉含 7 種，配合客戶要求題型不再只有選擇題） ---- */
+function toggleCqNewQuestionForm(){
+  var el = document.getElementById('cq_newQuestionForm');
+  var showing = el.style.display !== 'none';
+  if (showing){ el.style.display = 'none'; return; }
+  el.innerHTML = '' +
+    '<div class="formrow"><label>'+TLI_I18N.t('題型','Question Type')+'<span class="req">*</span></label><select id="nq_type">' + QUESTION_TYPES.map(function(t){ return '<option value="'+t+'">'+qtypeShortLabel(t)+'</option>'; }).join('') + '</select></div>' +
+    '<div class="formrow"><label>'+TLI_I18N.t('題目摘要','Question Summary')+'<span class="req">*</span></label><input type="text" id="nq_summary" placeholder="'+TLI_I18N.t('例如：選出正確的道別用語','e.g. Choose the correct farewell phrase')+'"></div>' +
+    '<div class="grid2">' +
+    '<div class="formrow"><label>'+TLI_I18N.t('等級範圍','Level Range')+'</label><select id="nq_level"><option value="">'+TLI_I18N.t('不指定','Not specified')+'</option>' + QLEVELS.map(function(l){ return '<option value="'+l.id+'">'+l.label+'</option>'; }).join('') + '</select></div>' +
+    '<div class="formrow"><label>'+TLI_I18N.t('主題','Topic')+'</label><select id="nq_topic">' + QTOPICS.map(function(t){ return '<option value="'+t+'">'+topicLabel(t)+'</option>'; }).join('') + '</select></div>' +
+    '</div>' +
+    '<div style="text-align:right"><button type="button" class="btn sm" onclick="submitCqNewQuestion()">'+TLI_I18N.t('加入題目庫','Add to Question Bank')+'</button></div>';
+  el.style.display = 'block';
+}
+function submitCqNewQuestion(){
+  var summary = document.getElementById('nq_summary').value.trim();
+  var qtype = document.getElementById('nq_type').value;
+  var levelRangeId = document.getElementById('nq_level').value || null;
+  var topic = document.getElementById('nq_topic').value;
+  if (!summary){ toast(TLI_I18N.t('請輸入題目摘要','Please enter a question summary')); return; }
+  var q = addQuestionToBank(qtype, summary, levelRangeId, topic);
+  cqPicked.push(q.id);
+  document.getElementById('cq_newQuestionForm').style.display = 'none';
+  renderCqQuestionPicker();
+  toast(TLI_I18N.t('已加入題目庫並勾選這題（'+qtype+'）','Added to question bank and selected this question (' + (QUESTION_TYPE_EN[qtype]||qtype) + ')'));
+}
+function renderCqLevelChips(){
+  document.getElementById('cq_levelChips').innerHTML = QLEVELS.map(function(l){
+    return '<button type="button" class="fchip'+(cqLevelFilter.indexOf(l.id)>-1?' active':'')+'" onclick="toggleCqFilter(\'level\',\''+l.id+'\')">'+l.label+'</button>';
+  }).join('');
+}
+function renderCqTopicChips(){
+  document.getElementById('cq_topicChips').innerHTML = QTOPICS.map(function(t){
+    return '<button type="button" class="fchip'+(cqTopicFilter.indexOf(t)>-1?' active':'')+'" onclick="toggleCqFilter(\'topic\',\''+t+'\')">'+topicLabel(t)+'</button>';
+  }).join('');
+}
+function toggleCqFilter(kind, val){
+  var arr = kind==='level' ? cqLevelFilter : cqTopicFilter;
+  var idx = arr.indexOf(val);
+  if (idx>-1) arr.splice(idx,1); else arr.push(val);
+  if (kind==='level') renderCqLevelChips(); else renderCqTopicChips();
+  renderCqQuestionPicker();
+}
+function questionLevelLabel(q){
+  if (q.level) return q.level;
+  if (q.levelRangeId){
+    var r = TLI_MASTERS.levelSystems.ranges.find(function(x){return x.id===q.levelRangeId;});
+    if (r) return rangeLabel(r);
+  }
+  return TLI_I18N.t('未指定等級','Level not specified');
+}
+function renderCqQuestionPicker(){
+  var pool = QUESTION_BANK.filter(function(q){
+    if (cqLevelFilter.length && cqLevelFilter.indexOf(q.levelRangeId)===-1) return false;
+    if (cqTopicFilter.length && cqTopicFilter.indexOf(q.topic)===-1) return false;
+    return true;
+  });
+  var wrap = document.getElementById('cq_questionPicker');
+  if (!pool.length){
+    wrap.innerHTML = '<div class="small" style="padding:6px">'+TLI_I18N.t('此條件下找不到題目','No questions match these criteria')+'</div>';
+  } else {
+    wrap.innerHTML = pool.map(function(q){
+      var checked = cqPicked.indexOf(q.id)>-1;
+      return '<div class="pickrow"><input type="checkbox" '+(checked?'checked':'')+' onchange="onCqPickToggle(\''+q.id+'\',this)"><span class="pname">'+escHtml(q.summary)+'　<span class="small">（'+qtypeShortLabel(q.qtype)+'／'+questionLevelLabel(q)+'）</span></span></div>';
+    }).join('');
+  }
+  document.getElementById('cq_pickedHint').textContent = TLI_I18N.t('已選 '+cqPicked.length+' 題', cqPicked.length+' selected');
+}
+function onCqPickToggle(id, el){
+  var idx = cqPicked.indexOf(id);
+  if (el.checked){ if (idx===-1) cqPicked.push(id); }
+  else if (idx>-1) cqPicked.splice(idx,1);
+  document.getElementById('cq_pickedHint').textContent = '已選 '+cqPicked.length+' 題';
+}
+function submitCreateQuiz(){
+  var name = document.getElementById('cq_name').value.trim();
+  var type = document.getElementById('cq_type').value;
+  var source = document.querySelector('input[name="cq_source"]:checked').value;
+  var maxN = QUIZZES.reduce(function(m,q){ var mm=/(\d+)$/.exec(q.id); var n=mm?parseInt(mm[1],10):0; return Math.max(m,n); }, 0);
+  if (source==='wordwall'){
+    var url = document.getElementById('cq_wwurl').value.trim();
+    if (!name || !type || !url || !isValidWwUrl(url)){
+      toast(TLI_I18N.t('請填寫測驗名稱、類型，並貼上有效的 Wordwall 連結','Please fill in the quiz name, type, and paste a valid Wordwall link'));
+      return;
+    }
+    var newWwQuiz = {
+      id:'qz_ww'+(maxN+1), name:name, qtype:type, source:'wordwall', url:url,
+      unitIds:cqWwUnitIds.slice(), status:'已發布', stats:{count:0, avg:null}
+    };
+    QUIZZES.unshift(newWwQuiz);
+    closeCreateQuizModal();
+    renderQuizList();
+    toast(TLI_I18N.t('已建立測驗「'+name+'」（Wordwall）','Quiz "'+name+'" created (Wordwall)'));
+    return;
+  }
+  var passScoreRaw = document.getElementById('cq_passscore').value;
+  var passScore = passScoreRaw==='' ? null : Number(passScoreRaw);
+  var timeLimitRaw = document.getElementById('cq_timelimit').value;
+  var orderInput = document.querySelector('input[name="cq_order"]:checked');
+  var order = orderInput ? orderInput.value : '固定';
+  var productId = document.getElementById('cq_product').value;
+  var exSrc = document.getElementById('cq_examSrc').value, lf = Number(document.getElementById('cq_lessonFrom').value), lt = Number(document.getElementById('cq_lessonTo').value);
+  var stageCustom = (type==='階段考' && exSrc==='custom');
+  if (type==='階段考' && exSrc==='tli' && (!lf || !lt || lf>lt)){
+    toast(TLI_I18N.t('TLI 教材階段考請填寫適用課次（起始課不可大於結束課）','For a TLI material stage exam, enter the applicable lessons (start must not exceed end)'));
+    return;
+  }
+  if (!name || !type || (type!=='程度測驗' && (passScore===null || isNaN(passScore))) || (!cqPicked.length && !stageCustom)){
+    toast(TLI_I18N.t('請填寫測驗名稱、類型、及格分數，並至少從題目庫挑選 1 題','Please fill in the quiz name, type, pass score, and select at least 1 question from the question bank'));
+    return;
+  }
+  var boundUnits = [];
+  if (productId){
+    var prod = SELFPACE_PRODUCTS.find(function(p){return p.id===productId;});
+    if (prod) boundUnits = [{productId:prod.id, productName:prod.name, unitId:'', unitTitle:TLI_I18N.t('（待於產品管理設定單元）','(Unit to be set in Product Management)')}];
+  }
+  if (type==='程度測驗') passScore = null;
+  var newQuiz = {
+    id:'qz_new'+(maxN+1), name:name, qtype:type, source:'self', passScore:passScore,
+    lang: type==='程度測驗' ? document.getElementById('cq_lang').value : undefined,
+    examSource: type==='階段考' ? exSrc : undefined, lessonFrom: (type==='階段考' && exSrc==='tli') ? lf : null, lessonTo: (type==='階段考' && exSrc==='tli') ? lt : null,
+    transcriptTemplate: (type==='程度測驗' || type==='隨堂單元考') ? document.getElementById('cq_trTpl').value : undefined,
+    timeLimit: timeLimitRaw ? Number(timeLimitRaw) : null, order:order,
+    boundUnits:boundUnits, questionIds:cqPicked.slice(), status:'草稿',
+    stats:{count:0, avg:null, passRate:null}
+  };
+  QUIZZES.unshift(newQuiz);
+  closeCreateQuizModal();
+  renderQuizList();
+  toast(TLI_I18N.t('已建立測驗「'+name+'」，共 '+newQuiz.questionIds.length+' 題', 'Quiz "'+name+'" created with '+newQuiz.questionIds.length+' question(s)'));
+}
+
+/* ================= 測驗詳情抽屜 ================= */
+var currentQuizId = null, qdAddPicking = false, qdLevelFilter = [], qdTopicFilter = [], qdSettingsEditing = false;
+function findQuiz(id){ return QUIZZES.find(function(x){return x.id===id;}); }
+function orderLabel(o){ return o==='固定' ? TLI_I18N.t('固定','Fixed') : TLI_I18N.t('隨機','Random'); }
+function quizSubHtml(q){
+  if (q.source==='wordwall'){
+    return '<span class="badge blue">'+qtypeLabel(q.qtype)+'</span> '+sourceBadgeHtml(q.source)+' '+statusBadgeHtml(q.status)+'　'+TLI_I18N.t('完成即記錄','Recorded on completion');
+  }
+  return '<span class="badge blue">'+qtypeLabel(q.qtype)+'</span> '+sourceBadgeHtml(q.source)+' '+statusBadgeHtml(q.status)+'　'+TLI_I18N.t('及格 ','Pass ')+(q.passScore!=null?TLI_I18N.t(q.passScore+' 分',q.passScore+' pts'):'—')+'　'+(q.timeLimit?TLI_I18N.t(q.timeLimit+' 分鐘',q.timeLimit+' min'):TLI_I18N.t('不限時','Unlimited time'))+'　'+TLI_I18N.t('題序：','Order: ')+orderLabel(q.order);
+}
+function openQuizDrawer(id){
+  currentQuizId = id; qdAddPicking = false; qdLevelFilter = []; qdTopicFilter = []; qdSettingsEditing = false; qdEditUnitIds = [];
+  var q = findQuiz(id);
+  if (!q) return;
+  document.getElementById('qd_name').textContent = q.name;
+  document.getElementById('qd_sub').innerHTML = quizSubHtml(q);
+  renderQuizDrawerBody(q);
+  document.getElementById('quizDrawerMask').classList.add('open');
+  document.getElementById('quizDrawer').classList.add('open');
+}
+function closeQuizDrawer(){
+  document.getElementById('quizDrawerMask').classList.remove('open');
+  document.getElementById('quizDrawer').classList.remove('open');
+}
+function questionRowHtml(qid, idx, total){
+  var qq = findQuestion(qid);
+  var label = qq ? qq.summary+'（'+qtypeShortLabel(qq.qtype)+'／'+questionLevelLabel(qq)+'）' : qid+TLI_I18N.t('（題目已從題庫移除）','(question removed from bank)');
+  return '<tr><td>'+(idx+1)+'</td><td>'+escHtml(label)+'</td>' +
+    '<td style="white-space:nowrap">' +
+    '<button class="btn ghost sm" onclick="moveQuizQuestion(\''+qid+'\',-1)" '+(idx===0?'disabled':'')+'>▲</button> ' +
+    '<button class="btn ghost sm" onclick="moveQuizQuestion(\''+qid+'\',1)" '+(idx===total-1?'disabled':'')+'>▼</button> ' +
+    '<button class="btn ghost sm" onclick="removeQuizQuestion(\''+qid+'\')">'+TLI_I18N.t('移除','Remove')+'</button>' +
+    '</td></tr>';
+}
+function quizSettingsViewHtml(q){
+  var base = '<div class="kv"><span>'+TLI_I18N.t('測驗名稱','Quiz Name')+'</span><span>'+escHtml(quizNameLabel(q.name))+'</span></div>' +
+    '<div class="kv"><span>'+TLI_I18N.t('建置方式','Build Method')+'</span><span>'+sourceBadgeHtml(q.source)+'</span></div>' +
+    '<div class="kv"><span>'+TLI_I18N.t('類型','Type')+'</span><span>'+qtypeLabel(q.qtype)+'</span></div>';
+  if (q.source==='wordwall'){
+    base += '<div class="kv"><span>'+TLI_I18N.t('Wordwall 連結','Wordwall Link')+'</span><span><a href="'+escAttr(q.url)+'" target="_blank" rel="noopener">'+escHtml(q.url)+'</a></span></div>' +
+      '<div class="kv"><span>'+TLI_I18N.t('綁定的課程單元','Bound Course Units')+'</span><span>'+boundSummaryHtml(q)+'</span></div>' +
+      '<div class="kv"><span>'+TLI_I18N.t('狀態','Status')+'</span><span>'+statusBadgeHtml(q.status)+'</span></div>' +
+      renderWwPreview(q.url) +
+      '<div class="note" style="margin-top:8px">'+TLI_I18N.t('Wordwall 用嵌入連結，平台只記錄是否開啟過，個別作答與分數不會回寫學習紀錄。','Wordwall uses an embedded link; the platform only records whether it was opened. Individual answers and scores are not written back to learning records.')+'</div>';
+  } else {
+    base += '<div class="kv"><span>'+TLI_I18N.t('及格分數','Pass Score')+'</span><span>'+(q.passScore!=null?TLI_I18N.t(q.passScore+' 分',q.passScore+' pts'):'—')+'</span></div>' +
+      '<div class="kv"><span>'+TLI_I18N.t('時間限制','Time Limit')+'</span><span>'+(q.timeLimit?TLI_I18N.t(q.timeLimit+' 分鐘',q.timeLimit+' min'):TLI_I18N.t('不限時','Unlimited time'))+'</span></div>' +
+      (q.qtype==='程度測驗' ? '<div class="kv"><span>'+TLI_I18N.t('教學語言','Teaching Language')+'</span><span>'+escHtml(langLabelA22((TLI_MASTERS.teachLangs.filter(function(l){return l.id===q.lang;})[0]||{name:'—'}).name))+'</span></div>' : '') +
+      ((q.qtype==='程度測驗' || q.qtype==='隨堂單元考') ? '<div class="kv"><span>'+TLI_I18N.t('成績單範本','Transcript Template')+'</span><span>'+escHtml(trTplLabel(q.transcriptTemplate||defaultTrTpl(q.qtype)))+'</span></div>' : '') +
+      (q.qtype==='階段考' ? '<div class="kv"><span>'+TLI_I18N.t('題目來源','Question Source')+'</span><span>'+examSrcLabel(q.examSource||'tli')+'</span></div><div class="kv"><span>'+TLI_I18N.t('適用課次','Applicable Lessons')+'</span><span>'+lessonRangeLabel(q)+'</span></div><div class="kv"><span>'+TLI_I18N.t('證書','Certificate')+'</span><span>'+TLI_I18N.t('依課次核發，每 12 課一張','Issued per 12 lessons')+'</span></div>' : '') +
+      '<div class="kv"><span>'+TLI_I18N.t('題目順序','Question Order')+'</span><span>'+orderLabel(q.order)+'</span></div>' +
+      '<div class="kv"><span>'+TLI_I18N.t('狀態','Status')+'</span><span>'+statusBadgeHtml(q.status)+'</span></div>';
+  }
+  return base;
+}
+function quizSettingsEditHtml(q){
+  var srcSelf = q.source!=='wordwall';
+  var html = '<div class="formrow"><label>'+TLI_I18N.t('建置方式','Build Method')+'<span class="req">*</span></label>' +
+    '<label class="small" style="margin-right:14px;display:inline-flex;align-items:center;gap:5px"><input type="radio" name="qs_source" value="self" '+(srcSelf?'checked':'')+' onchange="onQsSourceChange()"> '+TLI_I18N.t('平台自建','Self-built')+'</label>' +
+    '<label class="small" style="display:inline-flex;align-items:center;gap:5px"><input type="radio" name="qs_source" value="wordwall" '+(!srcSelf?'checked':'')+' onchange="onQsSourceChange()"> Wordwall</label>' +
+    '</div>' +
+    '<div class="formrow"><label>'+TLI_I18N.t('測驗名稱','Quiz Name')+'<span class="req">*</span></label><input type="text" id="qs_name" value="'+escAttr(q.name)+'"></div>' +
+    '<div class="formrow"><label>'+TLI_I18N.t('類型','Type')+'<span class="req">*</span></label><select id="qs_type" onchange="onQsTypeChange()">' + TYPE_OPTIONS.map(function(t){ return '<option value="'+t+'"'+(q.qtype===t?' selected':'')+'>'+qtypeLabel(t)+'</option>'; }).join('') + '</select></div>' +
+    '<div id="qs_selfSection" style="display:'+(srcSelf?'block':'none')+'">' +
+    '<div id="qs_plRow" class="formrow" style="display:'+(q.qtype==='程度測驗'?'block':'none')+'"><label>'+TLI_I18N.t('教學語言','Teaching Language')+'</label><select id="qs_lang">'+TLI_MASTERS.teachLangs.filter(function(l){return l.enabled;}).map(function(l){return '<option value="'+l.id+'"'+(q.lang===l.id?' selected':'')+'>'+l.name+'</option>';}).join('')+'</select></div>' +
+    '<div id="qs_trRow" class="formrow" style="display:'+((q.qtype==='程度測驗'||q.qtype==='隨堂單元考')?'block':'none')+'"><label>'+TLI_I18N.t('成績單範本','Transcript Template')+'</label><select id="qs_trTpl">'+trTplOptions(q.transcriptTemplate||defaultTrTpl(q.qtype))+'</select></div>' +
+    '<div id="qs_stageBox" style="display:'+(q.qtype==='階段考'?'block':'none')+'"><div class="grid2">' +
+    '<div class="formrow"><label>'+TLI_I18N.t('題目來源','Question Source')+'<span class="req">*</span></label><select id="qs_examSrc" onchange="onQsTypeChange()"><option value="tli"'+((q.examSource||'tli')==='tli'?' selected':'')+'>'+examSrcLabel('tli')+'</option><option value="custom"'+(q.examSource==='custom'?' selected':'')+'>'+examSrcLabel('custom')+'</option></select></div>' +
+    '<div class="formrow" id="qs_lessonRow"><label>'+TLI_I18N.t('適用課次','Applicable Lessons')+'<span class="req">*</span></label><div style="display:flex;align-items:center;gap:6px"><span>'+TLI_I18N.t('第','Lessons')+'</span><input type="number" id="qs_lessonFrom" min="1" style="width:80px" value="'+(q.lessonFrom||'')+'"><span>～</span><input type="number" id="qs_lessonTo" min="1" style="width:80px" value="'+(q.lessonTo||'')+'"><span>'+TLI_I18N.t('課','')+'</span></div></div>' +
+    '</div><div class="hint" style="margin-bottom:10px">'+TLI_I18N.t('證書依課次核發，由系統於學生完成每 12 課時產生，與階段考是否參加或通過無關；階段考成績只列在成績單。','Certificates follow lesson completion: the system generates one when a student completes every 12 lessons, whether or not the student takes or passes the stage exam. Stage exam scores appear only on the transcript.')+'</div></div>' +
+    '<div class="grid2">' +
+    '<div class="formrow"><label>'+TLI_I18N.t('及格分數（0–100，留白為不設定）','Pass Score (0–100, blank for none)')+'</label><input type="number" id="qs_passscore" min="0" max="100" value="'+(q.passScore!=null?q.passScore:'')+'"></div>' +
+    '<div class="formrow"><label>'+TLI_I18N.t('時間限制（分鐘，留白為不限時）','Time Limit (minutes, blank for unlimited)')+'</label><input type="number" id="qs_timelimit" min="1" value="'+(q.timeLimit||'')+'" placeholder="'+TLI_I18N.t('不限時','Unlimited time')+'"></div>' +
+    '</div>' +
+    '<div class="formrow"><label>'+TLI_I18N.t('題目順序','Question Order')+'</label>' +
+    '<label class="small" style="margin-right:14px;display:inline-flex;align-items:center;gap:5px"><input type="radio" name="qs_order" value="固定" '+(q.order==='固定'?'checked':'')+'> '+TLI_I18N.t('固定順序','Fixed order')+'</label>' +
+    '<label class="small" style="display:inline-flex;align-items:center;gap:5px"><input type="radio" name="qs_order" value="隨機" '+(q.order==='隨機'?'checked':'')+'> '+TLI_I18N.t('隨機出題','Random order')+'</label>' +
+    '</div>' +
+    '</div>' +
+    '<div id="qs_wwSection" style="display:'+(srcSelf?'none':'block')+'">' +
+    '<div class="formrow"><label>'+TLI_I18N.t('Wordwall 連結','Wordwall Link')+'<span class="req">*</span></label><input type="text" id="qs_wwurl" value="'+escAttr(q.url||'')+'" oninput="document.getElementById(\'qs_wwPreview\').innerHTML=renderWwPreview(this.value)"></div>' +
+    '<div class="formrow"><div id="qs_wwPreview">'+renderWwPreview(q.url||'')+'</div></div>' +
+    '<div class="formrow"><label>'+TLI_I18N.t('綁定的課程單元（可複選，選填）','Bound Course Units (multi-select, optional)')+'</label><div class="chipgroup" id="qs_unitChips"></div></div>' +
+    '<div class="note">'+TLI_I18N.t('Wordwall 用嵌入連結，平台只記錄是否開啟過，個別作答與分數不會回寫學習紀錄。','Wordwall uses an embedded link; the platform only records whether it was opened. Individual answers and scores are not written back to learning records.')+'</div>' +
+    '</div>' +
+    '<div class="formrow"><label>'+TLI_I18N.t('狀態','Status')+'</label><select id="qs_status">' + STATUS_OPTIONS.map(function(s){ return '<option value="'+s+'"'+(q.status===s?' selected':'')+'>'+qstatusLabel(s)+'</option>'; }).join('') + '</select></div>';
+  return html;
+}
+function onQsTypeChange(){
+  var t = document.getElementById('qs_type').value;
+  var pl = document.getElementById('qs_plRow');
+  if (pl) pl.style.display = t==='程度測驗' ? 'block' : 'none';
+  var trr = document.getElementById('qs_trRow'), trs = document.getElementById('qs_trTpl');
+  if (trr){ trr.style.display = (t==='程度測驗'||t==='隨堂單元考') ? 'block' : 'none'; if (trs && (t==='程度測驗'||t==='隨堂單元考') && trs.dataset.t!==t){ trs.innerHTML = trTplOptions(defaultTrTpl(t)); trs.dataset.t = t; } }
+  var sb = document.getElementById('qs_stageBox'); if (sb) sb.style.display = t==='階段考' ? 'block' : 'none';
+  var lr = document.getElementById('qs_lessonRow'), es = document.getElementById('qs_examSrc'); if (lr && es) lr.style.display = es.value==='tli' ? 'block' : 'none';
+}
+function onQsSourceChange(){
+  var v = document.querySelector('input[name="qs_source"]:checked').value;
+  document.getElementById('qs_selfSection').style.display = v==='self' ? 'block' : 'none';
+  document.getElementById('qs_wwSection').style.display = v==='wordwall' ? 'block' : 'none';
+  if (v==='wordwall') renderQsUnitChips();
+}
+function renderQsUnitChips(){
+  var wrap = document.getElementById('qs_unitChips');
+  if (!wrap) return;
+  wrap.innerHTML = SELFPACE_UNITS.map(function(u){
+    return '<button type="button" class="fchip'+(qdEditUnitIds.indexOf(u.id)>-1?' active':'')+'" onclick="toggleQsUnit(\''+u.id+'\')">'+escHtml(u.title)+'</button>';
+  }).join('');
+}
+function toggleQsUnit(id){
+  var idx = qdEditUnitIds.indexOf(id);
+  if (idx>-1) qdEditUnitIds.splice(idx,1); else qdEditUnitIds.push(id);
+  renderQsUnitChips();
+}
+function startQuizSettingsEdit(){
+  qdSettingsEditing = true;
+  var q = findQuiz(currentQuizId);
+  qdEditUnitIds = (q.unitIds||[]).slice();
+  renderQuizDrawerBody(q);
+  if (q.source==='wordwall') renderQsUnitChips();
+}
+function cancelQuizSettingsEdit(){ qdSettingsEditing = false; renderQuizDrawerBody(findQuiz(currentQuizId)); }
+function saveQuizSettings(){
+  var q = findQuiz(currentQuizId);
+  var name = document.getElementById('qs_name').value.trim();
+  if (!name){ toast(TLI_I18N.t('請輸入測驗名稱','Please enter a quiz name')); return; }
+  var source = document.querySelector('input[name="qs_source"]:checked').value;
+  q.name = name;
+  q.qtype = document.getElementById('qs_type').value;
+  q.source = source;
+  q.status = document.getElementById('qs_status').value;
+  if (source==='wordwall'){
+    var url = document.getElementById('qs_wwurl').value.trim();
+    if (!url || !isValidWwUrl(url)){ toast(TLI_I18N.t('請輸入有效的 Wordwall 連結','Please enter a valid Wordwall link')); return; }
+    q.url = url;
+    q.unitIds = qdEditUnitIds.slice();
+  } else {
+    var passRaw = document.getElementById('qs_passscore').value;
+    var timeRaw = document.getElementById('qs_timelimit').value;
+    var orderEl = document.querySelector('input[name="qs_order"]:checked');
+    q.passScore = passRaw==='' ? null : Number(passRaw);
+    q.timeLimit = timeRaw==='' ? null : Number(timeRaw);
+    q.order = orderEl ? orderEl.value : (q.order||'固定');
+    if (q.qtype==='程度測驗'){ q.lang = document.getElementById('qs_lang').value; q.passScore = null; }
+    if (q.qtype==='程度測驗' || q.qtype==='隨堂單元考'){ q.transcriptTemplate = document.getElementById('qs_trTpl').value; } else { delete q.transcriptTemplate; }
+    if (q.qtype==='階段考'){
+      var es2 = document.getElementById('qs_examSrc').value, lf2 = Number(document.getElementById('qs_lessonFrom').value), lt2 = Number(document.getElementById('qs_lessonTo').value);
+      if (es2==='tli' && (!lf2 || !lt2 || lf2>lt2)){ toast(TLI_I18N.t('TLI 教材階段考請填寫適用課次（起始課不可大於結束課）','For a TLI material stage exam, enter the applicable lessons (start must not exceed end)')); return; }
+      q.examSource = es2; q.lessonFrom = es2==='tli' ? lf2 : null; q.lessonTo = es2==='tli' ? lt2 : null;
+    }
+    if (!q.questionIds) q.questionIds = [];
+    if (!q.boundUnits) q.boundUnits = [];
+  }
+  qdSettingsEditing = false;
+  document.getElementById('qd_name').textContent = q.name;
+  document.getElementById('qd_sub').innerHTML = quizSubHtml(q);
+  renderQuizDrawerBody(q);
+  renderQuizList();
+  toast(TLI_I18N.t('測驗設定已儲存','Quiz settings saved'));
+}
+function renderQuizDrawerBody(q){
+  var body = document.getElementById('qd_body');
+  var html = '<div class="card"><div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:10px;gap:8px"><h2 style="margin:0">'+TLI_I18N.t('測驗設定','Quiz Settings')+'</h2>' +
+    (qdSettingsEditing
+      ? '<span style="white-space:nowrap"><button class="btn ghost sm" onclick="cancelQuizSettingsEdit()">'+TLI_I18N.t('取消','Cancel')+'</button> <button class="btn sm" onclick="saveQuizSettings()">'+TLI_I18N.t('儲存','Save')+'</button></span>'
+      : '<button class="btn ghost sm" onclick="startQuizSettingsEdit()">'+TLI_I18N.t('編輯','Edit')+'</button>') +
+    '</div>' +
+    (qdSettingsEditing ? quizSettingsEditHtml(q) : quizSettingsViewHtml(q)) +
+    '</div>';
+  if (q.source==='wordwall'){
+    html += '<div class="card"><h2>'+TLI_I18N.t('學生完成情況','Student Completion')+'</h2>' +
+      '<div class="statgrid" style="grid-template-columns:repeat(2,1fr)">' +
+      '<div class="statbox"><div class="num">'+(q.stats.count||0)+'</div><div class="lbl">'+TLI_I18N.t('完成人數','Completed')+'</div></div>' +
+      '<div class="statbox"><div class="num">'+(q.stats.avg!=null?q.stats.avg:'—')+'</div><div class="lbl">'+TLI_I18N.t('平均分數','Average Score')+'</div></div>' +
+      '</div>' +
+      '<div class="small" style="margin-top:8px;color:var(--g500)">'+TLI_I18N.t('分數由 Wordwall 提供，僅作為練習參考；平台不會取得個別學員的作答明細，不計入課程成績與學習紀錄。','Scores are provided by Wordwall for practice reference only; the platform does not obtain individual answer details and they do not count toward course grades or learning records.')+'</div>' +
+      '</div>';
+  } else {
+    html += '<div class="card"><h2>'+TLI_I18N.t('題目清單','Question List')+'　<span class="small" style="font-weight:400">'+TLI_I18N.t('（共 '+q.questionIds.length+' 題）','(' +q.questionIds.length+ ' total)')+'</span></h2>' +
+      (q.questionIds.length
+        ? '<div class="tablewrap"><table><tr><th>'+TLI_I18N.t('順序','Order')+'</th><th>'+TLI_I18N.t('題目摘要','Question Summary')+'</th><th></th></tr>' + q.questionIds.map(function(qid, idx){ return questionRowHtml(qid, idx, q.questionIds.length); }).join('') + '</table></div>'
+        : '<div class="note">'+TLI_I18N.t('尚未加入任何題目。','No questions added yet.')+'</div>') +
+      '<div style="margin-top:12px">' + (qdAddPicking ? renderQuizAddPickerHtml(q) : '<button class="btn ghost sm" onclick="toggleQuizAddPicker()">'+TLI_I18N.t('＋ 從題目庫加入題目','+ Add from Question Bank')+'</button>') + '</div>' +
+      '</div>' +
+      '<div class="card"><h2>'+TLI_I18N.t('綁定到哪些課程單元','Bound to Which Course Units')+'</h2>' +
+      '<div class="desc" style="margin-bottom:8px">'+TLI_I18N.t('唯讀，實際綁定請到「產品管理 → 課程內容」設定；這裡僅顯示目前有哪些單元引用這份測驗。','Read-only; configure actual binding in "Product Management → Course Content". This only shows which units currently reference this quiz.')+'</div>' +
+      (q.boundUnits.length
+        ? q.boundUnits.map(function(b){ return '<div class="kv"><span>'+escHtml(b.productName)+' › '+escHtml(b.unitTitle)+'</span><a href="a03_product_detail.html?id='+b.productId+'&tab=content">'+TLI_I18N.t('前往課程內容 →','Go to Course Content →')+'</a></div>'; }).join('')
+        : '<div class="note">'+TLI_I18N.t('目前沒有任何課程單元綁定這份測驗。','No course units are bound to this quiz yet.')+'</div>') +
+      '</div>' +
+      '<div class="card"><h2>'+TLI_I18N.t('學員作答統計','Student Response Statistics')+'</h2>' +
+      '<div class="statgrid">' +
+      '<div class="statbox"><div class="num">'+(q.stats.count||0)+'</div><div class="lbl">'+TLI_I18N.t('作答人數','Respondents')+'</div></div>' +
+      '<div class="statbox"><div class="num">'+(q.stats.avg!=null?q.stats.avg:'—')+'</div><div class="lbl">'+TLI_I18N.t('平均分','Average Score')+'</div></div>' +
+      '<div class="statbox"><div class="num">'+(q.stats.passRate!=null?q.stats.passRate:'—')+'</div><div class="lbl">'+TLI_I18N.t('及格率','Pass Rate')+'</div></div>' +
+      '</div></div>';
+  }
+  body.innerHTML = html;
+  if (qdSettingsEditing && q.source==='wordwall') renderQsUnitChips();
+}
+function moveQuizQuestion(qid, delta){
+  var q = findQuiz(currentQuizId);
+  var idx = q.questionIds.indexOf(qid);
+  var target = idx + delta;
+  if (idx===-1 || target<0 || target>=q.questionIds.length) return;
+  var tmp = q.questionIds[idx]; q.questionIds[idx] = q.questionIds[target]; q.questionIds[target] = tmp;
+  renderQuizDrawerBody(q);
+}
+function removeQuizQuestion(qid){
+  var q = findQuiz(currentQuizId);
+  q.questionIds = q.questionIds.filter(function(x){return x!==qid;});
+  renderQuizDrawerBody(q);
+  renderQuizList();
+  toast(TLI_I18N.t('已從測驗移除 1 題','1 question removed from the quiz'));
+}
+function toggleQuizAddPicker(){
+  qdAddPicking = !qdAddPicking;
+  renderQuizDrawerBody(findQuiz(currentQuizId));
+}
+function renderQuizAddPickerHtml(q){
+  var pool = QUESTION_BANK.filter(function(x){
+    if (q.questionIds.indexOf(x.id)>-1) return false;
+    if (qdLevelFilter.length && qdLevelFilter.indexOf(x.levelRangeId)===-1) return false;
+    if (qdTopicFilter.length && qdTopicFilter.indexOf(x.topic)===-1) return false;
+    return true;
+  });
+  return '<div class="sectiontitle">'+TLI_I18N.t('從題目庫加入題目','Add Questions from Question Bank')+'</div>' +
+    '<div class="formrow"><label>'+TLI_I18N.t('依等級篩選','Filter by Level')+TLI_MASTERS.manageLink('levelSystems')+'</label><div class="chipgroup">' + QLEVELS.map(function(l){
+      return '<button type="button" class="fchip'+(qdLevelFilter.indexOf(l.id)>-1?' active':'')+'" onclick="toggleQdFilter(\'level\',\''+l.id+'\')">'+l.label+'</button>';
+    }).join('') + '</div></div>' +
+    '<div class="formrow"><label>'+TLI_I18N.t('依主題篩選','Filter by Topic')+'</label><div class="chipgroup">' + QTOPICS.map(function(t){
+      return '<button type="button" class="fchip'+(qdTopicFilter.indexOf(t)>-1?' active':'')+'" onclick="toggleQdFilter(\'topic\',\''+t+'\')">'+topicLabel(t)+'</button>';
+    }).join('') + '</div></div>' +
+    '<div class="pickbox">' + (pool.length ? pool.map(function(x){
+      return '<div class="pickrow"><span class="pname">'+escHtml(x.summary)+'　<span class="small">（'+qtypeShortLabel(x.qtype)+'／'+questionLevelLabel(x)+'）</span></span><button class="btn ghost sm" onclick="addQuizQuestion(\''+x.id+'\')">'+TLI_I18N.t('加入','Add')+'</button></div>';
+    }).join('') : '<div class="small" style="padding:6px">'+TLI_I18N.t('此條件下沒有可加入的題目','No questions available to add under these criteria')+'</div>') + '</div>' +
+    '<div style="display:flex;justify-content:space-between;margin-top:8px"><button type="button" class="btn ghost sm" onclick="toggleQuizNewQuestionForm()">'+TLI_I18N.t('＋ 新增題目到題目庫','+ Add New Question to Bank')+'</button><button class="btn ghost sm" onclick="toggleQuizAddPicker()">'+TLI_I18N.t('收合','Collapse')+'</button></div>' +
+    '<div id="qd_newQuestionForm" style="display:none;border:1px dashed var(--g200);border-radius:8px;padding:10px;margin-top:8px"></div>';
+}
+function toggleQdFilter(kind, val){
+  var arr = kind==='level' ? qdLevelFilter : qdTopicFilter;
+  var idx = arr.indexOf(val);
+  if (idx>-1) arr.splice(idx,1); else arr.push(val);
+  renderQuizDrawerBody(findQuiz(currentQuizId));
+}
+function addQuizQuestion(qid){
+  var q = findQuiz(currentQuizId);
+  if (q.questionIds.indexOf(qid)===-1) q.questionIds.push(qid);
+  renderQuizDrawerBody(q);
+  renderQuizList();
+  toast(TLI_I18N.t('已加入 1 題','1 question added'));
+}
+function toggleQuizNewQuestionForm(){
+  var el = document.getElementById('qd_newQuestionForm');
+  if (!el) return;
+  var showing = el.style.display !== 'none';
+  if (showing){ el.style.display = 'none'; return; }
+  el.innerHTML = '' +
+    '<div class="formrow"><label>'+TLI_I18N.t('題型','Question Type')+'<span class="req">*</span></label><select id="nq2_type">' + QUESTION_TYPES.map(function(t){ return '<option value="'+t+'">'+qtypeShortLabel(t)+'</option>'; }).join('') + '</select></div>' +
+    '<div class="formrow"><label>'+TLI_I18N.t('題目摘要','Question Summary')+'<span class="req">*</span></label><input type="text" id="nq2_summary" placeholder="'+TLI_I18N.t('例如：選出正確的道別用語','e.g. Choose the correct farewell phrase')+'"></div>' +
+    '<div class="grid2">' +
+    '<div class="formrow"><label>'+TLI_I18N.t('等級範圍','Level Range')+'</label><select id="nq2_level"><option value="">'+TLI_I18N.t('不指定','Not specified')+'</option>' + QLEVELS.map(function(l){ return '<option value="'+l.id+'">'+l.label+'</option>'; }).join('') + '</select></div>' +
+    '<div class="formrow"><label>'+TLI_I18N.t('主題','Topic')+'</label><select id="nq2_topic">' + QTOPICS.map(function(t){ return '<option value="'+t+'">'+topicLabel(t)+'</option>'; }).join('') + '</select></div>' +
+    '</div>' +
+    '<div style="text-align:right"><button type="button" class="btn sm" onclick="submitQdNewQuestion()">'+TLI_I18N.t('加入題目庫並加入這份測驗','Add to Question Bank and This Quiz')+'</button></div>';
+  el.style.display = 'block';
+}
+function submitQdNewQuestion(){
+  var summary = document.getElementById('nq2_summary').value.trim();
+  var qtype = document.getElementById('nq2_type').value;
+  var levelRangeId = document.getElementById('nq2_level').value || null;
+  var topic = document.getElementById('nq2_topic').value;
+  if (!summary){ toast(TLI_I18N.t('請輸入題目摘要','Please enter a question summary')); return; }
+  var newQ = addQuestionToBank(qtype, summary, levelRangeId, topic);
+  addQuizQuestion(newQ.id);
+  toast(TLI_I18N.t('已加入題目庫並加入這份測驗（'+qtype+'）','Added to question bank and this quiz (' + (QUESTION_TYPE_EN[qtype]||qtype) + ')'));
+}
+
+/* ================= 共用：側欄／頂欄／通知／登出／toast（與全站同一段） ================= */
+function toggleSidebar(){
+  document.getElementById('sidebar').classList.toggle('open');
+  document.getElementById('sidebarBackdrop').classList.toggle('open');
+}
+function closeSidebar(){
+  document.getElementById('sidebar').classList.remove('open');
+  document.getElementById('sidebarBackdrop').classList.remove('open');
+}
+function toggleSuMenu(ev){
+  if (ev) ev.stopPropagation();
+  var el = document.getElementById('suMenu');
+  if (el) el.classList.toggle('open');
+}
+var NOTIFS = [
+  {t:'測驗「第 5 單元：Email 商務書信・單元測驗」近 7 天作答量下降 12%', en:'Quiz \u201c第 5 單元：Email 商務書信・單元測驗\u201d response volume dropped 12% over the last 7 days', time:'20 分鐘前', timeEn:'20 minutes ago', unread:true},
+  {t:'訂單 ORD-2026-0102 已逾期 5 天未收款', en:'Order ORD-2026-0102 is 5 days overdue for payment', time:'1 小時前', timeEn:'1 hour ago', unread:true},
+  {t:'內容管理：首頁 Hero 文案已由校區主管發佈', en:'Content Management: homepage hero copy has been published by the campus manager', time:'今天 09:12', timeEn:'Today 09:12', unread:false},
+  {t:'老師黃志遠已切換為留職停薪', en:'Teacher 黃志遠 has switched to unpaid leave', time:'昨天', timeEn:'Yesterday', unread:false}
+];
+function renderNotifPanel(){
+  var panel = document.getElementById('notifPanel');
+  if (!panel) return;
+  var unread = NOTIFS.filter(function(n){return n.unread;}).length;
+  var dot = document.getElementById('tbDot');
+  if (dot) dot.style.display = unread ? 'block' : 'none';
+  panel.innerHTML = '<div class="tn-head"><span>'+(window.TLI_I18N?TLI_I18N.t('通知（'+unread+' 則未讀）','Notifications ('+unread+' unread)'):('通知（'+unread+' 則未讀）'))+'</span><a href="javascript:void(0)" onclick="markAllRead(event)">'+(window.TLI_I18N?TLI_I18N.t('全部標為已讀','Mark All as Read'):'全部標為已讀')+'</a></div>' +
+    NOTIFS.map(function(n){ return '<div class="tb-notifitem'+(n.unread?' unread':'')+'">'+(window.TLI_I18N?TLI_I18N.t(n.t,n.en):n.t)+'<div class="tn-t">'+(window.TLI_I18N?TLI_I18N.t(n.time,n.timeEn):n.time)+'</div></div>'; }).join('');
+}
+function markAllRead(ev){
+  if (ev) ev.stopPropagation();
+  NOTIFS.forEach(function(n){ n.unread = false; });
+  renderNotifPanel();
+}
+function toggleNotif(ev){
+  ev.stopPropagation();
+  closePanel('avatarMenu');
+  var p = document.getElementById('notifPanel');
+  p.classList.toggle('open');
+  if (p.classList.contains('open')) renderNotifPanel();
+}
+function toggleAvatarMenu(ev){
+  ev.stopPropagation();
+  closePanel('notifPanel');
+  document.getElementById('avatarMenu').classList.toggle('open');
+}
+function closePanel(id){
+  var el = document.getElementById(id);
+  if (el) el.classList.remove('open');
+}
+document.addEventListener('click', function(){ closePanel('notifPanel'); closePanel('avatarMenu'); closePanel('suMenu'); });
+function doLogout(){ location.href = '../公開網站/p07_login_register.html'; }
+function toast(msg){
+  var el = document.getElementById('toastEl');
+  if (!el){
+    el = document.createElement('div');
+    el.id = 'toastEl';
+    el.className = 'toast';
+    document.body.appendChild(el);
+  }
+  el.textContent = msg;
+  el.classList.add('show');
+  clearTimeout(window._toastTimer);
+  window._toastTimer = setTimeout(function(){ el.classList.remove('show'); }, 2200);
+}
+renderNotifPanel();
+
+function toggleNavGroup(ev, gid){
+  ev.stopPropagation();
+  var g = document.querySelector('#sidebar .navgroup[data-group="'+gid+'"]');
+  if (!g) return;
+  var collapsed = g.classList.toggle('collapsed');
+  try{ localStorage.setItem('tliNavCollapse_'+gid, collapsed ? '1' : '0'); }catch(e){}
+}
+(function initNavGroups(){
+  var activeLink = document.querySelector('#sidebar a.active');
+  var activeGroup = activeLink ? activeLink.closest('.navgroup') : null;
+  document.querySelectorAll('#sidebar .navgroup[data-group]').forEach(function(g){
+    var gid = g.dataset.group, saved = null;
+    try{ saved = localStorage.getItem('tliNavCollapse_'+gid); }catch(e){}
+    if (saved === '1') g.classList.add('collapsed');
+    else if (saved === '0') g.classList.remove('collapsed');
+    else if (g !== activeGroup) g.classList.add('collapsed');
+  });
+  if (activeGroup) activeGroup.classList.remove('collapsed');
+})();
+
+/* ================= ESC 鍵關閉目前開啟中的 modal／drawer ================= */
+document.addEventListener('keydown', function(e){
+  if (e.key !== 'Escape') return;
+  if (document.getElementById('createModalMask').classList.contains('open')) closeCreateQuizModal();
+  if (document.getElementById('quizDrawerMask').classList.contains('open')) closeQuizDrawer();
+});
+
+applyStaticI18nA22();
+if (window.TLI_I18N){ TLI_I18N.onRefresh(renderFilterChips); TLI_I18N.onRefresh(renderQuizList); TLI_I18N.onRefresh(applyStaticI18nA22); TLI_I18N.onRefresh(renderNotifPanel); TLI_I18N.init(); }
+</script>
+</body>
+</html>
