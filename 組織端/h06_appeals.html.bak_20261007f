@@ -1,0 +1,625 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<title>請假與申訴審核｜TLI Hub 組織端</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+:root{--navy:#1B4E8C;--navy-dark:#123a68;--orange:#E8792B;--teal:#0F9B79;
+--g50:#F5F7FA;--g200:#E4E7EC;--g500:#667085;--g900:#101828;}
+*{box-sizing:border-box;}
+html,body{overflow-x:hidden;}
+body{margin:0;font-family:"Noto Sans TC","Microsoft JhengHei",system-ui,-apple-system,sans-serif;
+background:var(--g50);color:var(--g900);}
+a{color:var(--navy);}
+.app{display:flex;min-height:100vh;width:100%;background:#fff;}
+.sidebar{width:260px;flex-shrink:0;background:#fff;padding:0;display:flex;flex-direction:column;height:100vh;
+overflow:hidden;border-right:1px solid var(--g200);position:sticky;top:0;align-self:flex-start;transition:left .2s;}
+.sidebar .brand{padding:16px 20px 14px;font-size:14px;font-weight:700;display:flex;flex-direction:column;gap:4px;
+border-bottom:1px solid var(--g200);margin-bottom:6px;text-decoration:none;color:inherit;cursor:pointer;flex-shrink:0;}
+.sidebar .brand-logo{height:28px;width:auto;object-fit:contain;object-position:left center;display:block;}
+.sidebar .brand small{display:block;font-weight:400;font-size:12px;color:var(--g500);margin-top:12px;}
+.sidebar nav{flex:1 1 auto;overflow-y:auto;overflow-x:hidden;padding:8px 8px 8px;}
+.sidebar .sec-label{padding:0 12px;margin:12px 0 8px;font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:#98A2B3;font-weight:600;}
+.sidebar .sec-label:first-child{margin-top:4px;}
+.sidebar nav a{display:flex;align-items:center;gap:12px;height:40px;padding:0 14px;margin:2px 0;border-radius:8px;
+font-size:14px;color:var(--g900);text-decoration:none;}
+.sidebar nav a .navicon{flex-shrink:0;color:var(--g500);}
+.sidebar nav a:hover{background:var(--g50);}
+.sidebar nav a.active{background:#E6EEF8;color:var(--navy);font-weight:600;}
+.sidebar nav a.active .navicon{color:var(--navy);}
+.sidebar-user{display:block;border-top:1px solid var(--g200);padding:10px 12px;margin:0;flex-shrink:0;position:relative;}
+.su-row{display:flex;align-items:center;gap:10px;cursor:pointer;min-width:0;}
+.su-avatar{width:36px;height:36px;border-radius:50%;background:var(--navy);color:#fff;display:flex;
+align-items:center;justify-content:center;font-size:13px;font-weight:600;flex-shrink:0;}
+.su-info{flex:1;min-width:0;display:flex;flex-direction:row;align-items:center;gap:8px;line-height:1.2;}
+.su-name{font-size:14px;font-weight:600;color:var(--g900);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.su-roletag{font-size:12px;background:#E6EEF8;color:var(--navy);padding:1px 7px;border-radius:8px;white-space:nowrap;flex-shrink:0;}
+.su-chevron{color:var(--g500);flex-shrink:0;}
+.su-menu{top:auto;bottom:60px;left:10px;right:10px;width:auto;padding:8px;}
+.su-menu a{display:block;padding:8px 10px;font-size:13px;color:var(--g900);text-decoration:none;border-radius:6px;}
+.su-menu a:hover{background:var(--g50);}
+.main{flex:1;padding:26px 32px 60px;min-width:0;}
+.topbar{display:flex;align-items:center;justify-content:space-between;padding:0 32px;height:56px;
+border-bottom:1px solid var(--g200);position:sticky;top:0;background:#fff;z-index:40;margin:-26px -32px 22px;gap:14px;}
+.hamburger{display:none;background:none;border:none;font-size:19px;cursor:pointer;color:var(--g900);padding:4px 6px;margin-right:4px;}
+.topbar .tb-title{font-size:15px;font-weight:600;color:var(--g900);flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.topbar .tb-actions{display:flex;align-items:center;gap:14px;position:relative;flex-shrink:0;}
+.tb-search{display:flex;align-items:center;gap:6px;background:var(--g50);border:1px solid var(--g200);border-radius:8px;
+padding:6px 10px;width:180px;}
+.tb-search input{border:none;background:none;outline:none;font-size:12.5px;font-family:inherit;width:100%;color:var(--g900);}
+.tb-bellbtn{position:relative;background:none;border:none;cursor:pointer;font-size:17px;padding:4px;line-height:1;}
+.tb-dot{position:absolute;top:0;right:0;width:7px;height:7px;background:#C0392B;border-radius:50%;display:none;}
+.tb-avatarbtn{width:30px;height:30px;border-radius:50%;background:var(--navy);color:#fff;border:none;
+cursor:pointer;font-size:13px;font-weight:600;flex-shrink:0;}
+.tb-panel{display:none;position:absolute;top:44px;right:0;background:#fff;border:1px solid var(--g200);
+border-radius:8px;box-shadow:0 8px 24px rgba(16,24,40,.16);z-index:50;}
+.tb-panel.open{display:block;}
+.tb-notifpanel{width:300px;padding:10px;}
+.tb-notifpanel .tn-head{display:flex;justify-content:space-between;align-items:center;font-size:12.5px;
+padding:4px 6px 8px;border-bottom:1px solid var(--g200);margin-bottom:6px;}
+.tb-notifpanel .tn-head a{font-size:11.5px;cursor:pointer;}
+.tb-notifitem{padding:8px 6px;border-radius:6px;font-size:12.5px;line-height:1.5;}
+.tb-notifitem:hover{background:var(--g50);}
+.tb-notifitem.unread{background:#EEF3FA;}
+.tb-notifitem .tn-t{color:var(--g500);font-size:11px;margin-top:2px;}
+.tb-avatarmenu{width:150px;padding:6px;}
+.tb-avatarmenu a{display:block;padding:8px 10px;font-size:13px;color:var(--g900);text-decoration:none;border-radius:6px;}
+.tb-avatarmenu a:hover{background:var(--g50);}
+.sidebar-backdrop{display:none;position:fixed;inset:0;background:rgba(16,24,40,.4);z-index:110;}
+.pagehead{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:16px;gap:16px;flex-wrap:wrap;}
+.pagehead h1{font-size:20px;margin:0;}
+.pagehead .desc{font-size:12.5px;color:var(--g500);margin-top:5px;line-height:1.6;}
+.btn{display:inline-block;background:var(--navy);color:#fff;border:none;padding:8px 14px;
+border-radius:6px;font-size:13px;cursor:pointer;text-decoration:none;white-space:nowrap;font-family:inherit;}
+.btn.orange{background:var(--orange);}
+.btn.teal{background:var(--teal);}
+.btn.ghost{background:#fff;border:1px solid var(--g200);color:var(--g900);}
+.btn.danger{background:#fff;border:1px solid #F0B4B4;color:#C0392B;}
+.btn:disabled{background:var(--g200)!important;color:var(--g500)!important;cursor:not-allowed!important;}
+.card,.filterband{background:#fff;border:1px solid var(--g200);border-radius:12px;padding:18px;margin-bottom:16px;box-shadow:0 1px 3px rgba(16,24,40,.06);}
+.card h2{font-size:15px;margin:0 0 4px;}
+.card .cardesc{font-size:12px;color:var(--g500);margin-bottom:12px;line-height:1.6;}
+.tablewrap{overflow-x:auto;max-width:100%;}
+table{width:100%;border-collapse:collapse;font-size:13px;}
+th{text-align:left;background:var(--g50);color:var(--g500);font-weight:600;padding:10px 12px;
+border-bottom:1px solid var(--g200);white-space:nowrap;}
+td{padding:10px 12px;border-bottom:1px solid var(--g200);white-space:nowrap;}
+tr.rowlink{cursor:pointer;}
+tr.rowlink:hover td{background:var(--g50);}
+td.wrap-cell{white-space:normal;min-width:200px;max-width:220px;}
+.badge{display:inline-block;padding:2px 9px;border-radius:10px;font-size:11.5px;font-weight:600;white-space:nowrap;}
+.badge.blue{background:#E7EEF8;color:var(--navy);}
+.badge.green{background:#E4F5EE;color:var(--teal);}
+.badge.orange{background:#FCE9DA;color:var(--orange);}
+.badge.grey{background:var(--g200);color:var(--g500);}
+.badge.red{background:#FBE7E7;color:#C0392B;}
+.note{font-size:12px;color:#7a5b1f;background:#FFF8EE;border:1px solid #F3DFB8;padding:9px 11px;border-radius:6px;}
+.formrow{margin-bottom:13px;}
+.formrow label{display:block;font-size:12.5px;color:var(--g500);margin-bottom:4px;}
+.formrow input,.formrow select,.formrow textarea{width:100%;padding:7px 10px;border:1px solid var(--g200);
+border-radius:6px;font-size:13px;box-sizing:border-box;font-family:inherit;}
+.formrow textarea{resize:vertical;min-height:70px;}
+.small{font-size:12px;color:var(--g500);}
+.hint{font-size:11.5px;color:var(--g500);margin-top:3px;}
+.modal-mask{display:none;position:fixed;inset:0;background:rgba(16,24,40,.42);z-index:180;align-items:center;justify-content:center;}
+.modal-mask.open{display:flex;}
+.modal{background:#fff;border-radius:10px;width:460px;max-width:90vw;max-height:85vh;overflow:auto;padding:22px;}
+.modal h3{margin-top:0;font-size:16px;}
+.toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(20px);
+background:#101828;color:#fff;padding:10px 20px;border-radius:8px;font-size:13px;
+opacity:0;pointer-events:none;transition:.2s;z-index:200;max-width:80vw;text-align:center;}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
+/* ---- 右側詳情抽屜 ---- */
+.drawer-mask{display:none;position:fixed;inset:0;background:rgba(16,24,40,.35);z-index:150;}
+.drawer-mask.open{display:block;}
+.drawer{position:fixed;top:0;right:0;height:100vh;width:520px;max-width:94vw;background:#fff;
+box-shadow:-8px 0 24px rgba(16,24,40,.18);z-index:151;transform:translateX(100%);transition:transform .2s;
+display:flex;flex-direction:column;}
+.drawer.open{transform:translateX(0);}
+.drawer-head{padding:18px 20px;border-bottom:1px solid var(--g200);display:flex;justify-content:space-between;align-items:flex-start;flex-shrink:0;}
+.drawer-head h2{font-size:16px;margin:0 0 4px;}
+.drawer-close{background:none;border:none;font-size:20px;cursor:pointer;color:var(--g500);line-height:1;padding:2px 6px;}
+.drawer-close:hover{color:var(--g900);}
+.drawer-body{flex:1;overflow-y:auto;padding:16px 20px 40px;}
+.kv{display:flex;justify-content:space-between;gap:12px;padding:9px 0;border-bottom:1px dashed var(--g200);font-size:13px;}
+.kv:last-child{border-bottom:none;}
+.kv span:first-child{color:var(--g500);flex-shrink:0;}
+.kv span:last-child{text-align:right;}
+.sectiontitle{font-size:13px;font-weight:600;margin:16px 0 8px;color:var(--g900);}
+.sectiontitle:first-child{margin-top:0;}
+.appealtext{font-size:13px;line-height:1.7;color:var(--g900);background:var(--g50);border-radius:8px;padding:12px;}
+.drawer-actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:16px;}
+.reviewinfo{font-size:12.5px;color:var(--g500);background:var(--g50);border-radius:8px;padding:10px 12px;margin-top:16px;line-height:1.7;}
+.filterrow{display:flex;gap:12px;flex-wrap:wrap;align-items:flex-end;margin-bottom:2px;}
+.filterrow .ff{min-width:160px;flex:1;}
+.filterrow .ff label{display:block;font-size:11.5px;color:var(--g500);margin-bottom:4px;}
+.filterrow select{width:100%;padding:7px 10px;border:1px solid var(--g200);border-radius:6px;font-size:13px;font-family:inherit;background:#fff;}
+/* ---- 分頁（請假核准／申訴覆核） ---- */
+.tabbar{display:flex;gap:4px;border-bottom:1px solid var(--g200);margin-bottom:16px;}
+.tabbtn{background:none;border:none;padding:10px 4px;margin-right:22px;font-size:14px;color:var(--g500);cursor:pointer;font-family:inherit;
+border-bottom:2px solid transparent;position:relative;top:1px;}
+.tabbtn.active{color:var(--navy);font-weight:600;border-bottom-color:var(--navy);}
+.tabbtn .tabcount{display:inline-block;background:var(--orange);color:#fff;font-size:11px;font-weight:700;border-radius:9px;
+padding:0 6px;margin-left:6px;}
+.tabpanel{display:none;}
+.tabpanel.active{display:block;}
+.rowactions{display:flex;gap:8px;flex-wrap:wrap;}
+.rowactions .btn{padding:5px 10px;font-size:12px;}
+@media (max-width:1023px){
+.hamburger{display:inline-flex;}
+.sidebar{position:fixed;left:-260px;top:0;height:100vh;width:260px;z-index:120;}
+.sidebar.open{left:0;}
+.sidebar-backdrop.open{display:block;}
+.app{width:100%;}
+.main{padding:16px 16px 40px;}
+.topbar{padding:0 16px;margin:-16px -16px 18px;}
+.tb-search{display:none;}
+.drawer{width:100%;max-width:100%;}
+}
+
+</style>
+</head>
+<body>
+<div class="app">
+<div class="sidebar" id="sidebar">
+<a class="brand" href="h01_dashboard.html"><img class="brand-logo" src="../assets/tli-logo.svg" alt="TLI"><small data-i18n="brand.enterprisePortal">企業管理後台</small></a>
+<nav>
+<div class="sec-label" data-i18n="nav_h.groupLabel">企業管理</div>
+<a data-nav="h01" href="h01_dashboard.html"><svg class="navicon" width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="6" height="6" rx="1"/><rect x="11" y="3" width="6" height="6" rx="1"/><rect x="3" y="11" width="6" height="6" rx="1"/><rect x="11" y="11" width="6" height="6" rx="1"/></svg><span data-i18n="nav_h.h01">儀表板</span></a>
+<a data-nav="h02" href="h02_employees.html"><svg class="navicon" width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="7" cy="7" r="2.5"/><path d="M2.5 16c0-2.5 2-4 4.5-4s4.5 1.5 4.5 4"/><circle cx="14" cy="7.5" r="2"/><path d="M13 12.2c1.8.2 3.2 1.6 3.5 3.8"/></svg><span data-i18n="nav_h.h02">員工管理</span></a>
+<a data-nav="h03" href="h03_reports.html"><svg class="navicon" width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><line x1="4" y1="17" x2="4" y2="10"/><line x1="10" y1="17" x2="10" y2="5"/><line x1="16" y1="17" x2="16" y2="12"/></svg><span data-i18n="nav_h.h03">學習報告</span></a>
+<a data-nav="h05" href="h05_contract.html"><svg class="navicon" width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2h5l3 3v11a1 1 0 0 1-1 1H6a1 1 0 0 1-1-1V3a1 1 0 0 1 1-1z"/><path d="M11 2v3h3"/><line x1="7.5" y1="10" x2="12.5" y2="10"/><line x1="7.5" y1="13" x2="12.5" y2="13"/></svg><span data-i18n="nav_h.h05">合約與時數池</span></a>
+<a data-nav="h06" class="active" href="h06_appeals.html"><svg class="navicon" width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M10 2.3 16 4.5v4.3c0 4-2.4 6.8-6 8.2-3.6-1.4-6-4.2-6-8.2V4.5z"/><polyline points="7.2 9.8 9.2 11.8 13 7.8"/></svg><span data-i18n="nav_h.h06">請假與申訴審核</span></a>
+<a data-nav="h07" href="h07_teacher_comments.html"><svg class="navicon" width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M3 5.5a1.5 1.5 0 0 1 1.5-1.5h11A1.5 1.5 0 0 1 17 5.5v6A1.5 1.5 0 0 1 15.5 13H9l-3.5 3v-3H4.5A1.5 1.5 0 0 1 3 11.5z"/><line x1="6.5" y1="7" x2="13.5" y2="7"/><line x1="6.5" y1="9.5" x2="11" y2="9.5"/></svg><span data-i18n="nav_h.h07">老師評語</span></a>
+<a data-nav="h04" href="h04_api.html"><svg class="navicon" width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><polyline points="7 6 3 10 7 14"/><polyline points="13 6 17 10 13 14"/></svg><span data-i18n="nav_h.h04">資料串接</span></a>
+</nav>
+<div class="sidebar-user" id="sidebarUser">
+<div class="su-row" onclick="toggleSuMenu(event)"><span class="su-avatar">陳</span><span class="su-info"><span class="su-name">陳雅婷 Sarah Chen</span><span class="su-roletag" data-i18n="role.enterpriseAdmin">企業管理者</span></span>
+<svg class="su-chevron" width="14" height="14" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 8 10 12 14 8"/></svg></div>
+<div class="tb-panel su-menu" id="suMenu"><a href="javascript:void(0)" onclick="toast(TLI_I18N.t('功能建置中，敬請期待','This feature is under development'))" data-i18n="common.settings">個人設定</a><a href="../公開網站/p01_home.html" data-i18n="common.gotoWebsite">前往官網</a><a href="javascript:void(0)" onclick="doLogout()" data-i18n="common.logout">登出</a></div>
+</div>
+</div>
+
+<div class="main">
+<div class="topbar">
+<button class="hamburger" onclick="toggleSidebar()" aria-label="開啟選單" data-i18n-aria-label="aria.openMenu"><svg width="18" height="18" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="5.5" x2="17" y2="5.5"/><line x1="3" y1="10" x2="17" y2="10"/><line x1="3" y1="14.5" x2="17" y2="14.5"/></svg></button>
+<div class="tb-title" data-i18n="nav_h.h06">請假與申訴審核</div>
+<div class="tb-actions">
+<div class="tb-search"><svg width="15" height="15" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="8.5" cy="8.5" r="5.5"/><line x1="16.5" y1="16.5" x2="12.6" y2="12.6"/></svg><input type="text" placeholder="搜尋員工" data-i18n-placeholder="h01.searchEmp"></div>
+<button class="tb-bellbtn" onclick="toggleNotif(event)" aria-label="通知" data-i18n-aria-label="aria.notifications"><svg width="17" height="17" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M10 2.5c-2.2 0-4 1.8-4 4v2.3c0 .6-.2 1.2-.6 1.7L4 12.5h12l-1.4-2c-.4-.5-.6-1.1-.6-1.7V6.5c0-2.2-1.8-4-4-4z"/><path d="M8.2 15.5a1.8 1.8 0 0 0 3.6 0"/></svg><span class="tb-dot" id="tbDot"></span></button>
+<div class="tb-panel tb-notifpanel" id="notifPanel"></div>
+<button class="tb-avatarbtn" onclick="toggleAvatarMenu(event)" aria-label="使用者選單" data-i18n-aria-label="aria.userMenu">陳</button>
+<div class="tb-panel tb-avatarmenu" id="avatarMenu"><a href="javascript:void(0)" onclick="toast(TLI_I18N.t('功能建置中，敬請期待','This feature is under development'))" data-i18n="common.settings">個人設定</a><a href="../公開網站/p01_home.html" data-i18n="common.gotoWebsite">前往官網</a><a href="javascript:void(0)" onclick="doLogout()" data-i18n="common.logout">登出</a></div>
+</div>
+</div>
+<div class="sidebar-backdrop" id="sidebarBackdrop" onclick="closeSidebar()"></div>
+
+
+<div class="pagehead">
+<div><h1 data-i18n="nav_h.h06">請假與申訴審核</h1><div class="desc" data-i18n="h06.pageDesc">「請假核准」處理需 HR 事前核准的請假申請；「申訴覆核」處理員工對超額請假扣時數判定提出的申訴。兩者為不同流程，各自獨立審核。</div></div>
+</div>
+
+<div class="tabbar">
+<button class="tabbtn active" id="tabbtn-leave" onclick="switchTab('leave')" data-i18n="h06.tabLeave">請假核准<span class="tabcount" id="leaveTabCount" style="display:none"></span></button>
+<button class="tabbtn" id="tabbtn-appeal" onclick="switchTab('appeal')" data-i18n="h06.tabAppeal">申訴覆核<span class="tabcount" id="appealTabCount" style="display:none"></span></button>
+</div>
+
+<!-- ===== 分頁一：請假核准 ===== -->
+<div class="tabpanel active" id="panel-leave">
+
+<div class="filterband">
+<div class="filterrow">
+<div class="ff"><label data-i18n="common.status">狀態</label><select id="fLeaveStatus" onchange="renderLeaveTable()">
+<option value="" data-i18n="h03.optAllStatus">全部狀態</option><option value="pending" data-i18n="h06.stLeavePending">待核准</option><option value="approved" data-i18n="h06.stLeaveApproved">已核准</option><option value="rejected" data-i18n="h06.stLeaveRejected">已退回</option>
+</select></div>
+<div class="ff"><label data-i18n="h01.lblDept">部門</label><select id="fLeaveDept" onchange="renderLeaveTable()"><option value="" data-i18n="h01.optAllDept">全部部門</option></select></div>
+</div>
+</div>
+
+<div class="card">
+<h2 data-i18n="h06.leaveListTitle">請假申請清單</h2>
+<div class="cardesc" data-i18n="h06.leaveListDesc">員工送出請假申請後，須經 HR 核准才會生效；退回後該堂課維持原排課，員工可重新申請或改期。</div>
+<div class="tablewrap"><table>
+<thead><tr><th data-i18n="h06.thEmp">員工</th><th data-i18n="h01.lblDept">部門</th><th data-i18n="h06.thClass">課堂</th><th data-i18n="h06.thTime">時間</th><th data-i18n="h06.thReason">原因</th><th data-i18n="h06.thSubmittedAt">送出時間</th><th data-i18n="common.status">狀態</th><th data-i18n="h06.thActionOrNote">操作／覆核意見</th></tr></thead>
+<tbody id="leaveTbody"></tbody>
+</table></div>
+</div>
+
+</div>
+
+<!-- ===== 分頁二：申訴覆核 ===== -->
+<div class="tabpanel" id="panel-appeal">
+
+<div class="filterband">
+<div class="filterrow">
+<div class="ff"><label data-i18n="common.status">狀態</label><select id="fStatus" onchange="renderTable()">
+<option value="" data-i18n="h03.optAllStatus">全部狀態</option><option value="pending" data-i18n="h06.stAppealPending">待覆核</option><option value="approved" data-i18n="h06.stAppealApproved">已通過</option><option value="rejected" data-i18n="h06.stAppealRejected">已駁回</option><option value="consultant" data-i18n="h06.stAppealConsultant">顧問覆核中</option>
+</select></div>
+<div class="ff"><label data-i18n="h01.lblDept">部門</label><select id="fDept" onchange="renderTable()"><option value="" data-i18n="h01.optAllDept">全部部門</option></select></div>
+</div>
+</div>
+
+<div class="card">
+<h2 data-i18n="h06.appealListTitle">申訴清單</h2>
+<div class="cardesc" data-i18n="h06.appealListDesc">點列可查看完整申訴說明與該員工本月免扣使用情形。</div>
+<div class="tablewrap"><table>
+<thead><tr><th data-i18n="h06.thEmp">員工</th><th data-i18n="h01.lblDept">部門</th><th data-i18n="h06.thClassDate">課堂日期</th><th data-i18n="h06.thOriginalRuling">原判定</th><th data-i18n="h06.thReasonCat">申訴原因分類</th><th data-i18n="h06.thDesc">說明</th><th data-i18n="h06.thSubmittedAt">送出時間</th><th data-i18n="common.status">狀態</th></tr></thead>
+<tbody id="appealTbody"></tbody>
+</table></div>
+</div>
+
+</div>
+
+</div>
+</div>
+
+<!-- 詳情抽屜 -->
+<div class="drawer-mask" id="drawerMask" onclick="closeDrawer()"></div>
+<div class="drawer" id="drawer">
+<div class="drawer-head"><div><h2 id="drTitle">—</h2><div class="small" id="drSub">—</div></div><button class="drawer-close" onclick="closeDrawer()">&times;</button></div>
+<div class="drawer-body" id="drawerBody"></div>
+</div>
+
+<!-- 覆核決定 modal（通過／駁回皆走此二次確認） -->
+<div class="modal-mask" id="decisionModal" onclick="if(event.target===this) closeModal('decisionModal')"><div class="modal">
+<h3 id="decisionTitle">覆核決定</h3>
+<div class="note" id="decisionNote" style="margin-bottom:14px"></div>
+<div class="formrow"><label data-i18n="h06.lblReviewNote">覆核意見（必填）</label><textarea id="decisionNoteInput" placeholder="請簡述覆核依據，例如審核了何種佐證文件" data-i18n-placeholder="h06.decisionNotePlaceholder"></textarea></div>
+<div style="text-align:right;margin-top:8px"><button class="btn ghost" onclick="closeModal('decisionModal')" data-i18n="common.cancel">取消</button> <button class="btn" id="decisionConfirmBtn" onclick="confirmDecision()" data-i18n="h06.btnConfirm">確認</button></div>
+</div></div>
+
+<!-- 轉顧問覆核 modal -->
+<div class="modal-mask" id="toConsultantModal" onclick="if(event.target===this) closeModal('toConsultantModal')"><div class="modal">
+<h3 data-i18n="h06.toConsultantTitle">轉顧問覆核</h3>
+<div class="note" style="margin-bottom:14px" data-i18n="h06.toConsultantNote">轉出後本件將由 TLI 顧問處理，HR 端不可再直接通過或駁回，如需追回請聯繫顧問。</div>
+<div style="text-align:right;margin-top:8px"><button class="btn ghost" onclick="closeModal('toConsultantModal')" data-i18n="common.cancel">取消</button> <button class="btn teal" onclick="confirmToConsultant()" data-i18n="h06.btnConfirmTransfer">確認轉出</button></div>
+</div></div>
+
+<!-- 請假核准決定 modal（核准／退回皆走此二次確認） -->
+<div class="modal-mask" id="leaveDecisionModal" onclick="if(event.target===this) closeModal('leaveDecisionModal')"><div class="modal">
+<h3 id="leaveDecisionTitle">請假核准決定</h3>
+<div class="note" id="leaveDecisionNote" style="margin-bottom:14px"></div>
+<div class="formrow"><label data-i18n="h06.lblReviewNote">覆核意見（必填）</label><textarea id="leaveDecisionNoteInput" placeholder="請簡述核准或退回依據" data-i18n-placeholder="h06.leaveDecisionNotePlaceholder"></textarea></div>
+<div style="text-align:right;margin-top:8px"><button class="btn ghost" onclick="closeModal('leaveDecisionModal')" data-i18n="common.cancel">取消</button> <button class="btn" id="leaveDecisionConfirmBtn" onclick="confirmLeaveDecision()" data-i18n="h06.btnConfirm">確認</button></div>
+</div></div>
+
+<script src="../assets/_i18n_dict.js"></script>
+<script src="../assets/_i18n_dict_org.js"></script>
+<script src="../assets/_i18n.js"></script>
+<script>
+function seededRand(seed){ var x=Math.sin(seed*9301+49297)*233280; return x-Math.floor(x); }
+function addDays(baseStr, days){ var d=new Date(baseStr+'T00:00:00'); d.setDate(d.getDate()+days); return d.toISOString().slice(0,10); }
+function T(zh, en){ return window.TLI_I18N ? TLI_I18N.t(zh, en) : zh; }
+
+/* ===== 申訴示範資料 ===== */
+/* 部門清單改讀「員工管理」「合約與時數池」共用的部門主檔（localStorage: tliDemoOrgDepts），
+   避免本頁另外寫死一組跟公司真正部門管理對不上的部門名稱；若尚未在 h05 儲存過異動，使用下方預設值。 */
+var LS_DEPT_KEY = 'tliDemoOrgDepts';
+function defaultOrgDepts(){
+  return [
+    {id:'d0', name:'業務部', quotaLimit:1200, used:860, status:'啟用'},
+    {id:'d1', name:'研發部', quotaLimit:1400, used:1055, status:'啟用'},
+    {id:'d2', name:'廠務部', quotaLimit:900, used:410, status:'啟用'},
+    {id:'d3', name:'人資部', quotaLimit:600, used:198, status:'啟用'},
+    {id:'d4', name:'製造部', quotaLimit:1900, used:1717, status:'啟用'}
+  ];
+}
+function loadOrgDepts(){
+  try{ var raw = localStorage.getItem(LS_DEPT_KEY); if (raw){ var arr = JSON.parse(raw); if (arr && arr.length) return arr; } }catch(err){}
+  return defaultOrgDepts();
+}
+var DEPTS_ALL = loadOrgDepts();
+var DEPTS = DEPTS_ALL.filter(function(d){ return d.status==='啟用'; }).map(function(d){ return d.name; });
+var SITE_LIST = [{id:'us', name:'美國廠區'}, {id:'jp', name:'日本廠區'}];
+var US_NAMES = ['John Miller','Emily Tran','David Park','Rachel Kim','Michael Brown','Sophia Garcia'];
+var JP_NAMES = ['田中 涼子','佐藤 健一','鈴木 美咲','高橋 大輔','伊藤 由美','渡辺 翔太'];
+var REASON_CATS_ZH = ['天災','緊急就醫','企業出差','其他不可歸責事由'];
+var REASON_CATS_EN = ['Natural Disaster','Emergency Medical Treatment','Business Trip','Other Non-Attributable Reason'];
+var REASON_CATS = REASON_CATS_ZH;
+var REASON_NOTES = {
+  '天災':'因颱風來襲，廠區當日發布停班停課通知，無法配合上課時段。',
+  '緊急就醫':'當日臨時發燒送急診，附有診斷證明可提供查核。',
+  '企業出差':'配合公司安排臨時出差支援其他廠區產線，出差證明可提供查核。',
+  '其他不可歸責事由':'當日系統臨時停電導致無法連線上課，非個人因素造成。'
+};
+/* 狀態分布：3 筆待覆核（與 h01「近期需關注」的 PENDING_APPEALS_COUNT 對應）、其餘分散在已通過／已駁回／顧問覆核中 */
+var STATUS_PLAN = ['pending','pending','pending','approved','approved','rejected','rejected','consultant','approved','rejected'];
+function makeAppeal(i){
+  var siteIdx = i % 2;
+  var pool = siteIdx===0 ? US_NAMES : JP_NAMES;
+  var name = pool[Math.floor(i/2) % pool.length];
+  var dept = DEPTS[i % DEPTS.length];
+  var reason = REASON_CATS[i % REASON_CATS.length];
+  var status = STATUS_PLAN[i % STATUS_PLAN.length];
+  var submitted = addDays('2026-09-08', -Math.floor(seededRand(i*13+3)*10));
+  var waivedUsed = 2; /* 每月免扣次數固定 2 次，申訴案均為已用完免扣才會進入本頁 */
+  var rec = {
+    id:'ap'+i, name:name, dept:dept, site:SITE_LIST[siteIdx].name,
+    classDate: addDays('2026-09-08', -Math.floor(seededRand(i*7+11)*14)),
+    originalZh:'缺席扣時數', originalEn:'Absence Deduction',
+    reasonCat: reason, reasonNote: REASON_NOTES[reason],
+    submittedAt: submitted+' '+(9+Math.floor(seededRand(i*5+2)*8))+':'+(seededRand(i*9+4)<0.5?'00':'30'),
+    status: status, waivedUsed: waivedUsed, waivedTotal: 2,
+    reviewNote:null, reviewer:null, reviewedAt:null
+  };
+  if (status==='approved'){ rec.reviewNote='已核對出差證明，同意改記請假。'; rec.reviewer='HR 陳雅婷'; rec.reviewedAt=addDays(submitted,1); }
+  if (status==='rejected'){ rec.reviewNote='說明與規定不符，未附具體佐證文件，維持原判定。'; rec.reviewer='HR 陳雅婷'; rec.reviewedAt=addDays(submitted,1); }
+  return rec;
+}
+var APPEALS = []; for (var i=0;i<STATUS_PLAN.length;i++) APPEALS.push(makeAppeal(i));
+
+var STATUS_META = {
+  pending:{lblZh:'待覆核', lblEn:'Pending Review', cls:'orange'},
+  approved:{lblZh:'已通過', lblEn:'Approved', cls:'green'},
+  rejected:{lblZh:'已駁回', lblEn:'Rejected', cls:'red'},
+  consultant:{lblZh:'顧問覆核中', lblEn:'Advisor Reviewing', cls:'blue'}
+};
+function reasonCatText(zh){ var i=REASON_CATS_ZH.indexOf(zh); return T(zh, i>=0?REASON_CATS_EN[i]:zh); }
+
+(function initFilterOptions(){
+  var dsel = document.getElementById('fDept');
+  DEPTS.forEach(function(d){ var o=document.createElement('option'); o.value=d; o.textContent=d; dsel.appendChild(o); });
+  var ldsel = document.getElementById('fLeaveDept');
+  DEPTS.forEach(function(d){ var o=document.createElement('option'); o.value=d; o.textContent=d; ldsel.appendChild(o); });
+})();
+
+/* ===== 請假核准示範資料（合約設定為需 HR 核准時才會有此清單） ===== */
+var CLASS_POOL = ['中文一對一－商務會話','中文一對一－聽力加強','中文一對一－閱讀寫作','中文一對一－會話進階'];
+var LEAVE_REASON_POOL = ['臨時加班，無法配合上課時段','身體不適，需請假就醫','出差在外，網路不穩定','小孩臨時生病需照顧'];
+var LEAVE_STATUS_PLAN = ['pending','pending','approved','approved','rejected'];
+function makeLeaveRequest(i){
+  var siteIdx = i % 2;
+  var pool = siteIdx===0 ? US_NAMES : JP_NAMES;
+  var name = pool[(Math.floor(i/2)+3) % pool.length];
+  var dept = DEPTS[(i+2) % DEPTS.length];
+  var status = LEAVE_STATUS_PLAN[i % LEAVE_STATUS_PLAN.length];
+  var classDate = addDays('2026-09-10', Math.floor(seededRand(i*23+5)*10));
+  var submitted = addDays(classDate, -Math.floor(seededRand(i*29+7)*3)-1);
+  var rec = {
+    id:'lv'+i, name:name, dept:dept, site:SITE_LIST[siteIdx].name,
+    classInfo: CLASS_POOL[i % CLASS_POOL.length],
+    classTime: classDate+' '+(9+Math.floor(seededRand(i*31+11)*8))+':00',
+    reason: LEAVE_REASON_POOL[i % LEAVE_REASON_POOL.length],
+    submittedAt: submitted+' '+(9+Math.floor(seededRand(i*37+13)*8))+':'+(seededRand(i*41+17)<0.5?'00':'30'),
+    status: status, note:null, reviewer:null, reviewedAt:null
+  };
+  if (status==='approved'){ rec.note='已核准，該堂課改記為請假。'; rec.reviewer='HR 陳雅婷'; rec.reviewedAt=addDays(submitted,1); }
+  if (status==='rejected'){ rec.note='與部門主管確認後，該時段仍需到班，請改期或另約時間。'; rec.reviewer='HR 陳雅婷'; rec.reviewedAt=addDays(submitted,1); }
+  return rec;
+}
+var LEAVE_REQUESTS = []; for (var li=0; li<LEAVE_STATUS_PLAN.length; li++) LEAVE_REQUESTS.push(makeLeaveRequest(li));
+var LEAVE_STATUS_META = {
+  pending:{lblZh:'待核准', lblEn:'Pending Approval', cls:'orange'},
+  approved:{lblZh:'已核准', lblEn:'Approved', cls:'green'},
+  rejected:{lblZh:'已退回', lblEn:'Returned', cls:'red'}
+};
+function renderLeaveTable(){
+  var fs = document.getElementById('fLeaveStatus').value, fd = document.getElementById('fLeaveDept').value;
+  var rows = LEAVE_REQUESTS.filter(function(r){ return (!fs || r.status===fs) && (!fd || r.dept===fd); });
+  var tbody = document.getElementById('leaveTbody');
+  if (!rows.length){
+    tbody.innerHTML = '<tr><td colspan="8" style="text-align:center;color:var(--g500);white-space:normal">'+T('目前沒有符合篩選條件的請假申請','No leave requests match the filters')+'</td></tr>';
+    updateTabCounts();
+    return;
+  }
+  tbody.innerHTML = rows.map(function(r){
+    var meta = LEAVE_STATUS_META[r.status];
+    var actionCell;
+    if (r.status==='pending'){
+      actionCell = '<div class="rowactions"><button class="btn teal" onclick="openLeaveDecision(\''+r.id+'\',\'approve\')">'+T('核准','Approve')+'</button>'+
+        '<button class="btn danger" onclick="openLeaveDecision(\''+r.id+'\',\'reject\')">'+T('退回','Return')+'</button></div>';
+    } else {
+      actionCell = '<span class="small">'+r.note+'<br>'+r.reviewer+'　'+r.reviewedAt+'</span>';
+    }
+    return '<tr><td>'+r.name+'</td><td>'+r.dept+'</td><td>'+r.classInfo+'</td><td>'+r.classTime+'</td>'+
+      '<td class="wrap-cell">'+r.reason+'</td><td>'+r.submittedAt+'</td>'+
+      '<td><span class="badge '+meta.cls+'">'+T(meta.lblZh,meta.lblEn)+'</span></td>'+
+      '<td class="wrap-cell">'+actionCell+'</td></tr>';
+  }).join('');
+  updateTabCounts();
+}
+var leaveDecisionId = null, leaveDecisionKind = null;
+function openLeaveDecision(id, kind){
+  leaveDecisionId = id; leaveDecisionKind = kind;
+  document.getElementById('leaveDecisionTitle').textContent = kind==='approve' ? T('確認核准請假','Confirm Approve Leave') : T('確認退回請假','Confirm Return Leave Request');
+  document.getElementById('leaveDecisionNote').textContent = kind==='approve'
+    ? T('核准後，該堂課將記為「請假」並生效，不計入出勤率分母缺席。','Once approved, this class will be recorded as “Leave” and take effect; it will not be counted as an absence in the attendance rate.')
+    : T('退回後，該堂課維持原排課，員工可重新申請請假或改期。','Once returned, this class keeps its original schedule; the employee may reapply for leave or reschedule.');
+  document.getElementById('leaveDecisionNoteInput').value = '';
+  document.getElementById('leaveDecisionModal').classList.add('open');
+}
+function confirmLeaveDecision(){
+  var note = document.getElementById('leaveDecisionNoteInput').value.trim();
+  if (!note){ toast(T('請先填寫覆核意見','Please fill in review notes first')); return; }
+  var r = LEAVE_REQUESTS.find(function(x){return x.id===leaveDecisionId;});
+  if (!r) return;
+  r.status = leaveDecisionKind==='approve' ? 'approved' : 'rejected';
+  r.note = note; r.reviewer = 'HR 陳雅婷'; r.reviewedAt = '2026-09-10';
+  closeModal('leaveDecisionModal');
+  renderLeaveTable();
+  toast(leaveDecisionKind==='approve' ? T('已核准請假，該堂課已改記為請假','Leave approved; the class has been re-recorded as leave') : T('已退回請假申請','Leave request returned'));
+}
+function updateTabCounts(){
+  var pendingLeave = LEAVE_REQUESTS.filter(function(r){return r.status==='pending';}).length;
+  var pendingAppeal = APPEALS.filter(function(a){return a.status==='pending';}).length;
+  var lc = document.getElementById('leaveTabCount'), ac = document.getElementById('appealTabCount');
+  if (pendingLeave){ lc.style.display='inline-block'; lc.textContent=pendingLeave; } else { lc.style.display='none'; }
+  if (pendingAppeal){ ac.style.display='inline-block'; ac.textContent=pendingAppeal; } else { ac.style.display='none'; }
+}
+function switchTab(name){
+  document.getElementById('tabbtn-leave').classList.toggle('active', name==='leave');
+  document.getElementById('tabbtn-appeal').classList.toggle('active', name==='appeal');
+  document.getElementById('panel-leave').classList.toggle('active', name==='leave');
+  document.getElementById('panel-appeal').classList.toggle('active', name==='appeal');
+}
+renderLeaveTable();
+
+function renderTable(){
+  var fs = document.getElementById('fStatus').value, fd = document.getElementById('fDept').value;
+  var rows = APPEALS.filter(function(a){
+    return (!fs || a.status===fs) && (!fd || a.dept===fd);
+  });
+  var tbody = document.getElementById('appealTbody');
+  if (!rows.length){
+    tbody.innerHTML = '<tr><td colspan="8" style="text-align:center;color:var(--g500);white-space:normal">'+T('目前沒有符合篩選條件的申訴案件','No appeals match the filters')+'</td></tr>';
+    if (typeof updateTabCounts==='function') updateTabCounts();
+    return;
+  }
+  tbody.innerHTML = rows.map(function(a){
+    var meta = STATUS_META[a.status];
+    return '<tr class="rowlink" onclick="openDrawer(\''+a.id+'\')">'+
+      '<td>'+a.name+'</td><td>'+a.dept+'</td><td>'+a.classDate+'</td>'+
+      '<td><span class="badge red">'+T(a.originalZh,a.originalEn)+'</span></td>'+
+      '<td>'+reasonCatText(a.reasonCat)+'</td>'+
+      '<td class="wrap-cell">'+a.reasonNote+'</td>'+
+      '<td>'+a.submittedAt+'</td>'+
+      '<td><span class="badge '+meta.cls+'">'+T(meta.lblZh,meta.lblEn)+'</span></td></tr>';
+  }).join('');
+  if (typeof updateTabCounts==='function') updateTabCounts();
+}
+
+/* ===== 詳情抽屜 ===== */
+var drawerCurrentId = null;
+function openDrawer(id){
+  drawerCurrentId = id;
+  var a = APPEALS.find(function(x){return x.id===id;});
+  if (!a) return;
+  document.getElementById('drTitle').textContent = a.name;
+  document.getElementById('drSub').textContent = a.dept+'｜'+a.site;
+  var meta = STATUS_META[a.status];
+  var body = ''+
+    '<div class="kv"><span>'+T('課堂日期','Class Date')+'</span><span>'+a.classDate+'</span></div>'+
+    '<div class="kv"><span>'+T('原判定','Original Ruling')+'</span><span><span class="badge red">'+T(a.originalZh,a.originalEn)+'</span></span></div>'+
+    '<div class="kv"><span>'+T('申訴原因分類','Appeal Reason Category')+'</span><span>'+reasonCatText(a.reasonCat)+'</span></div>'+
+    '<div class="kv"><span>'+T('送出時間','Submitted At')+'</span><span>'+a.submittedAt+'</span></div>'+
+    '<div class="kv"><span>'+T('目前狀態','Current Status')+'</span><span><span class="badge '+meta.cls+'">'+T(meta.lblZh,meta.lblEn)+'</span></span></div>'+
+    '<div class="sectiontitle">'+T('申訴說明','Appeal Description')+'</div>'+
+    '<div class="appealtext">'+a.reasonNote+'</div>'+
+    '<div class="sectiontitle">'+T('本月免扣使用情形','This Month\'s No-Deduction Usage')+'</div>'+
+    '<div class="appealtext">'+T('本月免扣次數已用 ','This month\'s no-deduction allowance used: ')+a.waivedUsed+'／'+a.waivedTotal+T(' 次（已用完），本次請假因超過免扣次數，依規則預設記為缺席並扣時數。',' time(s) (fully used); since this leave exceeds the no-deduction allowance, it defaults to being recorded as an absence with hours deducted per policy.')+'</div>';
+  if (a.status==='pending'){
+    body += '<div class="drawer-actions">'+
+      '<button class="btn teal" onclick="openDecision(\'approve\')">'+T('通過（改記請假不扣）','Approve (re-record as leave, no deduction)')+'</button>'+
+      '<button class="btn danger" onclick="openDecision(\'reject\')">'+T('駁回','Reject')+'</button>'+
+      '<button class="btn ghost" onclick="openToConsultant()">'+T('轉顧問覆核','Transfer to Advisor')+'</button>'+
+      '</div>';
+  } else if (a.status==='consultant'){
+    body += '<div class="reviewinfo">'+T('本件已轉由 TLI 顧問處理，HR 端無需再次處理，覆核結果將於處理完成後同步更新狀態。','This case has been transferred to a TLI advisor; no further action is needed from HR. The status will update automatically once the review is complete.')+'</div>';
+  } else {
+    body += '<div class="reviewinfo">'+T('覆核意見：','Review notes: ')+a.reviewNote+'<br>'+T('覆核人：','Reviewer: ')+a.reviewer+'　'+T('覆核時間：','Reviewed at: ')+a.reviewedAt+'</div>';
+  }
+  document.getElementById('drawerBody').innerHTML = body;
+  document.getElementById('drawer').classList.add('open');
+  document.getElementById('drawerMask').classList.add('open');
+}
+function closeDrawer(){
+  document.getElementById('drawer').classList.remove('open');
+  document.getElementById('drawerMask').classList.remove('open');
+}
+
+/* ===== 覆核決定：通過／駁回，二次確認＋填覆核意見 ===== */
+var decisionKind = null;
+function openDecision(kind){
+  decisionKind = kind;
+  document.getElementById('decisionTitle').textContent = kind==='approve' ? T('確認通過申訴','Confirm Approve Appeal') : T('確認駁回申訴','Confirm Reject Appeal');
+  document.getElementById('decisionNote').textContent = kind==='approve'
+    ? T('通過後，該堂課將改記為「請假」，不扣時數，此動作將計入覆核紀錄。','Once approved, this class will be re-recorded as “Leave” with no hour deduction; this action will be logged.')
+    : T('駁回後，該堂課維持記為「缺席」並扣時數，此動作將計入覆核紀錄。','Once rejected, this class remains recorded as “Absent” with hours deducted; this action will be logged.');
+  document.getElementById('decisionNoteInput').value = '';
+  document.getElementById('decisionModal').classList.add('open');
+}
+function confirmDecision(){
+  var note = document.getElementById('decisionNoteInput').value.trim();
+  if (!note){ toast(T('請先填寫覆核意見','Please fill in review notes first')); return; }
+  var a = APPEALS.find(function(x){return x.id===drawerCurrentId;});
+  if (!a) return;
+  a.status = decisionKind==='approve' ? 'approved' : 'rejected';
+  a.reviewNote = note; a.reviewer = 'HR 陳雅婷'; a.reviewedAt = '2026-09-08';
+  closeModal('decisionModal');
+  renderTable();
+  openDrawer(a.id);
+  toast(decisionKind==='approve' ? T('已通過申訴，該堂課已改記為請假','Appeal approved; the class has been re-recorded as leave') : T('已駁回申訴，維持原判定','Appeal rejected; the original ruling stands'));
+}
+
+/* ===== 轉顧問覆核 ===== */
+function openToConsultant(){ document.getElementById('toConsultantModal').classList.add('open'); }
+function confirmToConsultant(){
+  var a = APPEALS.find(function(x){return x.id===drawerCurrentId;});
+  if (!a) return;
+  a.status = 'consultant';
+  closeModal('toConsultantModal');
+  renderTable();
+  openDrawer(a.id);
+  toast(T('已轉顧問覆核，說明將由 TLI 顧問處理','Transferred to advisor review; a TLI advisor will handle this'));
+}
+function closeModal(id){ document.getElementById(id).classList.remove('open'); }
+/* ESC 鍵關閉目前開啟中的 modal 或抽屜（modal 蓋在抽屜上方時，先關 modal，抽屜留著） */
+document.addEventListener('keydown', function(e){
+  if (e.key !== 'Escape') return;
+  var opens = document.querySelectorAll('.modal-mask.open');
+  if (opens.length){ opens[opens.length-1].classList.remove('open'); return; }
+  if (document.getElementById('drawer').classList.contains('open')) closeDrawer();
+});
+
+renderTable();
+
+/* ===== 由儀表板通知深連結進入：?tab=leave|appeal&status=<狀態> 自動切到對應分頁並套用狀態篩選 =====
+   示範資料的姓名為隨機姓名池產生，與儀表板通知文字中的具名人物非同一來源，故只能定位到「分頁＋狀態」，
+   無法反白到某一特定筆（若要精確對應，需先統一兩處的示範資料來源）。 */
+function applyDashboardQuery(){
+  var params = new URLSearchParams(window.location.search);
+  var tab = params.get('tab') === 'appeal' ? 'appeal' : (params.get('tab') === 'leave' ? 'leave' : null);
+  var status = params.get('status');
+  if(tab) switchTab(tab);
+  if(status){
+    if(tab==='appeal'){
+      var sel = document.getElementById('fStatus');
+      if(sel && Array.prototype.some.call(sel.options,function(o){return o.value===status;})){ sel.value=status; renderTable(); }
+    } else {
+      var lsel = document.getElementById('fLeaveStatus');
+      if(lsel && Array.prototype.some.call(lsel.options,function(o){return o.value===status;})){ lsel.value=status; renderLeaveTable(); }
+    }
+  }
+}
+applyDashboardQuery();
+
+/* ===== 共用：側欄／頂欄／通知／登出／toast ===== */
+function toggleSidebar(){ document.getElementById('sidebar').classList.toggle('open'); document.getElementById('sidebarBackdrop').classList.toggle('open'); }
+function closeSidebar(){ document.getElementById('sidebar').classList.remove('open'); document.getElementById('sidebarBackdrop').classList.remove('open'); }
+function toggleSuMenu(ev){ ev.stopPropagation(); closePanel('notifPanel'); closePanel('avatarMenu'); document.getElementById('suMenu').classList.toggle('open'); }
+function closePanel(id){ var el=document.getElementById(id); if (el) el.classList.remove('open'); }
+document.addEventListener('click', function(){ closePanel('suMenu'); closePanel('notifPanel'); closePanel('avatarMenu'); });
+var NOTIFS = [
+  {tzh:'王大明尚未完成本月「廠務部」出勤率確認', ten:'Wang Daming has not completed this month\'s attendance confirmation for the "Manufacturing Dept."', time:'1 小時前', timeEn:'1 hour ago', unread:true},
+  {tzh:'「資料串接」申請已受理，TLI 顧問將於 3 個工作日內與您聯繫', ten:'Your "Data Integration" request has been received; a TLI advisor will contact you within 3 business days', time:'今天 08:40', timeEn:'Today 08:40', unread:true},
+  {tzh:'系統已產生上月學習報告 PDF，可至「學習報告」下載', ten:'Last month\'s learning report PDF has been generated; download it from "Learning Reports"', time:'昨天', timeEn:'Yesterday', unread:false}
+];
+function renderNotifPanel(){
+  var panel = document.getElementById('notifPanel'); if (!panel) return;
+  var unread = NOTIFS.filter(function(n){return n.unread;}).length;
+  var dot = document.getElementById('tbDot'); if (dot) dot.style.display = unread ? 'block' : 'none';
+  panel.innerHTML = '<div class="tn-head"><span>'+T('通知（','Notifications (')+unread+T(' 則未讀）',' unread)')+'</span><a href="javascript:void(0)" onclick="markAllRead(event)">'+T('全部標為已讀','Mark All as Read')+'</a></div>'+
+    NOTIFS.map(function(n){ return '<div class="tb-notifitem'+(n.unread?' unread':'')+'">'+T(n.tzh,n.ten)+'<div class="tn-t">'+T(n.time,n.timeEn)+'</div></div>'; }).join('');
+}
+function markAllRead(ev){ if (ev) ev.stopPropagation(); NOTIFS.forEach(function(n){n.unread=false;}); renderNotifPanel(); }
+function toggleNotif(ev){ ev.stopPropagation(); closePanel('avatarMenu'); closePanel('suMenu'); var p=document.getElementById('notifPanel'); p.classList.toggle('open'); if (p.classList.contains('open')) renderNotifPanel(); }
+function toggleAvatarMenu(ev){ ev.stopPropagation(); closePanel('notifPanel'); closePanel('suMenu'); document.getElementById('avatarMenu').classList.toggle('open'); }
+function doLogout(){ location.href = '../公開網站/p07_login_register.html'; }
+function toast(msg){
+  var el = document.getElementById('toastEl');
+  if (!el){ el=document.createElement('div'); el.id='toastEl'; el.className='toast'; document.body.appendChild(el); }
+  el.textContent = msg; el.classList.add('show');
+  clearTimeout(window._toastTimer);
+  window._toastTimer = setTimeout(function(){ el.classList.remove('show'); }, 2400);
+}
+if (window.TLI_I18N){
+  TLI_I18N.onRefresh(renderNotifPanel);
+  TLI_I18N.onRefresh(renderLeaveTable);
+  TLI_I18N.onRefresh(renderTable);
+  TLI_I18N.init();
+}
+renderNotifPanel();
+</script>
+</body>
+</html>

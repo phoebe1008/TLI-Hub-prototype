@@ -1,0 +1,762 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>TLI Hub 教師端－我的學生</title>
+<style>
+:root{
+  --c-primary:#1B4E8C;--c-primary-dark:#123A68;--c-accent:#E8792B;--c-accent-dark:#CF691F;--c-secondary:#0F9B79;
+  --c-bg:#F5F7FA;--c-border:#E4E7EC;--c-muted:#667085;--c-text:#101828;
+  --radius:12px;--radius-sm:8px;--shadow:0 1px 3px rgba(16,24,40,.08),0 1px 2px rgba(16,24,40,.04);--shadow-lg:0 8px 24px rgba(16,24,40,.16);
+  --topbar-h:52px;--bottomnav-h:64px;
+}
+*{box-sizing:border-box;}
+html,body{margin:0;padding:0;}
+body{font-family:"Noto Sans TC","Microsoft JhengHei",system-ui,-apple-system,"Segoe UI",sans-serif;background:var(--c-bg);color:var(--c-text);line-height:1.55;font-size:15px;-webkit-tap-highlight-color:transparent;}
+a{color:inherit;text-decoration:none;}
+img,svg{display:block;}
+button{font-family:inherit;}
+button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible{outline:2px solid var(--c-primary);outline-offset:2px;}
+.app{min-height:100vh;position:relative;}
+.topbar{position:sticky;top:0;z-index:60;height:var(--topbar-h);background:#fff;border-bottom:1px solid var(--c-border);display:flex;align-items:center;justify-content:space-between;padding:0 14px;gap:10px;}
+.topbar-left{display:flex;align-items:center;gap:8px;min-width:0;}
+.topbar-logo-wrap{width:26px;height:22px;overflow:hidden;position:relative;flex:none;}
+.topbar-logo-wrap img{position:absolute;left:0;top:0;height:22px;width:auto;max-width:none;}
+.topbar-title{font-size:16.5px;font-weight:700;color:var(--c-text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.topbar-actions{display:flex;align-items:center;gap:6px;position:relative;}
+.bell-btn{position:relative;width:32px;height:32px;border-radius:50%;border:1px solid var(--c-border);background:#fff;cursor:pointer;display:flex;align-items:center;justify-content:center;color:var(--c-muted);}
+.bell-btn svg{width:16px;height:16px;}
+.bell-btn .dot{position:absolute;top:5px;right:6px;width:7px;height:7px;border-radius:50%;background:var(--c-accent);border:1.5px solid #fff;}
+.bell-panel{display:none;position:absolute;right:0;top:40px;width:270px;background:#fff;border:1px solid var(--c-border);border-radius:var(--radius-sm);box-shadow:var(--shadow-lg);padding:6px 0;z-index:90;}
+.bell-panel.open{display:block;}
+.bell-panel h4{margin:0;padding:8px 14px 6px;font-size:12.5px;color:var(--c-muted);font-weight:700;}
+.bell-item{padding:9px 14px;font-size:12.5px;border-top:1px solid var(--c-border);display:flex;gap:8px;}
+.bell-item .b-dot{width:6px;height:6px;border-radius:50%;background:var(--c-accent);margin-top:5px;flex:none;}
+.bell-item p{margin:0;color:var(--c-text);}
+.bell-item span{color:var(--c-muted);font-size:11px;}
+/* ---------- 側欄（加盟在地教師版：僅我的班級／我的學生二項＋登入身分） ---------- */
+.side-nav{display:none;}
+@media(min-width:1024px){
+  .side-nav{display:flex;flex-direction:column;position:fixed;left:0;top:0;bottom:0;width:310px;background:#fff;border-right:1px solid var(--c-border);padding:18px 12px;z-index:50;}
+  .side-role{padding:0 10px 14px;margin-bottom:10px;border-bottom:1px solid var(--c-border);}
+.side-role strong{display:block;font-size:14px;color:var(--c-primary);font-weight:700;}
+.side-role span{display:block;font-size:12px;color:var(--c-muted);margin-top:2px;}
+.side-brand{display:flex;align-items:center;padding:0 8px 18px;}
+  .side-brand img{height:28px;width:auto;}
+  .side-link{display:flex;align-items:center;gap:10px;padding:10px 10px;border-radius:8px;font-size:14px;font-weight:600;color:var(--c-muted);margin-bottom:2px;}
+  .side-link svg{width:19px;height:19px;flex:none;}
+  .side-link.active{background:#E6EEF8;color:var(--c-primary);}
+  .side-link:hover:not(.active){background:var(--c-bg);}
+  .app.has-side .topbar{margin-left:310px;}
+  .app.has-side .content{margin-left:310px;} } .bottom-nav{position:fixed;left:0;right:0;bottom:0;z-index:70;background:#fff;border-top:1px solid var(--c-border);display:flex;height:var(--bottomnav-h);padding-bottom:env(safe-area-inset-bottom,0);box-shadow:0 -2px 10px rgba(16,24,40,.06);}
+.bottom-nav a{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;font-size:11px;color:var(--c-muted);font-weight:600;min-height:44px;}
+.bottom-nav a svg{width:21px;height:21px;}
+.bottom-nav a.active{color:var(--c-primary);}
+@media(min-width:1024px){.bottom-nav{display:none;}}
+.content{max-width:1040px;margin:0 auto;padding:18px 16px calc(var(--bottomnav-h) + 24px);}
+@media(min-width:1024px){.content{padding:26px 32px 40px;}}
+.page-sub{color:var(--c-muted);font-size:13px;margin:0 0 14px;}
+.card{background:#fff;border:1px solid var(--c-border);border-radius:var(--radius);box-shadow:var(--shadow);padding:16px;}
+.card + .card{margin-top:12px;}
+.muted{color:var(--c-muted);}
+.small{font-size:12px;}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;border:none;border-radius:var(--radius-sm);padding:11px 18px;font-size:14px;font-weight:700;cursor:pointer;font-family:inherit;transition:background .15s;min-height:44px;}
+.btn-primary{background:var(--c-primary);color:#fff;}
+.btn-primary:hover{background:var(--c-primary-dark);}
+.btn-outline{background:#fff;border:1px solid var(--c-border);color:var(--c-text);}
+.btn-outline:hover{background:var(--c-bg);}
+.btn-block{width:100%;}
+.btn-sm{padding:7px 12px;font-size:12.5px;min-height:36px;}
+.btn:disabled{background:var(--c-border)!important;color:#98A2B3!important;cursor:not-allowed;border-color:var(--c-border)!important;}
+.badge{display:inline-block;padding:2px 9px;border-radius:20px;font-size:11.5px;font-weight:700;white-space:nowrap;}
+.badge-info{background:#E6EEF8;color:var(--c-primary);}
+.badge-warn{background:#FCEBDC;color:var(--c-accent-dark);}
+.badge-ok{background:#E4F5F0;color:#0B6B52;}
+.badge-muted{background:var(--c-border);color:var(--c-muted);}
+.hidden{display:none!important;}
+/* ---------- 頂部統計 ---------- */
+.stat-row{display:flex;gap:12px;flex-wrap:wrap;margin-bottom:16px;}
+.stat-tile{flex:1;min-width:140px;background:#fff;border:1px solid var(--c-border);border-radius:var(--radius);box-shadow:var(--shadow);padding:12px 16px;}
+.stat-tile .stv{font-size:22px;font-weight:700;color:var(--c-text);}
+.stat-tile .stv.warn{color:var(--c-accent-dark);}
+.stat-tile .stl{font-size:12px;color:var(--c-muted);margin-top:2px;}
+/* ---------- 搜尋／篩選／排序 ---------- */
+.searchbox{position:relative;margin-bottom:12px;}
+.searchbox input{width:100%;border:1px solid var(--c-border);border-radius:var(--radius-sm);padding:10px 12px 10px 34px;font-size:14px;font-family:inherit;color:var(--c-text);background:#fff;min-height:44px;}
+.searchbox .sicon{position:absolute;left:11px;top:50%;transform:translateY(-50%);color:var(--c-muted);font-size:14px;pointer-events:none;}
+.tool-row{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:14px;}
+.fchip-bar{display:flex;gap:8px;flex-wrap:wrap;}
+.fchip{padding:7px 14px;border-radius:20px;border:1px solid var(--c-border);background:#fff;font-size:12.5px;font-weight:700;cursor:pointer;font-family:inherit;color:var(--c-muted);}
+.fchip.active{background:var(--c-primary);color:#fff;border-color:var(--c-primary);}
+.sort-select{border:1px solid var(--c-border);border-radius:var(--radius-sm);padding:8px 10px;font-size:12.5px;font-family:inherit;color:var(--c-text);background:#fff;min-height:38px;flex:none;}
+.result-count{font-size:12px;color:var(--c-muted);margin:-6px 0 10px;}
+/* ---------- 學生列表（緊湊列） ---------- */
+.stu-row{border:1px solid var(--c-border);border-radius:var(--radius-sm);padding:11px 14px;background:#fff;cursor:pointer;}
+.stu-row:hover{border-color:#C7D3E0;background:#FAFBFD;}
+.stu-row + .stu-row{margin-top:8px;}
+.row-top{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;}
+.row-name{display:flex;align-items:center;gap:8px;font-size:14.5px;font-weight:700;min-width:0;}
+.row-name .rn-chevron{color:#98A2B3;flex:none;}
+.row-badges{display:flex;gap:5px;flex-wrap:wrap;align-items:center;}
+.row-stats{display:flex;gap:14px;flex-wrap:wrap;margin-top:8px;font-size:12.5px;color:var(--c-muted);}
+.row-stats b{color:var(--c-text);font-weight:700;}
+.row-stats b.warn{color:var(--c-accent-dark);}
+.row-stats .rstat{white-space:nowrap;}
+.stu-empty{text-align:center;padding:34px 16px;color:var(--c-muted);font-size:13px;}
+.load-more-wrap{text-align:center;margin-top:16px;}
+/* ---------- 學生詳情 modal ---------- */
+.sheet-overlay{position:fixed;inset:0;background:rgba(16,24,40,.45);z-index:100;display:flex;align-items:flex-end;justify-content:center;}
+.sheet-overlay.hidden{display:none;}
+.sheet{background:#fff;width:100%;max-width:560px;border-radius:18px 18px 0 0;padding:18px 18px calc(18px + env(safe-area-inset-bottom,0));max-height:88vh;overflow-y:auto;animation:sheetUp .18s ease-out;}
+@keyframes sheetUp{from{transform:translateY(16px);opacity:.6;}to{transform:translateY(0);opacity:1;}}
+.sheet-handle{width:36px;height:4px;background:var(--c-border);border-radius:4px;margin:0 auto 14px;}
+.sheet h3{margin:0 0 4px;font-size:16px;}
+@media(min-width:640px){.sheet-overlay{align-items:center;}.sheet{border-radius:16px;}}
+.sheet-sec{margin-bottom:16px;}
+.sheet-sec .lbl{font-size:12px;font-weight:700;color:var(--c-muted);margin-bottom:6px;}
+.att-hist-row{display:flex;justify-content:space-between;font-size:12.5px;padding:6px 0;border-top:1px solid var(--c-border);}
+.att-hist-row:first-child{border-top:none;}
+.att-hist-row .ah-cls{color:var(--c-muted);}
+.unit-cls-block{margin-bottom:10px;}
+.unit-cls-block:last-child{margin-bottom:0;}
+.unit-cls-name{font-size:12.5px;font-weight:700;margin-bottom:5px;}
+.unit-pill-bar{display:flex;gap:5px;flex-wrap:wrap;}
+.unit-pill{font-size:11px;padding:3px 9px;border-radius:12px;background:var(--c-bg);color:var(--c-muted);border:1px solid var(--c-border);}
+.unit-pill.done{background:#E4F5F0;color:#0B6B52;border-color:#BEE6D9;}
+.unit-pill.current{background:#E6EEF8;color:var(--c-primary);border-color:#C7DAF0;font-weight:700;}
+.quiz-row{display:flex;justify-content:space-between;font-size:12.5px;padding:6px 0;border-top:1px solid var(--c-border);}
+.quiz-row:first-child{border-top:none;}
+.quiz-row .qr-score{font-weight:700;color:var(--c-text);}
+.usage-line{font-size:12.5px;color:var(--c-text);background:var(--c-bg);border-radius:var(--radius-sm);padding:10px 12px;line-height:1.7;}
+.inactive-note{font-size:13px;color:var(--c-accent-dark);background:#FCEBDC;border-radius:var(--radius-sm);padding:12px 14px;line-height:1.7;}
+.toast{position:fixed;left:50%;bottom:calc(var(--bottomnav-h) + 18px);transform:translateX(-50%);background:#101828;color:#fff;padding:10px 20px;border-radius:20px;font-size:13px;font-weight:700;z-index:120;box-shadow:var(--shadow-lg);white-space:nowrap;}
+.toast.hidden{display:none;}
+@media(min-width:1024px){.toast{bottom:24px;}}
+/* ---------- 課堂紀錄動作與 modal（20260929 新增：欄位與循環邏輯比照 t09_lesson_log.html） ---------- */
+.row-actions{margin-top:8px;text-align:right;}
+.field{display:flex;flex-direction:column;gap:5px;margin-bottom:14px;}
+.field label{font-size:13px;font-weight:700;}
+.field select,.field input,.field textarea{border:1px solid var(--c-border);border-radius:var(--radius-sm);padding:10px 11px;font-size:14px;font-family:inherit;color:var(--c-text);background:#fff;min-height:44px;width:100%;}
+.field textarea{resize:vertical;min-height:64px;}
+.att-toolrow{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:4px;}
+.att-pill{border:1.5px solid var(--c-border);border-radius:20px;padding:8px 16px;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;min-width:76px;text-align:center;}
+.att-pill.present{background:#E4F5F0;border-color:var(--c-secondary);color:#0B6B52;}
+.att-pill.late{background:#FCEBDC;border-color:var(--c-accent-dark);color:var(--c-accent-dark);}
+.att-pill.absent{background:var(--c-border);border-color:#98A2B3;color:#475467;}
+.att-pill.leave{background:#E6EEF8;border-color:var(--c-primary);color:var(--c-primary);}
+.lesson-hist-row{padding:8px 0;border-top:1px solid var(--c-border);font-size:12.5px;}
+.lesson-hist-row:first-child{border-top:none;}
+.lesson-hist-row .lh-top{display:flex;justify-content:space-between;gap:8px;flex-wrap:wrap;}
+.lesson-hist-row .lh-note{color:var(--c-muted);margin-top:3px;}
+.lesson-empty{font-size:12.5px;color:var(--c-muted);}
+.sheet-footer{position:sticky;bottom:0;background:#fff;margin-top:16px;padding-top:12px;border-top:1px solid var(--c-border);display:flex;gap:10px;}
+</style>
+</head>
+<body>
+<div class="app has-side">
+  <nav class="side-nav" aria-label="主導覽">
+    <div class="side-brand"><a href="../公開網站/p01_home.html" aria-label="回官網" data-i18n-aria-label="nav_t.backToWebsite"><img src="../assets/tli-logo.svg" alt="TLI"></a></div>
+    <div class="side-role"><strong>王建國 老師</strong><span><span data-i18n="profile.role.franchiseLocal">加盟機構在地教師</span> · 範例大學</span></div>
+    <a class="side-link" href="t08_my_classes.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="14" rx="2"/><line x1="3" y1="9" x2="21" y2="9"/><circle cx="8" cy="14" r="1.2"/><circle cx="12" cy="14" r="1.2"/><circle cx="16" cy="14" r="1.2"/></svg><span data-i18n="mystudents.nav.myClasses">我的班級</span></a>
+    <a class="side-link active" href="t10_my_students.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg><span data-i18n="mystudents.nav.myStudents">我的學生</span></a>
+    <a class="side-link" href="../公開網站/p01_home.html" style="margin-top:8px;"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg><span data-i18n="nav_t.backToWebsite">回官網</span></a>
+  </nav>
+
+  <header class="topbar">
+    <div class="topbar-left"><a class="topbar-logo-wrap" href="../公開網站/p01_home.html" aria-label="回官網" data-i18n-aria-label="nav_t.backToWebsite"><img src="../assets/tli-logo.svg" alt="TLI"></a><div class="topbar-title" data-i18n="mystudents.nav.myStudents">我的學生</div></div>
+    <div class="topbar-actions">
+      <button class="bell-btn" onclick="toggleBell()" aria-label="通知" data-i18n-aria-label="common.notifications">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8a6 6 0 10-12 0c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.7 21a2 2 0 01-3.4 0"/></svg>
+        <span class="dot" id="bellDot"></span>
+      </button>
+      <div class="bell-panel" id="bellPanel">
+        <h4 data-i18n="common.notifications">通知</h4>
+        <div id="bellItems"></div>
+      </div>
+    </div>
+  </header>
+
+  <main class="content">
+    <p class="page-sub" data-i18n="mystudents.pageDesc">彙整你所帶班級（我的班級）的學生學習數據，僅顯示你自己班上的學生；帳號啟用、教材進度、測驗成績由 TLI Hub 自動彙整，不需手動填寫。</p>
+
+    <div class="stat-row" id="statRow"></div>
+
+    <div class="searchbox">
+      <span class="sicon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="width:14px;height:14px;"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg></span>
+      <input type="text" id="searchInput" placeholder="搜尋學生姓名" data-i18n-placeholder="mystudents.search.placeholder" oninput="onControlsChange()">
+    </div>
+
+    <div class="tool-row">
+      <div class="fchip-bar" id="fchipBar"></div>
+      <select class="sort-select" id="sortSelect" onchange="onControlsChange()">
+        <option value="name" data-i18n="mystudents.sort.name">依姓名排序</option>
+        <option value="attend_desc" data-i18n="mystudents.sort.attendDesc">出席率：高到低</option>
+        <option value="attend_asc" data-i18n="mystudents.sort.attendAsc">出席率：低到高</option>
+        <option value="prog_desc" data-i18n="mystudents.sort.progDesc">教材進度：高到低</option>
+        <option value="prog_asc" data-i18n="mystudents.sort.progAsc">教材進度：低到高</option>
+        <option value="online_desc" data-i18n="mystudents.sort.onlineDesc">最近上線：新到舊</option>
+      </select>
+    </div>
+
+    <p class="result-count" id="resultCount"></p>
+    <div id="studentList"></div>
+    <div class="stu-empty hidden" id="emptyState" data-i18n="mystudents.empty.noMatch">找不到符合條件的學生。</div>
+    <div class="load-more-wrap hidden" id="loadMoreWrap"><button class="btn btn-outline" id="loadMoreBtn" onclick="loadMore()" data-i18n="mystudents.btn.loadMore">載入更多</button></div>
+  </main>
+
+  <nav class="bottom-nav">
+    <a href="t08_my_classes.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="14" rx="2"/><line x1="3" y1="9" x2="21" y2="9"/><circle cx="8" cy="14" r="1.2"/><circle cx="12" cy="14" r="1.2"/><circle cx="16" cy="14" r="1.2"/></svg><span data-i18n="mystudents.nav.myClasses">我的班級</span></a>
+    <a href="t10_my_students.html" class="active"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg><span data-i18n="mystudents.nav.myStudents">我的學生</span></a>
+  </nav>
+  <div class="toast hidden" id="toast"></div>
+</div>
+
+<div class="sheet-overlay hidden" id="detailOverlay">
+  <div class="sheet">
+    <div class="sheet-handle"></div>
+    <h3 id="dTitle">學生詳情</h3>
+    <p class="muted small" id="dMeta" style="margin:2px 0 14px;">—</p>
+
+    <div id="dActiveBody">
+      <div class="sheet-sec">
+        <div class="lbl" data-i18n="mystudents.label.attendanceHistory">出席紀錄（最近 6 堂）</div>
+        <div id="dAttendance"></div>
+      </div>
+      <div class="sheet-sec">
+        <div class="lbl" data-i18n="mystudents.label.unitProgress">各單元進度</div>
+        <div id="dUnits"></div>
+      </div>
+      <div class="sheet-sec">
+        <div class="lbl" data-i18n="mystudents.label.quizScores">線上測驗成績</div>
+        <div id="dQuizzes"></div>
+      </div>
+      <div class="sheet-sec" style="margin-bottom:0;">
+        <div class="lbl" data-i18n="mystudents.label.materialUsage">教材使用</div>
+        <div class="usage-line" id="dUsage"></div>
+      </div>
+    </div>
+
+    <div class="sheet-sec hidden" id="dInactiveBody">
+      <div class="inactive-note" data-i18n="mystudents.note.inactiveStudent">這位學生的帳號尚未啟用，開通連結已寄出。啟用後才會產生出席、教材進度、測驗成績與教材使用數據。</div>
+    </div>
+
+    <div class="sheet-sec" style="margin-bottom:0;">
+      <div class="lbl" style="display:flex;justify-content:space-between;align-items:center;">
+        <span data-i18n="mystudents.section.lessonRecordTeacher">課堂紀錄（教師填寫）</span>
+        <button type="button" class="btn btn-outline btn-sm" onclick="openLessonModal(currentStudentId)" data-i18n="mystudents.btn.addLessonRecord">＋新增</button>
+      </div>
+      <div id="dLessonList"></div>
+    </div>
+
+    <div class="stack" style="display:flex;flex-direction:column;gap:10px;margin-top:16px;">
+      <button class="btn btn-primary btn-block hidden" id="dRemindBtn" onclick="remindActivation()" data-i18n="mystudents.btn.remindActivation">提醒學生啟用帳號</button>
+      <button class="btn btn-outline btn-block" onclick="closeDetail()" data-i18n="common.close">關閉</button>
+    </div>
+  </div>
+</div>
+
+<!-- ===== 課堂紀錄 modal（20260929 新增：出席狀態／教材進度／課堂評語，欄位比照 t09_lesson_log.html） ===== -->
+<div class="sheet-overlay hidden" id="lessonOverlay">
+  <div class="sheet">
+    <div class="sheet-handle"></div>
+    <h3 id="lTitle">課堂紀錄</h3>
+    <p class="muted small" id="lMeta" style="margin:2px 0 14px;">—</p>
+
+    <div class="field" id="lClassField">
+      <label data-i18n="mystudents.label.classField">班級</label>
+      <select id="lClassSelect" onchange="onLessonClassChange()"></select>
+    </div>
+
+    <div class="field">
+      <label data-i18n="mystudents.field.lessonDate">上課日期</label>
+      <input type="date" id="lDate">
+    </div>
+
+    <div class="field">
+      <label data-i18n="mystudents.label.courseProgress">教材進度</label>
+      <select id="lUnitSelect"></select>
+    </div>
+
+    <div class="field" style="margin-bottom:8px;">
+      <label data-i18n="mystudents.field.attendanceStatus">出席狀態</label>
+      <div class="att-toolrow">
+        <button type="button" class="att-pill present" id="lAttPill" onclick="cycleLessonAttendance()">出席</button>
+        <span class="small muted" data-i18n="mystudents.hint.cycleAttendance">點一下切換：出席→遲到→缺席→請假</span>
+      </div>
+    </div>
+
+    <div class="field" style="margin-bottom:0;">
+      <label data-i18n="mystudents.field.lessonComment">課堂評語（選填）</label>
+      <textarea id="lNote" placeholder="例如：今天口說練習表現不錯。" data-i18n-placeholder="mystudents.placeholder.lessonComment"></textarea>
+    </div>
+
+    <div class="sheet-footer">
+      <button type="button" class="btn btn-outline" style="flex:1;" onclick="closeLessonModal()" data-i18n="common.cancel">取消</button>
+      <button type="button" class="btn btn-primary" style="flex:2;" onclick="submitLessonRecord()" data-i18n="common.submit">送出</button>
+    </div>
+  </div>
+</div>
+
+<script src="../assets/_i18n_dict.js"></script>
+<script src="../assets/_i18n_dict_teacher.js"></script>
+<script src="../assets/_i18n.js"></script>
+<script>
+function toggleBell(){document.getElementById('bellPanel').classList.toggle('open');}
+document.addEventListener('click',function(e){
+  if(!e.target.closest('.bell-btn')&&!e.target.closest('.bell-panel'))document.getElementById('bellPanel').classList.remove('open');
+});
+function daysBetween(a,b){ return Math.round((new Date(b+'T00:00:00') - new Date(a+'T00:00:00'))/86400000); }
+var TODAY = '2026-09-27';
+
+/* ===== 班級基本資料：教材單元與最近上課日期，與「我的班級」t08／課堂紀錄 t09 的示範資料對齊，
+   維持同一位加盟教師（王建國）視角下的資料一致性；u05 已改為 cl1／cl2／cl3／cl4
+   四班的主要授課老師都是王建國，本頁同步這四班 ===== */
+var CLASSES_INFO = {
+  cl1:{name:'企業管理學系 範例交換班 A', short:'範例交換班 A', units:['第 1 課','第 2 課','第 3 課','第 4 課','第 5 課','第 6 課','第 7 課','第 8 課'], recentDates:['2026-09-24','2026-09-21','2026-09-17']},
+  cl2:{name:'企業管理學系 範例交換班 B', short:'範例交換班 B', units:['第 1 課','第 2 課','第 3 課','第 4 課','第 5 課','第 6 課','第 7 課'], recentDates:['2026-09-24','2026-09-17','2026-09-10']},
+  cl3:{name:'外語學院 範例進階會話班', short:'範例進階會話班', units:['第 1 課','第 2 課','第 3 課','第 4 課','第 5 課','第 6 課','第 7 課'], recentDates:['2026-09-22','2026-09-15']},
+  cl4:{name:'商學院 範例短期密集班', short:'範例短期密集班', units:['單元 1：開場問候','單元 2：會議安排','單元 3：商務簡報','單元 4：郵件往來'], recentDates:[]}
+};
+
+/* ===== 我的學生（示範資料：由「我的班級」cl1／cl2／cl3／cl4 四班聚合，同一學生可能同時在多班；
+   不含金額／訂單欄位，也不含其他機構或班級的學生） ===== */
+var STUDENTS = [
+  {id:'s01', name:'Emily Tran', classes:['cl2'], active:true, attendance:92, progress:71, quiz:88, lastOnline:'2026-09-25 14:20'},
+  {id:'s02', name:'Rachel Kim', classes:['cl2','cl1'], active:true, attendance:95, progress:80, quiz:91, lastOnline:'2026-09-26 09:10'},
+  {id:'s03', name:'Sophia Garcia', classes:['cl2','cl1'], active:true, attendance:89, progress:66, quiz:82, lastOnline:'2026-09-24 20:05'},
+  {id:'s04', name:'Laura Chen', classes:['cl2','cl1'], active:true, attendance:58, progress:29, quiz:65, lastOnline:'2026-09-10 08:30'},
+  {id:'s05', name:'Olivia Martinez', classes:['cl2'], active:false, attendance:null, progress:null, quiz:null, lastOnline:null},
+  {id:'s06', name:'Natalie Scott', classes:['cl2'], active:true, attendance:97, progress:86, quiz:94, lastOnline:'2026-09-26 21:40'},
+  {id:'s07', name:'Grace Liu', classes:['cl2'], active:true, attendance:91, progress:71, quiz:85, lastOnline:'2026-09-23 16:00'},
+  {id:'s08', name:'Amanda Lopez', classes:['cl2'], active:false, attendance:null, progress:null, quiz:null, lastOnline:null},
+  {id:'s09', name:'Chris Nguyen', classes:['cl2'], active:true, attendance:62, progress:43, quiz:70, lastOnline:'2026-09-12 10:00'},
+  {id:'s10', name:'Jason Kim', classes:['cl2'], active:true, attendance:88, progress:71, quiz:80, lastOnline:'2026-09-25 19:15'},
+  {id:'s11', name:'Brian Wu', classes:['cl2'], active:true, attendance:94, progress:86, quiz:89, lastOnline:'2026-09-26 12:05'},
+  {id:'s12', name:'David Park', classes:['cl2','cl1'], active:true, attendance:85, progress:57, quiz:77, lastOnline:'2026-09-20 09:45'},
+  {id:'s13', name:'Kevin Lee', classes:['cl4','cl1'], active:true, attendance:100, progress:25, quiz:84, lastOnline:'2026-09-26 08:00'},
+  {id:'s14', name:'Daniel Wright', classes:['cl4'], active:false, attendance:null, progress:null, quiz:null, lastOnline:null},
+  {id:'s15', name:'Michael Brown', classes:['cl4','cl1'], active:true, attendance:90, progress:50, quiz:84, lastOnline:'2026-09-22 17:30'},
+  {id:'s16', name:'John Miller', classes:['cl4'], active:true, attendance:96, progress:25, quiz:90, lastOnline:'2026-09-21 11:20'},
+  {id:'s17', name:'Ethan Walker', classes:['cl3'], active:true, attendance:93, progress:60, quiz:87, lastOnline:'2026-09-24 10:00'},
+  {id:'s18', name:'Chloe Adams', classes:['cl3'], active:true, attendance:80, progress:45, quiz:75, lastOnline:'2026-09-20 15:30'},
+  {id:'s19', name:'Ryan Cooper', classes:['cl3'], active:false, attendance:null, progress:null, quiz:null, lastOnline:null}
+];
+
+function classNames(s){ return s.classes.map(function(c){ return CLASSES_INFO[c].short; }); }
+function classBadges(s){ return classNames(s).map(function(n){ return '<span class="badge badge-info">'+n+'</span>'; }).join(''); }
+
+/* ===== 篩選 chip：全部＋各班（依 CLASSES_INFO 動態產生，避免與班級資料脫鉤） ===== */
+var currentClassFilter = 'all';
+var currentSort = 'name';
+var showCount = 10;
+var PAGE_SIZE = 10;
+
+function buildChipBar(){
+  var t = window.TLI_I18N ? TLI_I18N.t : function(zh){ return zh; };
+  var bar = document.getElementById('fchipBar');
+  var chips = [{id:'all', label:t('全部','All')}];
+  Object.keys(CLASSES_INFO).forEach(function(cid){ chips.push({id:cid, label:CLASSES_INFO[cid].short}); });
+  bar.innerHTML = '<label style="font-size:13px;color:var(--g500);margin-right:6px">'+t('班級','Class')+'</label><select id="classFilterSel" onchange="setClassFilter(this.value)" style="padding:6px 10px;border:1px solid var(--g200);border-radius:8px;font-size:13px">'
+    + chips.map(function(c){ return '<option value="'+c.id+'"'+(c.id===currentClassFilter?' selected':'')+'>'+c.label+'</option>'; }).join('') + '</select>';
+  if (window.TLI_I18N) TLI_I18N.refresh();
+}
+function setClassFilter(cid){
+  currentClassFilter = cid;
+  var sel=document.getElementById('classFilterSel'); if(sel && sel.value!==cid) sel.value=cid;
+  onControlsChange();
+}
+function onControlsChange(){
+  showCount = PAGE_SIZE;
+  currentSort = document.getElementById('sortSelect').value;
+  renderList();
+}
+
+function fmtLastOnline(s){
+  if(!s.lastOnline) return (window.TLI_I18N ? TLI_I18N.t('尚未登入','Not Logged In') : '尚未登入');
+  var datePart = s.lastOnline.slice(0,10);
+  var timePart = s.lastOnline.slice(11);
+  return datePart.slice(5)+' '+timePart;
+}
+function onlineGapDays(s){
+  if(!s.lastOnline) return null;
+  return daysBetween(s.lastOnline.slice(0,10), TODAY);
+}
+
+function getFiltered(){
+  var kw = document.getElementById('searchInput').value.trim().toLowerCase();
+  return STUDENTS.filter(function(s){
+    if(kw && s.name.toLowerCase().indexOf(kw)===-1) return false;
+    if(currentClassFilter!=='all' && s.classes.indexOf(currentClassFilter)===-1) return false;
+    return true;
+  });
+}
+function sortStudents(list){
+  var arr = list.slice();
+  function valOf(s, field){ var v = s[field]; return (v===null||v===undefined) ? -1 : v; }
+  switch(currentSort){
+    case 'attend_desc': arr.sort(function(a,b){ return valOf(b,'attendance')-valOf(a,'attendance'); }); break;
+    case 'attend_asc': arr.sort(function(a,b){
+        // 未啟用（null）排在最後，而不是誤判為「最低出席率」
+        var av=a.attendance===null?9999:a.attendance, bv=b.attendance===null?9999:b.attendance;
+        return av-bv; }); break;
+    case 'prog_desc': arr.sort(function(a,b){ return valOf(b,'progress')-valOf(a,'progress'); }); break;
+    case 'prog_asc': arr.sort(function(a,b){
+        var av=a.progress===null?9999:a.progress, bv=b.progress===null?9999:b.progress;
+        return av-bv; }); break;
+    case 'online_desc': arr.sort(function(a,b){ return (b.lastOnline||'').localeCompare(a.lastOnline||''); }); break;
+    default: arr.sort(function(a,b){ return a.name.localeCompare(b.name); });
+  }
+  return arr;
+}
+
+function renderStatRow(){
+  var t = window.TLI_I18N ? TLI_I18N.t : function(zh){ return zh; };
+  var total = STUDENTS.length;
+  var inactiveCount = STUDENTS.filter(function(s){ return !s.active; }).length;
+  var lowAttendCount = STUDENTS.filter(function(s){ return s.active && s.attendance<70; }).length;
+  var el = document.getElementById('statRow');
+  el.innerHTML =
+    '<div class="stat-tile"><div class="stv">'+total+'</div><div class="stl">'+t('學生總數（','Total Students (')+Object.keys(CLASSES_INFO).length+t(' 個班級）',' Classes)')+'</div></div>'+
+    '<div class="stat-tile"><div class="stv'+(inactiveCount>0?' warn':'')+'">'+inactiveCount+'</div><div class="stl">'+t('帳號尚未啟用','Account Not Activated')+'</div></div>'+
+    '<div class="stat-tile"><div class="stv'+(lowAttendCount>0?' warn':'')+'">'+lowAttendCount+'</div><div class="stl">'+t('出席率低於 70%','Attendance Below 70%')+'</div></div>';
+  if (window.TLI_I18N) TLI_I18N.refresh();
+}
+
+function renderList(){
+  var t = window.TLI_I18N ? TLI_I18N.t : function(zh){ return zh; };
+  var filtered = sortStudents(getFiltered());
+  var listEl = document.getElementById('studentList');
+  document.getElementById('emptyState').classList.toggle('hidden', filtered.length>0);
+  document.getElementById('resultCount').textContent = t('共 ','Total ')+filtered.length+t(' 位學生',' student(s)');
+
+  var shown = filtered.slice(0, showCount);
+  listEl.innerHTML = shown.map(function(s){
+    var statusBadge = s.active ? '<span class="badge badge-ok">'+t('已啟用','Activated')+'</span>' : '<span class="badge badge-muted">'+t('尚未啟用','Not Activated')+'</span>';
+    var statsHtml;
+    if(!s.active){
+      statsHtml = '<span class="rstat muted">'+t('帳號尚未啟用・尚無學習數據','Account not activated · No learning data yet')+'</span>';
+    }else{
+      var gap = onlineGapDays(s);
+      var onlineWarn = (gap!==null && gap>=10);
+      statsHtml =
+        '<span class="rstat">'+t('出席率','Attendance Rate')+' <b class="'+(s.attendance<70?'warn':'')+'">'+s.attendance+'%</b></span>'+
+        '<span class="rstat">'+t('教材進度','Course Progress')+' <b>'+s.progress+'%</b></span>'+
+        '<span class="rstat">'+t('測驗成績','Quiz Score')+' <b>'+s.quiz+t(' 分',' pts')+'</b></span>'+
+        '<span class="rstat">'+t('最近上線','Last Online')+' <b class="'+(onlineWarn?'warn':'')+'">'+fmtLastOnline(s)+(onlineWarn?t('（','(')+gap+t(' 天未上線）',' days offline)'):'')+'</b></span>';
+    }
+    return '<div class="stu-row" onclick="openDetail(\''+s.id+'\')">'+
+      '<div class="row-top">'+
+        '<div class="row-name">'+s.name+
+          '<svg class="rn-chevron" viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 6 15 12 9 18"/></svg>'+
+        '</div>'+
+        '<div class="row-badges">'+statusBadge+classBadges(s)+'</div>'+
+      '</div>'+
+      '<div class="row-stats">'+statsHtml+'</div>'+
+      '<div class="row-actions"><button type="button" class="btn btn-outline btn-sm" onclick="event.stopPropagation();openLessonModal(\''+s.id+'\')">'+t('課堂紀錄','Lesson Record')+'</button></div>'+
+    '</div>';
+  }).join('');
+
+  document.getElementById('loadMoreWrap').classList.toggle('hidden', filtered.length<=showCount);
+  if (window.TLI_I18N) TLI_I18N.refresh();
+}
+function loadMore(){
+  showCount += PAGE_SIZE;
+  renderList();
+}
+
+/* ===== 出席紀錄／測驗成績：依出席率與教材進度合理推算的示範資料（僅供原型展示） ===== */
+function attendanceHistory(s){
+  var rows = [];
+  s.classes.forEach(function(cid){
+    var info = CLASSES_INFO[cid];
+    var dates = info.recentDates;
+    var absentCount = Math.round((100-s.attendance)/100*dates.length);
+    dates.forEach(function(d, i){
+      rows.push({date:d, classId:cid, present: i>=absentCount});
+    });
+  });
+  rows.sort(function(a,b){ return b.date.localeCompare(a.date); });
+  return rows.slice(0,6);
+}
+function quizList(s){
+  var t = window.TLI_I18N ? TLI_I18N.t : function(zh){ return zh; };
+  var base = s.quiz;
+  return [
+    {name:t('期中測驗','Midterm Exam'), date: s.classes.length && CLASSES_INFO[s.classes[0]].recentDates[0] || '2026-09-20', score: Math.min(100, base+4)},
+    {name:t('單元隨堂小考','Unit Quiz'), date: s.classes.length && (CLASSES_INFO[s.classes[0]].recentDates[1]||CLASSES_INFO[s.classes[0]].recentDates[0]) || '2026-09-10', score: Math.max(0, base-6)}
+  ];
+}
+
+var currentStudentId = null;
+/* 抽出為獨立函式：openDetail 初次開啟與語言切換時的重繪都呼叫這裡，
+   確保「已開啟的學生詳情」在切換語言當下也會即時換語言（不需重新點開） */
+function renderDetailBody(s){
+  var t = window.TLI_I18N ? TLI_I18N.t : function(zh){ return zh; };
+  document.getElementById('dTitle').textContent = s.name;
+  document.getElementById('dMeta').textContent = classNames(s).join('・')+'・'+(s.active?t('帳號已啟用','Account Activated'):t('帳號尚未啟用','Account Not Activated'));
+
+  var activeBody = document.getElementById('dActiveBody');
+  var inactiveBody = document.getElementById('dInactiveBody');
+  var remindBtn = document.getElementById('dRemindBtn');
+
+  if(!s.active){
+    activeBody.classList.add('hidden');
+    inactiveBody.classList.remove('hidden');
+    remindBtn.classList.remove('hidden');
+  }else{
+    activeBody.classList.remove('hidden');
+    inactiveBody.classList.add('hidden');
+    remindBtn.classList.add('hidden');
+
+    var attRows = attendanceHistory(s);
+    document.getElementById('dAttendance').innerHTML = attRows.length ? attRows.map(function(r){
+      return '<div class="att-hist-row"><span>'+r.date+' <span class="ah-cls">'+CLASSES_INFO[r.classId].short+'</span></span>'+
+        '<span class="badge '+(r.present?'badge-ok':'badge-warn')+'">'+(r.present?t('出席','Present'):t('缺席','Absent'))+'</span></div>';
+    }).join('') : '<p class="small muted">'+t('這個班尚未有課堂紀錄。','No lesson records for this class yet.')+'</p>';
+
+    document.getElementById('dUnits').innerHTML = s.classes.map(function(cid){
+      var info = CLASSES_INFO[cid];
+      var doneCount = Math.round(s.progress/100*info.units.length);
+      var pills = info.units.map(function(u,i){
+        var cls = i<doneCount ? 'done' : (i===doneCount ? 'current' : '');
+        return '<span class="unit-pill'+(cls?' '+cls:'')+'">'+u+'</span>';
+      }).join('');
+      return '<div class="unit-cls-block"><div class="unit-cls-name">'+info.name+'（'+t('已完成 ','Completed ')+doneCount+'／'+info.units.length+'）</div><div class="unit-pill-bar">'+pills+'</div></div>';
+    }).join('');
+
+    document.getElementById('dQuizzes').innerHTML = quizList(s).map(function(q){
+      return '<div class="quiz-row"><span>'+q.date+'　'+q.name+'</span><span class="qr-score">'+q.score+t(' 分',' pts')+'</span></div>';
+    }).join('');
+
+    var gap = onlineGapDays(s);
+    document.getElementById('dUsage').textContent =
+      t('最近使用教材：','Recently Used Materials: ')+fmtLastOnline(s)+(gap!==null && gap>=10 ? t('（已 ','(Offline for ')+gap+t(' 天未上線，建議提醒）',' days, reminder suggested)'):'')+t('。教材整體使用進度 ','. Overall course material progress ')+s.progress+t('%，涵蓋所帶班級之教材單元與線上練習。','%, covering course units and online practice across your classes.');
+  }
+
+  renderLessonHistoryInDetail(s);
+  if (window.TLI_I18N) TLI_I18N.refresh();
+}
+function openDetail(id){
+  currentStudentId = id;
+  var s = STUDENTS.filter(function(x){return x.id===id;})[0];
+  renderDetailBody(s);
+  document.getElementById('detailOverlay').classList.remove('hidden');
+}
+function closeDetail(){
+  document.getElementById('detailOverlay').classList.add('hidden');
+}
+document.getElementById('detailOverlay').addEventListener('click', function(e){
+  if(e.target.id === 'detailOverlay') closeDetail();
+});
+/* ESC 鍵關閉目前開啟中的 sheet-overlay */
+document.addEventListener('keydown', function(e){
+  if (e.key !== 'Escape') return;
+  document.querySelectorAll('.sheet-overlay').forEach(function(el){ el.classList.add('hidden'); });
+});
+function remindActivation(){
+  var s = STUDENTS.filter(function(x){return x.id===currentStudentId;})[0];
+  if(!s) return;
+  closeDetail();
+  showToast((window.TLI_I18N ? TLI_I18N.t('已重新寄送開通信給 ','Resent the activation email to ') : '已重新寄送開通信給 ')+s.name);
+}
+
+var toastTimer=null;
+function showToast(msg){
+  var t=document.getElementById('toast');
+  t.textContent=msg;
+  t.classList.remove('hidden');
+  clearTimeout(toastTimer);
+  toastTimer=setTimeout(function(){t.classList.add('hidden');},2400);
+}
+
+/* ===== 通知鈴鐺：提示帳號未啟用與出席率偏低的學生數 ===== */
+function renderBell(){
+  var t = window.TLI_I18N ? TLI_I18N.t : function(zh){ return zh; };
+  var inactiveCount = STUDENTS.filter(function(s){ return !s.active; }).length;
+  var lowCount = STUDENTS.filter(function(s){ return s.active && s.attendance<70; }).length;
+  var dot = document.getElementById('bellDot');
+  var items = document.getElementById('bellItems');
+  var todayLabel = t('今天','Today');
+  var msgs = [];
+  if(inactiveCount>0) msgs.push('<div class="bell-item"><span class="b-dot"></span><div><p>'+inactiveCount+t(' 位學生帳號尚未啟用，建議提醒開通',' student(s) have not activated their account yet — a reminder is suggested')+'</p><span>'+todayLabel+'</span></div></div>');
+  if(lowCount>0) msgs.push('<div class="bell-item"><span class="b-dot" style="background:var(--c-accent-dark)"></span><div><p>'+lowCount+t(' 位學生出席率低於 70%',' student(s) have attendance below 70%')+'</p><span>'+todayLabel+'</span></div></div>');
+  if(msgs.length){
+    dot.style.display='block';
+    items.innerHTML = msgs.join('');
+  }else{
+    dot.style.display='none';
+    items.innerHTML = '<div class="bell-item"><span class="b-dot" style="background:var(--c-secondary)"></span><div><p>'+t('目前沒有待處理事項','No pending items at the moment')+'</p><span>'+todayLabel+'</span></div></div>';
+  }
+  if (window.TLI_I18N) TLI_I18N.refresh();
+}
+
+/* ===== 課堂紀錄（20260929 新增：教師針對單一學生記錄出席／教材進度／課堂評語；
+   欄位與循環邏輯比照 t09_lesson_log.html 的課堂紀錄表單，資料獨立存 localStorage，
+   key 與 t09 的整班紀錄分開，避免互相覆蓋） ===== */
+var LESSON_ATT_STATES = ['present','late','absent','leave'];
+function lessonAttLabel(state){
+  var t = window.TLI_I18N ? TLI_I18N.t : function(zh){ return zh; };
+  var map = {present:t('出席','Present'), late:t('遲到','Late'), absent:t('缺席','Absent'), leave:t('請假','Leave')};
+  return map[state] || map.present;
+}
+function nextLessonAttState(state){
+  var i = LESSON_ATT_STATES.indexOf(state);
+  return LESSON_ATT_STATES[(i+1) % LESSON_ATT_STATES.length];
+}
+function lessonAttBadgeClass(state){
+  if(state==='present') return 'badge-ok';
+  if(state==='absent') return 'badge-muted';
+  if(state==='leave') return 'badge-info';
+  return 'badge-warn'; // late
+}
+function loadLessonRecords(){
+  try{ var raw = localStorage.getItem('tliT10LessonRecords'); if(raw){ var obj = JSON.parse(raw); if(obj && typeof obj==='object') return obj; } }catch(err){}
+  return {};
+}
+function saveLessonRecords(obj){ try{ localStorage.setItem('tliT10LessonRecords', JSON.stringify(obj)); }catch(err){} }
+function lessonRecordsOf(studentId){
+  var all = loadLessonRecords();
+  var arr = all[studentId] || [];
+  return arr.slice().sort(function(a,b){ return b.ts - a.ts; });
+}
+function escapeHtml(str){
+  return String(str||'').replace(/[&<>"']/g, function(c){
+    return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];
+  });
+}
+function getStudentById(id){ return STUDENTS.filter(function(x){ return x.id===id; })[0]; }
+
+var currentLessonStudentId = null;
+var currentLessonAttState = 'present';
+
+function openLessonModal(studentId){
+  var s = getStudentById(studentId);
+  if(!s) return;
+  currentLessonStudentId = studentId;
+  document.getElementById('lTitle').textContent = (window.TLI_I18N ? TLI_I18N.t('課堂紀錄・','Lesson Record · ') : '課堂紀錄・')+s.name;
+  document.getElementById('lMeta').textContent = classNames(s).join('・');
+
+  var classSel = document.getElementById('lClassSelect');
+  var classField = document.getElementById('lClassField');
+  classSel.innerHTML = s.classes.map(function(cid){ return '<option value="'+cid+'">'+CLASSES_INFO[cid].name+'</option>'; }).join('');
+  classField.style.display = s.classes.length>1 ? '' : 'none';
+  classSel.value = s.classes[0];
+
+  document.getElementById('lDate').value = TODAY;
+  document.getElementById('lDate').max = TODAY;
+
+  currentLessonAttState = 'present';
+  renderLessonAttPill();
+  document.getElementById('lNote').value = '';
+
+  populateLessonUnitSelect();
+  document.getElementById('lessonOverlay').classList.remove('hidden');
+  if (window.TLI_I18N) TLI_I18N.refresh();
+}
+function onLessonClassChange(){ populateLessonUnitSelect(); }
+function populateLessonUnitSelect(){
+  var cid = document.getElementById('lClassSelect').value;
+  var info = CLASSES_INFO[cid];
+  if(!info) return;
+  document.getElementById('lUnitSelect').innerHTML = info.units.map(function(u){ return '<option>'+u+'</option>'; }).join('');
+}
+function renderLessonAttPill(){
+  var pill = document.getElementById('lAttPill');
+  pill.className = 'att-pill '+currentLessonAttState;
+  pill.textContent = lessonAttLabel(currentLessonAttState);
+}
+function cycleLessonAttendance(){
+  currentLessonAttState = nextLessonAttState(currentLessonAttState);
+  renderLessonAttPill();
+}
+function closeLessonModal(){
+  document.getElementById('lessonOverlay').classList.add('hidden');
+}
+function submitLessonRecord(){
+  var s = getStudentById(currentLessonStudentId);
+  if(!s) return;
+  var cid = document.getElementById('lClassSelect').value || s.classes[0];
+  var record = {
+    classId: cid,
+    date: document.getElementById('lDate').value || TODAY,
+    attendance: currentLessonAttState,
+    unit: document.getElementById('lUnitSelect').value,
+    note: document.getElementById('lNote').value,
+    ts: Date.now()
+  };
+  var all = loadLessonRecords();
+  if(!all[s.id]) all[s.id] = [];
+  all[s.id].push(record);
+  saveLessonRecords(all);
+  closeLessonModal();
+  showToast((window.TLI_I18N ? TLI_I18N.t('已記錄 ','Recorded ') : '已記錄 ')+s.name+(window.TLI_I18N ? TLI_I18N.t(' 的課堂紀錄',"'s lesson record") : ' 的課堂紀錄'));
+  if(currentStudentId === s.id && !document.getElementById('detailOverlay').classList.contains('hidden')){
+    renderLessonHistoryInDetail(s);
+  }
+}
+function renderLessonHistoryInDetail(s){
+  var t = window.TLI_I18N ? TLI_I18N.t : function(zh){ return zh; };
+  var recs = lessonRecordsOf(s.id);
+  var el = document.getElementById('dLessonList');
+  if(!el) return;
+  if(!recs.length){
+    el.innerHTML = '<p class="lesson-empty">'+t('尚無課堂紀錄，點右上「＋新增」開始記錄。','No lesson records yet. Tap the “+ Add” button at the top right to start.')+'</p>';
+    if (window.TLI_I18N) TLI_I18N.refresh();
+    return;
+  }
+  el.innerHTML = recs.map(function(r){
+    var clsShort = CLASSES_INFO[r.classId] ? CLASSES_INFO[r.classId].short : r.classId;
+    return '<div class="lesson-hist-row"><div class="lh-top"><span>'+r.date+'　'+clsShort+'</span>'+
+      '<span class="badge '+lessonAttBadgeClass(r.attendance)+'">'+lessonAttLabel(r.attendance)+'</span></div>'+
+      '<div class="lh-note">'+escapeHtml(r.unit)+(r.note?'・'+escapeHtml(r.note):'')+'</div></div>';
+  }).join('');
+  if (window.TLI_I18N) TLI_I18N.refresh();
+}
+document.getElementById('lessonOverlay').addEventListener('click', function(e){
+  if(e.target.id === 'lessonOverlay') closeLessonModal();
+});
+
+/* ===== 語系切換：detailOverlay／lessonOverlay 若已開啟，切換語言時要即時重繪內容
+   （不重置表單已填內容／不重置目前開啟的學生），這是 onRefresh 用途 ===== */
+function refreshOpenPanelsI18n(){
+  var detailOverlay = document.getElementById('detailOverlay');
+  if(detailOverlay && !detailOverlay.classList.contains('hidden') && currentStudentId){
+    var s = getStudentById(currentStudentId);
+    if(s) renderDetailBody(s);
+  }
+  var lessonOverlay = document.getElementById('lessonOverlay');
+  if(lessonOverlay && !lessonOverlay.classList.contains('hidden') && currentLessonStudentId){
+    var s2 = getStudentById(currentLessonStudentId);
+    if(s2){
+      document.getElementById('lTitle').textContent = TLI_I18N.t('課堂紀錄・','Lesson Record · ')+s2.name;
+      renderLessonAttPill();
+    }
+  }
+}
+if (window.TLI_I18N) {
+  TLI_I18N.onRefresh(buildChipBar);
+  TLI_I18N.onRefresh(renderStatRow);
+  TLI_I18N.onRefresh(renderBell);
+  TLI_I18N.onRefresh(renderList);
+  TLI_I18N.onRefresh(refreshOpenPanelsI18n);
+  /* init() 提前到這裡呼叫（在 buildChipBar/renderStatRow/renderBell/renderList 動態組字串之前）：
+     頁面用 t() 組的統計列／篩選列／學生清單，字串是在「呼叫當下」就依目前語言組好存進 innerHTML，
+     不像 data-i18n 元素能等之後 refresh() 補翻；如果沿用 t01「init() 放最後一行」的順序，
+     使用者已選英文時，重新整理頁面會先用預設的繁體語言組出這批動態內容，之後 init() 才把
+     curLang 設成 en，但 init() 只會 render()（走 data-i18n 標籤與 zh-CN 轉換），不會重跑
+     refreshCallbacks，這批已經組好的繁體字串就會一路卡住直到使用者手動再切一次語言——
+     這就是協調者全站英文模式殘留掃描抓到的那批「頁首統計／篩選 label／清單列」漏翻問題，
+     根因是呼叫順序而非漏了包 t()。改成 init() 先跑、把 curLang 從 localStorage 還原後，
+     下面這幾個動態渲染函式一開始就會用正確語言組字串。init() 內部的 mountSwitcher()／render()
+     都是冪等操作、不依賴這些動態內容已存在，提前呼叫沒有副作用。 */
+  TLI_I18N.init();
+}
+
+buildChipBar();
+renderStatRow();
+renderBell();
+renderList();
+</script>
+</body>
+</html>

@@ -1,0 +1,273 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<title>組織帳號開通｜TLI Hub 組織端</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+:root{--navy:#1B4E8C;--navy-dark:#123a68;--orange:#E8792B;--teal:#0F9B79;
+--g50:#F5F7FA;--g200:#E4E7EC;--g500:#667085;--g900:#101828;}
+*{box-sizing:border-box;}
+html,body{overflow-x:hidden;}
+body{margin:0;font-family:"Noto Sans TC","Microsoft JhengHei",system-ui,-apple-system,sans-serif;
+background:var(--g50);color:var(--g900);min-height:100vh;}
+a{color:var(--navy);}
+.wrap{max-width:600px;margin:0 auto;padding:32px 20px 60px;}
+.topmark{display:flex;align-items:center;gap:10px;justify-content:center;margin-bottom:22px;}
+.topmark img{height:30px;}
+.topmark span{font-size:13px;color:var(--g500);border-left:1px solid var(--g200);padding-left:10px;}
+.card{background:#fff;border:1px solid var(--g200);border-radius:14px;padding:30px;box-shadow:0 1px 3px rgba(16,24,40,.06);}
+.note{font-size:12px;color:#7a5b1f;background:#FFF8EE;border:1px solid #F3DFB8;padding:9px 11px;border-radius:6px;margin-bottom:18px;}
+.steps{display:flex;align-items:center;justify-content:center;gap:0;margin-bottom:26px;}
+.stepitem{display:flex;flex-direction:column;align-items:center;gap:6px;flex:1;position:relative;}
+.stepitem .dot{width:28px;height:28px;border-radius:50%;background:var(--g200);color:var(--g500);
+display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;z-index:1;}
+.stepitem.done .dot{background:var(--teal);color:#fff;}
+.stepitem.current .dot{background:var(--navy);color:#fff;}
+.stepitem .stlbl{font-size:11.5px;color:var(--g500);white-space:nowrap;}
+.stepitem.current .stlbl{color:var(--navy);font-weight:600;}
+.stepline{position:absolute;top:14px;left:calc(-50% + 14px);right:calc(50% + 14px);height:2px;background:var(--g200);z-index:0;}
+.stepitem.done .stepline,.stepitem.current .stepline{background:var(--teal);}
+.stepitem:first-child .stepline{display:none;}
+h1.sth{font-size:17px;margin:0 0 4px;}
+.stdesc{font-size:12.5px;color:var(--g500);margin-bottom:18px;line-height:1.6;}
+.formrow{margin-bottom:15px;}
+.formrow label{display:block;font-size:12.5px;color:var(--g500);margin-bottom:4px;}
+.formrow input,.formrow select{width:100%;padding:9px 11px;border:1px solid var(--g200);
+border-radius:6px;font-size:13.5px;box-sizing:border-box;font-family:inherit;}
+.formrow input[readonly]{background:var(--g50);color:var(--g500);}
+.formrow input.invalid,.formrow select.invalid{border-color:#C0392B;}
+.hint{font-size:11.5px;color:var(--g500);margin-top:4px;}
+.req-mark{color:#C0392B;margin-left:2px;}
+.field-required-note{font-size:12px;color:var(--g500);margin-bottom:16px;}
+.pwmeter{height:5px;border-radius:3px;background:var(--g200);margin-top:8px;overflow:hidden;}
+.pwmeter i{display:block;height:100%;width:0%;background:#C0392B;transition:.2s;}
+.pwmeter.weak i{width:33%;background:#C0392B;}
+.pwmeter.medium i{width:66%;background:var(--orange);}
+.pwmeter.strong i{width:100%;background:var(--teal);}
+.pwmeterlbl{font-size:11.5px;margin-top:4px;color:var(--g500);}
+.errmsg{font-size:12px;color:#C0392B;margin-top:5px;display:none;}
+.errmsg.show{display:block;}
+.btnrow{display:flex;justify-content:space-between;gap:10px;margin-top:24px;}
+.btn{display:inline-block;background:var(--navy);color:#fff;border:none;padding:10px 20px;
+border-radius:6px;font-size:13.5px;cursor:pointer;text-decoration:none;white-space:nowrap;font-family:inherit;}
+.btn.orange{background:var(--orange);}
+.btn.teal{background:var(--teal);}
+.btn.ghost{background:#fff;border:1px solid var(--g200);color:var(--g900);}
+.btn:disabled{background:var(--g200)!important;color:var(--g500)!important;cursor:not-allowed!important;}
+.donewrap{text-align:center;padding:6px 0 4px;}
+.doneicon{width:56px;height:56px;border-radius:50%;background:#E4F5EE;display:flex;align-items:center;justify-content:center;margin:0 auto 14px;}
+.donetitle{font-size:17px;font-weight:700;margin-bottom:6px;}
+.donedesc{font-size:12.5px;color:var(--g500);margin-bottom:22px;}
+.nextlist{display:flex;flex-direction:column;gap:0;text-align:left;margin-bottom:22px;}
+.nextitem{display:flex;align-items:center;gap:12px;padding:13px 4px;border-bottom:1px dashed var(--g200);text-decoration:none;color:inherit;}
+.nextitem:last-child{border-bottom:none;}
+.nextitem:hover{background:var(--g50);}
+.nextitem .ni-num{width:24px;height:24px;border-radius:50%;background:#E6EEF8;color:var(--navy);font-size:12px;font-weight:700;
+display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.nextitem .ni-main{flex:1;min-width:0;}
+.nextitem .ni-t{font-size:13.5px;font-weight:600;color:var(--g900);}
+.nextitem .ni-s{font-size:12px;color:var(--g500);margin-top:2px;}
+.nextitem .ni-arrow{color:var(--g500);flex-shrink:0;}
+.expiredwrap{text-align:center;padding:20px 4px 4px;}
+.expiredicon{width:56px;height:56px;border-radius:50%;background:#FBE7E7;display:flex;align-items:center;justify-content:center;margin:0 auto 16px;}
+.expiredtitle{font-size:17px;font-weight:700;margin-bottom:8px;}
+.expireddesc{font-size:13px;color:var(--g500);margin-bottom:22px;line-height:1.7;}
+.toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(20px);
+background:#101828;color:#fff;padding:10px 20px;border-radius:8px;font-size:13px;
+opacity:0;pointer-events:none;transition:.2s;z-index:200;max-width:80vw;text-align:center;}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
+@media (max-width:480px){
+.card{padding:22px 18px;}
+.stepitem .stlbl{display:none;}
+}
+</style>
+</head>
+<body>
+
+<div class="wrap">
+<div class="topmark"><img src="../assets/tli-logo.svg" alt="TLI"><span data-i18n="h00.pageLabel">組織帳號開通</span></div>
+<div class="stdesc" id="scenarioNote" style="text-align:center" data-i18n="h00.welcomeNote">歡迎使用 TLI Hub！請完成以下步驟啟用貴組織的帳號。</div>
+
+<div id="validScenario">
+<div class="steps" id="stepsBar"></div>
+<div class="card">
+
+<div id="stepPane1">
+<h1 class="sth" data-i18n="h00.step1Title">步驟 1／3　確認公司與帳號資料</h1>
+<div class="stdesc" data-i18n="h00.step1Desc">以下資料由 TLI 顧問於後台建檔時填入，如有錯誤請聯繫顧問修正；廠區時區請自行確認後選擇。</div>
+<div class="field-required-note"><span class="req-mark">*</span> <span data-i18n="common.requiredNote">為必填欄位</span></div>
+<div class="formrow"><label data-i18n="h00.lblCompany">企業名稱</label><input type="text" value="範例半導體股份有限公司" readonly></div>
+<div class="formrow"><label data-i18n="h00.lblHrName">HR 姓名</label><input type="text" value="陳雅婷 Sarah Chen" readonly></div>
+<div class="formrow"><label>Email</label><input type="text" value="sarah.chen@example-semi.com" readonly></div>
+<div class="formrow"><label><span data-i18n="h00.lblTimezone">廠區時區</span><span class="req-mark">*</span></label><select id="siteSelect" onchange="clearSiteErr()">
+<option value="" data-i18n="h00.optSelectSite">請選擇廠區</option>
+<option value="us" data-i18n="h00.optUs">美國廠區（UTC-7，美國西部時間）</option>
+<option value="jp" data-i18n="h00.optJp">日本廠區（UTC+9，日本標準時間）</option>
+</select><div class="errmsg" id="siteErr" data-i18n="h00.siteErr">請選擇廠區時區，將作為您帳號的預設時區顯示。</div></div>
+<div class="btnrow"><span></span><button class="btn" onclick="goStep2()" data-i18n="btn.nextStep">下一步</button></div>
+</div>
+
+<div id="stepPane2" style="display:none">
+<h1 class="sth" data-i18n="h00.step2Title">步驟 2／3　設定密碼</h1>
+<div class="stdesc" data-i18n="h00.step2Desc">密碼將用於登入企業管理後台，請設定至少 8 碼、包含英文與數字的密碼。</div>
+<div class="field-required-note"><span class="req-mark">*</span> <span data-i18n="common.requiredNote">為必填欄位</span></div>
+<div class="formrow"><label><span data-i18n="h00.lblSetPw">設定密碼</span><span class="req-mark">*</span></label><input type="password" id="pw1" oninput="onPwInput()" placeholder="至少 8 碼，含英文與數字" data-i18n-placeholder="h00.pw1Placeholder">
+<div class="pwmeter" id="pwmeter"><i></i></div><div class="pwmeterlbl" id="pwmeterlbl">尚未輸入</div></div>
+<div class="formrow"><label><span data-i18n="h00.lblConfirmPw">再次輸入密碼</span><span class="req-mark">*</span></label><input type="password" id="pw2" oninput="clearPwErr()" placeholder="請再輸入一次" data-i18n-placeholder="h00.pw2Placeholder">
+<div class="errmsg" id="pwErr" data-i18n="h00.pwErr">兩次輸入的密碼不一致，或密碼強度不足，請重新確認。</div></div>
+<div class="btnrow"><button class="btn ghost" onclick="goStep(1)" data-i18n="btn.prevStep">上一步</button><button class="btn" onclick="goStep3()" data-i18n="btn.nextStep">下一步</button></div>
+</div>
+
+<div id="stepPane3" style="display:none">
+<div class="donewrap">
+<div class="doneicon"><svg width="26" height="26" viewBox="0 0 20 20" fill="none" stroke="#0F9B79" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="4 10.5 8 14.5 16 5.5"/></svg></div>
+<div class="donetitle" data-i18n="h00.doneTitle">帳號已啟用</div>
+<div class="donedesc" data-i18n="h00.doneDesc">歡迎使用 TLI Hub 組織端，接下來建議您依序完成以下三件事：</div>
+<div class="nextlist">
+<a class="nextitem" href="h02_employees.html"><span class="ni-num">1</span><span class="ni-main"><span class="ni-t" data-i18n="h00.next1Title">邀請員工</span><span class="ni-s" data-i18n="h00.next1Sub">建立員工帳號，開放學員登入預約課程</span></span><span class="ni-arrow"><svg width="16" height="16" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><polyline points="7 4 13 10 7 16"/></svg></span></a>
+<a class="nextitem" href="h05_contract.html"><span class="ni-num">2</span><span class="ni-main"><span class="ni-t" data-i18n="h00.next2Title">查看合約參數</span><span class="ni-s" data-i18n="h00.next2Sub">確認取消時限、免扣次數與時數池等合約規則</span></span><span class="ni-arrow"><svg width="16" height="16" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><polyline points="7 4 13 10 7 16"/></svg></span></a>
+<a class="nextitem" href="h01_dashboard.html"><span class="ni-num">3</span><span class="ni-main"><span class="ni-t" data-i18n="h00.next3Title">查看 Dashboard</span><span class="ni-s" data-i18n="h00.next3Sub">掌握出勤率、學習時數與時數池餘額</span></span><span class="ni-arrow"><svg width="16" height="16" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><polyline points="7 4 13 10 7 16"/></svg></span></a>
+</div>
+<a class="btn" href="h01_dashboard.html" style="display:block" data-i18n="h00.enterOrgBtn">進入企業端</a>
+</div>
+</div>
+
+</div>
+</div>
+
+<div id="expiredScenario" style="display:none">
+<div class="card">
+<div class="expiredwrap">
+<div class="expiredicon"><svg width="26" height="26" viewBox="0 0 20 20" fill="none" stroke="#C0392B" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="10" cy="10" r="7.5"/><line x1="10" y1="6.5" x2="10" y2="11"/><circle cx="10" cy="13.6" r="0.6" fill="#C0392B"/></svg></div>
+<div class="expiredtitle" data-i18n="h00.expiredTitle">連結已失效，請聯繫顧問重寄</div>
+<div class="expireddesc" data-i18n="h00.expiredDesc">此開通連結已超過有效期限（發信後 7 天），為維護帳號安全，請聯繫您的專屬 TLI 顧問重新寄發開通信。</div>
+<button class="btn orange" onclick="toast(TLI_I18N.t('已通知您的專屬顧問協助重寄開通信','Your dedicated TLI advisor has been notified to resend the activation email'))" data-i18n="h00.contactAdvisorBtn">聯繫顧問重寄</button>
+</div>
+</div>
+</div>
+
+</div>
+
+<script src="../assets/_i18n_dict.js"></script>
+<script src="../assets/_i18n_dict_org.js"></script>
+<script src="../assets/_i18n.js"></script>
+<script>
+var isInternal = new URLSearchParams(location.search).get('internal')==='1';
+if(isInternal){
+  document.addEventListener('DOMContentLoaded', function(){
+    var el=document.getElementById('scenarioNote');
+    if(el){
+      el.removeAttribute('data-i18n');
+      function renderScenarioNote(){
+        el.textContent = window.TLI_I18N ? TLI_I18N.t('此頁情境：TLI 顧問於後台完成企業開通後，系統寄出開通信，HR 點擊信中連結進入本頁完成帳號啟用。','Scenario: after a TLI advisor completes organization activation in the back office, the system sends an activation email, and HR clicks the link in that email to arrive here and activate the account.') : '此頁情境：TLI 顧問於後台完成企業開通後，系統寄出開通信，HR 點擊信中連結進入本頁完成帳號啟用。';
+      }
+      renderScenarioNote();
+      if (window.TLI_I18N) TLI_I18N.onRefresh(renderScenarioNote);
+    }
+  });
+}
+/* ===== 步驟列 ===== */
+var STEP_LABELS_ZH = ['確認資料','設定密碼','完成'];
+var STEP_LABELS_EN = ['Confirm Info','Set Password','Done'];
+var currentStep = 1;
+function renderSteps(){
+  var html = STEP_LABELS_ZH.map(function(lbl, i){
+    var n = i+1;
+    var cls = n<currentStep ? 'done' : (n===currentStep ? 'current' : '');
+    var dotContent = n<currentStep ? '<svg width="14" height="14" viewBox="0 0 20 20" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="4 10.5 8 14.5 16 5.5"/></svg>' : n;
+    var label = window.TLI_I18N ? TLI_I18N.t(lbl, STEP_LABELS_EN[i]) : lbl;
+    return '<div class="stepitem '+cls+'"><span class="stepline"></span><span class="dot">'+dotContent+'</span><span class="stlbl">'+label+'</span></div>';
+  }).join('');
+  document.getElementById('stepsBar').innerHTML = html;
+}
+if (window.TLI_I18N) TLI_I18N.onRefresh(renderSteps);
+function goStep(n){
+  currentStep = n;
+  document.getElementById('stepPane1').style.display = n===1 ? '' : 'none';
+  document.getElementById('stepPane2').style.display = n===2 ? '' : 'none';
+  document.getElementById('stepPane3').style.display = n===3 ? '' : 'none';
+  renderSteps();
+  window.scrollTo({top:0, behavior:'smooth'});
+}
+
+/* ===== 步驟 1：驗證廠區時區已選 ===== */
+function clearErr(id){ document.getElementById(id).classList.remove('show'); }
+function clearSiteErr(){
+  clearErr('siteErr');
+  document.getElementById('siteSelect').classList.remove('invalid');
+}
+function goStep2(){
+  var siteSelect = document.getElementById('siteSelect');
+  var site = siteSelect.value;
+  if (!site){
+    document.getElementById('siteErr').classList.add('show');
+    siteSelect.classList.add('invalid');
+    siteSelect.scrollIntoView({behavior:'smooth', block:'center'});
+    setTimeout(function(){ try{ siteSelect.focus(); }catch(err){} }, 250);
+    return;
+  }
+  siteSelect.classList.remove('invalid');
+  goStep(2);
+}
+
+/* ===== 步驟 2：密碼強度與一致性 ===== */
+function pwStrength(pw){
+  if (!pw) return 0;
+  var score = 0;
+  if (pw.length>=8) score++;
+  if (/[a-zA-Z]/.test(pw) && /[0-9]/.test(pw)) score++;
+  if (pw.length>=12 && /[^a-zA-Z0-9]/.test(pw)) score++;
+  return score; /* 0~3 */
+}
+function onPwInput(){
+  clearPwErr();
+  var pw = document.getElementById('pw1').value;
+  var s = pwStrength(pw);
+  var meter = document.getElementById('pwmeter'), lbl = document.getElementById('pwmeterlbl');
+  var t = window.TLI_I18N ? TLI_I18N.t : function(zh){ return zh; };
+  meter.className = 'pwmeter';
+  if (!pw){ lbl.textContent = t('尚未輸入','Not entered yet'); return; }
+  if (s<=1){ meter.classList.add('weak'); lbl.textContent = t('強度：弱（建議至少 8 碼，混合英文與數字）','Strength: Weak (use at least 8 characters, mixing letters and numbers)'); }
+  else if (s===2){ meter.classList.add('medium'); lbl.textContent = t('強度：中','Strength: Medium'); }
+  else { meter.classList.add('strong'); lbl.textContent = t('強度：強','Strength: Strong'); }
+}
+if (window.TLI_I18N) TLI_I18N.onRefresh(onPwInput);
+function clearPwErr(){
+  document.getElementById('pwErr').classList.remove('show');
+  document.getElementById('pw1').classList.remove('invalid');
+  document.getElementById('pw2').classList.remove('invalid');
+}
+function goStep3(){
+  var pw1El = document.getElementById('pw1'), pw2El = document.getElementById('pw2');
+  var pw1 = pw1El.value, pw2 = pw2El.value;
+  if (!pw1 || pwStrength(pw1)<1 || pw1!==pw2){
+    document.getElementById('pwErr').classList.add('show');
+    pw1El.classList.add('invalid');
+    pw2El.classList.add('invalid');
+    var focusTarget = !pw1 ? pw1El : pw2El;
+    focusTarget.scrollIntoView({behavior:'smooth', block:'center'});
+    setTimeout(function(){ try{ focusTarget.focus(); }catch(err){} }, 250);
+    return;
+  }
+  document.getElementById('pwErr').classList.remove('show');
+  pw1El.classList.remove('invalid');
+  pw2El.classList.remove('invalid');
+  goStep(3);
+}
+
+/* ===== toast ===== */
+function toast(msg){
+  var el = document.getElementById('toastEl');
+  if (!el){ el=document.createElement('div'); el.id='toastEl'; el.className='toast'; document.body.appendChild(el); }
+  el.textContent = msg; el.classList.add('show');
+  clearTimeout(window._toastTimer);
+  window._toastTimer = setTimeout(function(){ el.classList.remove('show'); }, 2400);
+}
+
+if (window.TLI_I18N) TLI_I18N.init();
+renderSteps();
+onPwInput();
+</script>
+</body>
+</html>

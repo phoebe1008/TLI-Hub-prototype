@@ -1,0 +1,2331 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<title>組織客戶｜TLI Hub 管理後台</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+:root{--navy:#1B4E8C;--navy-dark:#123a68;--orange:#E8792B;--teal:#0F9B79;
+--g50:#F5F7FA;--g200:#E4E7EC;--g500:#667085;--g900:#101828;}
+*{box-sizing:border-box;}
+body{margin:0;font-family:"Noto Sans TC","Microsoft JhengHei",system-ui,-apple-system,sans-serif;
+background:var(--g50);color:var(--g900);}
+a{color:var(--navy);}
+.app{display:flex;min-height:100vh;width:100%;background:#fff;}
+.sidebar{width:260px;flex-shrink:0;background:#fff;color:var(--g900);padding:18px 0;
+border-right:1px solid var(--g200);display:flex;flex-direction:column;transition:width .15s;
+position:sticky;top:0;height:100vh;align-self:flex-start;}
+.sidebar .brand{padding:0 20px 14px;font-size:14px;font-weight:700;display:flex;flex-direction:column;gap:4px;
+border-bottom:1px solid var(--g200);margin-bottom:6px;text-decoration:none;color:inherit;cursor:pointer;}
+.sidebar .brand-logo{height:28px;width:auto;display:block;}
+.sidebar .brand small{display:block;font-weight:400;font-size:12px;color:var(--g500);margin-top:0;text-transform:uppercase;letter-spacing:.04em;}
+.sidebar nav{flex:1 1 auto;overflow-y:auto;}
+.sidebar nav a,.sidebar nav span.disabled{display:flex;align-items:center;gap:10px;padding:9px 20px;font-size:13.5px;
+color:var(--g900);text-decoration:none;position:relative;}
+.sidebar nav a .navicon{flex-shrink:0;color:var(--g500);}
+.sidebar nav a:hover{background:var(--g50);}
+.sidebar nav a.active{background:#E6EEF8;color:var(--navy);font-weight:600;}
+.sidebar nav a.active .navicon{color:var(--navy);}
+.sidebar .sec-label{padding:16px 20px 4px;font-size:10.5px;color:var(--g500);letter-spacing:.08em;text-transform:uppercase;font-weight:600;}
+.main{flex:1;padding:26px 32px 60px;min-width:0;}
+.pagehead{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:18px;gap:16px;}
+.pagehead h1{font-size:20px;margin:0;}
+.pagehead .desc{font-size:12.5px;color:var(--g500);margin-top:5px;line-height:1.6;}
+.btn{display:inline-block;background:var(--navy);color:#fff;border:none;padding:8px 14px;
+border-radius:6px;font-size:13px;cursor:pointer;text-decoration:none;white-space:nowrap;font-family:inherit;}
+.btn.orange{background:var(--orange);}
+.btn.teal{background:var(--teal);}
+.btn.ghost{background:#fff;border:1px solid var(--g200);color:var(--g900);}
+.btn.danger{background:#fff;border:1px solid #F0B7B7;color:#C0392B;}
+.btn:disabled,.btn.isdisabled{background:var(--g200)!important;color:var(--g500)!important;
+cursor:not-allowed!important;}
+.filelist{list-style:none;padding:0;margin:0;}
+.filelist li{display:flex;align-items:center;justify-content:space-between;padding:8px 0;border-bottom:1px dashed var(--g200);font-size:13px;}
+.card,.listpanel{background:#fff;border:1px solid var(--g200);border-radius:12px;padding:18px;margin-bottom:16px;box-shadow:0 1px 3px rgba(16,24,40,.06);}
+.card h2{font-size:15px;margin:0 0 12px;}
+.tablewrap{overflow-x:auto;}
+table{width:100%;border-collapse:collapse;font-size:13px;}
+th{text-align:left;background:var(--g50);color:var(--g500);font-weight:600;padding:10px 12px;
+border-bottom:1px solid var(--g200);white-space:nowrap;}
+td{padding:10px 12px;border-bottom:1px solid var(--g200);white-space:nowrap;}
+tr.rowlink{cursor:pointer;}
+tr.rowlink:hover{background:#F8FAFD;}
+.badge{display:inline-block;padding:2px 9px;border-radius:10px;font-size:11.5px;font-weight:600;white-space:nowrap;}
+.badge.blue{background:#E7EEF8;color:var(--navy);}
+.badge.green{background:#E4F5EE;color:var(--teal);}
+.badge.orange{background:#FCE9DA;color:var(--orange);}
+.badge.grey{background:var(--g200);color:var(--g500);}
+.badge.red{background:#FBE7E7;color:#C0392B;}
+.badge.teal{background:#E1F3EE;color:var(--teal);}
+.empty{color:var(--g500);font-size:12.5px;padding:24px 0;text-align:center;}
+tr.row-highlight{animation:tliRowHighlight 2.6s ease-out;}
+@keyframes tliRowHighlight{0%{background:#fdeecb;}100%{background:transparent;}}
+.tabs{display:flex;gap:4px;border-bottom:1px solid var(--g200);margin-bottom:16px;flex-wrap:wrap;}
+.tabs button{background:none;border:none;padding:10px 12px;font-size:13px;color:var(--g500);
+cursor:pointer;border-bottom:2px solid transparent;font-family:inherit;}
+.tabs button.active{color:var(--navy);border-bottom-color:var(--navy);font-weight:600;}
+.tabpanel{display:none;}
+.tabpanel.active{display:block;}
+.modal-mask{display:none;position:fixed;inset:0;background:rgba(16,24,40,.42);z-index:160;
+align-items:center;justify-content:center;}
+.modal-mask.open{display:flex;}
+.modal{background:#fff;border-radius:10px;width:460px;max-width:90vw;max-height:85vh;
+overflow:auto;padding:22px;}
+.modal.wide{width:640px;}
+.modal h3{margin-top:0;font-size:16px;}
+.formrow{margin-bottom:13px;}
+.formrow label{display:block;font-size:12.5px;color:var(--g500);margin-bottom:4px;}
+.req{color:#C00000;margin-left:2px;}
+.formrow input,.formrow select,.formrow textarea{width:100%;padding:7px 10px;border:1px solid var(--g200);
+border-radius:6px;font-size:13px;box-sizing:border-box;font-family:inherit;}
+.formrow textarea{resize:vertical;min-height:60px;}
+.formrow .static{padding:7px 0;font-size:13.5px;}
+.note{font-size:12px;color:#7a5b1f;background:#FFF8EE;border:1px solid #F3DFB8;padding:9px 11px;
+border-radius:6px;}
+.crosslink{display:block;font-size:11.5px;color:var(--g500);margin:6px 0 10px;}
+.crosslink a{color:var(--navy);}
+.btn.small2{padding:5px 10px;font-size:12px;}
+/* ==== 規則欄位來源徽章（20260910b 新增） ==== */
+.src-badge-wrap{display:inline-flex;align-items:center;gap:6px;margin-top:5px;flex-wrap:wrap;}
+.src-badge{display:inline-block;padding:2px 9px;border-radius:10px;font-size:11px;font-weight:600;white-space:nowrap;}
+.src-badge.inherit{background:var(--g200);color:var(--g500);}
+.src-badge.override{background:#FCE9DA;color:var(--orange);}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
+.kv{display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px dashed var(--g200);font-size:13px;}
+.kv span:first-child{color:var(--g500);}
+.small{font-size:12px;color:var(--g500);}
+.hint{font-size:11.5px;color:var(--g500);margin-top:3px;}
+/* ---- 列表共用 ---- */
+.toolrow{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:12px;flex-wrap:wrap;}
+.searchbox{flex:1;min-width:220px;max-width:360px;position:relative;}
+.searchbox input{width:100%;padding:8px 10px 8px 30px;border:1px solid var(--g200);border-radius:6px;
+font-size:13px;font-family:inherit;box-sizing:border-box;}
+.searchbox .sicon{position:absolute;left:9px;top:50%;transform:translateY(-50%);color:var(--g500);font-size:13px;}
+.chipbar{display:flex;gap:14px;flex-wrap:wrap;align-items:center;margin-bottom:12px;padding:12px;
+background:var(--g50);border:1px solid var(--g200);border-radius:8px;}
+.chipgroup{display:flex;gap:6px;flex-wrap:wrap;align-items:center;}
+.chipgroup .glabel{font-size:11.5px;color:var(--g500);margin-right:2px;}
+.fchip{padding:5px 12px;border-radius:14px;border:1px solid var(--g200);background:#fff;font-size:12.5px;
+cursor:pointer;font-family:inherit;color:var(--g900);}
+.fchip.active{background:var(--navy);color:#fff;border-color:var(--navy);}
+.clearlink{font-size:12px;color:var(--navy);cursor:pointer;text-decoration:underline;background:none;border:none;font-family:inherit;padding:0;}
+/* ==== 20260928 列表 UX 規範改版：篩選列（≤3 下拉＋更多篩選）與作用中篩選標籤 ==== */
+.filterrow{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-bottom:10px;}
+.filterrow select{padding:7px 10px;border:1px solid var(--g200);border-radius:6px;font-size:12.5px;font-family:inherit;background:#fff;color:var(--g900);}
+.activetags{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:10px;}
+.activetags:empty{display:none;}
+.atag{display:inline-flex;align-items:center;gap:6px;padding:4px 10px;border-radius:14px;background:#E6EEF8;color:var(--navy);font-size:12px;}
+.atag button{background:none;border:none;color:var(--navy);cursor:pointer;font-size:13px;line-height:1;padding:0;font-family:inherit;}
+.sortable{cursor:pointer;user-select:none;}
+.sortable .sarrow{font-size:10px;color:var(--g200);margin-left:3px;}
+.sortable.sorted .sarrow{color:var(--navy);}
+.pagerbar{display:flex;justify-content:space-between;align-items:center;margin-top:12px;font-size:12.5px;
+color:var(--g500);flex-wrap:wrap;gap:10px;}
+.pagerbtns{display:flex;gap:6px;align-items:center;}
+.pagerbtns button{padding:5px 10px;border:1px solid var(--g200);background:#fff;border-radius:6px;
+font-size:12.5px;cursor:pointer;font-family:inherit;}
+.pagerbtns button:disabled{color:var(--g200);cursor:not-allowed;}
+.pagerbtns select{padding:5px 8px;border:1px solid var(--g200);border-radius:6px;font-size:12.5px;font-family:inherit;}
+/* ---- 右側詳情抽屜 ---- */
+.drawer-mask{display:none;position:fixed;inset:0;background:rgba(16,24,40,.35);z-index:150;}
+.drawer-mask.open{display:block;}
+.drawer{position:fixed;top:0;right:0;height:100vh;width:520px;max-width:94vw;background:#fff;
+box-shadow:-8px 0 24px rgba(16,24,40,.18);z-index:151;transform:translateX(100%);transition:transform .2s;
+display:flex;flex-direction:column;}
+.drawer.open{transform:translateX(0);}
+.drawer-head{padding:18px 20px;border-bottom:1px solid var(--g200);display:flex;justify-content:space-between;align-items:flex-start;flex-shrink:0;}
+.drawer-head h2{font-size:16px;margin:0 0 4px;}
+.drawer-close{background:none;border:none;font-size:20px;cursor:pointer;color:var(--g500);line-height:1;padding:2px 6px;}
+.drawer-close:hover{color:var(--g900);}
+.drawer-body{flex:1;overflow-y:auto;padding:16px 20px 40px;}
+/* ---- 統計卡 ---- */
+.statgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin:14px 0;}
+.statbox{border:1px solid var(--g200);border-radius:8px;padding:14px;text-align:center;}
+.statbox .num{font-size:22px;font-weight:700;color:var(--navy);}
+.statbox .lbl{font-size:11.5px;color:var(--g500);margin-top:4px;}
+.sectiontitle{font-size:13px;font-weight:600;margin:16px 0 8px;color:var(--g900);}
+.sectiontitle:first-child{margin-top:0;}
+.demo-tag{display:block;font-size:10px;font-weight:400;color:#98A2B3;text-transform:none;letter-spacing:0;white-space:normal;}
+/* ---- 組織樹 ---- */
+.orgtree{border:1px solid var(--g200);border-radius:8px;padding:4px 0;}
+.orgdept{padding:8px 12px;font-size:12.5px;font-weight:600;color:var(--g500);background:var(--g50);border-bottom:1px solid var(--g200);}
+.orgdept:first-child{border-top:none;}
+.orgemp{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:8px 20px;font-size:13px;border-bottom:1px dashed var(--g200);}
+.orgemp:last-child{border-bottom:none;}
+.orgemp .oe-actions{display:flex;gap:8px;}
+.orgemp .oe-actions button{background:none;border:none;color:var(--navy);font-size:12px;cursor:pointer;padding:0;text-decoration:underline;font-family:inherit;}
+.loglist{font-size:12px;color:var(--g500);margin-top:8px;border-top:1px dashed var(--g200);padding-top:6px;}
+.loglist .logrow{padding:2px 0;}
+/* ---- 開關 ---- */
+.switchrow{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:8px 0;}
+.switch{position:relative;display:inline-block;width:38px;height:21px;flex-shrink:0;}
+.switch input{opacity:0;width:0;height:0;}
+.switch .slider{position:absolute;cursor:pointer;inset:0;background:var(--g200);border-radius:21px;transition:.15s;}
+.switch .slider:before{position:absolute;content:"";height:15px;width:15px;left:3px;top:3px;background:#fff;border-radius:50%;transition:.15s;}
+.switch input:checked + .slider{background:var(--teal);}
+.switch input:checked + .slider:before{transform:translateX(17px);}
+/* ---- 共用：頂欄與側欄使用者卡 ---- */
+.sidebar-user{padding:14px 20px 16px;border-top:1px solid var(--g200);margin-top:6px;display:flex;align-items:center;gap:10px;position:relative;}
+.sidebar-user .su-avatar{width:32px;height:32px;border-radius:50%;background:var(--navy);color:#fff;display:flex;
+align-items:center;justify-content:center;font-size:13px;font-weight:600;flex-shrink:0;}
+.sidebar-user .su-info{display:flex;flex-direction:column;line-height:1.4;}
+.sidebar-user .su-name{font-size:13px;font-weight:600;color:var(--g900);}
+.sidebar-user .su-role{font-size:11px;color:var(--g500);}
+.sidebar .su-logout{display:block;margin:6px 20px 4px;font-size:12px;color:var(--navy);text-decoration:none;}
+.sidebar .su-logout:hover{text-decoration:underline;}
+.topbar{display:flex;align-items:center;justify-content:space-between;padding:0 32px;height:56px;
+border-bottom:1px solid var(--g200);position:sticky;top:0;background:#fff;z-index:40;margin:-26px -32px 22px;gap:14px;}
+.hamburger{display:none;background:none;border:none;font-size:19px;cursor:pointer;color:var(--g900);padding:4px 6px;margin-right:4px;}
+.topbar .tb-title{font-size:15px;font-weight:600;color:var(--g900);flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.topbar .tb-actions{display:flex;align-items:center;gap:14px;position:relative;flex-shrink:0;}
+.tb-search{display:flex;align-items:center;gap:6px;background:var(--g50);border:1px solid var(--g200);border-radius:8px;
+padding:6px 10px;width:180px;}
+.tb-search input{border:none;background:none;outline:none;font-size:12.5px;font-family:inherit;width:100%;color:var(--g900);}
+.tb-searchicon{font-size:12px;color:var(--g500);}
+.tb-bellbtn{position:relative;background:none;border:none;cursor:pointer;font-size:17px;padding:4px;line-height:1;}
+.tb-dot{position:absolute;top:0;right:0;width:7px;height:7px;background:#C0392B;border-radius:50%;display:none;}
+.tb-avatarbtn{width:30px;height:30px;border-radius:50%;background:var(--navy);color:#fff;border:none;
+cursor:pointer;font-size:13px;font-weight:600;flex-shrink:0;}
+.tb-panel{display:none;position:absolute;top:44px;right:0;background:#fff;border:1px solid var(--g200);
+border-radius:8px;box-shadow:0 8px 24px rgba(16,24,40,.16);z-index:50;}
+.tb-panel.open{display:block;}
+.tb-notifpanel{width:300px;padding:10px;}
+.tb-notifpanel .tn-head{display:flex;justify-content:space-between;align-items:center;font-size:12.5px;
+padding:4px 6px 8px;border-bottom:1px solid var(--g200);margin-bottom:6px;}
+.tb-notifpanel .tn-head a{font-size:11.5px;cursor:pointer;}
+.tb-notifitem{padding:8px 6px;border-radius:6px;font-size:12.5px;line-height:1.5;}
+.tb-notifitem:hover{background:var(--g50);}
+.tb-notifitem.unread{background:#EEF3FA;}
+.tb-notifitem .tn-t{color:var(--g500);font-size:11px;margin-top:2px;}
+.tb-avatarmenu{width:150px;padding:6px;}
+.tb-avatarmenu a{display:block;padding:8px 10px;font-size:13px;color:var(--g900);text-decoration:none;border-radius:6px;}
+.tb-avatarmenu a:hover{background:var(--g50);}
+.toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(20px);
+background:#101828;color:#fff;padding:10px 20px;border-radius:8px;font-size:13px;
+opacity:0;pointer-events:none;transition:.2s;z-index:200;}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
+.sidebar-backdrop{display:none;position:fixed;inset:0;background:rgba(16,24,40,.4);z-index:110;}
+.sidebar-user{padding:14px 20px 16px;border-top:1px solid var(--g200);margin-top:6px;position:relative;}
+.su-clickarea{display:flex;align-items:center;gap:10px;cursor:pointer;min-width:0;}
+.su-info{flex:1;min-width:0;}
+.su-name,.su-unit{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.su-menu a{display:block;padding:8px 10px;font-size:13px;color:var(--g900);text-decoration:none;border-radius:6px;}
+.su-menu a:hover{background:var(--g50);}
+.sidebar-user .su-avatar{width:32px;height:32px;border-radius:50%;background:var(--navy);color:#fff;display:flex;
+align-items:center;justify-content:center;font-size:13px;font-weight:600;flex-shrink:0;}
+.sidebar-user .su-info{display:flex;flex-direction:column;line-height:1.5;}
+.sidebar-user .su-name{font-size:13px;font-weight:600;color:var(--g900);}
+.sidebar-user .su-roletag{font-size:10.5px;background:#E6EEF8;color:var(--navy);padding:0 6px;border-radius:8px;display:inline-block;width:fit-content;white-space:nowrap;}
+.sidebar-user .su-unit{font-size:11px;color:var(--g500);}
+.su-menu{top:auto;bottom:64px;left:14px;right:14px;}
+/* ---- RWD ---- */
+@media (max-width:1279px) and (min-width:1024px){
+  .sidebar{width:72px;}
+  .sidebar .navtext{position:absolute;left:100%;top:50%;transform:translateY(-50%);background:#fff;
+    border:1px solid var(--g200);border-radius:6px;padding:6px 10px;font-size:12.5px;white-space:nowrap;
+    box-shadow:0 4px 12px rgba(16,24,40,.12);opacity:0;pointer-events:none;transition:opacity .12s;margin-left:6px;color:var(--g900);}
+  .sidebar nav a:hover .navtext{opacity:1;}
+  .sidebar .brand{align-items:center;overflow:hidden;}
+  .sidebar .brand-logo{max-width:100%;width:32px;height:28px;object-fit:cover;object-position:left center;flex-shrink:0;}
+  .sidebar .brand-text{display:none;}
+  .sidebar .brand small{display:none;}
+  .sidebar-user{justify-content:center;}
+  .sidebar-user .navtext{display:none;}
+  .sidebar .su-logout{text-align:center;}
+}
+@media (max-width:1023px){
+  .hamburger{display:inline-flex;}
+  .sidebar{position:fixed;left:-260px;top:0;height:100vh;width:260px;z-index:120;transition:left .2s;}
+  .sidebar.open{left:0;}
+  .sidebar-backdrop.open{display:block;}
+  .app{width:100%;}
+  .main{padding:16px 16px 40px;}
+  .topbar{padding:0 16px;margin:-16px -16px 18px;}
+  .tb-search{display:none;}
+  .drawer{width:100%;max-width:100%;}
+  .statgrid{grid-template-columns:1fr;}
+  .pagerbtns{flex-wrap:wrap;justify-content:flex-end;}
+}
+.phase2-pill{display:inline-block;background:#FFF4E0;border:1px solid #E8A23D;color:#8A5A00;border-radius:999px;padding:2px 8px;font-size:11px;font-weight:700;margin-left:8px;vertical-align:middle;white-space:nowrap;}
+</style>
+<style>
+/* ==== 側欄改版 20260826f：呼吸感間距／分段收合／底部卡收攏（覆寫舊樣式，回應主管截圖回饋） ==== */
+#sidebar{padding:0;display:flex;flex-direction:column;height:100vh;overflow:hidden;}
+#sidebar .brand{padding:16px 20px 14px;}
+#sidebar .brand-logo{height:28px;width:auto;object-fit:contain;object-position:left center;}
+#sidebar .brand small{margin-top:12px;font-size:12px;color:var(--g500);text-transform:none;letter-spacing:0;font-weight:400;}
+#sidebar .brand-text{display:none;}
+#sidebar nav{flex:1 1 auto;overflow-y:auto;overflow-x:hidden;padding:4px 8px 8px;scrollbar-width:thin;}
+#sidebar nav::-webkit-scrollbar{width:6px;}
+#sidebar nav::-webkit-scrollbar-thumb{background:var(--g200);border-radius:3px;}
+#sidebar nav a,#sidebar nav span.disabled{align-items:center;gap:12px;height:40px;padding:0 14px;margin:2px 0;border-radius:8px;font-size:14px;}
+#sidebar .navgroup .sec-label{display:flex;align-items:center;justify-content:space-between;gap:6px;padding:0 12px;margin:20px 0 8px;font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:#98A2B3;font-weight:600;}
+#sidebar .navgroup:first-child .sec-label{margin-top:8px;}
+#sidebar .sec-toggle{background:none;border:none;padding:2px;margin:0;cursor:pointer;color:var(--g500);display:flex;align-items:center;line-height:1;flex-shrink:0;}
+#sidebar .sec-toggle svg{transition:transform .15s;display:block;}
+#sidebar .navgroup.collapsed .sec-toggle svg{transform:rotate(-90deg);}
+#sidebar .navgroup-items{overflow:hidden;}
+#sidebar .navgroup.collapsed .navgroup-items{display:none;}
+#sidebar .sidebar-user{display:block;border-top:1px solid var(--g200);padding:10px 12px;margin:0;flex-shrink:0;position:relative;}
+#sidebar .su-row{display:flex;align-items:center;gap:10px;cursor:pointer;min-width:0;}
+#sidebar .su-row .su-avatar{flex-shrink:0;width:36px;height:36px;}
+#sidebar .su-row .su-info{flex:1;min-width:0;display:flex;flex-direction:row;align-items:center;gap:8px;line-height:1.2;}
+#sidebar .su-row .su-name{font-size:14px;font-weight:600;color:var(--g900);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+#sidebar .su-row .su-roletag{font-size:12px;background:#E6EEF8;color:var(--navy);padding:1px 7px;border-radius:8px;white-space:nowrap;flex-shrink:0;}
+#sidebar .su-row .su-chevron{color:var(--g500);flex-shrink:0;}
+#sidebar .su-menu{top:auto;bottom:60px;left:10px;right:10px;width:auto;padding:8px;}
+@media (max-width:1279px) and (min-width:1024px){
+  #sidebar{width:72px;}
+  #sidebar .navgroup .sec-label{display:none;}
+  #sidebar .su-row{justify-content:center;}
+  #sidebar .su-menu{left:64px;right:auto;bottom:10px;width:210px;}
+}
+@media (max-width:1023px){
+  #sidebar{width:260px;}
+}
+
+/* ==== 20260826v 容器寬度統一（對齊 a01 基準，覆寫舊版殘留樣式，防止寬內容撐開頁面）==== */
+html,body{overflow-x:hidden;}
+.app{display:flex;min-height:100vh;width:100%;max-width:none;background:#fff;}
+.main{flex:1;padding:26px 32px 60px;min-width:0;}
+.topbar{padding:0 32px;}
+.pagehead{padding:0;}
+.card,.listpanel{border-radius:12px;box-shadow:0 1px 3px rgba(16,24,40,.06);}
+.tablewrap,.cal-wrap,.flex-cal-wrap{overflow-x:auto;max-width:100%;}
+@media (max-width:1023px){
+.app{width:100%;}
+.main{padding:16px 16px 40px;}
+.topbar{padding:0 16px;}
+}
+</style>
+</head>
+<body>
+<div class="app">
+<div class="sidebar" id="sidebar"><a class="brand" href="../顧問工作台/c01_today.html"><img class="brand-logo" src="../assets/tli-logo.svg" alt="TLI"><small class="navtext" data-i18n="brand.adminPortal">管理後台</small></a><nav><div class="navgroup" data-group="sales"><div class="sec-label" onclick="toggleNavGroup(event,'sales')"><span class="navtext" data-i18n="nav.group.sales">銷售</span><button type="button" class="sec-toggle navtext" onclick="toggleNavGroup(event,'sales')" aria-label="收合銷售" data-i18n-aria-label="aria.collapseSales"><svg width="12" height="12" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 8 10 12 14 8"/></svg></button></div><div class="navgroup-items"><a data-nav="a21" href="a21_projects.html"><svg class="navicon" width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="14" height="13" rx="2"/><line x1="3" y1="8" x2="17" y2="8"/><line x1="7" y1="12" x2="13" y2="12"/><line x1="7" y1="14.6" x2="11" y2="14.6"/></svg><span class="navtext" data-i18n="nav.a21">專案設定</span></a><a data-nav="a04" href="a04_packages.html"><svg class="navicon" width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="7" width="14" height="10" rx="1"/><path d="M3 7l7-4 7 4"/><line x1="10" y1="7" x2="10" y2="17"/></svg><span class="navtext" data-i18n="nav.a04">銷售方案</span></a><a data-nav="a05" href="a05_orders.html"><svg class="navicon" width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 2h10v16l-2-1.3L11 18l-2-1.3L7 18l-2-1.3V2z"/><line x1="7.5" y1="6" x2="12.5" y2="6"/><line x1="7.5" y1="9" x2="12.5" y2="9"/></svg><span class="navtext" data-i18n="nav.a05">訂單</span></a><a data-nav="a20" href="a20_agents.html"><svg class="navicon" width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="6.5" cy="6" r="2.3"/><path d="M2.5 16c0-2.6 1.8-4.3 4-4.3s4 1.7 4 4.3"/><circle cx="14.5" cy="8.5" r="1.8"/><path d="M17.3 16c0-1.9-1.3-3.4-2.8-3.4"/><path d="M9 6l3-1.5"/></svg><span class="navtext" data-i18n="nav.a20">合作夥伴</span></a></div></div><div class="navgroup" data-group="customer"><div class="sec-label" onclick="toggleNavGroup(event,'customer')"><span class="navtext" data-i18n="nav.group.customer">客戶</span><button type="button" class="sec-toggle navtext" onclick="toggleNavGroup(event,'customer')" aria-label="收合客戶" data-i18n-aria-label="aria.collapseCustomer"><svg width="12" height="12" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 8 10 12 14 8"/></svg></button></div><div class="navgroup-items"><a data-nav="a01" href="a01_member_rules.html"><svg class="navicon" width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="10" cy="6.5" r="3"/><path d="M4 17c0-3 2.7-5 6-5s6 2 6 5"/></svg><span class="navtext" data-i18n="nav.a01">會員管理</span></a><a data-nav="a19" class="active" href="a19_b2b_enterprise.html"><svg class="navicon" width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="3.5" y="3" width="7" height="14" rx="1"/><rect x="10.5" y="7.5" width="6" height="9.5" rx="1"/><line x1="5.5" y1="6" x2="7.5" y2="6"/><line x1="5.5" y1="9" x2="7.5" y2="9"/><line x1="5.5" y1="12" x2="7.5" y2="12"/><line x1="12.5" y1="10.5" x2="14.5" y2="10.5"/><line x1="12.5" y1="13.5" x2="14.5" y2="13.5"/></svg><span class="navtext" data-i18n="nav.a19">組織客戶</span></a><a data-nav="a14" href="a14_feedback.html"><svg class="navicon" width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M3 4h14a1 1 0 0 1 1 1v8a1 1 0 0 1-1 1H8l-4 3v-3H3a1 1 0 0 1-1-1V5a1 1 0 0 1 1-1z"/></svg><span class="navtext" data-i18n="nav.a14">學員回饋</span></a></div></div><div class="navgroup" data-group="teaching"><div class="sec-label" onclick="toggleNavGroup(event,'teaching')"><span class="navtext" data-i18n="nav.group.teaching">教學</span><button type="button" class="sec-toggle navtext" onclick="toggleNavGroup(event,'teaching')" aria-label="收合教學" data-i18n-aria-label="aria.collapseTeaching"><svg width="12" height="12" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 8 10 12 14 8"/></svg></button></div><div class="navgroup-items"><a data-nav="a02" href="a02_products.html"><svg class="navicon" width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6l7-3.5L17 6v8l-7 3.5L3 14V6z"/><path d="M3 6l7 3.5L17 6"/><line x1="10" y1="9.5" x2="10" y2="17.5"/></svg><span class="navtext" data-i18n="nav.a02">產品管理</span></a><a data-nav="a10" href="a10_teachers.html"><svg class="navicon" width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="2.5" y="6.5" width="15" height="9.5" rx="1.5"/><path d="M7 6.5V5a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2v1.5"/><line x1="2.5" y1="10.5" x2="17.5" y2="10.5"/></svg><span class="navtext" data-i18n="nav.a10">老師管理</span></a><a data-nav="a18" href="a18_resource_library.html"><svg class="navicon" width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><ellipse cx="10" cy="4.5" rx="7" ry="2.5"/><path d="M3 4.5v5c0 1.4 3.1 2.5 7 2.5s7-1.1 7-2.5v-5"/><path d="M3 9.5v5c0 1.4 3.1 2.5 7 2.5s7-1.1 7-2.5v-5"/></svg><span class="navtext" data-i18n="nav.a18">資源庫</span></a><a data-nav="a16" href="a16_events.html"><svg class="navicon" width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="14" height="13" rx="1.5"/><line x1="3" y1="8" x2="17" y2="8"/><line x1="6.5" y1="2" x2="6.5" y2="5.5"/><line x1="13.5" y1="2" x2="13.5" y2="5.5"/><circle cx="10" cy="12.3" r="2"/></svg><span class="navtext" data-i18n="nav.a16">活動管理</span></a><a data-nav="a22" href="a22_quizzes.html"><svg class="navicon" width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="2.5" width="12" height="15" rx="1.5"/><path d="M7 7l1.5 1.5L11 6"/><line x1="12.5" y1="7.5" x2="14" y2="7.5"/><path d="M7 12l1.5 1.5L11 11"/><line x1="12.5" y1="12.5" x2="14" y2="12.5"/></svg><span class="navtext" data-i18n="nav.a22">測驗管理</span></a></div></div><div class="navgroup" data-group="finance"><div class="sec-label" onclick="toggleNavGroup(event,'finance')"><span class="navtext" data-i18n="nav.group.finance">財務</span><button type="button" class="sec-toggle navtext" onclick="toggleNavGroup(event,'finance')" aria-label="收合財務" data-i18n-aria-label="aria.collapseFinance"><svg width="12" height="12" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 8 10 12 14 8"/></svg></button></div><div class="navgroup-items"><a data-nav="a23" href="a23_payment_gateways.html"><svg class="navicon" width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="2.5" y="5" width="15" height="10" rx="1.5"/><line x1="2.5" y1="8.5" x2="17.5" y2="8.5"/><circle cx="13.5" cy="12" r="1.2"/></svg><span class="navtext" data-i18n="nav.a23">收款與發票</span></a><a data-nav="a24" href="a24_partner_settlement.html"><svg class="navicon" width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="2.5" y="4" width="15" height="12" rx="1.5"/><line x1="6" y1="8" x2="14" y2="8"/><line x1="6" y1="11" x2="11" y2="11"/><path d="M12.5 13.5l1.2 1.2 2.3-2.4"/></svg><span class="navtext" data-i18n="nav.a24">結算與對帳</span></a><a data-nav="a07" href="a07_reports.html"><svg class="navicon" width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><line x1="4" y1="17" x2="4" y2="10"/><line x1="10" y1="17" x2="10" y2="5"/><line x1="16" y1="17" x2="16" y2="12"/></svg><span class="navtext" data-i18n="nav.a07">營運報表</span></a></div></div><div class="navgroup" data-group="system"><div class="sec-label" onclick="toggleNavGroup(event,'system')"><span class="navtext" data-i18n="nav.group.system">系統</span><button type="button" class="sec-toggle navtext" onclick="toggleNavGroup(event,'system')" aria-label="收合系統" data-i18n-aria-label="aria.collapseSystem"><svg width="12" height="12" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 8 10 12 14 8"/></svg></button></div><div class="navgroup-items"><a data-nav="a17" href="a17_master_data.html"><svg class="navicon" width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><line x1="4" y1="5" x2="16" y2="5"/><circle cx="8" cy="5" r="1.6"/><line x1="4" y1="10" x2="16" y2="10"/><circle cx="13" cy="10" r="1.6"/><line x1="4" y1="15" x2="16" y2="15"/><circle cx="10" cy="15" r="1.6"/></svg><span class="navtext" data-i18n="nav.a17">基礎資料設定</span></a><a data-nav="a09" href="a09_permissions_notify.html"><svg class="navicon" width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M10 2l6.5 2.5v5C16.5 14 13.8 17 10 18c-3.8-1-6.5-4-6.5-8.5v-5L10 2z"/></svg><span class="navtext" data-i18n="nav.a09">權限管理</span></a><a data-nav="a15" href="a15_notifications.html"><svg class="navicon" width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M10 2.5c-2.2 0-4 1.8-4 4v2.3c0 .6-.2 1.2-.6 1.7L4 12.5h12l-1.4-2c-.4-.5-.6-1.1-.6-1.7V6.5c0-2.2-1.8-4-4-4z"/><path d="M8.2 15.5a1.8 1.8 0 0 0 3.6 0"/></svg><span class="navtext" data-i18n="nav.a15">通知管理</span></a><a data-nav="a08" href="a08_content_cms.html"><svg class="navicon" width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="2.5" y="3" width="15" height="14" rx="1.5"/><line x1="8" y1="3" x2="8" y2="17"/></svg><span class="navtext" data-i18n="nav.a08">內容管理</span></a></div></div></nav><div class="sidebar-user" id="sidebarUser"><div class="su-row" onclick="toggleSuMenu(event)"><span class="su-avatar" id="suAvatar">王</span><span class="navtext su-info"><span class="su-name" id="suName">王大明</span><span class="su-roletag" id="suRoleTag" data-i18n="role.hqAdmin">總公司管理者</span></span><svg class="navtext su-chevron" width="14" height="14" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 8 10 12 14 8"/></svg></div><div class="tb-panel su-menu" id="suMenu"><a href="javascript:void(0)" onclick="toast('功能建置中，敬請期待')" data-i18n="common.settings">個人設定</a><a href="../公開網站/p01_home.html" data-i18n="common.gotoWebsite">前往官網</a><a href="../顧問工作台/c01_today.html" data-i18n="nav_ext.consultantWorkbench">前往顧問工作台</a><a href="javascript:void(0)" onclick="doLogout()" data-i18n="common.logout">登出</a></div></div></div><div class="main"><div class="topbar"><button class="hamburger" onclick="toggleSidebar()" aria-label="開啟選單" data-i18n-aria-label="common.openMenu"><svg class="navicon" width="18" height="18" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="5.5" x2="17" y2="5.5"/><line x1="3" y1="10" x2="17" y2="10"/><line x1="3" y1="14.5" x2="17" y2="14.5"/></svg></button><div class="tb-title" data-i18n="nav.a19">組織客戶</div><div class="tb-actions"><div class="tb-search"><svg class="navicon" width="15" height="15" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="8.5" cy="8.5" r="5.5"/><line x1="16.5" y1="16.5" x2="12.6" y2="12.6"/></svg><input type="text" placeholder="搜尋" data-i18n-placeholder="search.genericPlaceholder"></div><button class="tb-bellbtn" onclick="toggleNotif(event)" aria-label="通知" data-i18n-aria-label="common.notifications"><svg class="navicon" width="17" height="17" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M10 2.5c-2.2 0-4 1.8-4 4v2.3c0 .6-.2 1.2-.6 1.7L4 12.5h12l-1.4-2c-.4-.5-.6-1.1-.6-1.7V6.5c0-2.2-1.8-4-4-4z"/><path d="M8.2 15.5a1.8 1.8 0 0 0 3.6 0"/></svg><span class="tb-dot" id="tbDot"></span></button><div class="tb-panel tb-notifpanel" id="notifPanel"></div><button class="tb-avatarbtn" onclick="toggleAvatarMenu(event)" aria-label="使用者選單" data-i18n-aria-label="common.userMenu">王</button><div class="tb-panel tb-avatarmenu" id="avatarMenu"><a href="javascript:void(0)" onclick="toast('功能建置中，敬請期待')" data-i18n="common.settings">個人設定</a><a href="../公開網站/p01_home.html" data-i18n="common.gotoWebsite">前往官網</a><a href="javascript:void(0)" onclick="doLogout()" data-i18n="common.logout">登出</a></div></div></div><div class="sidebar-backdrop" id="sidebarBackdrop" onclick="closeSidebar()"></div>
+
+<div class="pagehead">
+<div><h1 data-i18n="nav.a19">組織客戶</h1><div class="desc" data-i18n="page.desc.b2b">管理企業客戶（企業簽約／政府單位）的合約、成員與使用狀況。</div></div>
+<div class="toolbtns"><button class="btn" onclick="openNewEnterpriseDrawer()" data-i18n="btn.addOrgCustomer">＋ 新增組織客戶</button></div>
+</div>
+
+<div class="tabs" id="mainTabs"></div>
+
+<div class="tabpanel active" id="panel-list">
+<div class="listpanel">
+<div class="toolrow">
+<div class="searchbox"><span class="sicon"><svg width="14" height="14" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="8.5" cy="8.5" r="5.5"/><line x1="16.5" y1="16.5" x2="12.6" y2="12.6"/></svg></span><input type="text" id="entSearch" placeholder="搜尋組織名稱／主管理者" data-i18n-placeholder="ph.searchOrgName" oninput="onEntSearch(this.value)"></div>
+<div style="display:flex;gap:8px;position:relative">
+<button class="btn ghost" onclick="entExport()" data-i18n="btn.export">匯出</button>
+</div>
+</div>
+<div class="filterrow">
+<select id="entFilterTier" onchange="onEntSimpleFilterChange('tier',this.value)"></select>
+<select id="entFilterStatus" onchange="onEntSimpleFilterChange('status',this.value)"><option value="" data-i18n="filter.statusAll">狀態：全部</option><option value="合約有效" data-i18n="status.contractValid">合約有效</option><option value="已到期" data-i18n="status.expired">已到期</option></select>
+<button type="button" class="clearlink" onclick="toggleEntMoreFilters()" id="entMoreFiltersBtn" data-i18n="common.moreFilters">更多篩選</button>
+<button class="clearlink" onclick="clearEntFilters()" data-i18n="btn.clearAllFilters2">清除全部篩選</button>
+</div>
+<div class="filterrow" id="entMoreFiltersPanel" style="display:none">
+<select id="entFilterInvoice" onchange="onEntSimpleFilterChange('invoice',this.value)"><option value="" data-i18n="filter.invoiceStatusAll">請款狀態：全部</option><option value="待開立" data-i18n="status.invoicePending">待開立</option><option value="已開立" data-i18n="status.invoiceIssued">已開立</option><option value="已收款" data-i18n="status.invoicePaid">已收款</option></select>
+</div>
+<div class="activetags" id="entActiveTags"></div>
+<div class="tablewrap"><table id="entTable"></table></div>
+<div class="pagerbar"><span id="entPagerLabel"></span><div class="pagerbtns">
+<span class="small" data-i18n="pager.perPage">每頁</span><select id="entPageSizeSel" onchange="onEntPageSizeChange(this)"><option value="10">10</option><option value="20">20</option></select><span class="small" data-i18n="pager.unit">筆</span>
+<button id="entBtnFirst" onclick="entGotoPage(1)" data-i18n="pager.first">« 第一頁</button>
+<button id="entBtnPrev" onclick="entGotoPageRel(-1)" data-i18n="pager.prev">‹ 上一頁</button>
+<span id="entPageIndicator" class="small"></span>
+<button id="entBtnNext" onclick="entGotoPageRel(1)" data-i18n="pager.next">下一頁 ›</button>
+<button id="entBtnLast" onclick="entGotoPage(9999)" data-i18n="pager.last">最後一頁 »</button>
+</div></div>
+</div>
+</div>
+
+<div class="tabpanel" id="panel-trial">
+<div class="listpanel">
+<div class="desc" style="margin-bottom:12px"><span data-i18n="desc.leadPanelNote">顧問在顧問工作台處理這些單；這裡是總部檢視與指派的地方。</span> <a href="../顧問工作台/c08_inquiries.html" class="clearlink" data-i18n="nav_ext.gotoConsultantWorkbenchArrow">前往顧問工作台 →</a></div>
+<div class="toolrow">
+<div class="searchbox"><span class="sicon"><svg width="14" height="14" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="8.5" cy="8.5" r="5.5"/><line x1="16.5" y1="16.5" x2="12.6" y2="12.6"/></svg></span><input type="text" id="leadSearch" placeholder="搜尋公司／聯絡人／需求摘要" data-i18n-placeholder="ph.searchLead" oninput="onLeadSearch(this.value)"></div>
+</div>
+<div class="filterrow">
+<select id="leadFilterSource" onchange="onLeadFilterChange('source',this.value)"><option value="" data-i18n="filter.sourceAll">來源：全部</option><option value="企業諮詢" data-i18n="source.corporateInquiry">企業諮詢</option></select>
+<select id="leadFilterStatus" onchange="onLeadFilterChange('status',this.value)"><option value="" data-i18n="filter.statusAll">狀態：全部</option><option value="新進" data-i18n="status.leadNew">新進</option><option value="已聯繫" data-i18n="status.leadContacted">已聯繫</option><option value="報價中" data-i18n="status.leadQuoting">報價中</option><option value="已成交" data-i18n="status.leadWon">已成交</option><option value="未成交" data-i18n="status.leadLost">未成交</option></select>
+<select id="leadFilterAdvisor" onchange="onLeadFilterChange('advisor',this.value)"><option value="" data-i18n="filter.advisorAll">負責顧問：全部</option></select>
+<button type="button" class="clearlink" onclick="clearLeadFilters()" data-i18n="btn.clearAllFilters2">清除全部篩選</button>
+</div>
+<div class="activetags" id="leadActiveTags"></div>
+<div class="tablewrap"><table id="leadTable"></table></div>
+<div id="leadEmpty" class="empty" style="display:none" data-i18n="empty.noMatchingLeads">找不到符合條件的企業諮詢。</div>
+<div style="text-align:center;margin-top:14px" id="leadLoadMoreWrap">
+<button class="btn ghost" id="leadLoadMoreBtn" onclick="tliLeadLoadMore()" data-i18n="btn.loadMore">載入更多</button>
+</div>
+</div>
+</div>
+
+</div>
+</div>
+
+<!-- 企業詳情抽屜 -->
+<div class="drawer-mask" id="drawerMask" onclick="closeDrawer()"></div>
+<div class="drawer" id="drawer" role="dialog" aria-modal="true">
+<div class="drawer-head">
+<div><h2 id="drw_title">組織客戶詳情</h2><div class="small" id="drw_sub"></div></div>
+<button class="drawer-close" onclick="closeDrawer()"><svg width="16" height="16" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><line x1="4.5" y1="4.5" x2="15.5" y2="15.5"/><line x1="15.5" y1="4.5" x2="4.5" y2="15.5"/></svg></button>
+</div>
+<div class="drawer-body" id="drw_body"></div>
+</div>
+
+<!-- 邀請員工 modal -->
+<div class="modal-mask" id="inviteModal" onclick="if(event.target===this) closeModal('inviteModal')"><div class="modal">
+<h3 data-i18n="modal.inviteEmployees">邀請員工</h3>
+<div class="hint" style="margin-bottom:10px"><span class="req">*</span> <span data-i18n="common.required">為必填</span></div>
+<div class="formrow"><label data-i18n="label.inviteEmails">員工 Email（每行一筆，可貼上多筆批次邀請）</label><span class="req">*</span><textarea id="inviteEmails" placeholder="name1@example.com&#10;name2@example.com"></textarea></div>
+<div class="formrow"><label data-i18n="label.joinDept">加入部門</label><select id="inviteDept"></select></div>
+<div class="hint" id="inviteHint" style="margin-bottom:10px"></div>
+<div style="text-align:right"><button class="btn ghost" onclick="closeModal('inviteModal')" data-i18n="common.cancel">取消</button> <button class="btn" onclick="doInviteEmployees()" data-i18n="btn.sendInvite">送出邀請</button></div>
+</div></div>
+
+<!-- 代為修改廠區 modal（2026-09-10 新增，2026-09-11 修改：廠區改由企業自行維護，
+     後台僅保留「代為修改」單一入口，儲存時於修改紀錄標記由 TLI 代為處理） -->
+<div class="modal-mask" id="campusModal" onclick="if(event.target===this) closeModal('campusModal')"><div class="modal">
+<h3 data-i18n="modal.editCampusOnBehalf">代為修改廠區</h3>
+<div class="formrow"><label data-i18n="label.selectCampus">選擇廠區</label><select id="campusPicker" onchange="onCampusPickerChange(this.value)"></select></div>
+<div class="formrow"><label data-i18n="col.name">名稱</label><span class="req">*</span><input type="text" id="campusName" placeholder="例：美國廠區" data-i18n-placeholder="ph.campusNameExample"></div>
+<div class="formrow"><label data-i18n="label.countryRegion">國家地區</label><select id="campusCountry"></select></div>
+<div class="formrow"><label data-i18n="label.timezone">時區</label><select id="campusTz"></select></div>
+<div class="formrow"><label data-i18n="common.status">狀態</label><select id="campusStatusSel"><option value="啟用" data-i18n="status.enabled2">啟用</option><option value="停用" data-i18n="status.disabled2">停用</option></select></div>
+<div class="hint" data-i18n="hint.campusEmpCountAuto">員工數依「所屬廠區」自動計算，不需手動輸入；本操作將標記為「由 TLI 代為處理」。</div>
+<div style="text-align:right;margin-top:14px"><button class="btn ghost" onclick="closeModal('campusModal')" data-i18n="common.cancel">取消</button> <button class="btn" onclick="saveCampus()" data-i18n="btn.saveCampus">儲存廠區</button></div>
+</div></div>
+
+<!-- 代為修改部門配額 modal（2026-09-11 新增：部門配額改由企業自行維護，
+     後台僅保留「代為修改」單一入口，儲存時於修改紀錄標記由 TLI 代為處理） -->
+<div class="modal-mask" id="deptQuotaEditModal" onclick="if(event.target===this) closeModal('deptQuotaEditModal')"><div class="modal">
+<h3 data-i18n="modal.editDeptQuotaOnBehalf">代為修改部門配額</h3>
+<div class="formrow"><label data-i18n="label.department">部門</label><select id="dqSelect" onchange="onDqSelectChange(this.value)"></select></div>
+<div class="formrow" id="dqNewNameRow"><label data-i18n="label.newDeptName">新部門名稱</label><span class="req">*</span><input type="text" id="dqNewName"placeholder="例：物流部" data-i18n-placeholder="ph.deptNameExample2"></div>
+<div class="formrow"><label data-i18n="label.quotaCapHours">配額上限（小時）</label><input type="number" min="0" id="dqQuotaInput"></div>
+<div class="hint" data-i18n="hint.deptQuotaOnBehalf">本操作將標記為「由 TLI 代為處理」，正式環境應提示企業 HR 復核。</div>
+<div style="text-align:right;margin-top:14px"><button class="btn ghost" onclick="closeModal('deptQuotaEditModal')" data-i18n="common.cancel">取消</button> <button class="btn" onclick="saveDeptQuotaEdit()" data-i18n="common.save">儲存</button></div>
+</div></div>
+
+<!-- 產生本月請款單 modal -->
+<div class="modal-mask" id="invoiceGenModal" onclick="if(event.target===this) closeModal('invoiceGenModal')"><div class="modal wide">
+<h3 data-i18n="modal.genInvoice">產生本月請款單</h3>
+<div id="invoiceGenBody"></div>
+</div></div>
+
+<!-- 企業諮詢單詳情 modal（承接前台企業諮詢表單，總部檢視與指派用） -->
+<div class="modal-mask" id="leadModal" onclick="if(event.target===this) closeModal('leadModal')"><div class="modal">
+<div style="display:flex;justify-content:space-between;align-items:flex-start"><h3 data-i18n="modal.leadDetail">企業諮詢單詳情</h3><button type="button" class="drawer-close" onclick="closeModal('leadModal')" aria-label="關閉" data-i18n-aria-label="common.close">&times;</button></div>
+<div id="leadModalBody"></div>
+<div style="text-align:right;margin-top:16px;display:flex;justify-content:space-between;align-items:center">
+<button type="button" class="btn ghost" id="leadConvertBtn" onclick="convertLeadToCustomer()" data-i18n="btn.convertToOrgCustomer">轉為組織客戶</button>
+<div><button type="button" class="btn ghost" onclick="closeModal('leadModal')" data-i18n="common.cancel">取消</button> <button type="button" class="btn" onclick="saveLeadDetail()" data-i18n="common.save">儲存</button></div>
+</div>
+</div></div>
+
+<!-- 新增組織客戶 抽屜表單（沿用主抽屜） -->
+
+<script src="../assets/_shared_masters.js"></script>
+<script src="../assets/_i18n_dict.js"></script>
+<script src="../assets/_i18n_dict_admin.js"></script>
+<script src="../assets/_i18n.js"></script>
+<script>
+function i18nT(zh, en){ return window.TLI_I18N ? TLI_I18N.t(zh, en) : zh; }
+
+function seededRand(seed){
+  var x = Math.sin(seed*9301+49297)*233280;
+  return x - Math.floor(x);
+}
+function addDays(baseStr, days){
+  var d = new Date(baseStr+'T00:00:00');
+  d.setDate(d.getDate()+days);
+  return d.toISOString().slice(0,10);
+}
+function padNum(n, len){ var s=String(n); while(s.length<len) s='0'+s; return s; }
+function nowStr(){ var d=new Date(); return d.toISOString().slice(0,16).replace('T',' '); }
+function qs(k){ return new URLSearchParams(location.search).get(k); }
+/* 部門／廠區改由企業自行維護（2026-09-11 修改）：後台僅檢視，如需協助由 TLI 顧問「代為修改」，
+   異動一律寫入修改紀錄並標記操作者，供企業事後追溯 */
+function pushEntOrgLog(e, what){
+  e.orgChangeLog = e.orgChangeLog || [];
+  e.orgChangeLog.unshift({time: nowStr(), who:'TLI（'+e.advisor+'）代為處理', what: what});
+  if (e.orgChangeLog.length > 20) e.orgChangeLog.length = 20;
+}
+function renderOrgLogMini(e){
+  var log = e.orgChangeLog || [];
+  if (!log.length) return '';
+  return '<div class="loglist"><div class="hint" style="margin-bottom:4px">'+i18nT('修改紀錄','Change Log')+'</div>' + log.slice(0,4).map(function(l){
+    return '<div class="logrow">'+l.time+'　'+l.who+'　'+l.what+'</div>';
+  }).join('') + '</div>';
+}
+
+/* ================= 示範資料：企業客戶 ================= */
+var ENT_NAMES = {}; // 索引＝主檔 orgCustomers 的 id 數字（ent6 → 6），索引不因主檔刪項而位移
+TLI_MASTERS.orgCustomers.forEach(function(o){ ENT_NAMES[parseInt(String(o.id).replace(/\D/g,''),10)] = o.name; }); // 來源：共用主檔 TLI_MASTERS.orgCustomers，其清單維護入口在 a17
+var ENT_ADVISORS = ['顧問 A','顧問 B','顧問 C','顧問 D'];
+var ENT_MANAGERS = [
+  {name:'林淑惠', title:'人資處長'}, {name:'陳建宏', title:'教育訓練主管'}, {name:'黃雅婷', title:'總務經理'},
+  {name:'王志遠', title:'人力資源協理'}, {name:'吳佳蓉', title:'學習發展主管'}, {name:'許俊傑', title:'行政部經理'}
+];
+var DEPTS = ['業務部','研發部','人資部','財務部','行政部','海外事業部'];
+var EMP_SURNAMES = ['王','陳','林','黃','張','李','吳','劉','蔡','楊'];
+var EMP_GIVENS = ['小明','雅婷','建宏','詩涵','志遠','雅萍','冠廷','佳蓉','怡君','俊傑'];
+/* 20260929 改版：拿掉頁內自造的方案名稱，合約價方案一律讀共用主檔 TLI_MASTERS.packages，
+   依組織客戶的會員分類（B／G）篩 audiences 含該分類者；「會員分類」下拉也改讀主檔 TLI_MASTERS.memberTiers，
+   本頁組織客戶只收 needOrg=true 的兩類（企業簽約 B、政府單位 G）。 */
+var ORG_TIERS = TLI_MASTERS.memberTiers.filter(function(t){ return t.needOrg; });
+function orgTierByCode(code){ return ORG_TIERS.find(function(t){ return t.code===code; }) || null; }
+function orgTierLabel(code){
+  var t = orgTierByCode(code);
+  return t ? i18nT(t.name+'（'+t.code+'）', t.en+' ('+t.code+')') : code;
+}
+function orgTierOptionsHtml(selected, withAll){
+  var opts = withAll ? '<option value="" data-i18n="filter.tierAll">會員分類：全部</option>' : '';
+  opts += ORG_TIERS.map(function(t){ return '<option value="'+t.code+'"'+(t.code===selected?' selected':'')+'>'+orgTierLabel(t.code)+'</option>'; }).join('');
+  return opts;
+}
+function orgPlansForTier(tierCode){
+  return TLI_MASTERS.packages.filter(function(p){ return p.audiences && p.audiences.indexOf(tierCode) > -1; });
+}
+function orgPlanOptionsHtml(tierCode, selected){
+  var plans = orgPlansForTier(tierCode);
+  if (!plans.length) return '<option value="">'+i18nT('（此分類目前無可售方案）','(No plan available for this category)')+'</option>';
+  return plans.map(function(p){ return '<option'+(p.name===selected?' selected':'')+'>'+p.name+'</option>'; }).join('');
+}
+
+/* 客戶類型：組織客戶一律是企業（entType='general'）；代理屬於合作夥伴，不在本頁。
+   學校類夥伴走「合作夥伴管理」a20 的專案合作型態，不在本頁建檔。
+   index 12＝「範例半導體股份有限公司」：企業管理者角色（h00–h07，陳雅婷）示範租戶，
+   合約細節見下方 makeEnterprise 的 isRefSemi 覆寫。 */
+var ENT_TYPE_LABELS = {general:'企業'};
+var ENT_TYPE_LABELS_EN = {general:'Enterprise'};
+function entTypeLabelText(t){ return i18nT(ENT_TYPE_LABELS[t], ENT_TYPE_LABELS_EN[t]); }
+/* 功能開關：本頁組織客戶只剩企業一種型態。合約與時數池、成員名單、使用報表每一家都一樣、預設恆為開啟；
+   HR 儀表板／部門管理／請假與申訴審核／老師評語為可個別開關的企業功能。 */
+var FEATURE_DEFS = {
+  common: [
+    {key:'contractPool', label:'合約與時數池', en:'Contract & Hour Pool'},
+    {key:'memberList', label:'成員名單', en:'Member List'},
+    {key:'usageReport', label:'使用報表', en:'Usage Report'}
+  ],
+  general: [
+    {key:'hrDashboard', label:'HR 儀表板', en:'HR Dashboard'},
+    {key:'deptMgmt', label:'部門管理', en:'Department Management'},
+    {key:'leaveApproval', label:'請假與申訴審核', en:'Leave & Appeal Review'},
+    {key:'teacherComments', label:'老師評語', en:'Teacher Comments'}
+  ]
+};
+function defaultFeatures(entType){
+  var f = {contractPool:true, memberList:true, usageReport:true,
+    hrDashboard:false, deptMgmt:false, leaveApproval:false, teacherComments:false};
+  if (entType==='general'){ f.hrDashboard=true; f.deptMgmt=true; f.leaveApproval=true; f.teacherComments=true; }
+  return f;
+}
+/* activeFeatureDraft：目前可編輯的功能開關草稿指標，新增組織客戶表單與功能開關編輯 modal 共用同一個 checkbox 渲染函式，
+   兩者不會同時開啟，故共用一個指標即可，不需個別綁定不同函式名稱 */
+var activeFeatureDraft = null;
+function onFeatureToggle(key, checked){ if (activeFeatureDraft) activeFeatureDraft[key] = checked; }
+function renderFeatureTogglesHtml(entType, features, editable){
+  var html = '<div class="card" style="padding:12px;background:var(--g50);margin-bottom:12px"><h2 style="font-size:13px;margin:0 0 8px">'+i18nT('共同（預設開啟）','Shared (always on)')+'</h2>' +
+    FEATURE_DEFS.common.map(function(f){
+      return '<label style="display:block;font-size:13px;margin-bottom:6px"><input type="checkbox" checked disabled> '+i18nT(f.label,f.en)+'</label>';
+    }).join('') + '</div>';
+  /* 本頁組織客戶只剩企業一種型態，企業專屬功能一律顯示 */
+  html += '<div class="card" style="padding:12px"><h2 style="font-size:13px;margin:0 0 8px">'+i18nT('企業功能','Enterprise Features')+'</h2>';
+  html += FEATURE_DEFS.general.map(function(f){
+    var checked = features[f.key] ? 'checked' : '';
+    var attr = editable ? ' onchange="onFeatureToggle(\''+f.key+'\',this.checked)"' : ' disabled';
+    return '<label style="display:block;font-size:13px;margin-bottom:6px"><input type="checkbox" '+checked+attr+'> '+i18nT(f.label,f.en)+'</label>';
+  }).join('');
+  html += '</div>';
+  return html;
+}
+/* 包含上課型態與 Mandarin Lounge 報名模式（20260910f 新增）：與 a04_packages.html 的 COURSE_TYPE_OPTIONS 為同一組列舉，
+   決定此合約下的員工／學生能否看到並報名 Mandarin Lounge 場次；chatRegMode 決定報名方式是全員開放還是白名單（見 h02／u02） */
+var COURSE_TYPE_OPTIONS = ['一對一','團體直播','Mandarin Lounge','自學影音'];
+var COURSE_TYPE_EN = {'一對一':'1-on-1','團體直播':'Group Livestream','Mandarin Lounge':'Mandarin Lounge','自學影音':'Self-paced Video'};
+function courseTypeLabel(ct){ return i18nT(ct, COURSE_TYPE_EN[ct] || ct); }
+
+/* 廠區／據點（2026-09-10 新增）：每家一般企業可設多個廠區，各自綁定國家地區與時區，
+   員工學員綁定廠區後，取消時限與扣時數判定可依員工所屬廠區時區計算（見合約參數「時區判定基準」）。
+   國家地區與時區分開兩個下拉：國家地區只列國家／地區名稱（不寫城市）；時區列 IANA 時區代碼，
+   顯示中文名稱＋UTC 偏移，兩者由顧問各自選擇，不強制連動。 */
+var CAMPUS_COUNTRY_LIST = ['台灣','美國','日本','新加坡','越南','中國大陸','英國','澳洲'];
+var CAMPUS_TZ_LIST = [
+  {tz:'Asia/Taipei', label:'台灣時間（UTC+8）'},
+  {tz:'America/Los_Angeles', label:'美國太平洋時間（UTC-8，夏令 UTC-7）'},
+  {tz:'America/New_York', label:'美國東岸時間（UTC-5，夏令 UTC-4）'},
+  {tz:'Asia/Tokyo', label:'日本時間（UTC+9）'},
+  {tz:'Asia/Singapore', label:'新加坡時間（UTC+8）'},
+  {tz:'Asia/Ho_Chi_Minh', label:'越南時間（UTC+7）'},
+  {tz:'Asia/Shanghai', label:'中國大陸時間（UTC+8）'},
+  {tz:'Europe/London', label:'英國時間（UTC+0，夏令 UTC+1）'},
+  {tz:'Australia/Sydney', label:'澳洲東岸時間（UTC+10，夏令 UTC+11）'}
+];
+function campusTzLabel(tz){
+  var found = CAMPUS_TZ_LIST.find(function(x){return x.tz===tz;});
+  return found ? found.label : tz;
+}
+/* 示範用廠區組合：每家一般企業固定含「台灣廠區」作為總部，第二廠區依索引輪替，
+   確保跨企業廠區時區不同，供 h02／m02／m07／t02 等頁面示範雙時區情境 */
+var CAMPUS_SECOND_POOL = [
+  {name:'美國廠區', country:'美國', tz:'America/Los_Angeles'},
+  {name:'日本廠區', country:'日本', tz:'Asia/Tokyo'},
+  {name:'東南亞廠區', country:'新加坡', tz:'Asia/Singapore'}
+];
+function makeCampuses(i){
+  var second = CAMPUS_SECOND_POOL[i % CAMPUS_SECOND_POOL.length];
+  return [
+    {id:'camp'+i+'_0', name:'台灣廠區', country:'台灣', tz:'Asia/Taipei', status:'啟用'},
+    {id:'camp'+i+'_1', name:second.name, country:second.country, tz:second.tz, status:'啟用'}
+  ];
+}
+
+var IT_TITLES = ['IT 專員','IT 主管','系統管理師','資訊部經理'];
+var RENEWAL_REASONS = ['企業內部年度預算尚未核准，需要延長採購決議時間','人資單位仍在盤點下年度受訓名額，先申請展延銜接','企業教育訓練承辦人異動，需要時間交接後續事宜'];
+function makeRenewalRequests(entIdx, contractEnd){
+  var r = seededRand(entIdx*331+71), r2 = seededRand(entIdx*337+73), r3 = seededRand(entIdx*341+79);
+  var todayStr = new Date().toISOString().slice(0,10);
+  var diffDays = Math.ceil((new Date(contractEnd+'T00:00:00') - new Date(todayStr+'T00:00:00'))/86400000);
+  /* 展延申請只掛在「尚未到期或到期 30 天內」的企業，避免已嚴重逾期合約出現不合理的展延情境 */
+  if (diffDays < -30) return [];
+  if (r > 0.55) return [];
+  var base = contractEnd > todayStr ? contractEnd : todayStr; /* max(合約迄日, 今天)：ISO 日期字串可直接比大小 */
+  var count = r2 > 0.8 ? 2 : 1;
+  var arr = [];
+  for (var i=0;i<count;i++){
+    var periodDays = [30,60,90][Math.floor(seededRand(entIdx*349+83+i)*3)];
+    var submitted = addDays(contractEnd, -(10+Math.floor(r3*40)));
+    var status = (count>1 && i===0) ? (seededRand(entIdx*353+i)>0.5?'已核准':'已婉拒') : '待審核';
+    arr.push({
+      id:'renew'+entIdx+'_'+i, submitted:submitted, periodDays:periodDays,
+      requestedNewEnd: addDays(base, periodDays),
+      reason: RENEWAL_REASONS[(entIdx+i)%RENEWAL_REASONS.length],
+      status: status
+    });
+  }
+  return arr;
+}
+/* 合約版本歷史（v2 新增：支援「複製上次合約」＋版本歷史列表，示範畫面，資料為模擬數字） */
+function makeContractHistory(i, currentPlanName, currentDiscountRate, currentStart, tierCode){
+  var r = seededRand(i*401+151);
+  var histCount = 1 + Math.floor(r*2); // 1～2 筆歷史版本
+  var versions = [];
+  var tierPlans = orgPlansForTier(tierCode);
+  for (var v=0; v<histCount; v++){
+    var vStart = addDays(currentStart, -365*(histCount-v));
+    var vPlan = tierPlans.length ? tierPlans[(i+v) % tierPlans.length].name : currentPlanName;
+    var vDiscount = 5 + ((i+v)*3) % 20;
+    versions.push({version:'v'+(v+1)+'.0', effectiveDate:vStart, planSummary: vPlan+'／折扣 '+vDiscount+'%', status:'已到期'});
+  }
+  versions.push({version:'v'+(histCount+1)+'.0', effectiveDate:currentStart, planSummary: currentPlanName+'／折扣 '+currentDiscountRate+'%', status:'生效中'});
+  return versions;
+}
+/* 代理商型專屬資料（v2 新增：優惠碼、名單歸屬規則、結算週期，示範畫面） */
+function makeAgentInfo(i){
+  var r = seededRand(i*457+263);
+  /* i===1（環宇教育顧問（東南亞地區）」）需與 a20 合作夥伴管理／夥伴端 r01 的示範代理商資料對齊，
+     固定使用同一組優惠碼 REF-SEA07，確保跨頁資料一致；其餘索引沿用原本的流水號規則 */
+  var referralCode = (i===1) ? 'REF-SEA07' : 'REF-'+padNum(i+1,5);
+  return {
+    referralCode: referralCode,
+    attributionRule: '以優惠碼綁定成交名單（歸屬有效期依後台設定）',
+    commissionRate: '', // 佣金比例待定，由 TLI 拍板
+    settlementCycle: r > 0.5 ? '月結' : '季結'
+  };
+}
+/* ================= 合約（v4 改版，2026-09-28：合約管理（原 a12）併入本頁——合約跟著組織客戶走。
+   一家組織客戶可有多份合約（沿用既有 contractHistory 版本紀錄），欄位改採 a12 合約管理原本的
+   合約欄位結構（方案／期間／付款條件／幣別／計價單位／時數池或預付金額／合約預設值／附件／備註），
+   檢視與編輯共用同一組欄位；合作夥伴（代理／經銷／專案合作）的條件不放在本頁，一律在「合作夥伴管理」a20 維護。
+   合約預設值（時區判定基準／階梯計價／預付款門檻％／合約展延）沿用原「合約參數」分頁的對應設定值；
+   原合約參數分頁其餘欄位（取消與改期規則、審核模式、部門配額、上課型態等）移至「使用狀況」分頁，
+   屬使用規則而非合約商務條款，故不重複出現於合約分頁。 ================= */
+function buildContractsFromLegacy(e){
+  var cp = e.contractParams || {};
+  var hist = (e.contractHistory||[]).slice();
+  if (!hist.length) hist = [{version:'v1.0', effectiveDate:e.contractStart, planSummary:e.planName+'／折扣 '+e.discountRate+'%', status:'生效中'}];
+  return hist.map(function(v, idx){
+    var isLast = idx===hist.length-1;
+    var start = v.effectiveDate;
+    var end = isLast ? e.contractEnd : addDays(hist[idx+1].effectiveDate, -1);
+    var planName = isLast ? e.planName : (v.planSummary.split('／')[0] || v.planSummary);
+    var defaults = {
+      tzMode: (cp.tzBasis==='campus') ? 'campus' : 'fixed',
+      tzValue: campusTzLabel(cp.timezone || 'Asia/Taipei'),
+      tieredPricingEnabled: !!(cp.tieredPricing && cp.tieredPricing.tiers && cp.tieredPricing.tiers.length),
+      tieredPricingTiers: ((cp.tieredPricing && cp.tieredPricing.tiers) || []).map(function(t){
+        return {threshold:(t.from||'')+'～'+(t.to||'不限'), value:'原價'};
+      }),
+      prepaidThresholdPct: 30,
+      renewalMode: (cp.renewalExtension && cp.renewalExtension.days) ? 'auto' : 'none',
+      renewalMonths: (cp.renewalExtension && cp.renewalExtension.days) ? Math.max(1,Math.round(Number(cp.renewalExtension.days)/30)) : 12
+    };
+    var contract = {
+      id: 'CT-'+e.id.toUpperCase()+'-'+padNum(idx+1,2),
+      planName: planName, start: start, end: end,
+      status: isLast ? '生效' : '到期',
+      paymentTerms: (cp.paymentMethod==='monthly') ? '月結' : (cp.paymentMethod==='prepaid' ? '預付' : '季結'),
+      currency: 'TWD',
+      pricingMode: (cp.pricingUnit || 'hourpool'),
+      poolTotal: (cp.poolTotal || 0),
+      prepaidAmount: cp.prepaidAmount || 0,
+      defaults: defaults,
+      files: [{name: e.name+'_合約.pdf', size: (600+idx*35)+' KB'}],
+      notes: ''
+    };
+    return contract;
+  });
+}
+/* ---- 20261013 來源型態與帶來的夥伴（選項讀主檔 sourceTypes／partners） ---- */
+function srcTypeText(id){ var t=TLI_MASTERS.sourceTypes.filter(function(x){return x.id===id;})[0]; return t ? i18nT(t.name,t.en) : (id||'－'); }
+function srcUnitText(id){
+  if (!id || id==='tli') return i18nT('TLI 直營','TLI Direct');
+  var p=TLI_MASTERS.partners.filter(function(x){return x.id===id;})[0]; return p ? p.name : id;
+}
+function srcBadge(id){
+  var cls={direct:'blue',agent:'orange',project:'green',distributor:'grey'}[id]||'grey';
+  return '<span class="badge '+cls+'">'+srcTypeText(id)+'</span>';
+}
+function srcTypeOptionsHtml(sel, withAll){
+  return (withAll?'<option value="">'+i18nT('來源型態：全部','Source Type: All')+'</option>':'') +
+    TLI_MASTERS.sourceTypes.map(function(t){ return '<option value="'+t.id+'"'+(t.id===sel?' selected':'')+'>'+i18nT(t.name,t.en)+'</option>'; }).join('');
+}
+function srcUnitOptionsHtml(type, sel){
+  if (type==='direct') return '<option value="tli" selected>'+i18nT('TLI 直營（無夥伴）','TLI Direct (no partner)')+'</option>';
+  var list=TLI_MASTERS.partners.filter(function(p){ return p.type===type; });
+  if (!list.length) return '<option value="">'+i18nT('此型態尚無夥伴，請先至合作夥伴管理新增','No partner of this type yet; add one in Partner Management first')+'</option>';
+  return list.map(function(p){ return '<option value="'+p.id+'"'+(p.id===sel?' selected':'')+'>'+p.name+(p.status==='停用'?i18nT('（已停用）',' (inactive)'):'')+'</option>'; }).join('');
+}
+function firstUnitOf(type){
+  if (type==='direct') return 'tli';
+  var l=TLI_MASTERS.partners.filter(function(p){ return p.type===type && p.status!=='停用'; })[0] || TLI_MASTERS.partners.filter(function(p){ return p.type===type; })[0];
+  return l ? l.id : '';
+}
+function makeEnterprise(i){
+  var r = seededRand(i*5+31), r2 = seededRand(i*9+33), r3 = seededRand(i*13+35), r4 = seededRand(i*17+37);
+  var r5 = seededRand(i*19+41), r6 = seededRand(i*23+43);
+  var entType = 'general';
+  var entName = ENT_NAMES[i];
+  /* 13＝「範例半導體股份有限公司」：企業管理者角色（h00–h07，陳雅婷）示範租戶，合約條件改為固定值，
+     與 h01／h05 顯示的合約期間、時數池對齊，而不是跟其他公司一樣隨機產生 */
+  var isRefSemi = (i===12);
+  var tier = r < 0.6 ? 'B' : 'G';
+  var mgr = isRefSemi ? {name:'陳雅婷', title:'人資處長'} : ENT_MANAGERS[i % ENT_MANAGERS.length];
+  var empCount = 12 + Math.floor(r2*180);
+  var start = isRefSemi ? '2026-01-01' : addDays('2025-01-01', Math.floor(r3*500));
+  var end = isRefSemi ? '2026-12-31' : addDays(start, 365);
+  var invoiceStatus = ['待開立','已開立','已收款'][Math.floor(r4*3)];
+  var deptList = DEPTS.slice(0, 3+Math.floor(r*3));
+  var campuses = entType==='general' ? makeCampuses(i) : [];
+  var employees = [];
+  var empSeed = i*97;
+  for (var e=0;e<Math.min(empCount, 9+Math.floor(r2*6));e++){
+    var sn = EMP_SURNAMES[(empSeed+e)%EMP_SURNAMES.length];
+    var gv = EMP_GIVENS[(empSeed+e*3)%EMP_GIVENS.length];
+    employees.push({
+      id:'emp'+i+'_'+e, name:sn+gv, dept: deptList[e % deptList.length],
+      email:'emp'+i+'_'+e+'@'+(i%2===0?'example':'example-corp')+'.com',
+      status: seededRand(empSeed+e*7) < 0.9 ? '在學' : '停用',
+      attendance: 60 + Math.floor(seededRand(empSeed+e*11)*40),
+      progress: 20 + Math.floor(seededRand(empSeed+e*13)*80),
+      avgScore: 55 + Math.floor(seededRand(empSeed+e*17)*45),
+      /* 廠區歸屬（2026-09-10 新增）：員工依序輪流分派廠區，確保每個廠區都有員工，
+         員工數（自動計）以此欄位即時統計，不另外維護計數 */
+      campusId: campuses.length ? campuses[e % campuses.length].id : ''
+    });
+  }
+  var contractParamsSet = r6 > 0.35;
+  var connectionRequests = [];
+  var pricingUnit = isRefSemi ? 'hourpool' : (seededRand(i*409+211) > 0.5 ? 'hourpool' : 'prepaidpool');
+  var prepaidAmount = 50000 + Math.floor(seededRand(i*419+223)*150000);
+  var contractParams = {
+    followC2CDefault: contractParamsSet ? (r6 > 0.7) : true,
+    cancelWindowHours: 12,
+    monthlyFreeCancel: 1 + Math.floor(r*3),
+    rescheduleMaxTimes: 2 + Math.floor(r2*3),
+    rescheduleWindowHours: 12,
+    /* 超額請假處理規則（20260910c 修正）：與 a17 LEAVE_RULE_OVERAGE_OPTIONS 同一組枚舉，appeal 為預設值，示範資料偏向 appeal */
+    overageLeavePolicy: ['appeal','appeal','deduct','noleave'][Math.floor(r5*4)],
+    /* 取消時限與扣時數判定基準（2026-09-10 修改：原「企業慣用時區」單一時區改為兩種判定基準）：
+       'campus' = 依員工所屬廠區時區（預設，一般企業有廠區時才可選）；'contract' = 統一用合約指定時區。
+       沒有廠區資料的客戶固定只能用 contract 基準。 */
+    tzBasis: (campuses.length && i % 5 !== 0) ? 'campus' : 'contract',
+    timezone: CAMPUS_TZ_LIST[i % CAMPUS_TZ_LIST.length].tz,
+    poolTotal: isRefSemi ? 6000 : (500 + Math.floor(r3*2000)),
+    poolExpiry: end,
+    deptQuota: deptList.map(function(d, di){ return {dept:d, quota: 50 + di*20}; }),
+    tieredPricing: {type: r4 > 0.5 ? 'accounts' : 'hours', tiers:[{from:1,to:50},{from:51,to:200},{from:201,to:''}]},
+    renewalExtension: {days:'', requireApproval: true, maxTimes:''},
+    /* 取消／請假審核模式與成效紀錄（20260910b 新增）：預設值＝企業員工類型預設，
+       reviewMode 依索引輪替製造覆寫示範；未覆寫時應等於 ENT_TYPE_DEFAULTS 對應值 */
+    reviewMode: ['self','self','hrApproval','rescheduleOnly'][i % 4],
+    recordEnabled: (i % 6 !== 3),
+    consecutiveAbsentNotifyN: '', // 連續缺席／取消達 N 次通知門檻，待 TLI 拍板
+    /* v2 新增：付款方式與計價單位（2026-09-09 拍板：合約付款方式需支援分期／月結／預付款倒扣） */
+    paymentMethod: isRefSemi ? 'monthly' : ['installment','monthly','prepaid'][Math.floor(seededRand(i*401+199)*3)],
+    pricingUnit: pricingUnit,
+    prepaidAmount: prepaidAmount,
+    prepaidDeductUnit: '', // 每堂倒扣單價待定，由 TLI 拍板
+    prepaidBalance: Math.floor(prepaidAmount * (0.3 + seededRand(i*421+227)*0.6)),
+    prepaidThreshold: '', // 低於門檻提醒之門檻值待定，由 TLI 拍板，不由固定比例試算
+    /* 包含上課型態：除 i%3===2 外都含 Mandarin Lounge；chatRegMode 預設全員開放，index 0 示範白名單模式供 h02 對照 */
+    courseTypes: (function(){
+      var base = ['一對一','團體直播'];
+      if (i % 3 !== 2) base.push('Mandarin Lounge');
+      if (i % 4 === 0) base.push('自學影音');
+      return base;
+    })(),
+    chatRegMode: (i === 0) ? 'whitelist' : 'open'
+  };
+  var discountRate = 5 + Math.floor(r2*20);
+  var tierPlansForEnt = orgPlansForTier(tier);
+  var planName = tierPlansForEnt.length ? tierPlansForEnt[i % tierPlansForEnt.length].name : '';
+  var agentInfo = entType==='agent' ? makeAgentInfo(i) : null;
+  var finalEmpCount = (entType==='agent' ? 0 : employees.length);
+  var ent = {
+    id:'ent'+i, name:entName, entType:entType, tier:tier, planName: planName,
+    empCount:finalEmpCount, contractStart:start, contractEnd:end, manager:mgr,
+    advisor: isRefSemi ? '王大明' : ENT_ADVISORS[i % ENT_ADVISORS.length], attendance: 65 + Math.floor(r*30),
+    invoiceStatus:invoiceStatus, payMethod: isRefSemi ? '月結' : (r>0.5 ? '月結' : '一次付清'),
+    taxId: padNum((10000000+(i*53)%89999999),8), depts:deptList, employees:employees, campuses:campuses,
+    discountRate: discountRate, scheduleMonthly: r3 > 0.5,
+    invoices: [
+      {period:addDays(end,-95).slice(0,7), amount: 80000+Math.floor(r*400000), status:'已收款'},
+      {period:addDays(end,-65).slice(0,7), amount: 80000+Math.floor(r2*400000), status:'已開立'},
+      {period:addDays(end,-35).slice(0,7), amount: 80000+Math.floor(r3*400000), status:invoiceStatus}
+    ],
+    contractParamsSet: contractParamsSet, contractParams: contractParams,
+    connectionRequests: connectionRequests, renewalRequests: makeRenewalRequests(i, end),
+    contractHistory: makeContractHistory(i, planName, discountRate, start, tier),
+    agentInfo: agentInfo,
+    /* 功能開關（v43 架構定案）：預設值依客戶類型套用共同＋型別專屬功能，可於「功能設定」分頁編輯 */
+    features: defaultFeatures(entType),
+    /* 部門與廠區改由企業自行維護後台僅檢視（2026-09-11 修改）：修改紀錄種一筆企業端異動示範，
+       後台之後只會透過「代為修改」寫入標記「由 TLI 代為處理」的紀錄 */
+    orgChangeLog: [
+      {time: addDays(start, 40)+' 10:15', who: mgr.name+'（'+mgr.title+'）', what:'更新部門與廠區設定'}
+    ]
+  };
+  var mo = TLI_MASTERS.orgCustomers.filter(function(o){ return o.id==='ent'+i; })[0] || {};
+  ent.code = mo.code || ''; ent.sourceType = mo.sourceType || 'direct'; ent.sourceUnitId = mo.sourceUnitId || 'tli';
+  ent.contracts = buildContractsFromLegacy(ent);
+  return ent;
+}
+var ENTERPRISES = []; Object.keys(ENT_NAMES).map(Number).sort(function(a,b){ return a-b; }).forEach(function(ei){ ENTERPRISES.push(makeEnterprise(ei)); });
+
+function entById(id){ return ENTERPRISES.find(function(e){return e.id===id;}); }
+
+/* ================= 企業諮詢總覽（承接 p10 企業諮詢表單）=================
+   實際聯繫與建檔仍在顧問工作台 c08 處理；本頁只讀取同一批示範資料＋c08 寫回的狀態，做管理者唯讀總覽，
+   避免 a19 與 c08 各自維護一套企業諮詢邏輯。狀態沿用 c08 五態：新進／已聯繫／報價中／已成交／未成交。
+   示範用：本頁沒有真正後端，改讀 localStorage；正式版由後端 API 提供同一份資料。 */
+var TLI_ENT_APP_KEY='tliDemoEnterpriseApplications';
+var TLI_ENT_STATUS_KEY='tliDemoEnterpriseStatusOverrides';
+/* 基準示範資料：與顧問工作台 c08「諮詢與試聽」頁 ENTERPRISE_SEED_DATA 為同一組公司／聯絡人／id／狀態
+   （INQ-2026-B01～B12），確保跨頁對照一致，「前往顧問工作台處理」才能正確定位到同一筆 */
+var TRIAL_APP_SEED=[
+  {id:'INQ-2026-B01',company:'範例半導體股份有限公司',industry:'半導體',location:'美國廠區',headcount:'12',contactName:'王小姐',contactInfo:'wang.hr@example-semi.example',submittedAt:'2026-08-23 10:00',status:'新進'},
+  {id:'INQ-2026-B02',company:'北辰精密工業股份有限公司',industry:'電子零組件',location:'日本廠區',headcount:'8',contactName:'佐藤先生',contactInfo:'sato.hr@example-tech.example',submittedAt:'2026-08-19 10:00',status:'已聯繫'},
+  {id:'INQ-2026-B03',company:'假設國際貿易股份有限公司',industry:'國際貿易',location:'美國廠區',headcount:'20',contactName:'陳先生',contactInfo:'chen.hr@example-trade.example',submittedAt:'2026-08-13 10:00',status:'報價中'},
+  {id:'INQ-2026-B04',company:'範例生醫股份有限公司',industry:'生技醫療',location:'日本廠區',headcount:'15',contactName:'田中小姐',contactInfo:'tanaka.hr@example-bio.example',submittedAt:'2026-08-05 10:00',status:'報價中'},
+  {id:'INQ-2026-B05',company:'安泰保經股份有限公司',industry:'金融服務',location:'美國廠區',headcount:'30',contactName:'李小姐',contactInfo:'li.hr@example-fin.example',submittedAt:'2026-07-21 10:00',status:'已成交'},
+  {id:'INQ-2026-B06',company:'假設物流股份有限公司',industry:'物流運輸',location:'日本廠區',headcount:'6',contactName:'鈴木先生',contactInfo:'suzuki.hr@example-logi.example',submittedAt:'2026-07-28 10:00',status:'未成交',lostReason:'預算不符'},
+  {id:'INQ-2026-B07',company:'恆昌半導體材料股份有限公司',industry:'半導體材料',location:'美國廠區',headcount:'10',contactName:'林小姐',contactInfo:'lin.hr@example-mat.example',submittedAt:'2026-08-24 10:00',status:'新進'},
+  {id:'INQ-2026-B08',company:'譽陽電子股份有限公司',industry:'消費性電子',location:'日本廠區',headcount:'18',contactName:'中村先生',contactInfo:'nakamura.hr@example-elec.example',submittedAt:'2026-08-16 10:00',status:'已聯繫'},
+  {id:'INQ-2026-B09',company:'承運國際物流股份有限公司',industry:'物流運輸',location:'美國廠區',headcount:'14',contactName:'黃先生',contactInfo:'huang.hr@example-ship.example',submittedAt:'2026-08-10 10:00',status:'報價中'},
+  {id:'INQ-2026-B10',company:'昱誠光電股份有限公司',industry:'光電產業',location:'日本廠區',headcount:'9',contactName:'小林小姐',contactInfo:'kobayashi.hr@example-opt.example',submittedAt:'2026-08-01 10:00',status:'報價中'},
+  {id:'INQ-2026-B11',company:'大成生技製藥股份有限公司',industry:'生技醫療',location:'美國廠區',headcount:'22',contactName:'張小姐',contactInfo:'chang.hr@example-pharma.example',submittedAt:'2026-07-16 10:00',status:'已成交'},
+  {id:'INQ-2026-B12',company:'東亞精密機械股份有限公司',industry:'精密機械',location:'日本廠區',headcount:'7',contactName:'伊藤先生',contactInfo:'ito.hr@example-mech.example',submittedAt:'2026-07-24 10:00',status:'未成交',lostReason:'時段無法配合'}
+];
+function tliReadJSON(key,fallback){
+  try{ var v=JSON.parse(localStorage.getItem(key)); return (v===null||v===undefined)?fallback:v; }catch(e){ return fallback; }
+}
+/* 合併基準示範資料＋公開網站 p10 送出的新申請，並套用 c08 顧問處理後寫回的狀態，
+   狀態與 c08 同一份五態（新進／已聯繫／報價中／已成交／未成交），不再另外簡化或轉譯 */
+function tliTrialAllRows(){
+  var overrides=tliReadJSON(TLI_ENT_STATUS_KEY,{});
+  var apps=tliReadJSON(TLI_ENT_APP_KEY,[]);
+  var appRows=apps.map(function(a){
+    return {id:a.id,company:a.company,industry:a.industry,location:a.location,headcount:a.headcount,
+      contactName:a.contactName,contactInfo:a.contactInfo,submittedAt:a.submittedAt,
+      status:overrides[a.id]||a.status||'新進',lostReason:a.lostReason||''};
+  });
+  var seedRows=TRIAL_APP_SEED.map(function(s){
+    return {id:s.id,company:s.company,industry:s.industry,location:s.location,headcount:s.headcount,
+      contactName:s.contactName,contactInfo:s.contactInfo,submittedAt:s.submittedAt,
+      status:overrides[s.id]||s.status,lostReason:s.lostReason||''};
+  });
+  var all=appRows.concat(seedRows);
+  all.sort(function(a,b){ return (b.submittedAt||'').localeCompare(a.submittedAt||''); });
+  return all;
+}
+/* ================= 組織客戶「企業諮詢」分頁（承接前台企業諮詢表單，總部檢視與指派用）=================
+   資料分兩批：一批沿用上面 tliTrialAllRows()（與顧問工作台 c08 同一份資料，同一組公司／id）；
+   一批是本頁另建的示範單（尚無獨立前台表單串接，先以總部可見的示範單呈現）。兩批來源都統一標為「企業諮詢」，
+   狀態與負責顧問由本頁自行指派、與 c08 內部細節狀態分開記錄，寫回 localStorage，不覆寫 c08 的狀態欄位；
+   狀態沿用 c08 同一套五態：新進／已聯繫／報價中／已成交／未成交（未成交需填原因）。 */
+var ENT_INQUIRY_SEED=[
+  {id:'ENQ-2026-01',company:'新境半導體設備股份有限公司',contactName:'周先生',contactInfo:'chou.pm@example-equip.example',submittedAt:'2026-09-18 14:20',needSummary:'廠區擴編至 30 人，想了解企業包月方案與報價',status:'新進',advisor:''},
+  {id:'ENQ-2026-02',company:'翊宸能源科技股份有限公司',contactName:'許小姐',contactInfo:'hsu.hr@example-energy.example',submittedAt:'2026-09-12 09:40',needSummary:'詢問是否支援日文與英文雙語班',status:'已聯繫',advisor:'顧問 B'},
+  {id:'ENQ-2026-03',company:'柏昇材料科技股份有限公司',contactName:'游先生',contactInfo:'you.ops@example-material.example',submittedAt:'2026-09-05 16:05',needSummary:'想了解與現有 HR 系統的單一登入串接方式',status:'未成交',advisor:'顧問 A',lostReason:'僅為詢價，暫無學習計畫'},
+  {id:'ENQ-2026-04',company:'恆越生技製藥股份有限公司',contactName:'邱小姐',contactInfo:'chiu.hr@example-biotech.example',submittedAt:'2026-08-29 11:15',needSummary:'詢問企業包班與一對一混合方案報價',status:'新進',advisor:''},
+  {id:'ENQ-2026-05',company:'昇陽精密機電股份有限公司',contactName:'羅先生',contactInfo:'lo.hr@example-mech2.example',submittedAt:'2026-08-20 10:30',needSummary:'想先了解企業包班規劃與建議參加人數',status:'已聯繫',advisor:'顧問 C'},
+  {id:'ENQ-2026-06',company:'翎風科技材料股份有限公司',contactName:'蔡小姐',contactInfo:'tsai.hr@example-flux.example',submittedAt:'2026-08-10 09:00',needSummary:'原詢問企業包月方案，已完成簽約',status:'已成交',advisor:'顧問 A'},
+  {id:'ENQ-2026-07',company:'尚德電路科技股份有限公司',contactName:'范先生',contactInfo:'fan.hr@example-circuit.example',submittedAt:'2026-07-30 15:40',needSummary:'原詢問日語班報價，已完成簽約',status:'已成交',advisor:'顧問 D'}
+];
+var B2B_LEAD_OVERRIDE_KEY='tliDemoB2bLeadOverrides';
+function b2bLeadOverrides(){ return tliReadJSON(B2B_LEAD_OVERRIDE_KEY,{}); }
+function b2bLeadSaveOverride(id,patch){
+  var all=b2bLeadOverrides();
+  all[id]=Object.assign({},all[id]||{},patch);
+  try{ localStorage.setItem(B2B_LEAD_OVERRIDE_KEY,JSON.stringify(all)); }catch(e){}
+}
+/* 沿用 tliTrialAllRows() 的那批，排除公司名稱已是共用主檔 orgCustomers 的既有客戶
+   （示範資料裡少數幾筆企業諮詢公司剛好與既有組織客戶同名，這裡不重複顯示，避免看起來像已成交又還在洽談） */
+function b2bLeadAllRows(){
+  var overrides=b2bLeadOverrides();
+  var orgNames=(window.TLI_MASTERS&&TLI_MASTERS.orgCustomers?TLI_MASTERS.orgCustomers:[]).map(function(o){return o.name;});
+  var trialRows=tliTrialAllRows().filter(function(r){ return orgNames.indexOf(r.company)===-1; }).map(function(r){
+    var row={id:r.id, source:'企業諮詢', company:r.company, contactName:r.contactName, contactInfo:r.contactInfo,
+      submittedAt:r.submittedAt, needSummary:'產業：'+(r.industry||'－')+'／廠區：'+(r.location||'－')+'／預計人數：'+(r.headcount||'－'),
+      status:r.status, advisor:'', lostReason:r.lostReason||'',
+      raw:{industry:r.industry, location:r.location, headcount:r.headcount}};
+    var ov=overrides[r.id];
+    if(ov){ if(ov.status) row.status=ov.status; if(ov.advisor!==undefined) row.advisor=ov.advisor; if(ov.lostReason!==undefined) row.lostReason=ov.lostReason; }
+    return row;
+  });
+  var inquiryRows=ENT_INQUIRY_SEED.map(function(r){
+    var row={id:r.id, source:'企業諮詢', company:r.company, contactName:r.contactName, contactInfo:r.contactInfo,
+      submittedAt:r.submittedAt, needSummary:r.needSummary, status:r.status, advisor:r.advisor||'', lostReason:r.lostReason||'', raw:{}};
+    var ov=overrides[r.id];
+    if(ov){ if(ov.status) row.status=ov.status; if(ov.advisor!==undefined) row.advisor=ov.advisor; if(ov.lostReason!==undefined) row.lostReason=ov.lostReason; }
+    return row;
+  });
+  var all=trialRows.concat(inquiryRows);
+  all.sort(function(a,b){ return (b.submittedAt||'').localeCompare(a.submittedAt||''); });
+  return all;
+}
+var LEAD_STATUS_EN = {'已成交':'Won','報價中':'Quoting','已聯繫':'Contacted','未成交':'Lost','新進':'New'};
+function leadStatusText(s){ return i18nT(s||'新進', LEAD_STATUS_EN[s||'新進']); }
+function leadStatusBadge(s){
+  if(s==='已成交') return '<span class="badge green">'+leadStatusText(s)+'</span>';
+  if(s==='報價中') return '<span class="badge orange">'+leadStatusText(s)+'</span>';
+  if(s==='已聯繫') return '<span class="badge grey">'+leadStatusText(s)+'</span>';
+  if(s==='未成交') return '<span class="badge red">'+leadStatusText(s)+'</span>';
+  return '<span class="badge blue">'+leadStatusText('新進')+'</span>';
+}
+var leadState={search:'', filters:{source:'', status:'', advisor:''}, visibleCount:10};
+function leadFilteredRows(){
+  var term=leadState.search.trim().toLowerCase();
+  return b2bLeadAllRows().filter(function(r){
+    if(term && r.company.toLowerCase().indexOf(term)===-1 && (r.contactName||'').toLowerCase().indexOf(term)===-1 &&
+       (r.needSummary||'').toLowerCase().indexOf(term)===-1) return false;
+    if(leadState.filters.source && r.source!==leadState.filters.source) return false;
+    if(leadState.filters.status && r.status!==leadState.filters.status) return false;
+    if(leadState.filters.advisor){
+      if(leadState.filters.advisor==='（未指派）'){ if(r.advisor) return false; }
+      else if(r.advisor!==leadState.filters.advisor) return false;
+    }
+    return true;
+  });
+}
+function fillLeadAdvisorFilter(){
+  var sel=document.getElementById('leadFilterAdvisor');
+  var prev = sel.value;
+  while (sel.options.length > 1) sel.remove(1);
+  ENT_ADVISORS.concat(['（未指派）']).forEach(function(a){ var opt=document.createElement('option'); opt.value=a; opt.textContent=(a==='（未指派）') ? i18nT('（未指派）','(Unassigned)') : a; sel.appendChild(opt); });
+  sel.value = prev;
+}
+function onLeadSearch(val){ leadState.search=val; leadState.visibleCount=10; renderLeadTable(); }
+function onLeadFilterChange(key,val){ leadState.filters[key]=val; leadState.visibleCount=10; renderLeadActiveTags(); renderLeadTable(); }
+function clearLeadFilters(){
+  leadState.search=''; document.getElementById('leadSearch').value='';
+  leadState.filters={source:'', status:'', advisor:''};
+  ['leadFilterSource','leadFilterStatus','leadFilterAdvisor'].forEach(function(id){ document.getElementById(id).value=''; });
+  leadState.visibleCount=10;
+  renderLeadActiveTags();
+  renderLeadTable();
+}
+function leadFilterLabel(key,val){
+  if(key==='source') return i18nT('來源：','Source: ')+i18nT(val, val==='企業諮詢'?'Corporate Inquiry':val);
+  if(key==='status') return i18nT('狀態：','Status: ')+leadStatusText(val);
+  if(key==='advisor') return i18nT('負責顧問：','Advisor: ')+val;
+  return val;
+}
+function renderLeadActiveTags(){
+  var wrap=document.getElementById('leadActiveTags');
+  if(!wrap) return;
+  var tags=[];
+  ['source','status','advisor'].forEach(function(k){ if(leadState.filters[k]) tags.push({k:k,label:leadFilterLabel(k,leadState.filters[k])}); });
+  wrap.innerHTML=tags.map(function(t){ return '<span class="atag">'+t.label+' <button type="button" onclick="removeLeadFilter(\''+t.k+'\')">×</button></span>'; }).join('');
+}
+function removeLeadFilter(key){
+  leadState.filters[key]='';
+  var elId={source:'leadFilterSource', status:'leadFilterStatus', advisor:'leadFilterAdvisor'}[key];
+  if(elId) document.getElementById(elId).value='';
+  renderLeadActiveTags();
+  renderLeadTable();
+}
+function renderLeadTable(){
+  fillLeadAdvisorFilter();
+  var rows=leadFilteredRows();
+  document.getElementById('leadEmpty').style.display=rows.length?'none':'block';
+  var t=document.getElementById('leadTable');
+  var visible=rows.slice(0,leadState.visibleCount);
+  t.innerHTML='<tr><th data-i18n="col.source">來源</th><th data-i18n="col.companyName">公司名稱</th><th data-i18n="label.contactPerson">聯絡人</th><th data-i18n="label.contactInfo">聯絡方式</th><th data-i18n="col.needSummary">需求摘要</th><th data-i18n="col.submittedAt">送出時間</th><th data-i18n="common.status">狀態</th><th data-i18n="col.assignedAdvisor">負責顧問</th></tr>'+
+    visible.map(function(r){
+      return '<tr class="rowlink" onclick="openLeadDetail(\''+r.id+'\')"><td>'+i18nT(r.source, r.source==='企業諮詢'?'Corporate Inquiry':r.source)+'</td><td>'+r.company+'</td>'+
+        '<td>'+(r.contactName||'－')+'</td><td>'+(r.contactInfo||'－')+'</td>'+
+        '<td style="white-space:normal;max-width:220px">'+(r.needSummary||'－')+'</td>'+
+        '<td>'+(r.submittedAt||'－')+'</td><td>'+leadStatusBadge(r.status)+'</td><td>'+(r.advisor||i18nT('（未指派）','(Unassigned)'))+'</td></tr>';
+    }).join('');
+  document.getElementById('leadLoadMoreWrap').style.display=(rows.length>leadState.visibleCount)?'block':'none';
+  if (window.TLI_I18N) TLI_I18N.refresh();
+}
+function tliLeadLoadMore(){
+  leadState.visibleCount+=10;
+  renderLeadTable();
+}
+var currentLeadId=null;
+var pendingConvertLeadId=null;
+function openLeadDetail(id){
+  currentLeadId=id;
+  var r=b2bLeadAllRows().find(function(x){ return x.id===id; });
+  if(!r) return;
+  document.getElementById('leadModalBody').innerHTML =
+    '<div class="kv"><span>'+i18nT('來源','Source')+'</span><span style="color:var(--g500)">'+i18nT(r.source, r.source==='企業諮詢'?'Corporate Inquiry':r.source)+'</span></div>'+
+    '<div class="kv"><span>'+i18nT('公司名稱','Company Name')+'</span><span style="color:var(--g500)">'+r.company+'</span></div>'+
+    '<div class="kv"><span>'+i18nT('聯絡人','Contact Person')+'</span><span style="color:var(--g500)">'+(r.contactName||'－')+'</span></div>'+
+    '<div class="kv"><span>'+i18nT('聯絡方式','Contact Info')+'</span><span style="color:var(--g500)">'+(r.contactInfo||'－')+'</span></div>'+
+    '<div class="kv"><span>'+i18nT('送出時間','Submitted At')+'</span><span style="color:var(--g500)">'+(r.submittedAt||'－')+'</span></div>'+
+    '<div class="formrow" style="margin-top:8px"><label>'+i18nT('需求摘要','Need Summary')+'</label><textarea id="lead_summary" rows="2" readonly style="color:var(--g500);background:var(--g50)">'+(r.needSummary||'')+'</textarea></div>'+
+    '<div class="formrow"><label>'+i18nT('狀態','Status')+'</label><select id="lead_status" onchange="onLeadStatusSelectChange(this.value)">'+
+      ['新進','已聯繫','報價中','已成交','未成交'].map(function(s){ return '<option value="'+s+'"'+(s===r.status?' selected':'')+'>'+leadStatusText(s)+'</option>'; }).join('')+
+    '</select></div>'+
+    '<div class="formrow" id="lead_lostreason_row" style="'+(r.status==='未成交'?'':'display:none')+'"><label>'+i18nT('未成交原因','Lost Reason')+'</label><input type="text" id="lead_lostreason" value="'+(r.lostReason||'')+'" placeholder="請輸入未成交原因" data-i18n-placeholder="ph.lostReason"></div>'+
+    '<div class="formrow"><label>'+i18nT('負責顧問','Assigned Advisor')+'</label><select id="lead_advisor"><option value=""'+(!r.advisor?' selected':'')+'>'+i18nT('（未指派）','(Unassigned)')+'</option>'+
+      ENT_ADVISORS.map(function(a){ return '<option'+(a===r.advisor?' selected':'')+'>'+a+'</option>'; }).join('')+
+    '</select></div>';
+  var convertBtn=document.getElementById('leadConvertBtn');
+  convertBtn.disabled = (r.status==='已成交');
+  convertBtn.textContent = (r.status==='已成交') ? leadStatusText('已成交') : i18nT('轉為組織客戶','Convert to Organization Customer');
+  document.getElementById('leadModal').classList.add('open');
+  if (window.TLI_I18N) TLI_I18N.refresh();
+}
+function onLeadStatusSelectChange(val){
+  var row=document.getElementById('lead_lostreason_row');
+  if(row) row.style.display = (val==='未成交') ? '' : 'none';
+}
+function saveLeadDetail(){
+  if(!currentLeadId) return;
+  var status=document.getElementById('lead_status').value;
+  var advisor=document.getElementById('lead_advisor').value;
+  var lostReasonEl=document.getElementById('lead_lostreason');
+  var lostReason=(status==='未成交'&&lostReasonEl)?lostReasonEl.value.trim():'';
+  b2bLeadSaveOverride(currentLeadId,{status:status, advisor:advisor, lostReason:lostReason});
+  closeModal('leadModal');
+  renderMainTabs();
+  renderLeadTable();
+  toast(i18nT('已更新此筆企業諮詢單','This corporate inquiry has been updated'));
+}
+function convertLeadToCustomer(){
+  if(!currentLeadId) return;
+  var r=b2bLeadAllRows().find(function(x){ return x.id===currentLeadId; });
+  if(!r || r.status==='已成交') return;
+  pendingConvertLeadId=r.id;
+  closeModal('leadModal');
+  openNewEnterpriseDrawer({company:r.company, industry:(r.raw&&r.raw.industry)||'', location:(r.raw&&r.raw.location)||'',
+    headcount:(r.raw&&r.raw.headcount)||'', contactName:r.contactName, contactInfo:r.contactInfo});
+}
+
+/* ================= 徽章 ================= */
+function entTypeBadge(t){
+  return '<span class="badge blue">'+entTypeLabelText('general')+'</span>';
+}
+/* 20260929：組織客戶列表與詳情改以「會員分類」（企業簽約 B／政府單位 G）當唯一分類徽章，取代舊的類型徽章 */
+function entTierBadge(tierCode){
+  return '<span class="badge '+(tierCode==='G'?'teal':'blue')+'">'+orgTierLabel(tierCode)+'</span>';
+}
+function contractVersionBadge(s){ return s==='生效中' ? '<span class="badge green">'+i18nT('生效中','Active')+'</span>' : '<span class="badge grey">'+i18nT('已到期','Expired')+'</span>'; }
+function tierBadgeEnt(t){ return '<span class="badge blue">'+i18nT(t+' 類', t+' Category')+'</span>'; }
+function invoiceBadge(s){
+  if (s==='已收款') return '<span class="badge green">'+i18nT('已收款','Paid')+'</span>';
+  if (s==='已開立') return '<span class="badge blue">'+i18nT('已開立','Issued')+'</span>';
+  return '<span class="badge orange">'+i18nT('待開立','Pending')+'</span>';
+}
+function contractParamsBadge(e){ return e.contractParamsSet ? '<span class="badge green">'+i18nT('已設定','Configured')+'</span>' : '<span class="badge grey">'+i18nT('未設定','Not Configured')+'</span>'; }
+function contractExpiryCell(e){
+  var today = new Date();
+  var end = new Date(e.contractEnd+'T00:00:00');
+  var diffDays = Math.ceil((end-today)/86400000);
+  var badge;
+  if (diffDays<0) badge = '<span class="badge red">'+i18nT('已逾期 '+Math.abs(diffDays)+' 天','Overdue by '+Math.abs(diffDays)+' days')+'</span>';
+  else if (diffDays<=30) badge = '<span class="badge red">'+i18nT('30 天內到期','Due within 30 days')+'</span>';
+  else if (diffDays<=60) badge = '<span class="badge orange">'+i18nT('60 天內到期','Due within 60 days')+'</span>';
+  else if (diffDays<=90) badge = '<span class="badge blue">'+i18nT('90 天內到期','Due within 90 days')+'</span>';
+  else badge = '<span class="badge grey">'+i18nT('尚有 '+diffDays+' 天','('+diffDays+' days remaining)')+'</span>';
+  return e.contractEnd+'<div class="small" style="margin-top:2px">'+badge+'</div>';
+}
+/* 組織客戶狀態：依合約到期日判斷是否仍在有效期內；成交前的洽談一律在「企業諮詢」分頁處理，這裡不再另分兩種客戶型態 */
+function entIsActive(e){ return new Date(e.contractEnd+'T00:00:00') >= new Date(); }
+function entStatusBadge(e){ return entIsActive(e) ? '<span class="badge green">'+i18nT('合約有效','Contract Active')+'</span>' : '<span class="badge grey">'+i18nT('已到期','Expired')+'</span>'; }
+
+/* ================= 主頁籤 ================= */
+var MAIN_TABS = [{key:'trial', label:'企業諮詢', en:'Corporate Inquiries'}, {key:'list', label:'組織客戶列表', en:'Organization Customer List'}];
+var currentMainTab = 'list';
+function renderMainTabs(){
+  document.getElementById('mainTabs').innerHTML = MAIN_TABS.map(function(t){
+    var extra = t.key==='trial' ? '（'+b2bLeadAllRows().filter(function(q){return q.status!=='已成交'&&q.status!=='未成交';}).length+'）' : '';
+    return '<button class="'+(t.key===currentMainTab?'active':'')+'" onclick="switchMainTab(\''+t.key+'\')">'+i18nT(t.label,t.en)+extra+'</button>';
+  }).join('');
+}
+function switchMainTab(key){
+  currentMainTab = key;
+  renderMainTabs();
+  document.querySelectorAll('.tabpanel').forEach(function(p){ p.classList.toggle('active', p.id==='panel-'+key); });
+  if (key==='trial') renderLeadTable();
+}
+
+/* ================= 企業列表 ================= */
+/* 20260928 改版：篩選改為 ≤2 下拉（類型／狀態）＋更多篩選（會員分類／請款狀態），
+   禁用 chip 牆；篩選值改為單選（下拉本質即單選），移除 toggleEntFilter 陣列式寫法；
+   拿掉「所屬夥伴」篩選與欄位——夥伴歸屬在「合作夥伴管理」a20 維護，跟本頁組織客戶無關。
+   20260929 改版：組織客戶只收企業，一律以會員分類（企業簽約 B／政府單位 G，讀主檔 TLI_MASTERS.memberTiers）分類。 */
+var entState = {search:'', filters:{tier:'', invoice:'', status:'', source:''}, page:1, pageSize:10};
+var ENT_FILTER_LABELS = {
+  status:{'合約有效':'合約有效', '已到期':'已到期'},
+  invoice:{'待開立':'待開立','已開立':'已開立','已收款':'已收款'}
+};
+function onEntSimpleFilterChange(key, val){
+  entState.filters[key] = val;
+  entState.page = 1;
+  renderEntActiveTags();
+  renderEntTable();
+}
+function toggleEntMoreFilters(){
+  var panel = document.getElementById('entMoreFiltersPanel');
+  panel.style.display = panel.style.display==='none' ? 'flex' : 'none';
+}
+function removeEntFilter(key){
+  entState.filters[key] = '';
+  var elId = {status:'entFilterStatus', tier:'entFilterTier', invoice:'entFilterInvoice', source:'entFilterSource'}[key];
+  if (elId && document.getElementById(elId)) document.getElementById(elId).value = '';
+  entState.page = 1;
+  renderEntActiveTags();
+  renderEntTable();
+}
+var INVOICE_STATUS_EN = {'待開立':'Pending','已開立':'Issued','已收款':'Paid'};
+function invoiceStatusText(s){ return i18nT(s, INVOICE_STATUS_EN[s] || s); }
+function renderEntActiveTags(){
+  var f = entState.filters;
+  var tags = [];
+  if (f.status) tags.push({key:'status', label:i18nT('狀態：','Status: ')+i18nT(f.status, f.status==='合約有效'?'Contract Active':'Expired')});
+  if (f.tier) tags.push({key:'tier', label:i18nT('會員分類：','Category: ')+orgTierLabel(f.tier)});
+  if (f.source) tags.push({key:'source', label:i18nT('來源型態：','Source Type: ')+srcTypeText(f.source)});
+  if (f.invoice) tags.push({key:'invoice', label:i18nT('請款狀態：','Billing Status: ')+invoiceStatusText(f.invoice)});
+  document.getElementById('entActiveTags').innerHTML = tags.map(function(t){
+    return '<span class="atag">'+t.label+' <button type="button" onclick="removeEntFilter(\''+t.key+'\')">×</button></span>';
+  }).join('');
+}
+function clearEntFilters(){
+  entState.search=''; document.getElementById('entSearch').value='';
+  entState.filters = {tier:'', invoice:'', status:'', source:''};
+  ['entFilterStatus','entFilterTier','entFilterInvoice','entFilterSource'].forEach(function(id){
+    var el = document.getElementById(id); if (el) el.value='';
+  });
+  entState.page = 1;
+  renderEntActiveTags();
+  renderEntTable();
+}
+function onEntSearch(val){ entState.search = val; entState.page = 1; renderEntTable(); }
+function onEntPageSizeChange(el){ entState.pageSize = Number(el.value); entState.page = 1; renderEntTable(); }
+function entFiltered(){
+  var term = entState.search.trim().toLowerCase();
+  return ENTERPRISES.filter(function(e){
+    if (term && e.name.toLowerCase().indexOf(term)===-1 && e.manager.name.toLowerCase().indexOf(term)===-1 && (e.code||'').toLowerCase().indexOf(term)===-1) return false;
+    if (entState.filters.source && entState.filters.source!==e.sourceType) return false;
+    if (entState.filters.tier && entState.filters.tier!==e.tier) return false;
+    if (entState.filters.invoice && entState.filters.invoice!==e.invoiceStatus) return false;
+    if (entState.filters.status==='已到期' && entIsActive(e)) return false;
+    if (entState.filters.status==='合約有效' && !entIsActive(e)) return false;
+    return true;
+  });
+}
+function entMaxPage(){ return Math.max(1, Math.ceil(entFiltered().length/entState.pageSize)); }
+function entGotoPage(p){
+  var max = entMaxPage();
+  if (p<1) p=1; if (p>max) p=max;
+  entState.page = p;
+  renderEntTable();
+}
+function entGotoPageRel(delta){ entGotoPage(entState.page+delta); }
+function entExport(){ toast(i18nT('已產生匯出檔案，共 '+entFiltered().length+' 筆，請至下載中心取得','Export file generated ('+entFiltered().length+' rows). Get it from the Download Center.')); }
+function renderEntTable(){
+  var filtered = entFiltered();
+  var total = filtered.length;
+  var maxPage = Math.max(1, Math.ceil(total/entState.pageSize));
+  if (entState.page > maxPage) entState.page = maxPage;
+  var startIdx = (entState.page-1)*entState.pageSize;
+  var pageRows = filtered.slice(startIdx, startIdx+entState.pageSize);
+  var t = document.getElementById('entTable');
+  /* 20260929 移除欄位顯示切換：表格固定 7 欄（≤8），會員分類／合約期間／出席率／請款狀態／串接狀態不再進表格 */
+  var head = '<tr><th data-i18n="col.orgName">組織名稱</th><th data-i18n="col.tier">會員分類</th>' +
+    '<th>'+i18nT('來源型態','Source Type')+'</th><th data-i18n="col.contractPlan">合約價方案</th><th data-i18n="col.empCount">員工學員數</th>' +
+    '<th data-i18n="col.contractExpiry">合約到期</th><th data-i18n="col.mainManager">主管理者</th>' +
+    '<th data-i18n="common.status">狀態</th></tr>';
+  t.innerHTML = head;
+  pageRows.forEach(function(e){
+    var tr = document.createElement('tr');
+    tr.className = 'rowlink';
+    tr.innerHTML = '<td>'+e.name+'<div class="small">'+i18nT('企業代碼 ','Code ')+(e.code||'－')+'</div></td><td>'+entTierBadge(e.tier)+'</td>' +
+      '<td>'+srcBadge(e.sourceType)+'<div class="small">'+srcUnitText(e.sourceUnitId)+'</div></td>' +
+      '<td>'+e.planName+'</td><td>'+e.empCount+'</td>' +
+      '<td>'+contractExpiryCell(e)+'</td><td>'+e.manager.name+'（'+e.manager.title+'）</td>' +
+      '<td>'+entStatusBadge(e)+'</td>';
+    tr.addEventListener('click', function(){ openEnterpriseDrawer(e.id); });
+    t.appendChild(tr);
+  });
+  var startLabel = total===0 ? 0 : startIdx+1;
+  var endLabel = Math.min(startIdx+entState.pageSize, total);
+  document.getElementById('entPagerLabel').textContent = window.TLI_I18N
+    ? TLI_I18N.t('第 '+startLabel+'–'+endLabel+' 筆／共 '+total+' 筆', startLabel+'–'+endLabel+' of '+total)
+    : ('第 '+startLabel+'–'+endLabel+' 筆／共 '+total+' 筆');
+  document.getElementById('entPageIndicator').textContent = window.TLI_I18N
+    ? TLI_I18N.t('第 '+entState.page+' / '+maxPage+' 頁', 'Page '+entState.page+' / '+maxPage)
+    : ('第 '+entState.page+' / '+maxPage+' 頁');
+  document.getElementById('entBtnFirst').disabled = entState.page<=1;
+  document.getElementById('entBtnPrev').disabled = entState.page<=1;
+  document.getElementById('entBtnNext').disabled = entState.page>=maxPage;
+  document.getElementById('entBtnLast').disabled = entState.page>=maxPage;
+  document.getElementById('entPageSizeSel').value = String(entState.pageSize);
+  if (window.TLI_I18N) TLI_I18N.refresh();
+}
+
+/* ================= 企業詳情抽屜 ================= */
+var currentEntId = null, currentEntTab = 'basic';
+/* entEditSection：目前正在編輯中的分區 key（basic／people／usage 不分區塊皆用同一個值；contracts 用 'contracts'），
+   null 表示沒有任何分區在編輯中；關閉抽屜／切換分頁前用來判斷是否要跳出「放棄變更？」確認 */
+var entEditSection = null;
+var entEditDraft = null; // 編輯中欄位的暫存草稿
+var currentContractViewId = null; // 合約分頁目前點開檢視／編輯的合約 id，null 表示顯示合約列表
+function openEnterpriseDrawer(id){
+  currentEntId = id;
+  var e = entById(id);
+  currentEntTab = 'basic';
+  entEditSection = null;
+  document.getElementById('drw_title').textContent = e.name;
+  document.getElementById('drw_sub').textContent = i18nT(e.tier+' 類｜'+e.planName+'｜'+e.empCount+' 位員工學員', e.tier+' Category | '+e.planName+' | '+e.empCount+' employees/students');
+  renderEntDrawerBody(e);
+  document.getElementById('drawerMask').classList.add('open');
+  document.getElementById('drawer').classList.add('open');
+}
+function closeDrawer(){
+  if (entEditSection && !confirm(i18nT('目前正在編輯，尚未儲存的變更將會遺失，確定要放棄變更並關閉嗎？','You are currently editing. Unsaved changes will be lost — discard changes and close?'))) return;
+  entEditSection = null;
+  currentContractViewId = null;
+  document.getElementById('drawerMask').classList.remove('open');
+  document.getElementById('drawer').classList.remove('open');
+  currentEntId = null;
+}
+function entDrawerTab(name){
+  if (entEditSection && !confirm(i18nT('切換分頁將放棄本分頁尚未儲存的變更，確定要切換嗎？','Switching tabs will discard unsaved changes on this tab — continue?'))) return;
+  entEditSection = null;
+  currentEntTab = name;
+  renderEntDrawerBody(entById(currentEntId));
+}
+/* 20260928 改版：詳情分頁統一為「基本資料／窗口與成員／使用狀況／合約」四區，四區固定；每區檢視＝表單唯讀，右上「編輯」切換可輸入，不留獨立編輯 modal。 */
+var ENT_DETAIL_TABS = ['basic','people','usage','contracts'];
+var ENT_DETAIL_LABELS = {basic:'基本資料', people:'窗口與成員', usage:'使用狀況', contracts:'合約'};
+var ENT_DETAIL_LABELS_EN = {basic:'Basic Info', people:'Contacts & Members', usage:'Usage', contracts:'Contracts'};
+function renderEntDrawerBody(e){
+  var tabs = ENT_DETAIL_TABS, labels = ENT_DETAIL_LABELS;
+  if (tabs.indexOf(currentEntTab) === -1) currentEntTab = tabs[0];
+  var tabsHtml = '<div class="tabs">' + tabs.map(function(t){
+    return '<button class="'+(t===currentEntTab?'active':'')+'" onclick="entDrawerTab(\''+t+'\')">'+i18nT(labels[t],ENT_DETAIL_LABELS_EN[t])+'</button>';
+  }).join('') + '</div>';
+
+  var body = '';
+  if (currentEntTab==='basic') body = renderBasicTab(e);
+  else if (currentEntTab==='people') body = renderPeopleTab(e);
+  else if (currentEntTab==='usage') body = renderUsageTab(e);
+  else if (currentEntTab==='contracts') body = renderContractsTab(e);
+
+  document.getElementById('drw_body').innerHTML = tabsHtml + '<div>' + body + '</div>';
+  if (window.TLI_I18N) TLI_I18N.refresh();
+}
+/* ================= 廠區／據點（2026-09-10 新增） ================= */
+function campusById(e, campusId){
+  var c = (e.campuses||[]).find(function(x){return x.id===campusId;});
+  return c ? c.name : '';
+}
+function campusEmpCount(e, campusId){
+  return e.employees.filter(function(em){ return em.campusId===campusId; }).length;
+}
+function campusStatusBadge(s){ return s==='啟用' ? '<span class="badge green">'+i18nT('啟用','Enabled')+'</span>' : '<span class="badge grey">'+i18nT('停用','Disabled')+'</span>'; }
+function renderCampusSection(e){
+  var rows = e.campuses.map(function(c){
+    return '<tr><td>'+c.name+'</td><td>'+i18nT(c.country, COUNTRY_EN[c.country]||c.country)+'</td><td>'+campusTzLabel(c.tz)+'</td><td>'+campusEmpCount(e,c.id)+'</td><td>'+campusStatusBadge(c.status)+'</td></tr>';
+  }).join('');
+  var lastUpd = (e.orgChangeLog && e.orgChangeLog.length) ? e.orgChangeLog[0].time.slice(0,10) : e.contractStart;
+  return '<div class="sectiontitle">'+i18nT('廠區／據點','Sites / Locations')+'<span class="demo-tag">'+i18nT('由企業自行維護（最後更新：','Self-maintained by the enterprise (last updated: ')+lastUpd+i18nT('）',')')+'</span></div>' +
+    '<div class="tablewrap"><table><tr><th data-i18n="col.name">名稱</th><th data-i18n="label.countryRegion">國家地區</th><th data-i18n="label.timezone">時區</th><th data-i18n="col.empCount2">員工數</th><th data-i18n="common.status">狀態</th></tr>'+rows+'</table></div>' +
+    '<div style="text-align:right;margin:8px 0 4px"><button class="btn ghost" onclick="openCampusManageModal()">'+i18nT('代為修改','Edit on Behalf')+'</button></div>' +
+    renderOrgLogMini(e);
+}
+var COUNTRY_EN = {'台灣':'Taiwan','美國':'United States','日本':'Japan','新加坡':'Singapore','越南':'Vietnam','中國大陸':'Mainland China','英國':'United Kingdom','澳洲':'Australia'};
+var TZ_EN = {
+  'Asia/Taipei':'Taiwan Time (UTC+8)',
+  'America/Los_Angeles':'US Pacific Time (UTC-8, DST UTC-7)',
+  'America/New_York':'US Eastern Time (UTC-5, DST UTC-4)',
+  'Asia/Tokyo':'Japan Time (UTC+9)',
+  'Asia/Singapore':'Singapore Time (UTC+8)',
+  'Asia/Ho_Chi_Minh':'Vietnam Time (UTC+7)',
+  'Asia/Shanghai':'China Time (UTC+8)',
+  'Europe/London':'UK Time (UTC+0, DST UTC+1)',
+  'Australia/Sydney':'Australia Eastern Time (UTC+10, DST UTC+11)'
+};
+var TZ_LABEL_EN = {};
+CAMPUS_TZ_LIST.forEach(function(t){ TZ_LABEL_EN[t.label] = TZ_EN[t.tz]; });
+function openCampusManageModal(){
+  var e = entById(currentEntId);
+  var picker = document.getElementById('campusPicker');
+  picker.innerHTML = (e.campuses||[]).map(function(c,idx){ return '<option value="'+idx+'">'+c.name+'</option>'; }).join('') +
+    '<option value="__new__">'+i18nT('＋ 新增廠區','＋ Add Site')+'</option>';
+  document.getElementById('campusCountry').innerHTML = CAMPUS_COUNTRY_LIST.map(function(co){ return '<option value="'+co+'">'+i18nT(co, COUNTRY_EN[co]||co)+'</option>'; }).join('');
+  document.getElementById('campusTz').innerHTML = CAMPUS_TZ_LIST.map(function(t){ return '<option value="'+t.tz+'">'+i18nT(t.label, TZ_EN[t.tz]||t.label)+'</option>'; }).join('');
+  onCampusPickerChange(picker.value);
+  document.getElementById('campusModal').classList.add('open');
+}
+function onCampusPickerChange(val){
+  var e = entById(currentEntId);
+  if (val==='__new__'){
+    document.getElementById('campusName').value = '';
+    document.getElementById('campusCountry').value = CAMPUS_COUNTRY_LIST[0];
+    document.getElementById('campusTz').value = CAMPUS_TZ_LIST[0].tz;
+    document.getElementById('campusStatusSel').value = '啟用';
+  } else {
+    var c = e.campuses[Number(val)];
+    document.getElementById('campusName').value = c.name;
+    document.getElementById('campusCountry').value = c.country;
+    document.getElementById('campusTz').value = c.tz;
+    document.getElementById('campusStatusSel').value = c.status;
+  }
+}
+function saveCampus(){
+  var e = entById(currentEntId);
+  var picker = document.getElementById('campusPicker');
+  var name = document.getElementById('campusName').value.trim();
+  if (!name){ toast(i18nT('請輸入廠區名稱','Please enter a site name')); return; }
+  var country = document.getElementById('campusCountry').value;
+  var tz = document.getElementById('campusTz').value;
+  var status = document.getElementById('campusStatusSel').value;
+  var label;
+  if (picker.value==='__new__'){
+    e.campuses.push({id:'camp'+currentEntId+'_'+Date.now(), name:name, country:country, tz:tz, status:status});
+    label = i18nT('新增廠區「'+name+'」','Site “'+name+'” added');
+  } else {
+    var c = e.campuses[Number(picker.value)];
+    label = i18nT('編輯廠區「'+c.name+'」','Site “'+c.name+'” updated');
+    c.name = name; c.country = country; c.tz = tz; c.status = status;
+  }
+  pushEntOrgLog(e, label);
+  closeModal('campusModal');
+  renderEntDrawerBody(e);
+  toast(i18nT('已儲存（由 TLI 代為處理）：','Saved (edited on behalf by TLI): ')+label);
+}
+function statusBadgeEnt(s){ return s==='在學' ? '<span class="badge green">'+i18nT('在學','Active')+'</span>' : '<span class="badge grey">'+i18nT('停用','Disabled')+'</span>'; }
+function transferEmployee(empId){ toast(i18nT('已開啟轉移流程：可將此員工學員轉移至同企業其他部門或子公司','Transfer process started: this employee/student can be moved to another department or subsidiary within the same company')); }
+function toggleEmployeeStatus(empId){
+  var e = entById(currentEntId);
+  var em = e.employees.find(function(x){return x.id===empId;});
+  em.status = em.status==='在學' ? '停用' : '在學';
+  renderEntDrawerBody(e);
+  toast(i18nT('已將「'+em.name+'」設為','“'+em.name+'” has been set to ')+i18nT(em.status, em.status==='在學'?'Active':'Disabled'));
+}
+function openInviteModal(){
+  var e = entById(currentEntId);
+  document.getElementById('inviteDept').innerHTML = e.depts.map(function(d){return '<option>'+d+'</option>';}).join('');
+  document.getElementById('inviteEmails').value = '';
+  document.getElementById('inviteHint').textContent = i18nT('將加入「'+e.name+'」，邀請信會發送至各 Email 帳號。','Will join “'+e.name+'”. Invitation emails will be sent to each address.');
+  document.getElementById('inviteModal').classList.add('open');
+}
+function doInviteEmployees(){
+  var raw = document.getElementById('inviteEmails').value.trim();
+  if (!raw){ toast(i18nT('請輸入至少一筆 Email','Please enter at least one email')); return; }
+  var lines = raw.split('\n').filter(function(l){return l.trim();});
+  var e = entById(currentEntId);
+  var dept = document.getElementById('inviteDept').value;
+  lines.forEach(function(email, idx){
+    e.employees.push({
+      id:'empnew'+Date.now()+idx, name:i18nT('（待接受邀請）','(Invitation pending)'), dept:dept, email:email.trim(),
+      status:'在學', attendance:0, progress:0, avgScore:0,
+      campusId: e.campuses.length ? e.campuses[0].id : ''
+    });
+  });
+  e.empCount = e.employees.length;
+  closeModal('inviteModal');
+  renderEntDrawerBody(e);
+  renderEntTable();
+  toast('已發送 '+lines.length+' 封邀請信至「'+dept+'」');
+}
+
+function renderReportTab(e){
+  var avgAttend = Math.round(e.employees.reduce(function(s,em){return s+em.attendance;},0)/Math.max(1,e.employees.length));
+  var avgProgress = Math.round(e.employees.reduce(function(s,em){return s+em.progress;},0)/Math.max(1,e.employees.length));
+  var avgScore = Math.round(e.employees.reduce(function(s,em){return s+em.avgScore;},0)/Math.max(1,e.employees.length));
+  var html = '<div class="formrow"><label>'+i18nT('期間篩選','Period Filter')+'</label><div style="display:flex;gap:8px"><input type="date" value="'+addDays(e.contractEnd,-30)+'"><span class="small" style="align-self:center">～</span><input type="date" value="'+e.contractEnd+'"></div></div>' +
+    '<div class="statgrid">' +
+    '<div class="statbox"><div class="num">'+avgAttend+'%</div><div class="lbl">'+i18nT('平均出席率','Avg. Attendance Rate')+'</div></div>' +
+    '<div class="statbox"><div class="num">'+avgProgress+'%</div><div class="lbl">'+i18nT('平均學習進度','Avg. Learning Progress')+'</div></div>' +
+    '<div class="statbox"><div class="num">'+avgScore+'</div><div class="lbl">'+i18nT('平均評量分數','Avg. Assessment Score')+'</div></div>' +
+    '</div>' +
+    '<div class="tablewrap"><table><tr><th data-i18n="col.name">姓名</th><th data-i18n="label.department">部門</th><th data-i18n="col.attendanceRate">出席率</th><th data-i18n="col.progress">進度</th><th data-i18n="col.avgScore">評量平均</th></tr>' +
+    e.employees.map(function(em){ return '<tr><td>'+em.name+'</td><td>'+em.dept+'</td><td>'+em.attendance+'%</td><td>'+em.progress+'%</td><td>'+em.avgScore+'</td></tr>'; }).join('') +
+    '</table></div>' +
+    '<div style="display:flex;gap:8px;margin-top:12px"><button class="btn ghost" onclick="exportReport(\'pdf\')">'+i18nT('匯出 PDF','Export PDF')+'</button><button class="btn ghost" onclick="exportReport(\'csv\')">'+i18nT('匯出 CSV','Export CSV')+'</button></div>' +
+    '<div class="switchrow"><span class="small">'+i18nT('排程每月自動寄送學習報告給企業管理者','Schedule monthly learning reports to be sent automatically to the enterprise administrator')+'</span><label class="switch"><input type="checkbox" '+(e.scheduleMonthly?'checked':'')+' onchange="toggleScheduleMonthly(this)"><span class="slider"></span></label></div>';
+  if (window.TLI_I18N) TLI_I18N.refresh();
+  return html;
+}
+function exportReport(type){ toast(i18nT('已產生 '+(type==='pdf'?'PDF':'CSV')+' 學習報告，請至下載中心取得', (type==='pdf'?'PDF':'CSV')+' learning report generated. Get it from the Download Center.')); }
+function toggleScheduleMonthly(el){
+  var e = entById(currentEntId);
+  e.scheduleMonthly = el.checked;
+  toast(el.checked ? i18nT('已開啟每月自動寄送學習報告','Monthly automatic learning report has been turned on') : i18nT('已關閉每月自動寄送學習報告','Monthly automatic learning report has been turned off'));
+}
+
+function renderInvoiceTab(e){
+  var html = '<div style="text-align:right;margin-bottom:10px"><button class="btn orange" onclick="openInvoiceGenModal()">'+i18nT('產生本月請款單','Generate This Month’s Invoice')+'</button></div>' +
+    '<div class="tablewrap"><table><tr><th data-i18n="label.period">期間</th><th data-i18n="label.amount">金額</th><th data-i18n="common.status">狀態</th></tr>' +
+    e.invoices.map(function(inv){ return '<tr><td>'+inv.period+'</td><td>NT$ '+inv.amount.toLocaleString()+'</td><td>'+invoiceBadge(inv.status)+'</td></tr>'; }).join('') +
+    '</table></div>' +
+    '<div class="sectiontitle">'+i18nT('月結對帳表','Monthly Statement')+'<span class="phase2-pill" data-i18n="badge.phase2">第二階段</span></div>' +
+    '<div class="kv"><span>'+i18nT('付款方式','Payment Method')+'</span><span>'+e.payMethod+'</span></div>' +
+    '<div class="kv"><span>'+i18nT('累計應收','Total Receivable')+'</span><span>NT$ '+e.invoices.reduce(function(s,i){return s+i.amount;},0).toLocaleString()+'</span></div>' +
+    '<div class="kv"><span>'+i18nT('已收款','Received')+'</span><span>NT$ '+e.invoices.filter(function(i){return i.status==='已收款';}).reduce(function(s,i){return s+i.amount;},0).toLocaleString()+'</span></div>' +
+    '<button class="btn ghost" style="margin-top:10px" onclick="toast(tliInvoiceStatementToast())">'+i18nT('下載對帳表','Download Statement')+'</button>';
+  if (window.TLI_I18N) TLI_I18N.refresh();
+  return html;
+}
+function tliInvoiceStatementToast(){ return i18nT('已產生月結對帳表，請至下載中心取得','Monthly statement generated. Get it from the Download Center.'); }
+function openInvoiceGenModal(){
+  var e = entById(currentEntId);
+  var amount = 60000 + e.employees.length*1500;
+  document.getElementById('invoiceGenBody').innerHTML =
+    '<div class="desc" style="margin-bottom:10px">'+i18nT('依「'+e.name+'」本月學員使用課時明細預覽請款金額：','Preview the billing amount based on “'+e.name+'”’s student class-hour usage this month:')+'</div>' +
+    '<div class="tablewrap"><table><tr><th data-i18n="label.item">項目</th><th data-i18n="label.quantity">數量</th><th data-i18n="label.amount">金額</th></tr>' +
+    '<tr><td>'+i18nT('員工學員月費（'+e.planName+'）','Employee/Student Monthly Fee ('+e.planName+')')+'</td><td>'+e.employees.length+'</td><td>NT$ '+amount.toLocaleString()+'</td></tr>' +
+    '</table></div>' +
+    '<div class="hint" style="margin:10px 0">'+i18nT('合約折扣率 '+e.discountRate+'% 已套用於明細金額。','Contract discount rate of '+e.discountRate+'% has been applied to the line amount.')+'</div>' +
+    '<div style="text-align:right"><button class="btn ghost" onclick="closeModal(\'invoiceGenModal\')">'+i18nT('取消','Cancel')+'</button> <button class="btn" onclick="doGenInvoice('+amount+')">'+i18nT('確認產生請款單','Confirm & Generate Invoice')+'</button></div>';
+  document.getElementById('invoiceGenModal').classList.add('open');
+  if (window.TLI_I18N) TLI_I18N.refresh();
+}
+function doGenInvoice(amount){
+  var e = entById(currentEntId);
+  e.invoices.push({period: new Date().toISOString().slice(0,7), amount:amount, status:'待開立'});
+  closeModal('invoiceGenModal');
+  renderEntDrawerBody(e);
+  toast(i18nT('已產生本月請款單，金額 NT$ '+amount.toLocaleString(),'This month’s invoice generated, amount NT$ '+amount.toLocaleString()));
+}
+
+/* ================= 規則欄位來源徽章（20260910b 新增） =================
+   對照 a17「請假與取消規則組」的「企業員工」類型預設列；合約層數值與類型預設相同時視為繼承，
+   不同則視為已覆寫，可一鍵還原。cancelWindowHours／monthlyFreeCancel／rescheduleMaxTimes 的類型
+   預設為空字串（a17 該列尚未設定類型預設值），故本合約已填入數字時一律顯示「已覆寫」，符合現況。 */
+var ENT_TYPE_DEFAULTS = {
+  cancelWindowHours: '', monthlyFreeCancel: '', rescheduleMaxTimes: '',
+  overageLeavePolicy: 'appeal', reviewMode: 'self', recordEnabled: true
+};
+var ENT_TYPE_FIELD_LABELS = {
+  cancelWindowHours:'取消時限', monthlyFreeCancel:'每月免扣次數', rescheduleMaxTimes:'每堂改期上限',
+  overageLeavePolicy:'超額處理', reviewMode:'審核模式', recordEnabled:'成效紀錄'
+};
+function cpBadgeHtml(field){
+  var e = entById(currentEntId);
+  var val = e.contractParams[field];
+  var def = ENT_TYPE_DEFAULTS[field];
+  var isDefault = (val === def) || (val === undefined) || (val === null);
+  var inner = isDefault
+    ? '<span class="src-badge inherit">'+i18nT('繼承自：企業員工類型預設','Inherited from: enterprise employee type default')+'</span>'
+    : '<span class="src-badge override">'+i18nT('已覆寫','Overridden')+'</span><button type="button" class="btn ghost small2" onclick="restoreCpDefault(\''+field+'\')">'+i18nT('還原為類型預設','Restore Type Default')+'</button>';
+  return '<span class="src-badge-wrap" id="badge_'+field+'">'+inner+'</span>';
+}
+function onCpBadgeField(field, val){
+  var e = entById(currentEntId);
+  e.contractParams[field] = val;
+  renderEntDrawerBody(e);
+}
+function onCpBadgeToggle(field, el){
+  var e = entById(currentEntId);
+  e.contractParams[field] = el.checked;
+  renderEntDrawerBody(e);
+}
+var ENT_TYPE_FIELD_LABELS_EN = {
+  cancelWindowHours:'Cancellation Window', monthlyFreeCancel:'Monthly Free Cancellations', rescheduleMaxTimes:'Max Reschedules per Class',
+  overageLeavePolicy:'Overage Handling', reviewMode:'Review Mode', recordEnabled:'Performance Record'
+};
+function restoreCpDefault(field){
+  var e = entById(currentEntId);
+  e.contractParams[field] = ENT_TYPE_DEFAULTS[field];
+  renderEntDrawerBody(e);
+  toast(i18nT('已將「'+ENT_TYPE_FIELD_LABELS[field]+'」還原為企業員工類型預設','“'+ENT_TYPE_FIELD_LABELS_EN[field]+'” has been restored to the enterprise employee type default'));
+}
+/* ================= 使用規則（v4 改版，2026-09-28：原「合約參數」分頁移入「使用狀況」——
+   這些是使用行為規則（取消／改期／請假審核、部門配額、上課型態），不是合約商務條款，故與合約分頁分開；
+   時區判定基準／階梯計價／預付款門檻／合約展延已搬到「合約」分頁的合約預設值，不在此重複出現。
+   示範畫面，資料為模擬數字。 ================= */
+function renderUsageRulesBlock(e){
+  var cp = e.contractParams;
+  var cancelDisabled = cp.followC2CDefault ? 'disabled' : '';
+  var deptRows = cp.deptQuota.map(function(dq){
+    return '<div class="pickrow"><span class="pname">'+dq.dept+'</span><span class="small">'+i18nT(dq.quota+' 小時', dq.quota+' hours')+'</span></div>';
+  }).join('');
+  cp.courseTypes = cp.courseTypes || [];
+  var courseTypeBoxes = COURSE_TYPE_OPTIONS.map(function(ct){
+    var checked = cp.courseTypes.indexOf(ct) > -1 ? 'checked' : '';
+    return '<label style="display:inline-block;margin:0 18px 8px 0;font-size:13.5px"><input type="checkbox" class="chk" value="'+ct+'" '+checked+' onchange="onEntCourseTypeToggle(this)"> '+courseTypeLabel(ct)+'</label>';
+  }).join('');
+  var hasChatRoom = cp.courseTypes.indexOf('Mandarin Lounge') > -1;
+  var chatRegModeHtml = hasChatRoom ? (
+    '<div class="formrow" style="margin-top:10px"><label>'+i18nT('Mandarin Lounge 報名模式','Mandarin Lounge Registration Mode')+'</label>' +
+    '<label style="margin-right:20px;font-size:13px"><input type="radio" name="chatRegMode-'+e.id+'" value="open" '+(cp.chatRegMode!=='whitelist'?'checked':'')+' onchange="onChatRegModeChange(this.value)"> '+i18nT('全員開放（預設）','Open to all (default)')+'</label>' +
+    '<label style="font-size:13px"><input type="radio" name="chatRegMode-'+e.id+'" value="whitelist" '+(cp.chatRegMode==='whitelist'?'checked':'')+' onchange="onChatRegModeChange(this.value)"> '+i18nT('白名單','Whitelist')+'</label>' +
+    '<div class="hint" style="margin-top:4px">'+i18nT('白名單模式由企業 HR 在其後台維護名單；全員開放則所有在學員工皆可自主報名，兩者皆受名額上限管控。','In whitelist mode, the enterprise HR maintains the list on their side; in open mode, all active employees can self-register. Both modes are still subject to the seat cap.')+'</div></div>'
+  ) : '';
+  return '<div class="note">'+i18nT('合約商務條款（方案、期間、付款條件等）請至「合約」分頁查看與編輯；此處為使用行為規則設定。','Commercial contract terms (plan, period, payment terms, etc.) are viewed and edited under the “Contracts” tab; this section covers usage behavior rules.')+'</div>' +
+   '<div class="crosslink">'+i18nT('請假與取消規則之類型預設值來自','Leave & cancellation rule type defaults come from ')+'<a href="a17_master_data.html#params-leaverules">'+i18nT('基礎資料設定 → 參數設定 → 請假與取消規則組','Master Data Settings → Parameters → Leave & Cancellation Rule Sets')+'</a>'+i18nT('，此處僅供本合約覆寫；其餘參數預設值來自','; this section only overrides them for this contract. Other parameter defaults come from ')+'<a href="a17_master_data.html#params">'+i18nT('參數設定','Parameters')+'</a>'+i18nT('。','.')+'</div>' +
+   '<div class="sectiontitle">'+i18nT('包含上課型態與 Mandarin Lounge 報名','Included Class Types & Mandarin Lounge Registration')+'</div>' +
+   '<div class="formrow"><label>'+i18nT('包含上課型態','Included Class Types')+'</label><div>'+courseTypeBoxes+'</div>' +
+   '<div class="hint">'+i18nT('勾選此合約涵蓋的上課型態；勾選「Mandarin Lounge」後，本企業員工才能在會員區看到並報名 Mandarin Lounge 場次。','Check the class types covered by this contract; checking “Mandarin Lounge” lets this enterprise’s employees see and register for Mandarin Lounge sessions in the member area.')+'</div></div>' +
+   '<div id="chatRegModeWrap-'+e.id+'">'+chatRegModeHtml+'</div>' +
+   '<div class="switchrow" style="margin-top:10px"><span class="small">'+i18nT('沿用 C2C 預設（取消時限 12 小時）。企業合約層規則只套用於本企業員工學員，不影響 C2C 個人學員的既有規則。','Follow the C2C default (12-hour cancellation window). Enterprise contract-level rules only apply to this enterprise’s employees/students and do not affect existing C2C individual member rules.')+'</span><label class="switch"><input type="checkbox" '+(cp.followC2CDefault?'checked':'')+' onchange="onFollowC2CToggle(this)"><span class="slider"></span></label></div>' +
+   '<div class="sectiontitle">'+i18nT('取消與改期','Cancellation & Rescheduling')+'</div>' +
+   '<div class="grid2">' +
+   '<div class="formrow"><label>'+i18nT('取消時限（小時）','Cancellation Window (hours)')+'</label><input type="number" min="0" value="'+cp.cancelWindowHours+'" '+cancelDisabled+' onchange="onCpBadgeField(\'cancelWindowHours\',Number(this.value)||0)">'+cpBadgeHtml('cancelWindowHours')+'</div>' +
+   '<div class="formrow"><label>'+i18nT('每月免扣次數','Monthly Free Cancellations')+'</label><input type="number" min="0" value="'+cp.monthlyFreeCancel+'" onchange="onCpBadgeField(\'monthlyFreeCancel\',Number(this.value)||0)">'+cpBadgeHtml('monthlyFreeCancel')+'</div>' +
+   '</div>' +
+   '<div class="grid2">' +
+   '<div class="formrow"><label>'+i18nT('改期規則－允許次數（每堂改期上限）','Reschedule Rule – Allowed Count (max per class)')+'</label><input type="number" min="0" value="'+cp.rescheduleMaxTimes+'" onchange="onCpBadgeField(\'rescheduleMaxTimes\',Number(this.value)||0)">'+cpBadgeHtml('rescheduleMaxTimes')+'</div>' +
+   '<div class="formrow"><label>'+i18nT('改期規則－時限（小時）','Reschedule Rule – Window (hours)')+'</label><input type="number" min="0" value="'+cp.rescheduleWindowHours+'" onchange="onCpField(\'rescheduleWindowHours\',Number(this.value)||0)"></div>' +
+   '</div>' +
+   '<div class="formrow"><label>'+i18nT('超額請假處理規則','Overage Leave Handling Rule')+'</label><select onchange="onCpBadgeField(\'overageLeavePolicy\',this.value)">' +
+   '<option value="appeal"'+(cp.overageLeavePolicy==='appeal'?' selected':'')+'>'+i18nT('扣時數，可申訴（預設）','Deduct hours, appealable (default)')+'</option>' +
+   '<option value="deduct"'+(cp.overageLeavePolicy==='deduct'?' selected':'')+'>'+i18nT('直接扣，不可申訴','Deduct directly, not appealable')+'</option>' +
+   '<option value="noleave"'+(cp.overageLeavePolicy==='noleave'?' selected':'')+'>'+i18nT('不可取消，只能改期','No cancellation, reschedule only')+'</option>' +
+   '</select><div class="hint" style="margin-top:4px">'+i18nT('與 a17「請假與取消規則組」同一組枚舉；申訴由 HR 或顧問覆核，通過改記請假不扣。','Uses the same enumeration as a17 “Leave & Cancellation Rule Sets”; appeals are reviewed by HR or the advisor, and an approved appeal is recorded as leave with no deduction.')+'</div>'+cpBadgeHtml('overageLeavePolicy')+'</div>' +
+   '<div class="sectiontitle">'+i18nT('取消／請假審核模式','Cancellation / Leave Review Mode')+'</div>' +
+   '<div class="formrow"><label>'+i18nT('審核模式','Review Mode')+'</label><select onchange="onCpBadgeField(\'reviewMode\',this.value)">' +
+   '<option value="self"'+(cp.reviewMode==='self'?' selected':'')+'>'+i18nT('自主（員工自行取消／請假，不需審核）','Self-service (employees cancel/take leave without review)')+'</option>' +
+   '<option value="hrApproval"'+(cp.reviewMode==='hrApproval'?' selected':'')+'>'+i18nT('需 HR 核准','Requires HR approval')+'</option>' +
+   '<option value="rescheduleOnly"'+(cp.reviewMode==='rescheduleOnly'?' selected':'')+'>'+i18nT('只能改期，不開放取消','Reschedule only, no cancellation')+'</option>' +
+   '</select><div class="hint" style="margin-top:4px">'+i18nT('企業合約下員工的取消／請假是否需 HR 審核，避免員工自行取消影響企業已付費之學習成效。','Whether employee cancellations/leave under this enterprise contract require HR review, to prevent self-service cancellations from affecting the enterprise’s paid learning outcomes.')+'</div>'+cpBadgeHtml('reviewMode')+'</div>' +
+   '<div class="switchrow"><span class="small">'+i18nT('成效紀錄：將取消／請假／缺席／遲到記入員工學習成效報表，供 HR 掌握出勤狀況','Performance record: logs cancellations/leave/absence/lateness into the employee learning outcome report so HR can track attendance')+'</span><label class="switch"><input type="checkbox" '+(cp.recordEnabled?'checked':'')+' onchange="onCpBadgeToggle(\'recordEnabled\',this)"><span class="slider"></span></label></div>' +
+   cpBadgeHtml('recordEnabled') +
+   '<div class="formrow" style="margin-top:10px"><label>'+i18nT('連續缺席／取消達 N 次通知 HR 與顧問','Notify HR & advisor after N consecutive absences/cancellations')+'</label><input type="number" min="0" value="'+cp.consecutiveAbsentNotifyN+'" placeholder="請輸入" onchange="onCpField(\'consecutiveAbsentNotifyN\',this.value)"><div class="hint" style="margin-top:4px">'+i18nT('達門檻時觸發','When the threshold is reached, this triggers the ')+'<a href="a15_notifications.html">'+i18nT('通知管理 → 事件通知設定','Notification Management → Event Notification Settings')+'</a>'+i18nT('「連續缺席達門檻」事件，即時通知 HR 與顧問。','“Consecutive absences reach threshold” event, notifying HR and the advisor immediately.')+'</div></div>' +
+   '<div class="sectiontitle">'+i18nT('部門配額','Department Quota')+'</div>' +
+   '<div class="hint" style="margin-bottom:6px">'+i18nT('部門配額（子帳號依部門配額領用時數池；由企業自行維護，最後更新：','Department quota (sub-accounts draw from the hour pool by department quota; self-maintained by the enterprise, last updated: ')+
+     ((e.orgChangeLog && e.orgChangeLog.length) ? e.orgChangeLog[0].time.slice(0,10) : e.contractStart) + i18nT('）：',')：') +'</div>' +
+   '<div class="orgtree">'+deptRows+'</div>' +
+   '<div style="text-align:right;margin-top:8px"><button class="btn ghost" onclick="openDeptQuotaEditModal()">'+i18nT('代為修改','Edit on Behalf')+'</button></div>' +
+   renderOrgLogMini(e) +
+   '<div class="sectiontitle">'+i18nT('展延申請','Extension Requests')+'</div>' +
+   '<div class="note" style="margin-bottom:10px">'+i18nT('來自企業端提出的合約展延申請；合約展延預設值（自動展延月數）請至「合約」分頁的合約預設值設定。','Contract extension requests submitted by the enterprise side; the extension default (auto-extend months) is set under the “Contracts” tab’s contract defaults.')+'</div>' +
+   renderRenewalRequests(e) +
+   '<div class="sectiontitle">'+i18nT('教材與智財','Materials & IP')+'</div>' +
+   '<div class="note">'+i18nT('教材由 TLI 教研團隊維護；教材智慧財產權歸屬 TLI，企業僅取得合約期間之使用權；企業對課程與教材內容負保密義務，不得對外揭露教學術語。','Course materials are maintained by the TLI curriculum team. IP for the materials belongs to TLI; the enterprise only receives a right to use them during the contract term. The enterprise is bound to confidentiality on course and material content and may not disclose it externally.')+'</div>' +
+   '<div style="text-align:right;margin-top:16px"><button class="btn" onclick="saveContractParams()">'+i18nT('儲存使用規則','Save Usage Rules')+'</button></div>';
+}
+function onFollowC2CToggle(el){
+  var e = entById(currentEntId);
+  e.contractParams.followC2CDefault = el.checked;
+  if (el.checked) e.contractParams.cancelWindowHours = 12;
+  renderEntDrawerBody(e);
+}
+function onCpField(field, val){
+  entById(currentEntId).contractParams[field] = val;
+}
+function onEntCourseTypeToggle(el){
+  var cp = entById(currentEntId).contractParams;
+  cp.courseTypes = cp.courseTypes || [];
+  if (el.checked){ if (cp.courseTypes.indexOf(el.value)===-1) cp.courseTypes.push(el.value); }
+  else { cp.courseTypes = cp.courseTypes.filter(function(t){ return t !== el.value; }); }
+  renderEntDrawerBody(entById(currentEntId));
+}
+function onChatRegModeChange(val){
+  entById(currentEntId).contractParams.chatRegMode = val;
+}
+function openDeptQuotaEditModal(){
+  var e = entById(currentEntId);
+  var sel = document.getElementById('dqSelect');
+  sel.innerHTML = e.contractParams.deptQuota.map(function(dq,idx){ return '<option value="'+idx+'">'+dq.dept+'</option>'; }).join('') +
+    '<option value="__new__">'+i18nT('＋ 新增部門','＋ Add Department')+'</option>';
+  onDqSelectChange(sel.value);
+  document.getElementById('deptQuotaEditModal').classList.add('open');
+}
+function onDqSelectChange(val){
+  var e = entById(currentEntId);
+  var isNew = val==='__new__';
+  document.getElementById('dqNewNameRow').hidden = !isNew;
+  document.getElementById('dqQuotaInput').value = isNew ? 0 : e.contractParams.deptQuota[Number(val)].quota;
+}
+function saveDeptQuotaEdit(){
+  var e = entById(currentEntId);
+  var sel = document.getElementById('dqSelect');
+  var quota = Number(document.getElementById('dqQuotaInput').value)||0;
+  var label;
+  if (sel.value==='__new__'){
+    var name = document.getElementById('dqNewName').value.trim();
+    if (!name){ toast(i18nT('請輸入新部門名稱','Please enter a new department name')); return; }
+    e.contractParams.deptQuota.push({dept:name, quota:quota});
+    label = i18nT('新增部門「'+name+'」配額 '+quota+' 小時','Department “'+name+'” added with a quota of '+quota+' hours');
+  } else {
+    var dq = e.contractParams.deptQuota[Number(sel.value)];
+    dq.quota = quota;
+    label = i18nT('調整「'+dq.dept+'」配額為 '+quota+' 小時','“'+dq.dept+'”’s quota adjusted to '+quota+' hours');
+  }
+  pushEntOrgLog(e, label);
+  closeModal('deptQuotaEditModal');
+  renderEntDrawerBody(e);
+  toast(i18nT('已儲存（由 TLI 代為處理）：','Saved (edited on behalf by TLI): ')+label);
+}
+var RENEWAL_STATUS_EN = {'已核准':'Approved','已婉拒':'Declined','待審核':'Pending Review'};
+function renewalStatusText(s){ return i18nT(s, RENEWAL_STATUS_EN[s] || s); }
+function renewalStatusBadge(s){
+  if (s==='已核准') return '<span class="badge green">'+renewalStatusText(s)+'</span>';
+  if (s==='已婉拒') return '<span class="badge grey">'+renewalStatusText(s)+'</span>';
+  return '<span class="badge orange">'+renewalStatusText('待審核')+'</span>';
+}
+function renderRenewalRequests(e){
+  if (!e.renewalRequests || !e.renewalRequests.length) return '<div class="small">'+i18nT('此企業目前尚無展延申請。','This enterprise has no extension requests yet.')+'</div>';
+  var rows = e.renewalRequests.map(function(req){
+    var actionCell = req.status==='待審核'
+      ? '<button class="btn ghost" onclick="approveRenewalRequest(\''+req.id+'\')">'+i18nT('核准並更新合約期間','Approve & Update Contract Period')+'</button> <button class="btn ghost" onclick="declineRenewalRequest(\''+req.id+'\')">'+i18nT('婉拒','Decline')+'</button>'
+      : '<span class="small">'+i18nT('已處理','Processed')+'</span>';
+    return '<tr><td>'+req.submitted+'</td><td>'+i18nT(req.periodDays+' 天（延至 '+req.requestedNewEnd+'）', req.periodDays+' days (extend to '+req.requestedNewEnd+')')+'</td><td style="white-space:normal;max-width:220px">'+req.reason+'</td><td>'+renewalStatusBadge(req.status)+'</td><td>'+actionCell+'</td></tr>';
+  }).join('');
+  return '<div class="tablewrap"><table><tr><th>'+i18nT('申請日','Requested On')+'</th><th>'+i18nT('展延期間','Extension Period')+'</th><th>'+i18nT('原因','Reason')+'</th><th>'+i18nT('狀態','Status')+'</th><th>'+i18nT('動作','Action')+'</th></tr>'+rows+'</table></div>';
+}
+function approveRenewalRequest(reqId){
+  var e = entById(currentEntId);
+  var req = e.renewalRequests.find(function(x){return x.id===reqId;});
+  if (!req) return;
+  if (!confirm(i18nT('確認核准展延申請，並將合約迄日更新為 '+req.requestedNewEnd+'？','Confirm approving this extension request and updating the contract end date to '+req.requestedNewEnd+'?'))) return;
+  req.status = '已核准';
+  e.contractEnd = req.requestedNewEnd;
+  renderEntDrawerBody(e);
+  renderEntTable();
+  toast(i18nT('已核准展延申請，「'+e.name+'」合約期間已更新為至 '+req.requestedNewEnd,'Extension request approved. “'+e.name+'”’s contract period has been updated to '+req.requestedNewEnd));
+}
+function declineRenewalRequest(reqId){
+  var e = entById(currentEntId);
+  var req = e.renewalRequests.find(function(x){return x.id===reqId;});
+  if (!req) return;
+  if (!confirm(i18nT('確認婉拒此展延申請？','Confirm declining this extension request?'))) return;
+  req.status = '已婉拒';
+  renderEntDrawerBody(e);
+  toast(i18nT('已婉拒展延申請','Extension request declined'));
+}
+function saveContractParams(){
+  var e = entById(currentEntId);
+  e.contractParamsSet = true;
+  toast(i18nT('已儲存「'+e.name+'」的使用規則設定','Usage rules for “'+e.name+'” saved'));
+}
+
+/* ================================================================
+   20260928 改版：詳情四大分頁（基本資料／窗口與成員／使用狀況／合約）
+   ================================================================ */
+
+/* ---- 基本資料 ---- */
+function renderBasicTab(e){
+  var editing = entEditSection==='basic';
+  var d = editing ? entEditDraft : null;
+  var html = '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px">' +
+    '<div class="sectiontitle" style="margin:0">'+i18nT('核心資料','Core Info')+'</div>' +
+    (editing ? '' : '<button class="btn ghost small2" onclick="startEditSection(\'basic\')">'+i18nT('編輯','Edit')+'</button>') +
+    '</div>';
+  html += '<div class="kv"><span>'+i18nT('會員分類','Category')+'</span><span>'+entTierBadge(e.tier)+'</span></div>';
+  html += '<div class="kv"><span>'+i18nT('企業代碼','Organization Code')+'</span><span><strong>'+(e.code||'－')+'</strong></span></div>';
+  if (editing){
+    html += '<div class="formrow"><label>'+i18nT('來源型態','Source Type')+'</label><select id="be_srctype" onchange="onBeSrcType(this.value)">'+srcTypeOptionsHtml(d.sourceType,false)+'</select></div>';
+    html += '<div class="formrow"><label>'+i18nT('帶來的夥伴','Referring Partner')+'</label><select id="be_srcunit">'+srcUnitOptionsHtml(d.sourceType,d.sourceUnitId)+'</select></div>';
+  } else {
+    html += '<div class="kv"><span>'+i18nT('來源型態','Source Type')+'</span><span>'+srcBadge(e.sourceType)+'</span></div>';
+    html += '<div class="kv"><span>'+i18nT('帶來的夥伴','Referring Partner')+'</span><span>'+srcUnitText(e.sourceUnitId)+'</span></div>';
+  }
+  if (editing){
+    html += '<div class="formrow"><label>'+i18nT('統一編號','Tax ID')+'</label><input type="text" id="be_taxid" value="'+d.taxId+'"></div>';
+    html += '<div class="formrow"><label>'+i18nT('對應顧問','Advisor')+'</label><select id="be_advisor">'+ENT_ADVISORS.map(function(a){return '<option'+(a===d.advisor?' selected':'')+'>'+a+'</option>';}).join('')+'</select></div>';
+  } else {
+    html += '<div class="kv"><span>'+i18nT('統一編號','Tax ID')+'</span><span>'+(e.taxId||'－')+'</span></div>';
+    html += '<div class="kv"><span>'+i18nT('對應顧問','Advisor')+'</span><span>'+e.advisor+'</span></div>';
+  }
+  if (editing){
+    html += '<div style="text-align:right;margin-top:10px"><button class="btn ghost" onclick="cancelEditSection()">'+i18nT('取消','Cancel')+'</button> <button class="btn" onclick="saveBasicSection()">'+i18nT('儲存','Save')+'</button></div>';
+  }
+  html += '<div class="sectiontitle" style="margin-top:16px">'+i18nT('功能開關','Feature Toggles')+'</div>';
+  activeFeatureDraft = editing ? d.features : null;
+  html += renderFeatureTogglesHtml(e.entType, editing ? d.features : e.features, editing);
+  if (editing){
+    html += '<div style="text-align:right;margin-top:4px"><button class="btn ghost" onclick="cancelEditSection()">'+i18nT('取消','Cancel')+'</button> <button class="btn" onclick="saveBasicSection()">'+i18nT('儲存','Save')+'</button></div>';
+  }
+  html += (e.campuses && e.campuses.length ? renderCampusSection(e) : '');
+  if (window.TLI_I18N) TLI_I18N.refresh();
+  return html;
+}
+function startEditSection(section){
+  var e = entById(currentEntId);
+  entEditSection = section;
+  if (section==='basic'){
+    entEditDraft = {taxId:e.taxId, advisor:e.advisor, sourceType:e.sourceType||'direct', sourceUnitId:e.sourceUnitId||'tli', features:Object.assign({}, e.features)};
+  } else if (section==='people'){
+    entEditDraft = {
+      managerName:e.manager.name, managerTitle:e.manager.title
+    };
+  }
+  renderEntDrawerBody(e);
+}
+function onBeSrcType(val){
+  var t=document.getElementById('be_taxid'); if (t) entEditDraft.taxId=t.value;
+  var a=document.getElementById('be_advisor'); if (a) entEditDraft.advisor=a.value;
+  entEditDraft.sourceType=val; entEditDraft.sourceUnitId=firstUnitOf(val);
+  renderEntDrawerBody(entById(currentEntId));
+}
+function cancelEditSection(){
+  entEditSection = null; entEditDraft = null; activeFeatureDraft = null;
+  renderEntDrawerBody(entById(currentEntId));
+}
+/* 來源型態變更寫回主檔：組織客戶本身，以及該企業底下已建立的員工帳號，讓 a01 與組織端讀到同一份 */
+function syncOrgSourceToMasters(e, alsoAccounts){
+  var mo = TLI_MASTERS.orgCustomers.filter(function(o){ return o.id===e.id; })[0];
+  if (mo){ mo.sourceType = e.sourceType; mo.sourceUnitId = e.sourceUnitId; mo.code = e.code; }
+  if (alsoAccounts){
+    TLI_MASTERS.memberAccounts.forEach(function(a){ if (a.orgId===e.id){ a.sourceType=e.sourceType; a.sourceUnitId=e.sourceUnitId; } });
+    TLI_MASTERS.saveMemberData();
+  }
+}
+function saveBasicSection(){
+  var e = entById(currentEntId);
+  var taxIdEl = document.getElementById('be_taxid'); if (taxIdEl) entEditDraft.taxId = taxIdEl.value;
+  var advisorEl = document.getElementById('be_advisor'); if (advisorEl) entEditDraft.advisor = advisorEl.value;
+  var stEl = document.getElementById('be_srctype'); if (stEl) entEditDraft.sourceType = stEl.value;
+  var suEl = document.getElementById('be_srcunit'); if (suEl) entEditDraft.sourceUnitId = suEl.value;
+  if (entEditDraft.sourceType!=='direct' && !entEditDraft.sourceUnitId){ toast(i18nT('請選擇帶來這家企業的夥伴','Please choose the partner that brought this organization')); return; }
+  var srcChanged = (e.sourceType!==entEditDraft.sourceType || e.sourceUnitId!==entEditDraft.sourceUnitId);
+  e.taxId = entEditDraft.taxId;
+  e.advisor = entEditDraft.advisor;
+  e.sourceType = entEditDraft.sourceType; e.sourceUnitId = entEditDraft.sourceUnitId;
+  syncOrgSourceToMasters(e, srcChanged);
+  e.features = entEditDraft.features;
+  entEditSection = null; entEditDraft = null; activeFeatureDraft = null;
+  renderEntDrawerBody(e);
+  renderEntTable();
+  toast('已儲存基本資料');
+}
+
+/* ---- 窗口與成員 ---- */
+function renderPeopleTab(e){
+  var editing = entEditSection==='people';
+  var d = editing ? entEditDraft : null;
+  var html = '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px">' +
+    '<div class="sectiontitle" style="margin:0">主要窗口</div>' +
+    (editing ? '' : '<button class="btn ghost small2" onclick="startEditSection(\'people\')">'+i18nT('編輯','Edit')+'</button>') +
+    '</div>';
+  if (editing){
+    html += '<div class="formrow"><label>'+i18nT('姓名','Name')+'</label><input type="text" id="pe_name" value="'+d.managerName+'"></div>';
+    html += '<div class="formrow"><label>'+i18nT('職稱','Title')+'</label><input type="text" id="pe_title" value="'+d.managerTitle+'"></div>';
+  } else {
+    html += '<div class="kv"><span>'+i18nT('姓名／職稱','Name / Title')+'</span><span>'+e.manager.name+'（'+e.manager.title+'）</span></div>';
+  }
+  if (editing){
+    html += '<div style="text-align:right;margin-top:10px"><button class="btn ghost" onclick="cancelEditSection()">'+i18nT('取消','Cancel')+'</button> <button class="btn" onclick="savePeopleSection()">'+i18nT('儲存','Save')+'</button></div>';
+  }
+  {
+    html += '<div class="sectiontitle" style="margin-top:16px">'+i18nT('成員名單','Member List')+'</div>' +
+      '<div style="text-align:right;margin:0 0 10px"><button class="btn ghost" onclick="openInviteModal()">'+i18nT('邀請員工','Invite Employees')+'</button></div>' +
+      '<div class="orgtree">';
+    e.depts.forEach(function(dept){
+      var emps = e.employees.filter(function(em){ return em.dept===dept; });
+      html += '<div class="orgdept">'+dept+'（'+emps.length+' '+i18nT('人','people')+'）</div>';
+      emps.forEach(function(em){
+        var campusName = campusById(e, em.campusId);
+        html += '<div class="orgemp"><span>'+em.name+'　<span class="small">'+em.email+'</span>　'+(campusName?'<span class="badge grey">'+campusName+'</span>　':'')+statusBadgeEnt(em.status)+'</span>' +
+          '<span class="oe-actions"><button onclick="transferEmployee(\''+em.id+'\')">'+i18nT('轉移','Transfer')+'</button><button onclick="toggleEmployeeStatus(\''+em.id+'\')">'+(em.status==='在學'?i18nT('停用','Disable'):i18nT('恢復','Restore'))+'</button></span></div>';
+      });
+    });
+    html += '</div>';
+  }
+  if (window.TLI_I18N) TLI_I18N.refresh();
+  return html;
+}
+function savePeopleSection(){
+  var e = entById(currentEntId);
+  var nameEl=document.getElementById('pe_name'), titleEl=document.getElementById('pe_title'), emailEl=document.getElementById('pe_email');
+  e.manager.name = nameEl?nameEl.value:e.manager.name;
+  e.manager.title = titleEl?titleEl.value:e.manager.title;
+  entEditSection = null; entEditDraft = null;
+  renderEntDrawerBody(e);
+  renderEntTable();
+  toast(i18nT('已儲存窗口資訊','Contact info saved'));
+}
+
+/* ---- 使用狀況 ---- */
+function renderUsageTab(e){
+  var html = '';
+  html += '<div class="sectiontitle">'+i18nT('學習報告','Learning Report')+'</div>' + renderReportTab(e);
+  html += '<div class="sectiontitle" style="margin-top:16px">'+i18nT('請款','Billing')+'<span class="phase2-pill" data-i18n="badge.phase2">第二階段</span></div>' + renderInvoiceTab(e);
+  html += '<div class="sectiontitle" style="margin-top:16px">'+i18nT('使用規則','Usage Rules')+'</div>' + renderUsageRulesBlock(e);
+  if (window.TLI_I18N) TLI_I18N.refresh();
+  return html;
+}
+
+/* ---- 合約 ---- */
+var CONTRACT_STATUS_OPTIONS = ['生效','草稿','到期','終止'];
+var CONTRACT_STATUS_EN = {'生效':'Active','草稿':'Draft','到期':'Expired','終止':'Terminated'};
+function contractStatusText(s){ return i18nT(s, CONTRACT_STATUS_EN[s] || s); }
+function contractStatusBadge(s){
+  if (s==='生效') return '<span class="badge green">'+contractStatusText(s)+'</span>';
+  if (s==='草稿') return '<span class="badge grey">'+contractStatusText(s)+'</span>';
+  if (s==='終止') return '<span class="badge red">'+contractStatusText(s)+'</span>';
+  return '<span class="badge orange">'+contractStatusText('到期')+'</span>';
+}
+function renderContractsTab(e){
+  if (currentContractViewId){
+    var c = e.contracts.find(function(x){ return x.id===currentContractViewId; });
+    if (!c){ currentContractViewId = null; }
+    else return renderContractDetail(e, c);
+  }
+  var rows = e.contracts.map(function(c){
+    return '<tr class="rowlink" onclick="openContractDetail(\''+c.id+'\')"><td>'+c.id+'</td><td>'+c.planName+'</td><td>'+c.start+' ～ '+c.end+'</td><td>'+contractStatusBadge(c.status)+'</td></tr>';
+  }).join('');
+  var out = '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px">' +
+    '<div class="sectiontitle" style="margin:0">'+i18nT('合約列表（共 '+e.contracts.length+' 份）','Contract List ('+e.contracts.length+' total)')+'</div>' +
+    '<button class="btn ghost small2" onclick="addNewContract()">'+i18nT('＋ 新增合約','＋ Add Contract')+'</button></div>' +
+    '<div class="tablewrap"><table><tr><th data-i18n="label.contractNo">合約編號</th><th data-i18n="label.plan">方案</th><th data-i18n="label.period">期間</th><th data-i18n="common.status">狀態</th></tr>' +
+    (rows || '<tr><td colspan="4" class="small" style="white-space:normal;padding:14px 12px">'+i18nT('此組織客戶尚無合約紀錄。','This organization customer has no contract records yet.')+'</td></tr>') +
+    '</table></div>';
+  if (window.TLI_I18N) TLI_I18N.refresh();
+  return out;
+}
+function openContractDetail(id){
+  currentContractViewId = id;
+  entEditSection = null;
+  renderEntDrawerBody(entById(currentEntId));
+}
+function backToContractList(){
+  if (entEditSection && !confirm(i18nT('尚未儲存的變更將會遺失，確定要返回列表嗎？','Unsaved changes will be lost — return to the list anyway?'))) return;
+  currentContractViewId = null;
+  entEditSection = null;
+  entEditDraft = null;
+  renderEntDrawerBody(entById(currentEntId));
+}
+function startEditContract(){
+  var e = entById(currentEntId);
+  var c = e.contracts.find(function(x){ return x.id===currentContractViewId; });
+  entEditSection = 'contracts';
+  entEditDraft = JSON.parse(JSON.stringify(c));
+  renderEntDrawerBody(e);
+}
+function cancelEditContract(){
+  entEditSection = null; entEditDraft = null;
+  renderEntDrawerBody(entById(currentEntId));
+}
+function addNewContract(){
+  var e = entById(currentEntId);
+  var seq = e.contracts.length+1;
+  var todayStr = new Date().toISOString().slice(0,10);
+  var blank = {
+    id: 'CT-'+e.id.toUpperCase()+'-'+padNum(seq,2),
+    planName: (orgPlansForTier(e.tier)[0] || {}).name || '',
+    start: todayStr, end: addDays(todayStr,365), status:'草稿',
+    paymentTerms: '月結', currency:'TWD',
+    pricingMode: 'hourpool', poolTotal: 0, prepaidAmount: 0,
+    defaults: {tzMode:'campus', tzValue:'台灣時間（UTC+8）', tieredPricingEnabled:false, tieredPricingTiers:[], prepaidThresholdPct:30, renewalMode:'none', renewalMonths:12},
+    files: [], notes:''
+  };
+  e.contracts.push(blank);
+  currentContractViewId = blank.id;
+  entEditSection = 'contracts';
+  entEditDraft = JSON.parse(JSON.stringify(blank));
+  renderEntDrawerBody(e);
+}
+function onContractTierAdd(){
+  entEditDraft.defaults.tieredPricingTiers.push({threshold:'', value:''});
+  renderEntDrawerBody(entById(currentEntId));
+}
+function onContractTierRemove(idx){
+  entEditDraft.defaults.tieredPricingTiers.splice(idx,1);
+  renderEntDrawerBody(entById(currentEntId));
+}
+function onContractTierField(idx, field, val){
+  entEditDraft.defaults.tieredPricingTiers[idx][field] = val;
+}
+function onContractFileUpload(input){
+  if (!input.files || !input.files.length) return;
+  var f = input.files[0];
+  entEditDraft.files.push({name:f.name, size: Math.max(1,Math.round(f.size/1024))+' KB'});
+  input.value = '';
+  renderEntDrawerBody(entById(currentEntId));
+  toast(i18nT('已上傳附件「'+f.name+'」','Attachment “'+f.name+'” uploaded'));
+}
+function onContractFileRemove(idx){
+  entEditDraft.files.splice(idx,1);
+  renderEntDrawerBody(entById(currentEntId));
+}
+function collectContractDraft(){
+  var d = entEditDraft;
+  var g = function(id){ var el = document.getElementById(id); return el ? el.value : undefined; };
+  if (g('ct_plan')!==undefined) d.planName = g('ct_plan');
+  if (g('ct_start')) d.start = g('ct_start');
+  if (g('ct_end')) d.end = g('ct_end');
+  if (g('ct_status')!==undefined) d.status = g('ct_status');
+  if (g('ct_payterm')!==undefined) d.paymentTerms = g('ct_payterm');
+  if (g('ct_currency')!==undefined) d.currency = g('ct_currency');
+  if (d.pricingMode!==undefined){
+    if (g('ct_pricingmode')!==undefined) d.pricingMode = g('ct_pricingmode');
+    if (d.pricingMode==='hourpool'){ if (g('ct_poolnum')!==undefined) d.poolTotal = Number(g('ct_poolnum'))||0; }
+    else { if (g('ct_poolnum')!==undefined) d.prepaidAmount = Number(g('ct_poolnum'))||0; }
+  }
+  var tzModeEl = document.querySelector('input[name="ct_tzmode"]:checked'); if (tzModeEl) d.defaults.tzMode = tzModeEl.value;
+  if (g('ct_tzvalue')!==undefined) d.defaults.tzValue = g('ct_tzvalue');
+  var tieredEl = document.getElementById('ct_tiered'); if (tieredEl) d.defaults.tieredPricingEnabled = tieredEl.checked;
+  if (g('ct_prepaidpct')!==undefined) d.defaults.prepaidThresholdPct = Number(g('ct_prepaidpct'))||0;
+  var renewalEl = document.querySelector('input[name="ct_renewal"]:checked'); if (renewalEl) d.defaults.renewalMode = renewalEl.value;
+  if (g('ct_renewalmonths')!==undefined) d.defaults.renewalMonths = Number(g('ct_renewalmonths'))||0;
+  if (g('ct_notes')!==undefined) d.notes = g('ct_notes');
+}
+function saveContractDetail(){
+  collectContractDraft();
+  var e = entById(currentEntId);
+  var idx = e.contracts.findIndex(function(x){ return x.id===currentContractViewId; });
+  if (idx===-1) return;
+  var wasLast = idx===e.contracts.length-1;
+  e.contracts[idx] = entEditDraft;
+  /* 最新一份合約的商務條款回寫到既有頂層欄位，讓列表／學習報告／請款等分頁維持一致 */
+  if (wasLast){
+    e.planName = entEditDraft.planName;
+    e.contractStart = entEditDraft.start;
+    e.contractEnd = entEditDraft.end;
+  }
+  entEditSection = null; entEditDraft = null;
+  renderEntDrawerBody(e);
+  renderEntTable();
+  toast(i18nT('已儲存合約「'+e.contracts[idx].id+'」','Contract “'+e.contracts[idx].id+'” saved'));
+}
+function deleteContract(){
+  var e = entById(currentEntId);
+  if (e.contracts.length<=1){ toast(i18nT('至少須保留一份合約','At least one contract must remain')); return; }
+  if (!confirm(i18nT('確定要刪除合約「'+currentContractViewId+'」？','Delete contract “'+currentContractViewId+'”?'))) return;
+  e.contracts = e.contracts.filter(function(x){ return x.id!==currentContractViewId; });
+  currentContractViewId = null; entEditSection = null; entEditDraft = null;
+  renderEntDrawerBody(e);
+  renderEntTable();
+  toast(i18nT('已刪除合約','Contract deleted'));
+}
+var PAY_TERMS_EN = {'月結':'Monthly','季結':'Quarterly','預付':'Prepaid'};
+function payTermText(p){ return i18nT(p, PAY_TERMS_EN[p] || p); }
+function renderContractDetail(e, c){
+  var editing = entEditSection==='contracts';
+  var d = editing ? entEditDraft : c;
+  var payOptions = ['月結','季結','預付'];
+  var html = '<div style="margin-bottom:10px"><a href="javascript:void(0)" onclick="backToContractList()">'+i18nT('← 返回合約列表','← Back to Contract List')+'</a></div>';
+  html += '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">' +
+    '<div class="sectiontitle" style="margin:0">'+i18nT('合約 ','Contract ')+c.id+'</div>' +
+    (editing ? '' : '<button class="btn ghost small2" onclick="startEditContract()">'+i18nT('編輯','Edit')+'</button>') + '</div>';
+
+  if (editing){
+    html += '<div class="formrow"><label>'+i18nT('方案','Plan')+'</label><select id="ct_plan">'+orgPlanOptionsHtml(e.tier, d.planName)+'</select><a class="crosslink" href="a04_packages.html" target="_blank">'+i18nT('管理選項 →','Manage →')+'</a></div>';
+    html += '<div class="formrow"><label>'+i18nT('合約期間','Contract Period')+'</label><div style="display:flex;gap:8px"><input type="date" id="ct_start" value="'+d.start+'"><span class="small" style="align-self:center">～</span><input type="date" id="ct_end" value="'+d.end+'"></div></div>';
+    html += '<div class="formrow"><label>'+i18nT('狀態','Status')+'</label><select id="ct_status">'+CONTRACT_STATUS_OPTIONS.map(function(s){return '<option value="'+s+'"'+(s===d.status?' selected':'')+'>'+contractStatusText(s)+'</option>';}).join('')+'</select></div>';
+    html += '<div class="grid2"><div class="formrow"><label>'+i18nT('付款條件','Payment Terms')+'</label><select id="ct_payterm">'+payOptions.map(function(p){return '<option value="'+p+'"'+(p===d.paymentTerms?' selected':'')+'>'+payTermText(p)+'</option>';}).join('')+'</select></div>' +
+      '<div class="formrow"><label>'+i18nT('幣別','Currency')+'</label><select id="ct_currency"><option'+(d.currency==='TWD'?' selected':'')+'>TWD</option><option'+(d.currency==='USD'?' selected':'')+'>USD</option></select></div></div>';
+    html += '<div class="grid2"><div class="formrow"><label>'+i18nT('計價單位','Pricing Unit')+'</label><select id="ct_pricingmode" onchange="entEditDraft.pricingMode=this.value; renderEntDrawerBody(entById(currentEntId));"><option value="hourpool"'+(d.pricingMode==='hourpool'?' selected':'')+'>'+i18nT('時數池','Hour Pool')+'</option><option value="prepaidpool"'+(d.pricingMode==='prepaidpool'?' selected':'')+'>'+i18nT('預付金額池','Prepaid Amount Pool')+'</option></select></div>' +
+      '<div class="formrow"><label>'+(d.pricingMode==='hourpool'?i18nT('時數池（小時）','Hour Pool (hours)'):i18nT('預付金額','Prepaid Amount'))+'</label><input type="number" min="0" id="ct_poolnum" value="'+(d.pricingMode==='hourpool'?d.poolTotal:d.prepaidAmount)+'"></div></div>';
+    html += '<fieldset style="border:1px solid var(--g200);border-radius:8px;padding:12px;margin-top:14px"><legend class="small" style="padding:0 6px">'+i18nT('合約預設值','Contract Defaults')+'</legend>';
+    html += '<div class="formrow"><label>'+i18nT('時區判定基準','Time Zone Basis')+'</label>' +
+      '<label style="display:block;font-size:13px"><input type="radio" name="ct_tzmode" value="campus" style="width:auto;display:inline-block" '+(d.defaults.tzMode==='campus'?'checked':'')+'> '+i18nT('依員工所屬廠區','By employee’s assigned site')+'</label>' +
+      '<label style="display:block;font-size:13px;margin-top:4px"><input type="radio" name="ct_tzmode" value="fixed" style="width:auto;display:inline-block" '+(d.defaults.tzMode==='fixed'?'checked':'')+'> '+i18nT('合約指定單一時區：','Contract specifies a single time zone: ')+'<input type="text" id="ct_tzvalue" value="'+d.defaults.tzValue+'" style="width:220px;display:inline-block;margin-left:6px"></label></div>';
+    html += '<div class="switchrow"><span class="small">'+i18nT('階梯計價','Tiered Pricing')+'</span><label class="switch"><input type="checkbox" id="ct_tiered" '+(d.defaults.tieredPricingEnabled?'checked':'')+'><span class="slider"></span></label></div>';
+    if (d.defaults.tieredPricingEnabled){
+      html += '<div class="tablewrap"><table><tr><th data-i18n="label.tier">級距</th><th data-i18n="label.unitPrice">單價</th><th></th></tr>' +
+        d.defaults.tieredPricingTiers.map(function(t,idx){
+          return '<tr><td><input type="text" value="'+t.threshold+'" style="width:140px" onchange="onContractTierField('+idx+',\'threshold\',this.value)"></td>' +
+            '<td><input type="text" value="'+t.value+'" style="width:100px" onchange="onContractTierField('+idx+',\'value\',this.value)"></td>' +
+            '<td><button type="button" class="btn ghost small2" onclick="onContractTierRemove('+idx+')">'+i18nT('刪除','Remove')+'</button></td></tr>';
+        }).join('') + '</table></div>' +
+        '<button type="button" class="btn ghost small2" style="margin-top:6px" onclick="onContractTierAdd()">'+i18nT('＋ 新增級距','＋ Add Tier')+'</button>';
+    }
+    html += '<div class="formrow" style="margin-top:10px"><label>'+i18nT('預付款門檻','Prepayment Threshold')+'</label><input type="number" min="1" max="100" id="ct_prepaidpct" value="'+d.defaults.prepaidThresholdPct+'"><div class="hint">'+i18nT('單位：%','Unit: %')+'</div></div>';
+    html += '<div class="formrow"><label>'+i18nT('合約展延','Contract Extension')+'</label>' +
+      '<label style="display:block;font-size:13px"><input type="radio" name="ct_renewal" value="auto" style="width:auto;display:inline-block" '+(d.defaults.renewalMode==='auto'?'checked':'')+'> '+i18nT('自動展延，每次延長','Auto-extend, each time by')+' <input type="number" min="1" id="ct_renewalmonths" value="'+d.defaults.renewalMonths+'" style="width:70px;display:inline-block;margin:0 4px"> '+i18nT('個月','months')+'</label>' +
+      '<label style="display:block;font-size:13px;margin-top:4px"><input type="radio" name="ct_renewal" value="none" style="width:auto;display:inline-block" '+(d.defaults.renewalMode==='none'?'checked':'')+'> '+i18nT('不自動展延','No auto-extension')+'</label></div>';
+    html += '</fieldset>';
+    html += '<div class="sectiontitle" style="margin-top:14px">'+i18nT('附件','Attachments')+'</div><ul class="filelist">' +
+      d.files.map(function(f,idx){ return '<li><span>'+f.name+'　<span class="small">'+f.size+'</span></span><button type="button" class="btn ghost small2" onclick="onContractFileRemove('+idx+')">'+i18nT('移除','Remove')+'</button></li>'; }).join('') +
+      '</ul><label class="btn ghost small2" style="display:inline-block;margin-top:6px;cursor:pointer">'+i18nT('上傳附件','Upload Attachment')+'<input type="file" style="display:none" onchange="onContractFileUpload(this)"></label>';
+    html += '<div class="formrow" style="margin-top:14px"><label>'+i18nT('備註','Notes')+'</label><textarea id="ct_notes" rows="2">'+(d.notes||'')+'</textarea></div>';
+    html += '<div style="text-align:right;margin-top:14px"><button class="btn ghost" onclick="cancelEditContract()">'+i18nT('取消','Cancel')+'</button> <button class="btn" onclick="saveContractDetail()">'+i18nT('儲存','Save')+'</button></div>';
+  } else {
+    html += '<div class="kv"><span>'+i18nT('方案','Plan')+'</span><span>'+c.planName+'</span></div>';
+    html += '<div class="kv"><span>'+i18nT('合約期間','Contract Period')+'</span><span>'+c.start+' ～ '+c.end+'</span></div>';
+    html += '<div class="kv"><span>'+i18nT('狀態','Status')+'</span><span>'+contractStatusBadge(c.status)+'</span></div>';
+    html += '<div class="kv"><span>'+i18nT('付款條件','Payment Terms')+'</span><span>'+payTermText(c.paymentTerms)+'</span></div>';
+    html += '<div class="kv"><span>'+i18nT('幣別','Currency')+'</span><span>'+c.currency+'</span></div>';
+    html += '<div class="kv"><span>'+i18nT('計價單位','Pricing Unit')+'</span><span>'+(c.pricingMode==='hourpool'?i18nT('時數池','Hour Pool'):i18nT('預付金額池','Prepaid Amount Pool'))+'</span></div>';
+    html += '<div class="kv"><span>'+(c.pricingMode==='hourpool'?i18nT('時數池（小時）','Hour Pool (hours)'):i18nT('預付金額','Prepaid Amount'))+'</span><span>'+(c.pricingMode==='hourpool'?c.poolTotal:('NT$ '+c.prepaidAmount.toLocaleString()))+'</span></div>';
+    html += '<div class="sectiontitle" style="margin-top:14px">'+i18nT('合約預設值','Contract Defaults')+'</div>';
+    html += '<div class="kv"><span>'+i18nT('時區判定基準','Time Zone Basis')+'</span><span>'+(c.defaults.tzMode==='campus'?i18nT('依員工所屬廠區','By employee’s assigned site'):(i18nT('合約指定單一時區：','Contract specifies a single time zone: ')+i18nT(c.defaults.tzValue, TZ_LABEL_EN[c.defaults.tzValue]||c.defaults.tzValue)))+'</span></div>';
+    html += '<div class="kv"><span>'+i18nT('階梯計價','Tiered Pricing')+'</span><span>'+(c.defaults.tieredPricingEnabled ? (c.defaults.tieredPricingTiers.map(function(t){return t.threshold+'／'+t.value;}).join('；')||i18nT('已啟用','Enabled')) : i18nT('未啟用','Disabled'))+'</span></div>';
+    html += '<div class="kv"><span>'+i18nT('預付款門檻','Prepayment Threshold')+'</span><span>'+c.defaults.prepaidThresholdPct+'%</span></div>';
+    html += '<div class="kv"><span>'+i18nT('合約展延','Contract Extension')+'</span><span>'+(c.defaults.renewalMode==='auto' ? i18nT('自動展延，每次延長 '+c.defaults.renewalMonths+' 個月','Auto-extend, each time by '+c.defaults.renewalMonths+' months') : i18nT('不自動展延','No auto-extension'))+'</span></div>';
+    html += '<div class="sectiontitle" style="margin-top:14px">'+i18nT('附件','Attachments')+'</div>';
+    html += c.files.length ? ('<ul class="filelist">'+c.files.map(function(f){ return '<li><span>'+f.name+'　<span class="small">'+f.size+'</span></span></li>'; }).join('')+'</ul>') : '<div class="small">'+i18nT('尚無附件。','No attachments yet.')+'</div>';
+    html += '<div class="sectiontitle" style="margin-top:14px">'+i18nT('備註','Notes')+'</div><div class="small" style="white-space:pre-wrap">'+(c.notes||i18nT('（無）','(None)'))+'</div>';
+    html += '<div style="text-align:right;margin-top:16px"><button class="btn danger" onclick="deleteContract()">'+i18nT('刪除此合約','Delete This Contract')+'</button></div>';
+  }
+  if (window.TLI_I18N) TLI_I18N.refresh();
+  return html;
+}
+
+/* ================= 代理商型詳情（v2 新增：摘要卡＋連結至代理商詳細管理，示範畫面，資料為模擬數字） ================= */
+function renderAgentInfoTab(e){
+  var info = e.agentInfo;
+  var out = '<div class="card" style="margin-top:10px">' +
+   '<div class="kv"><span>'+i18nT('優惠碼','Promo Code')+'</span><span>'+info.referralCode+'</span></div>' +
+   '<div class="kv"><span>'+i18nT('名單歸屬規則','Lead Attribution Rule')+'</span><span>'+info.attributionRule+'</span></div>' +
+   '<div class="kv"><span>'+i18nT('佣金比例','Commission Rate')+'</span><span class="small">'+i18nT('依合約設定','Per contract')+'</span></div>' +
+   '<div class="formrow" style="margin-top:10px"><label>'+i18nT('結算週期','Settlement Cycle')+'</label><select onchange="onAgentSettlementChange(this.value)">' +
+   '<option value="月結"'+(info.settlementCycle==='月結'?' selected':'')+'>'+payTermText('月結')+'</option>' +
+   '<option value="季結"'+(info.settlementCycle==='季結'?' selected':'')+'>'+payTermText('季結')+'</option>' +
+   '</select></div>' +
+   '</div>' +
+   '<div style="text-align:right;margin-top:14px"><a class="btn ghost" href="a20_agents.html">'+i18nT('查看代理商詳細管理 →','View Partner Management →')+'</a></div>';
+  if (window.TLI_I18N) TLI_I18N.refresh();
+  return out;
+}
+function onAgentSettlementChange(val){
+  var e = entById(currentEntId);
+  e.agentInfo.settlementCycle = val;
+  toast(i18nT('已更新結算週期為「'+val+'」','Settlement cycle updated to “'+payTermText(val)+'”'));
+}
+
+/* ================= 新增企業客戶 ================= */
+var newEntTab = 'basic';
+var newEntDraft = null;
+/* 建檔免重打：帶著 ?draft=<id> 從 c08 顧問工作台導入時，讀同一份 localStorage 橋接，
+   把詢問單已有的公司基本資料自動帶入，顧問只需補合約層資訊（合約期間、時數池總量、審核模式、規則組、計價方式等）。
+   示範用：正式版由後端 API 直接帶著同一筆資料開啟本表單。 */
+var TLI_ENT_DRAFT_KEY='tliDemoEnterpriseDraft';
+function tliReadEnterpriseDraft(){
+  try{ return JSON.parse(localStorage.getItem(TLI_ENT_DRAFT_KEY)); }catch(e){ return null; }
+}
+function openNewEnterpriseDrawer(sourceDraft){
+  currentEntId = null;
+  newEntTab = 'basic';
+  newEntDraft = {name:'', entType:'general', tier:'B', planName:(orgPlansForTier('B')[0]||{}).name||'', managerName:'', managerTitle:'', payMethod:'月結',
+    industry:'', location:'', headcount:'', language:'', contactName:'', contactInfo:'',
+    code:'', sourceType:'direct', sourceUnitId:'tli',
+    features: defaultFeatures('general')};
+  if(sourceDraft){
+    newEntDraft.name = sourceDraft.company||'';
+    newEntDraft.industry = sourceDraft.industry||'';
+    newEntDraft.location = sourceDraft.location||'';
+    newEntDraft.headcount = sourceDraft.headcount||'';
+    newEntDraft.language = sourceDraft.language||'';
+    newEntDraft.contactName = sourceDraft.contactName||'';
+    newEntDraft.contactInfo = sourceDraft.contactInfo||'';
+  }
+  document.getElementById('drw_title').textContent = i18nT('新增組織客戶','Add Organization Customer');
+  document.getElementById('drw_sub').textContent = sourceDraft ?
+    i18nT('已從「企業諮詢」帶入公司基本資料（部分欄位如未提供請自行填寫），請補齊合約期間、時數池總量、審核模式、規則組、計價方式等合約層設定','Company basic info has been carried over from “Corporate Inquiry” (fill in any missing fields yourself); please complete the contract-level settings such as contract period, hour pool total, review mode, rule set and pricing method') :
+    i18nT('依序填寫基本資料、合約與分類、主管理者、付款方式','Fill in Basic Info, Contract & Category, Main Contact, and Payment Method in order');
+  renderNewEntForm();
+  document.getElementById('drawerMask').classList.add('open');
+  document.getElementById('drawer').classList.add('open');
+}
+var NEW_ENT_STEP_EN = {basic:'Basic Info', features:'Feature Toggles', contract:'Contract & Category', manager:'Main Contact', pay:'Payment & Billing Method'};
+function renderNewEntForm(){
+  var steps = ['basic','features','contract','manager','pay'];
+  var labels = {basic:'基本資料', features:'功能開關', contract:'合約與分類', manager:'主管理者', pay:'付款與請款方式'};
+  var tabsHtml = '<div class="tabs">' + steps.map(function(s){
+    return '<button class="'+(s===newEntTab?'active':'')+'" onclick="newEntSwitchTab(\''+s+'\')">'+i18nT(labels[s],NEW_ENT_STEP_EN[s])+'</button>';
+  }).join('') + '</div>';
+  var body = '';
+  if (newEntTab==='basic'){
+    body = '<div class="hint" style="margin-bottom:10px"><span class="req">*</span> '+i18nT('為必填','Required')+'</div>' +
+      '<div class="formrow"><label>'+i18nT('企業名稱','Company Name')+'</label><span class="req">*</span><input type="text" id="ne_name" value="'+newEntDraft.name+'" placeholder="請輸入完整公司名稱" data-i18n-placeholder="ph.fullCompanyName"></div>' +
+      '<div class="formrow"><label>'+i18nT('企業代碼','Organization Code')+'</label><span class="req">*</span><input type="text" id="ne_code" value="'+newEntDraft.code+'" placeholder="'+i18nT('英數字，例：FANLI','Letters/digits, e.g. FANLI')+'" style="text-transform:uppercase"><div class="hint">'+i18nT('不可與其他企業重複，建立後不能修改。','Must be unique and cannot be changed after creation.')+'</div></div>' +
+      '<div class="formrow"><label>'+i18nT('來源型態','Source Type')+'</label><span class="req">*</span><select id="ne_srctype" onchange="onNewSrcType(this.value)">'+srcTypeOptionsHtml(newEntDraft.sourceType,false)+'</select></div>' +
+      '<div class="formrow"><label>'+i18nT('帶來的夥伴','Referring Partner')+'</label><select id="ne_srcunit" onchange="newEntDraft.sourceUnitId=this.value">'+srcUnitOptionsHtml(newEntDraft.sourceType,newEntDraft.sourceUnitId)+'</select></div>' +
+      '<div class="formrow"><label>'+i18nT('產業別','Industry')+'</label><input type="text" id="ne_industry" value="'+newEntDraft.industry+'" placeholder="如：半導體、AI 硬體" data-i18n-placeholder="ph.industryExample"></div>' +
+      '<div class="formrow"><label>'+i18nT('廠區地點','Site Location')+'</label><input type="text" id="ne_location" value="'+newEntDraft.location+'" placeholder="如：美國廠區" data-i18n-placeholder="ph.siteLocationExample"></div>' +
+      '<div class="formrow"><label>'+i18nT('預計參加人數','Expected Headcount')+'</label><input type="text" id="ne_headcount" value="'+newEntDraft.headcount+'" placeholder="請輸入預計人數" data-i18n-placeholder="ph.expectedHeadcount"></div>' +
+      '<div class="formrow"><label>'+i18nT('語言需求','Language Requirement')+'</label><input type="text" id="ne_language" value="'+newEntDraft.language+'" placeholder="如：英文、日文" data-i18n-placeholder="ph.languageExample"></div>' +
+      '<div class="formrow"><label>'+i18nT('聯絡人姓名','Contact Name')+'</label><input type="text" id="ne_contactname" value="'+newEntDraft.contactName+'" placeholder="請輸入聯絡人姓名" data-i18n-placeholder="ph.contactNameInput"></div>' +
+      '<div class="formrow"><label>'+i18nT('聯絡方式','Contact Info')+'</label><input type="text" id="ne_contactinfo" value="'+newEntDraft.contactInfo+'" placeholder="Email 或電話" data-i18n-placeholder="ph.emailOrPhone"></div>' +
+      '<div class="formrow"><label>'+i18nT('統一編號','Tax ID')+'</label><input type="text" id="ne_taxid" placeholder="8 碼統一編號" data-i18n-placeholder="ph.taxId8digit"></div>' +
+      '<div class="formrow"><label>'+i18nT('對應顧問','Advisor')+'</label><select id="ne_advisor">'+ENT_ADVISORS.map(function(a){return '<option>'+a+'</option>';}).join('')+'</select></div>';
+  } else if (newEntTab==='features'){
+    activeFeatureDraft = newEntDraft.features;
+    body = renderFeatureTogglesHtml(newEntDraft.entType, newEntDraft.features, true);
+  } else if (newEntTab==='contract'){
+    body = '<div class="formrow"><label>'+i18nT('會員分類','Member Category')+'</label><select id="ne_tier" onchange="onNewEntTierChange(this.value)">'+orgTierOptionsHtml(newEntDraft.tier,false)+'</select></div>' +
+      '<div class="formrow"><label>'+i18nT('合約價方案','Contract Plan')+'</label><select id="ne_plan">'+orgPlanOptionsHtml(newEntDraft.tier, newEntDraft.planName)+'</select></div>' +
+      '<div class="formrow"><label>'+i18nT('折扣率（%）','Discount Rate (%)')+'</label><input type="number" id="ne_discount" value="10"></div>' +
+      '<div class="formrow"><label>'+i18nT('合約期間','Contract Period')+'</label><div style="display:flex;gap:8px"><input type="date" id="ne_start" value="'+new Date().toISOString().slice(0,10)+'"><span class="small" style="align-self:center">～</span><input type="date" id="ne_end" value="'+addDays(new Date().toISOString().slice(0,10),365)+'"></div></div>';
+  } else if (newEntTab==='manager'){
+    body = '<div class="formrow"><label>'+i18nT('主管理者姓名','Main Contact Name')+'</label><input type="text" id="ne_mgrname" placeholder="例：林淑惠" data-i18n-placeholder="ph.managerNameExample"></div>' +
+      '<div class="formrow"><label>'+i18nT('職稱','Title')+'</label><input type="text" id="ne_mgrtitle" placeholder="例：人資處長" data-i18n-placeholder="ph.managerTitleExample"></div>' +
+      '<div class="formrow"><label>'+i18nT('聯絡 Email','Contact Email')+'</label><input type="email" id="ne_mgremail" placeholder="name@company.com"></div>';
+  } else if (newEntTab==='pay'){
+    body = '<div class="formrow"><label>'+i18nT('付款方式','Payment Method')+'</label><select id="ne_pay"><option value="月結">'+payTermText('月結')+'</option><option value="一次付清">'+i18nT('一次付清','Paid in Full')+'</option></select></div>' +
+      '<div class="formrow"><label>'+i18nT('請款抬頭','Billing Name')+'</label><input type="text" id="ne_invtitle" value="'+newEntDraft.name+'"></div>' +
+      '<button class="btn" style="margin-top:6px" onclick="saveNewEnterprise()">'+i18nT('儲存並加入組織客戶列表','Save & Add to Organization Customer List')+'</button>';
+  }
+  document.getElementById('drw_body').innerHTML = tabsHtml + '<div>' + body + '</div>';
+  if (window.TLI_I18N) TLI_I18N.refresh();
+}
+function onNewSrcType(val){
+  captureNewEntDraft();
+  newEntDraft.sourceType = val; newEntDraft.sourceUnitId = firstUnitOf(val);
+  renderNewEntForm();
+}
+function newEntSwitchTab(s){
+  captureNewEntDraft();
+  newEntTab = s;
+  renderNewEntForm();
+}
+function onNewEntTierChange(val){
+  newEntDraft.tier = val;
+  var plans = orgPlansForTier(val);
+  if (!plans.some(function(p){ return p.name===newEntDraft.planName; })) {
+    newEntDraft.planName = plans.length ? plans[0].name : '';
+  }
+  renderNewEntForm();
+}
+function captureNewEntDraft(){
+  var nameEl = document.getElementById('ne_name'); if (nameEl) newEntDraft.name = nameEl.value;
+  var codeEl = document.getElementById('ne_code'); if (codeEl) newEntDraft.code = codeEl.value.trim().toUpperCase();
+  var stEl = document.getElementById('ne_srctype'); if (stEl) newEntDraft.sourceType = stEl.value;
+  var suEl = document.getElementById('ne_srcunit'); if (suEl) newEntDraft.sourceUnitId = suEl.value;
+  var tierEl = document.getElementById('ne_tier'); if (tierEl) newEntDraft.tier = tierEl.value;
+  var planEl = document.getElementById('ne_plan'); if (planEl) newEntDraft.planName = planEl.value;
+  var industryEl = document.getElementById('ne_industry'); if (industryEl) newEntDraft.industry = industryEl.value;
+  var locationEl = document.getElementById('ne_location'); if (locationEl) newEntDraft.location = locationEl.value;
+  var headcountEl = document.getElementById('ne_headcount'); if (headcountEl) newEntDraft.headcount = headcountEl.value;
+  var languageEl = document.getElementById('ne_language'); if (languageEl) newEntDraft.language = languageEl.value;
+  var contactNameEl = document.getElementById('ne_contactname'); if (contactNameEl) newEntDraft.contactName = contactNameEl.value;
+  var contactInfoEl = document.getElementById('ne_contactinfo'); if (contactInfoEl) newEntDraft.contactInfo = contactInfoEl.value;
+}
+function saveNewEnterprise(){
+  captureNewEntDraft();
+  var name = newEntDraft.name.trim();
+  if (!name){ toast(i18nT('請先於「基本資料」分頁輸入企業名稱','Please enter the company name on the “Basic Info” tab first')); newEntTab='basic'; renderNewEntForm(); return; }
+  var code = (newEntDraft.code||'').toUpperCase();
+  if (!/^[A-Z0-9]{2,12}$/.test(code)){ toast(i18nT('請於「基本資料」填寫企業代碼（2–12 碼英數字）','Please enter an organization code on “Basic Info” (2–12 letters or digits)')); newEntTab='basic'; renderNewEntForm(); return; }
+  if (TLI_MASTERS.findOrgByCode(code)){ toast(i18nT('企業代碼「'+code+'」已被使用，請改用別的','Organization code “'+code+'” is already in use; please choose another')); newEntTab='basic'; renderNewEntForm(); return; }
+  if (newEntDraft.sourceType!=='direct' && !newEntDraft.sourceUnitId){ toast(i18nT('請選擇帶來這家企業的夥伴','Please choose the partner that brought this organization')); newEntTab='basic'; renderNewEntForm(); return; }
+  var mgrName = (document.getElementById('ne_mgrname') && document.getElementById('ne_mgrname').value.trim()) || newEntDraft.contactName || i18nT('（未指定）','(Unspecified)');
+  var mgrTitle = (document.getElementById('ne_mgrtitle') && document.getElementById('ne_mgrtitle').value.trim()) || i18nT('窗口','Contact');
+  var mgrEmail = (document.getElementById('ne_mgremail') && document.getElementById('ne_mgremail').value.trim()) || newEntDraft.contactInfo || '';
+  var payMethod = document.getElementById('ne_pay').value;
+  var newId = 'entnew'+Date.now();
+  var todayStr = new Date().toISOString().slice(0,10);
+  var newEnt = {
+    id:newId, name:name, entType:newEntDraft.entType, tier:newEntDraft.tier, planName:newEntDraft.planName,
+    empCount:parseInt(newEntDraft.headcount,10)||0,
+    industry:newEntDraft.industry, sourceLocation:newEntDraft.location, language:newEntDraft.language,
+    contractStart:todayStr, contractEnd:addDays(todayStr,365), manager:{name:mgrName, title:mgrTitle, email:mgrEmail},
+    advisor:ENT_ADVISORS[0], attendance:0, invoiceStatus:'待開立', payMethod:payMethod, taxId:'',
+    depts:DEPTS.slice(0,3), employees:[], discountRate:10, scheduleMonthly:false, invoices:[],
+    contractParamsSet:false, contractParams:{followC2CDefault:true, cancelWindowHours:12, monthlyFreeCancel:1, rescheduleMaxTimes:2, rescheduleWindowHours:12,
+      overageLeavePolicy:'appeal', timezone:'Asia/Taipei', poolTotal:0, poolExpiry:addDays(todayStr,365), deptQuota:[], tieredPricing:{type:'accounts', tiers:[{from:1,to:''}]},
+      renewalExtension:{days:'', requireApproval:true, maxTimes:''},
+      paymentMethod:'monthly', pricingUnit:'hourpool', prepaidAmount:0, prepaidDeductUnit:'', prepaidBalance:0, prepaidThreshold:''},
+    connectionRequests:[], renewalRequests:[],
+    contractHistory:[{version:'v1.0', effectiveDate:todayStr, planSummary:newEntDraft.planName+'／折扣 10%', status:'生效中'}],
+    agentInfo: null, code: code, sourceType: newEntDraft.sourceType, sourceUnitId: newEntDraft.sourceUnitId,
+    features: newEntDraft.features || defaultFeatures(newEntDraft.entType)
+  };
+  TLI_MASTERS.orgCustomers.push({id:newId, name:name, type:'general', code:code, sourceType:newEnt.sourceType, sourceUnitId:newEnt.sourceUnitId});
+  newEnt.contracts = buildContractsFromLegacy(newEnt);
+  ENTERPRISES.unshift(newEnt);
+  closeDrawer();
+  entState.page = 1;
+  renderEntTable();
+  if (pendingConvertLeadId){
+    b2bLeadSaveOverride(pendingConvertLeadId, {status:'已成交'});
+    pendingConvertLeadId = null;
+    renderMainTabs();
+    renderLeadTable();
+  }
+  toast(i18nT('已新增組織客戶「'+name+'」','Organization customer “'+name+'” added'));
+}
+
+function closeModal(id){ document.getElementById(id).classList.remove('open'); }
+
+// ESC 鍵可關閉所有開啟中的 modal 與抽屜
+document.addEventListener('keydown', function(e){
+  if (e.key !== 'Escape') return;
+  document.querySelectorAll('.modal-mask.open').forEach(function(el){ el.classList.remove('open'); });
+  if (document.getElementById('drawerMask').classList.contains('open')) closeDrawer();
+});
+
+function toggleSidebar(){
+  document.getElementById('sidebar').classList.toggle('open');
+  document.getElementById('sidebarBackdrop').classList.toggle('open');
+}
+function closeSidebar(){
+  document.getElementById('sidebar').classList.remove('open');
+  document.getElementById('sidebarBackdrop').classList.remove('open');
+}
+/* ================= 共用：頂欄通知／使用者選單／登出／toast（全站同一段） ================= */
+var NOTIFS = [
+  {t:'「和霖科技股份有限公司」本月請款單待開立', en:'Monthly invoice for \u201c和霖科技股份有限公司\u201d is pending', time:'25 分鐘前', timeEn:'25 minutes ago', unread:true},
+  {t:'企業詢課有 2 筆待處理', en:'2 corporate course inquiries pending', time:'2 小時前', timeEn:'2 hours ago', unread:true},
+  {t:'內容管理：首頁 Hero 文案已由校區主管發佈', en:'Content Management: homepage hero copy has been published by the campus manager', time:'今天 09:12', timeEn:'Today 09:12', unread:false},
+  {t:'老師黃志遠已切換為留職停薪', en:'Teacher 黃志遠 has switched to unpaid leave', time:'昨天', timeEn:'Yesterday', unread:false}
+];
+function renderNotifPanel(){
+  var panel = document.getElementById('notifPanel');
+  if (!panel) return;
+  var unread = NOTIFS.filter(function(n){return n.unread;}).length;
+  var dot = document.getElementById('tbDot');
+  if (dot) dot.style.display = unread ? 'block' : 'none';
+  panel.innerHTML = '<div class="tn-head"><span>'+(window.TLI_I18N?TLI_I18N.t('通知（'+unread+' 則未讀）','Notifications ('+unread+' unread)'):('通知（'+unread+' 則未讀）'))+'</span><a href="javascript:void(0)" onclick="markAllRead(event)">'+(window.TLI_I18N?TLI_I18N.t('全部標為已讀','Mark All as Read'):'全部標為已讀')+'</a></div>' +
+    NOTIFS.map(function(n){ return '<div class="tb-notifitem'+(n.unread?' unread':'')+'">'+(window.TLI_I18N?TLI_I18N.t(n.t,n.en):n.t)+'<div class="tn-t">'+(window.TLI_I18N?TLI_I18N.t(n.time,n.timeEn):n.time)+'</div></div>'; }).join('');
+}
+function markAllRead(ev){
+  if (ev) ev.stopPropagation();
+  NOTIFS.forEach(function(n){ n.unread = false; });
+  renderNotifPanel();
+}
+function toggleNotif(ev){
+  ev.stopPropagation();
+  closePanel('avatarMenu');
+  var p = document.getElementById('notifPanel');
+  p.classList.toggle('open');
+  if (p.classList.contains('open')) renderNotifPanel();
+}
+function toggleAvatarMenu(ev){
+  ev.stopPropagation();
+  closePanel('notifPanel');
+  document.getElementById('avatarMenu').classList.toggle('open');
+}
+function closePanel(id){
+  var el = document.getElementById(id);
+  if (el) el.classList.remove('open');
+}
+document.addEventListener('click', function(){ closePanel('notifPanel'); closePanel('avatarMenu'); });
+function doLogout(){ location.href = '../公開網站/p07_login_register.html'; }
+function toast(msg){
+  var el = document.getElementById('toastEl');
+  if (!el){
+    el = document.createElement('div');
+    el.id = 'toastEl';
+    el.className = 'toast';
+    document.body.appendChild(el);
+  }
+  el.textContent = msg;
+  el.classList.add('show');
+  clearTimeout(window._toastTimer);
+  window._toastTimer = setTimeout(function(){ el.classList.remove('show'); }, 2200);
+}
+renderNotifPanel();
+
+/* ================= 初始化 ================= */
+function resetDrwTitleIfIdle(){
+  var drawerOpen = document.getElementById('drawer').classList.contains('open');
+  if (drawerOpen && currentEntId) return; // 顯示中的是既有企業名稱（示範資料），不翻譯
+  if (drawerOpen && !currentEntId) { document.getElementById('drw_title').textContent = i18nT('新增組織客戶','Add Organization Customer'); return; }
+  document.getElementById('drw_title').textContent = i18nT('組織客戶詳情','Organization Customer Details');
+}
+function renderEntFilterSourceOptions(){
+  var panel = document.getElementById('entMoreFiltersPanel'); if (!panel) return;
+  var el = document.getElementById('entFilterSource');
+  if (!el){
+    el = document.createElement('select'); el.id = 'entFilterSource';
+    el.onchange = function(){ onEntSimpleFilterChange('source', this.value); };
+    panel.appendChild(el);
+  }
+  var cur = entState.filters.source;
+  el.innerHTML = srcTypeOptionsHtml(cur, true);
+  el.value = cur;
+}
+function renderEntFilterTierOptions(){
+  var el = document.getElementById('entFilterTier');
+  if (!el) return;
+  var cur = entState.filters.tier;
+  el.innerHTML = orgTierOptionsHtml(cur, true);
+  el.value = cur;
+}
+function renderAllB2bViews(){
+  renderEntFilterTierOptions();
+  renderEntFilterSourceOptions();
+  renderMainTabs();
+  renderEntActiveTags();
+  renderEntTable();
+  renderLeadTable();
+  resetDrwTitleIfIdle();
+}
+if (window.TLI_I18N) { TLI_I18N.onRefresh(renderAllB2bViews); TLI_I18N.onRefresh(renderNotifPanel); TLI_I18N.init(); }
+renderAllB2bViews();
+
+/* 從 a20 經銷企業訂單帶 ?org=<企業id>：開頁後直接開啟該企業詳情 */
+(function tliAutoOpenOrg(){
+  var orgId=qs('org');
+  if(!orgId||!entById(orgId)) return;
+  openEnterpriseDrawer(orgId);
+})();
+
+/* 從 c08「建立企業客戶檔案」帶 ?draft=<id> 過來：自動開啟「新增企業客戶」表單並帶入公司基本資料 */
+(function tliAutoOpenDraft(){
+  var draftId=qs('draft');
+  if(!draftId) return;
+  var draft=tliReadEnterpriseDraft();
+  if(draft&&draft.id===draftId){ openNewEnterpriseDrawer(draft); }
+})();
+
+</script>
+<script>
+function toggleNavGroup(ev, gid){
+  ev.stopPropagation();
+  var g = document.querySelector('#sidebar .navgroup[data-group="'+gid+'"]');
+  if (!g) return;
+  var collapsed = g.classList.toggle('collapsed');
+  try{ localStorage.setItem('tliNavCollapse_'+gid, collapsed ? '1' : '0'); }catch(e){}
+}
+(function initNavGroups(){
+  var activeLink = document.querySelector('#sidebar a.active');
+  var activeGroup = activeLink ? activeLink.closest('.navgroup') : null;
+  /* 20260927f：預設只展開目前頁面所在的群，其他群收合；若使用者手動展開/收合過某群，之後照該紀錄 */
+  document.querySelectorAll('#sidebar .navgroup[data-group]').forEach(function(g){
+    var gid = g.dataset.group, saved = null;
+    try{ saved = localStorage.getItem('tliNavCollapse_'+gid); }catch(e){}
+    if (saved === '1') g.classList.add('collapsed');
+    else if (saved === '0') g.classList.remove('collapsed');
+    else if (g !== activeGroup) g.classList.add('collapsed');
+  });
+  /* 目前頁所屬群組不可被收合到看不到 active 項目 */
+  if (activeGroup) activeGroup.classList.remove('collapsed');
+})();
+</script>
+<script>
+/* 20260929 死按鈕修正：側欄使用者選單（姓名／大頭貼）點擊開合；此頁樣板漏帶 toggleSuMenu */
+window.toggleSuMenu = window.toggleSuMenu || function(ev){
+  if (ev) ev.stopPropagation();
+  var m = document.getElementById('suMenu'); if (!m) return;
+  ['notifPanel','avatarMenu'].forEach(function(id){ var e = document.getElementById(id); if (e) e.classList.remove('open'); });
+  m.classList.toggle('open');
+};
+document.addEventListener('click', function(ev){
+  var m = document.getElementById('suMenu');
+  if (m && !m.contains(ev.target)) m.classList.remove('open');
+});
+</script>
+<script src="../assets/_phase_map.js"></script>
+<script src="../assets/_phase_switch.js"></script>
+</body>
+</html>

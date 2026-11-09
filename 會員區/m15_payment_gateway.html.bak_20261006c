@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>TLI Connect 會員區－金流付款示意頁</title>
+<style>
+:root{
+  --c-primary:#1B4E8C;--c-primary-dark:#123A68;--c-accent:#E8792B;--c-accent-dark:#CF691F;--c-secondary:#0F9B79;
+  --c-bg:#F5F7FA;--c-border:#E4E7EC;--c-muted:#667085;--c-text:#101828;
+  --radius:12px;--radius-sm:8px;--shadow:0 1px 3px rgba(16,24,40,.08),0 1px 2px rgba(16,24,40,.04);--shadow-lg:0 8px 24px rgba(16,24,40,.16);
+}
+*{box-sizing:border-box;}
+html,body{margin:0;padding:0;overflow-x:hidden;}
+body{font-family:"Noto Sans TC","Microsoft JhengHei",system-ui,-apple-system,"Segoe UI",sans-serif;background:var(--c-bg);color:var(--c-text);line-height:1.55;font-size:15px;-webkit-tap-highlight-color:transparent;}
+button{font-family:inherit;}
+button:focus-visible,input:focus-visible,select:focus-visible{outline:2px solid var(--c-primary);outline-offset:2px;}
+svg{display:block;}
+.gw-topbar{background:#fff;border-bottom:1px solid var(--c-border);padding:14px 18px;display:flex;align-items:center;gap:10px;}
+.gw-topbar-badge{display:inline-flex;align-items:center;gap:6px;font-size:12.5px;font-weight:800;color:var(--c-primary);background:#E6EEF8;border-radius:999px;padding:6px 12px;}
+.gw-topbar-badge svg{width:14px;height:14px;}
+.gw-topbar-title{font-size:15.5px;font-weight:700;}
+.gw-wrap{max-width:480px;margin:0 auto;padding:24px 16px 60px;}
+.gw-card{background:#fff;border:1px solid var(--c-border);border-radius:var(--radius);box-shadow:var(--shadow);padding:20px;}
+.gw-card + .gw-card{margin-top:14px;}
+.gw-store-row{display:flex;justify-content:space-between;align-items:baseline;padding:6px 0;font-size:13.5px;}
+.gw-store-row.total{border-top:1px solid var(--c-border);margin-top:6px;padding-top:12px;font-size:17px;font-weight:800;align-items:flex-start;}
+.gw-store-row .muted{color:var(--c-muted);font-size:12.5px;}
+.gw-amount-tag{display:block;font-size:11px;font-weight:400;color:var(--c-muted);text-align:right;margin-top:2px;}
+.gw-note-line{font-size:12px;color:var(--c-muted);margin:0 0 16px;}
+.section-title{font-size:14px;font-weight:700;margin:18px 0 10px;}
+.section-title.first{margin-top:0;}
+.req-mark{color:#D92D20;margin-left:2px;}
+.field-required-note{font-size:12px;color:var(--c-muted);margin-bottom:14px;}
+.field{display:flex;flex-direction:column;gap:5px;margin-bottom:14px;}
+.field label{font-size:13px;font-weight:700;}
+.field input,.field select{border:1px solid var(--c-border);border-radius:var(--radius-sm);padding:10px 11px;font-size:14px;font-family:inherit;color:var(--c-text);background:#fff;min-height:44px;width:100%;min-width:0;}
+.field input.invalid,.field select.invalid{border-color:#D92D20;}
+.field-error{display:none;font-size:12px;color:#D92D20;margin-top:5px;line-height:1.5;}
+.field-error.show{display:block;}
+.card-row{display:flex;gap:10px;}
+.card-row .field{flex:1;}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;border:none;border-radius:var(--radius-sm);padding:11px 18px;font-size:14px;font-weight:700;cursor:pointer;font-family:inherit;transition:background .15s;min-height:44px;width:100%;}
+.btn-primary{background:var(--c-primary);color:#fff;}
+.btn-primary:hover{background:var(--c-primary-dark);}
+.btn-outline{background:#fff;border:1px solid var(--c-border);color:var(--c-text);margin-top:10px;}
+.btn-outline:hover{background:var(--c-bg);}
+.toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%);background:#101828;color:#fff;padding:10px 20px;border-radius:20px;font-size:13px;font-weight:700;z-index:120;box-shadow:var(--shadow-lg);white-space:nowrap;max-width:88vw;overflow:hidden;text-overflow:ellipsis;}
+.toast.hidden{display:none;}
+</style>
+</head>
+<body>
+
+<header class="gw-topbar">
+  <span class="gw-topbar-badge" id="gwBadge">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="5" width="20" height="14" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/></svg>
+    <span id="gwBadgeText">示意：藍新金流付款頁</span>
+  </span>
+  <span class="gw-topbar-title" data-i18n="m15.topbarTitle">第三方金流付款（示意畫面）</span>
+</header>
+
+<main class="gw-wrap">
+  <p class="gw-note-line" data-i18n="m15.note">示意畫面，非真實金流頁面，卡號僅作格式檢查。</p>
+
+  <div class="gw-card">
+    <div class="gw-store-row"><span data-i18n="m15.storeNameLabel">商店名稱</span><span data-i18n="m15.storeName">TLI 中華語文研習所</span></div>
+    <div class="gw-store-row"><span data-i18n="m15.orderNoLabel">訂單編號</span><span id="gwOrderNo">－</span></div>
+    <div class="gw-store-row total"><span data-i18n="m15.amountLabel">應付金額</span><span style="text-align:right;"><span id="gwAmount">NT$0</span></span></div>
+  </div>
+
+  <div class="gw-card">
+    <div class="section-title first" data-i18n="m15.cardSectionTitle">卡片資訊</div>
+    <div class="field-required-note"><span class="req-mark" aria-hidden="true">*</span> <span data-i18n="m15.requiredNote">為必填欄位</span></div>
+    <div class="field">
+      <label for="cardNumber"><span data-i18n="m15.cardNumberLabel">卡號</span><span class="req-mark">*</span></label>
+      <input type="text" id="cardNumber" placeholder="16 碼數字，例如 4111111111111111" data-i18n-placeholder="m15.cardNumberPlaceholder" maxlength="19" inputmode="numeric" onblur="validateCardNumber()">
+      <div class="field-error" id="err_cardNumber"></div>
+    </div>
+    <div class="card-row">
+      <div class="field">
+        <label for="cardExpiry"><span data-i18n="m15.expiryLabel">有效期（MM/YY）</span><span class="req-mark">*</span></label>
+        <input type="text" id="cardExpiry" placeholder="例如 12/28" data-i18n-placeholder="m15.expiryPlaceholder" maxlength="5" onblur="validateCardExpiry()">
+        <div class="field-error" id="err_cardExpiry"></div>
+      </div>
+      <div class="field">
+        <label for="cardCvv"><span data-i18n="m15.cvvLabel">安全碼</span><span class="req-mark">*</span></label>
+        <input type="text" id="cardCvv" placeholder="3 碼數字" data-i18n-placeholder="m15.cvvPlaceholder" maxlength="3" inputmode="numeric" onblur="validateCardCvv()">
+        <div class="field-error" id="err_cardCvv"></div>
+      </div>
+    </div>
+    <div class="field" id="installmentField">
+      <label for="gwInstallment" data-i18n="m15.installmentLabel">分期選項</label>
+      <select id="gwInstallment">
+        <option value="0" data-i18n="m15.installment0">不分期</option>
+        <option value="3" data-i18n="m15.installment3">3 期（期數與利率待定）</option>
+        <option value="6" data-i18n="m15.installment6">6 期（期數與利率待定）</option>
+        <option value="12" data-i18n="m15.installment12">12 期（期數與利率待定）</option>
+      </select>
+    </div>
+  </div>
+
+  <button type="button" class="btn btn-primary" id="confirmPayBtn" onclick="confirmPay()" data-i18n="m15.btnConfirm">確認付款</button>
+  <button type="button" class="btn btn-outline" id="cancelPayBtn" onclick="cancelPay()" data-i18n="m15.btnCancel">取消返回</button>
+</main>
+
+<div class="toast hidden" id="toast"></div>
+
+<script>window.TLI_I18N_PAGE_LANGS=['zh-TW','zh-CN','en','ja','de'];</script>
+<script src="../assets/_i18n_dict.js"></script>
+<script src="../assets/_i18n_dict_member.js"></script>
+<script src="../assets/_i18n_dict_ja.js"></script>
+<script src="../assets/_i18n_dict_de.js"></script>
+<script src="../assets/_i18n.js"></script>
+<script>
+/* 讀取網址參數：?gw=newebpay|stripe&order=xxx&amount=xxx（皆由 m13 結帳頁帶入） */
+function getParam(name){
+  var m = new RegExp('[?&]'+name+'=([^&]*)').exec(window.location.search);
+  return m ? decodeURIComponent(m[1].replace(/\+/g,' ')) : '';
+}
+var gw = getParam('gw') === 'stripe' ? 'stripe' : 'newebpay';
+var orderNo = getParam('order') || '－';
+var amount = parseInt(getParam('amount'), 10) || 0;
+
+function showToast(msg){
+  var t = document.getElementById('toast');
+  if(!t) return;
+  t.textContent = msg;
+  t.classList.remove('hidden');
+  clearTimeout(window._toastTimer);
+  window._toastTimer = setTimeout(function(){ t.classList.add('hidden'); }, 2200);
+}
+
+function renderGatewayDynamic(){
+  document.getElementById('gwOrderNo').textContent = orderNo;
+  document.getElementById('gwAmount').textContent = amount ? ('NT$'+amount.toLocaleString('zh-Hant')) : TLI_I18N.t('待定',{en:'TBD',ja:'未定',de:'Ausstehend'});
+  if(gw === 'stripe'){
+    document.getElementById('gwBadgeText').textContent = TLI_I18N.t('示意：Stripe Checkout',{en:'Demo: Stripe Checkout',ja:'デモ：Stripe Checkout',de:'Demo: Stripe Checkout'});
+    document.title = TLI_I18N.t('Stripe Checkout（示意）',{en:'Stripe Checkout (Demo)',ja:'Stripe Checkout（デモ）',de:'Stripe Checkout (Demo)'});
+    /* Stripe 海外卡流程無零利率分期選項，僅藍新提供分期 */
+    document.getElementById('installmentField').style.display = 'none';
+  } else {
+    document.getElementById('gwBadgeText').textContent = TLI_I18N.t('示意：藍新金流付款頁',{en:'Demo: NewebPay Payment Page',ja:'デモ：藍新金流決済ページ',de:'Demo: NewebPay-Zahlungsseite'});
+    document.title = TLI_I18N.t('藍新金流付款頁（示意）',{en:'NewebPay Payment Page (Demo)',ja:'藍新金流決済ページ（デモ）',de:'NewebPay-Zahlungsseite (Demo)'});
+  }
+}
+/* 錯誤訊息可能在切換語言當下仍顯示中，重新套用目前語言的驗證訊息 */
+function refreshVisibleFieldErrors(){
+  if(document.getElementById('err_cardNumber').classList.contains('show')) validateCardNumber();
+  if(document.getElementById('err_cardExpiry').classList.contains('show')) validateCardExpiry();
+  if(document.getElementById('err_cardCvv').classList.contains('show')) validateCardCvv();
+}
+
+/* ============ 必填驗證共用工具（與 m13 同套邏輯） ============ */
+function fieldSetError(errId, msg){
+  var el = document.getElementById(errId);
+  if(!el) return;
+  el.textContent = msg;
+  el.classList.add('show');
+}
+function fieldClearError(errId){
+  var el = document.getElementById(errId);
+  if(!el) return;
+  el.textContent = '';
+  el.classList.remove('show');
+}
+function markInvalid(inputEl, invalid){
+  if(inputEl) inputEl.classList.toggle('invalid', !!invalid);
+}
+function validateCardNumber(){
+  var input = document.getElementById('cardNumber');
+  var digits = input.value.replace(/\s+/g,'');
+  if(!/^\d{16}$/.test(digits)){ fieldSetError('err_cardNumber',TLI_I18N.t('請輸入 16 碼數字卡號',{en:'Enter a 16-digit card number',ja:'16桁の数字でカード番号を入力してください',de:'Bitte eine 16-stellige Kartennummer eingeben'})); markInvalid(input,true); return false; }
+  fieldClearError('err_cardNumber'); markInvalid(input,false); return true;
+}
+function validateCardExpiry(){
+  var input = document.getElementById('cardExpiry');
+  var v = input.value.trim();
+  if(!/^(0[1-9]|1[0-2])\/\d{2}$/.test(v)){ fieldSetError('err_cardExpiry',TLI_I18N.t('格式錯誤，請輸入 MM/YY',{en:'Invalid format, use MM/YY',ja:'形式が正しくありません。MM/YY形式で入力してください',de:'Ungültiges Format, bitte MM/JJ verwenden'})); markInvalid(input,true); return false; }
+  fieldClearError('err_cardExpiry'); markInvalid(input,false); return true;
+}
+function validateCardCvv(){
+  var input = document.getElementById('cardCvv');
+  var v = input.value.trim();
+  if(!/^\d{3}$/.test(v)){ fieldSetError('err_cardCvv',TLI_I18N.t('請輸入 3 碼數字安全碼',{en:'Enter a 3-digit security code',ja:'3桁の数字でセキュリティコードを入力してください',de:'Bitte einen 3-stelligen Sicherheitscode eingeben'})); markInvalid(input,true); return false; }
+  fieldClearError('err_cardCvv'); markInvalid(input,false); return true;
+}
+
+/* 使用者修正欄位內容時，先清掉舊的錯誤狀態，避免錯誤訊息消失造成的版面偏移
+   （reflow）與「確認付款」按鈕點擊時間點重疊，導致捲動後點擊落空 */
+document.querySelectorAll('#cardNumber,#cardExpiry,#cardCvv').forEach(function(el){
+  el.addEventListener('input', function(){
+    fieldClearError('err_' + el.id);
+    markInvalid(el, false);
+  });
+});
+
+/* 送出中鎖旗標：避免快速連點「確認付款」時，驗證通過後的 toast／導頁邏輯被重複觸發 */
+var payInProgress = false;
+function confirmPay(){
+  if(payInProgress) return;
+  var checks = [
+    {input:'cardNumber', fn:validateCardNumber},
+    {input:'cardExpiry', fn:validateCardExpiry},
+    {input:'cardCvv', fn:validateCardCvv}
+  ];
+  var firstInvalidEl = null;
+  var allOk = true;
+  checks.forEach(function(c){
+    var ok = c.fn();
+    if(!ok){
+      allOk = false;
+      if(!firstInvalidEl) firstInvalidEl = document.getElementById(c.input);
+    }
+  });
+  if(!allOk){
+    if(firstInvalidEl){
+      firstInvalidEl.scrollIntoView({behavior:'smooth', block:'center'});
+      setTimeout(function(){ try{ firstInvalidEl.focus(); }catch(err){} }, 250);
+    }
+    return;
+  }
+  payInProgress = true;
+  showToast(TLI_I18N.t('付款成功，正在返回訂單頁面',{en:'Payment successful, returning to order page',ja:'お支払いが完了しました。注文ページに戻ります',de:'Zahlung erfolgreich, Rückkehr zur Bestellseite'}));
+  setTimeout(function(){
+    window.location.href = 'm13_checkout.html?paid=1&order='+encodeURIComponent(orderNo);
+  }, 700);
+}
+/* 取消返回：帶回原本的方案 querystring（plan／event／name…），並保留 m13 已填的表單狀態
+   （由 m13 送出時寫入 sessionStorage），讓使用者返回時不必重填 */
+function cancelPay(){
+  var qs = '';
+  try{ qs = sessionStorage.getItem('tli_m13_return_qs') || ''; }catch(e){}
+  window.location.href = 'm13_checkout.html' + qs;
+}
+
+TLI_I18N.onRefresh(renderGatewayDynamic);
+TLI_I18N.onRefresh(refreshVisibleFieldErrors);
+renderGatewayDynamic();
+TLI_I18N.init();
+</script>
+</body>
+</html>

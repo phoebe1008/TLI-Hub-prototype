@@ -1,0 +1,204 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<title>管理後台登入｜TLI Hub</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<!--
+  後台專屬登入頁（2026-11-05）。
+  管理後台所有頁面的「登出」都導到這裡，與前台學員／老師登入（公開網站/p07_login_register.html）分開：
+  - 本頁只給 TLI／新達的後台人員（例：總公司管理者）使用，沒有註冊、第三方登入、企業代碼登入、帳號開通。
+  - 帳號密碼驗證、是否強制雙重驗證：文件未定義，為待確認；本頁只示範畫面，任意非空輸入即視為登入成功。
+  - 忘記密碼（2026-11-05 依使用者說明，預設做法）：輸入 Email → 系統寄一次性密碼 → 輸入一次性密碼登入 → 導到
+    a00_reset_password.html（單獨的重設密碼頁，不需原密碼），設好新密碼才進後台；個人設定的變更密碼才需要原密碼。一次性密碼的有效時間、長度、可重送次數、錯誤幾次鎖定：文件未定義，待確認。
+  - 登入後預設進 a02_products.html，可用 ?next=頁面檔名 指定（只收同資料夾的 a*.html）。
+-->
+<style>
+:root{--navy:#1B4E8C;--navy-dark:#123a68;--orange:#E8792B;--teal:#0F9B79;
+--g50:#F5F7FA;--g200:#E4E7EC;--g500:#667085;--g900:#101828;--red:#C0392B;}
+*{box-sizing:border-box;}
+body{margin:0;min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;
+font-family:"Noto Sans TC","Microsoft JhengHei",system-ui,-apple-system,sans-serif;
+background:var(--g50);color:var(--g900);padding:24px 16px;}
+a{color:var(--navy);}
+.box{width:100%;max-width:400px;background:#fff;border:1px solid var(--g200);border-radius:12px;
+box-shadow:0 1px 3px rgba(16,24,40,.06);padding:28px 28px 24px;}
+.brand{display:flex;flex-direction:column;gap:6px;padding-bottom:16px;margin-bottom:18px;border-bottom:1px solid var(--g200);}
+.brand img{height:28px;width:auto;display:block;align-self:flex-start;}
+.brand small{font-size:12px;color:var(--g500);text-transform:uppercase;letter-spacing:.04em;}
+h1{font-size:20px;margin:0 0 18px;}
+.desc{font-size:12.5px;color:var(--g500);line-height:1.6;margin:0 0 18px;}
+label{display:block;font-size:12.5px;font-weight:600;margin:0 0 6px;}
+.field{margin-bottom:14px;}
+input[type=text],input[type=password]{width:100%;padding:9px 11px;border:1px solid var(--g200);border-radius:6px;
+font-size:14px;font-family:inherit;color:var(--g900);background:#fff;}
+input:focus{outline:2px solid #BFD3EC;border-color:var(--navy);}
+.pwwrap{position:relative;}
+.pwwrap input{padding-right:56px;}
+.pwwrap button{position:absolute;right:6px;top:50%;transform:translateY(-50%);background:none;border:none;
+color:var(--navy);font-size:12.5px;cursor:pointer;font-family:inherit;padding:4px 6px;}
+.row{display:flex;justify-content:space-between;align-items:center;gap:8px;margin-bottom:16px;font-size:12.5px;}
+.row label{display:flex;align-items:center;gap:6px;font-weight:400;margin:0;}
+.linkbtn{background:none;border:none;color:var(--navy);font-size:12.5px;cursor:pointer;padding:0;text-decoration:underline;font-family:inherit;}
+.btn{display:block;width:100%;background:var(--navy);color:#fff;border:none;padding:10px 14px;
+border-radius:6px;font-size:14px;cursor:pointer;font-family:inherit;}
+.btn:hover{background:var(--navy-dark);}
+.err{display:none;background:#FDECEC;border:1px solid #F0B7B7;color:var(--red);border-radius:6px;
+padding:8px 10px;font-size:12.5px;margin-bottom:14px;}
+.err.show{display:block;}
+.note{display:none;background:#E7EEF8;color:var(--navy);border-radius:6px;padding:8px 10px;font-size:12.5px;line-height:1.6;margin-bottom:14px;}
+.note.show{display:block;}
+[hidden]{display:none!important;}
+.foot{margin-top:18px;padding-top:14px;border-top:1px solid var(--g200);font-size:12px;color:var(--g500);line-height:1.7;text-align:center;}
+</style>
+</head>
+<body>
+<main class="box">
+  <div class="brand">
+    <img src="../assets/tli-logo.svg" alt="TLI">
+    <small data-i18n="a00.brand">TLI Hub 管理後台</small>
+  </div>
+  <h1 data-i18n="a00.title" id="h1Login">管理後台登入</h1>
+  <h1 data-i18n="a00.foTitle" id="h1Fo" hidden>忘記密碼</h1>
+  
+  <form id="f" novalidate>
+    <div class="err" id="err" role="alert" data-i18n="a00.err">請輸入帳號與密碼</div>
+    <div class="field">
+      <label for="acct" data-i18n="a00.acct">帳號（Email）</label>
+      <input type="text" id="acct" autocomplete="username" placeholder="name@company.com">
+    </div>
+    <div class="field">
+      <label for="pw" data-i18n="a00.pw">密碼</label>
+      <div class="pwwrap">
+        <input type="password" id="pw" autocomplete="current-password">
+        <button type="button" id="pwToggle">顯示</button>
+      </div>
+    </div>
+    <div class="row">
+      <label><input type="checkbox" id="remember"><span data-i18n="a00.remember">保持登入</span></label>
+      <button type="button" class="linkbtn" id="forgot" data-i18n="a00.forgot">忘記密碼？</button>
+    </div>
+    <button type="submit" class="btn" data-i18n="a00.submit">登入</button>
+  </form>
+
+  <form id="fo" novalidate hidden>
+    <div class="err" id="foErr" role="alert"></div>
+    <div class="note" id="foNote"></div>
+    <div id="foStep1">
+      <p class="desc" data-i18n="a00.foDesc1">輸入帳號 Email，我們會寄送一次性密碼給你。</p>
+      <div class="field">
+        <label for="foEmail" data-i18n="a00.acct">帳號（Email）</label>
+        <input type="text" id="foEmail" autocomplete="username" placeholder="name@company.com">
+      </div>
+      <button type="submit" class="btn" data-i18n="a00.foSend">寄送一次性密碼</button>
+    </div>
+    <div id="foStep2" hidden>
+      <p class="desc" data-i18n="a00.foDesc2">請輸入信中的一次性密碼。</p>
+      <div class="field">
+        <label for="foOtp" data-i18n="a00.foOtp">一次性密碼</label>
+        <input type="text" id="foOtp" autocomplete="one-time-code">
+      </div>
+      <button type="submit" class="btn" data-i18n="a00.foVerify">驗證並登入</button>
+      <div class="row" style="margin:12px 0 0;justify-content:center">
+        <button type="button" class="linkbtn" id="foResend" data-i18n="a00.foResend">重新寄送</button>
+      </div>
+    </div>
+    <div class="row" style="margin:14px 0 0;justify-content:center">
+      <button type="button" class="linkbtn" id="foBack" data-i18n="a00.foBack">返回登入</button>
+    </div>
+  </form>
+
+</main>
+
+<script src="../assets/_shared_masters.js"></script>
+<script src="../assets/_i18n_dict.js"></script>
+<script>
+/* 本頁專屬英文詞條；繁中為預設，簡中由 _i18n.js 機械轉換，語系選擇存 tli_ui_lang，與後台各頁共用 */
+Object.assign(TLI_I18N_DICT.en, {
+"a00.brand":"TLI Hub Admin",
+"a00.title":"Admin Sign In",
+"a00.err":"Please enter your account and password",
+"a00.foDesc1":"Enter your account email and we will send you a one-time password.",
+"a00.foTitle":"Forgot password",
+"a00.foSend":"Send one-time password",
+"a00.foDesc2":"Enter the one-time password from the email.",
+"a00.foOtp":"One-time password",
+"a00.foVerify":"Verify and sign in",
+"a00.foResend":"Resend",
+"a00.foBack":"Back to sign in",
+"a00.acct":"Account (Email)",
+"a00.pw":"Password",
+"a00.remember":"Keep me signed in",
+"a00.forgot":"Forgot password?",
+"a00.submit":"Sign in",
+});
+</script>
+<script src="../assets/_i18n.js"></script>
+<script>
+(function(){
+  var $ = function(id){ return document.getElementById(id); };
+  var ADMIN_SESSION_KEY = 'tliAdminSession_v1';
+
+  function pwLabel(){
+    var shown = $('pw').type !== 'password';
+    $('pwToggle').textContent = window.TLI_I18N ? TLI_I18N.t(shown ? '隱藏' : '顯示', shown ? 'Hide' : 'Show') : (shown ? '隱藏' : '顯示');
+  }
+  $('pwToggle').onclick = function(){
+    $('pw').type = $('pw').type === 'password' ? 'text' : 'password';
+    pwLabel();
+  };
+  /* ---- 忘記密碼：寄一次性密碼 → 輸入 → 導到個人設定改密碼（示範：任意非空輸入即通過） ---- */
+  var t = function(zh,en){ return window.TLI_I18N ? TLI_I18N.t(zh,en) : zh; };
+  var foEmail = '';
+  function foMsg(id, text){ var el=$(id); el.textContent=text||''; el.classList.toggle('show', !!text); }
+  function showFo(on){
+    $('f').hidden = on; $('fo').hidden = !on;
+    $('foStep1').hidden = false; $('foStep2').hidden = true;
+    foMsg('foErr',''); foMsg('foNote','');
+    $('foEmail').value = $('acct').value;
+    $('h1Login').hidden = on; $('h1Fo').hidden = !on;
+  }
+  function foSent(){
+    foMsg('foNote', t('已寄送一次性密碼到 ','A one-time password has been sent to ') + foEmail + t('，請查看信箱。','. Please check your inbox.'));
+  }
+  $('forgot').onclick = function(){ showFo(true); };
+  $('foBack').onclick = function(){ showFo(false); };
+  $('foResend').onclick = function(){ foSent(); };
+  $('fo').onsubmit = function(e){
+    e.preventDefault();
+    foMsg('foErr','');
+    if(!$('foStep1').hidden){
+      foEmail = $('foEmail').value.trim();
+      if(!foEmail){ foMsg('foErr', t('請輸入帳號 Email','Please enter your account email')); return; }
+      $('foStep1').hidden = true; $('foStep2').hidden = false;
+      foSent();
+      return;
+    }
+    if(!$('foOtp').value.trim()){ foMsg('foErr', t('請輸入一次性密碼','Please enter the one-time password')); return; }
+    try{ sessionStorage.setItem(ADMIN_SESSION_KEY, JSON.stringify({acct:foEmail, t:Date.now(), otp:true})); }catch(x){}
+    location.href = 'a00_reset_password.html';
+  };
+
+  /* 登入後的目標頁：?next= 只接受同資料夾的 a*.html，其餘一律回預設 */
+  function target(){
+    var m = /[?&]next=([^&]+)/.exec(location.search);
+    var n = m ? decodeURIComponent(m[1]) : '';
+    return /^a\d{2}_[a-z0-9_]+\.html(\?[^#]*)?$/i.test(n) ? n : 'a02_products.html';
+  }
+
+  $('f').onsubmit = function(e){
+    e.preventDefault();
+    if(!$('acct').value.trim() || !$('pw').value){
+      $('err').classList.add('show');
+      return;
+    }
+    $('err').classList.remove('show');
+    try{ sessionStorage.setItem(ADMIN_SESSION_KEY, JSON.stringify({acct:$('acct').value.trim(), t:Date.now()})); }catch(x){}
+    location.href = target();
+  };
+
+  if(window.TLI_I18N){ TLI_I18N.onRefresh(pwLabel); TLI_I18N.init(); }
+})();
+</script>
+</body>
+</html>

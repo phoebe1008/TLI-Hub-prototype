@@ -1,0 +1,832 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title data-i18n="meta_title">TLI Connect｜師資介紹</title>
+<meta name="description" content="TLI 師資介紹：依語言與校區篩選教師，呈現語言、資歷、平均授課時數與專長標籤。">
+<style>
+:root{
+  --c-primary:#1B4E8C;--c-primary-dark:#123A66;--c-accent:#E8792B;--c-accent-dark:#CF691F;
+  --c-secondary:#0F9B79;--c-bg:#F5F7FA;--c-border:#E4E7EC;--c-muted:#667085;--c-text:#101828;
+  --radius:10px;--shadow:0 1px 3px rgba(16,24,40,.08),0 1px 2px rgba(16,24,40,.04);--shadow-lg:0 8px 24px rgba(16,24,40,.10);
+}
+*{box-sizing:border-box;}html,body{margin:0;padding:0;}
+body{font-family:"Noto Sans TC","Microsoft JhengHei",system-ui,-apple-system,"Segoe UI",sans-serif;background:var(--c-bg);color:var(--c-text);line-height:1.65;font-size:15px;}
+a{color:inherit;text-decoration:none;}img{max-width:100%;display:block;}ul{margin:0;padding:0;list-style:none;}h1,h2,h3,p{margin:0;}
+
+
+.site-header{background:#fff;border-bottom:1px solid var(--c-border);padding:12px 24px;display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;position:sticky;top:0;z-index:40;}
+.brand{font-weight:700;font-size:20px;color:var(--c-primary);display:flex;align-items:center;gap:8px;}
+.brand img{height:32px;width:auto;display:block;}
+
+.site-nav{display:flex;gap:22px;align-items:center;font-size:14px;font-weight:600;}
+.site-nav a:hover{color:var(--c-primary);}
+.header-right{display:flex;gap:10px;align-items:center;flex-wrap:wrap;}
+.lang-select{border:1px solid var(--c-border);border-radius:6px;padding:6px 8px;font-size:13px;background:#fff;color:var(--c-text);}
+.menu-toggle{display:none;background:none;border:1px solid var(--c-border);border-radius:6px;padding:6px 10px;font-size:16px;cursor:pointer;}
+@media(max-width:780px){
+  .brand img{height:26px;}.site-nav{display:none;width:100%;order:3;flex-direction:column;align-items:flex-start;gap:12px;padding-top:12px;border-top:1px solid var(--c-border);margin-top:10px;}.site-nav.open{display:flex;}.menu-toggle{display:inline-block;min-width:44px;min-height:44px;}
+  .site-nav a{display:flex;align-items:center;width:100%;min-height:44px;box-sizing:border-box;}}
+
+.toast{position:fixed;left:50%;bottom:28px;transform:translateX(-50%) translateY(20px);background:#101828;color:#fff;font-size:13.5px;padding:12px 20px;border-radius:8px;box-shadow:var(--shadow-lg);opacity:0;pointer-events:none;transition:opacity .2s,transform .2s;z-index:100;max-width:90vw;text-align:center;}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
+.no-results{display:none;text-align:center;color:var(--c-muted);font-size:14px;background:#fff;border:1px solid var(--c-border);border-radius:var(--radius);padding:30px;margin-bottom:20px;}
+.no-results.show{display:block;}
+
+.teacher-card{cursor:pointer;transition:box-shadow .15s,transform .15s;}
+.teacher-card:hover{box-shadow:var(--shadow-lg);transform:translateY(-2px);}
+
+.modal-overlay{position:fixed;inset:0;background:rgba(16,24,40,.55);display:none;align-items:center;justify-content:center;z-index:200;padding:20px;}
+.modal-overlay.show{display:flex;}
+.modal-sheet{background:#fff;border-radius:14px;max-width:420px;width:100%;padding:28px;box-shadow:var(--shadow-lg);position:relative;max-height:86vh;overflow-y:auto;}
+.modal-close{position:absolute;top:14px;right:14px;width:32px;height:32px;border-radius:50%;border:1px solid var(--c-border);background:#fff;font-size:16px;cursor:pointer;display:flex;align-items:center;justify-content:center;}
+.modal-sheet .t-top{margin-bottom:14px;}
+.modal-sheet .t-avatar{width:64px;height:64px;font-size:20px;}
+.modal-sheet .t-name{font-size:18px;}
+.modal-bio{font-size:13.5px;color:var(--c-muted);margin:14px 0;line-height:1.7;}
+
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;border:none;border-radius:6px;padding:10px 20px;font-size:14px;font-weight:700;cursor:pointer;font-family:inherit;white-space:nowrap;}
+.btn-primary{background:var(--c-primary);color:#fff;}.btn-primary:hover{background:var(--c-primary-dark);}
+.btn-accent{background:var(--c-accent);color:#fff;}.btn-accent:hover{background:var(--c-accent-dark);}
+.btn-outline{background:#fff;border:1px solid var(--c-border);color:var(--c-text);}.btn-outline:hover{background:var(--c-bg);}
+.btn-sm{padding:7px 14px;font-size:13px;}
+
+.page-banner{background:linear-gradient(120deg,var(--c-primary),#153f70);color:#fff;padding:34px 24px;}
+.page-banner-inner{max-width:1120px;margin:0 auto;}
+.page-banner h1{font-size:26px;font-weight:800;margin-bottom:6px;}
+.page-banner p{color:rgba(255,255,255,.85);font-size:14px;}
+
+main{max-width:1120px;margin:0 auto;padding:0 20px 60px;}
+.filter-bar{background:#fff;border:1px solid var(--c-border);border-radius:var(--radius);box-shadow:var(--shadow);padding:16px;display:flex;gap:12px;flex-wrap:wrap;align-items:center;margin:-22px auto 34px;position:relative;z-index:2;}
+.filter-bar label{font-size:12.5px;color:var(--c-muted);display:block;margin-bottom:4px;}
+.filter-bar select{border:1px solid var(--c-border);border-radius:6px;padding:8px 10px;font-size:13.5px;background:#fff;color:var(--c-text);min-width:140px;}
+.filter-bar .filter-note{margin-left:auto;font-size:12.5px;color:var(--c-muted);}
+
+.section-head{margin-bottom:20px;}
+.section-head h2{font-size:21px;font-weight:800;margin-bottom:6px;}
+.section-head p{color:var(--c-muted);font-size:13.5px;}
+
+.teacher-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;}
+@media(max-width:900px){.teacher-grid{grid-template-columns:repeat(2,1fr);}}
+@media(max-width:600px){.teacher-grid{grid-template-columns:1fr;}}
+.teacher-card{background:#fff;border:1px solid var(--c-border);border-radius:var(--radius);box-shadow:var(--shadow);padding:20px;display:flex;flex-direction:column;gap:10px;}
+.t-top{display:flex;gap:12px;align-items:center;}
+.t-avatar{width:52px;height:52px;border-radius:50%;background:linear-gradient(135deg,var(--c-primary),var(--c-secondary));color:#fff;font-weight:800;display:flex;align-items:center;justify-content:center;font-size:16px;flex:none;}
+.t-name{font-size:16px;font-weight:700;}
+.t-campus{font-size:12.5px;color:var(--c-muted);}
+.t-meta{display:flex;flex-wrap:wrap;gap:6px;}
+.chip{background:var(--c-bg);color:var(--c-muted);font-size:12px;padding:3px 9px;border-radius:12px;}
+.chip.lang{color:var(--c-primary);background:#EAF1F9;font-weight:600;}
+.t-stat{display:flex;justify-content:space-between;font-size:12.5px;color:var(--c-muted);border-top:1px solid var(--c-border);padding-top:10px;}
+.t-stat b{color:var(--c-text);font-weight:700;}
+.t-tags{display:flex;flex-wrap:wrap;gap:6px;}
+.t-tags .chip{background:#FFF4EC;color:var(--c-accent-dark);}
+
+.trust-line{font-size:13px;color:var(--c-muted);margin-top:28px;}
+.trust-line b{color:var(--c-text);}
+
+.site-footer{background:#101828;color:#CBD3DE;padding:44px 24px 24px;}
+.footer-inner{max-width:1120px;margin:0 auto;display:grid;grid-template-columns:1.4fr 1fr 1fr 1fr;gap:28px;}
+@media(max-width:780px){.footer-inner{grid-template-columns:1fr 1fr;}}
+@media(max-width:480px){.footer-inner{grid-template-columns:1fr;}}
+.footer-inner h4{color:#fff;font-size:14px;margin-bottom:12px;}
+.footer-inner li{font-size:13px;margin-bottom:8px;color:#9AA4B2;}
+.footer-bottom img{display:block;margin:0 auto 10px;height:24px;width:auto;}
+.footer-bottom{max-width:1120px;margin:26px auto 0;padding-top:18px;border-top:1px solid #2A3241;font-size:12px;color:#7C879A;text-align:center;}
+
+
+/* AI 線上諮詢浮動元件（全站共用，右下角） */
+.ai-fab{position:fixed;right:20px;bottom:20px;width:56px;height:56px;border-radius:50%;background:var(--c-primary);color:#fff;border:none;box-shadow:0 8px 24px rgba(16,24,40,.16);font-size:23px;cursor:pointer;z-index:150;display:flex;align-items:center;justify-content:center;}
+.ai-fab:hover{background:var(--c-primary-dark);}
+.ai-fab-label{position:fixed;right:84px;bottom:36px;background:#101828;color:#fff;font-size:12px;padding:6px 10px;border-radius:6px;z-index:150;white-space:nowrap;opacity:0;pointer-events:none;transition:opacity .2s;}
+.ai-fab:hover + .ai-fab-label,.ai-fab-label.show{opacity:1;}
+.ai-overlay{position:fixed;inset:0;background:rgba(16,24,40,.4);display:none;align-items:flex-end;justify-content:flex-end;z-index:200;padding:20px;}
+.ai-overlay.show{display:flex;}
+@media(max-width:780px){.ai-overlay{align-items:flex-end;justify-content:center;padding:0;}}
+.ai-sheet{background:#fff;width:380px;max-width:100%;height:600px;max-height:85vh;border-radius:16px;box-shadow:0 8px 24px rgba(16,24,40,.16);display:flex;flex-direction:column;overflow:hidden;}
+@media(max-width:780px){.ai-sheet{width:100%;height:85vh;max-height:85vh;border-radius:16px 16px 0 0;}}
+.ai-sheet.minimized{height:auto;}
+.ai-sheet.minimized .ai-body,.ai-sheet.minimized .ai-chips,.ai-sheet.minimized .ai-inputrow,.ai-sheet.minimized .ai-disclaimer{display:none;}
+.ai-head{background:var(--c-primary);color:#fff;padding:12px 14px;display:flex;justify-content:space-between;align-items:center;flex:none;gap:8px;}
+.ai-head-info{display:flex;align-items:center;gap:10px;min-width:0;}
+.ai-avatar{flex:none;width:32px;height:32px;border-radius:50%;background:rgba(255,255,255,.18);display:flex;align-items:center;justify-content:center;}
+.ai-avatar.sm{width:24px;height:24px;background:var(--c-primary);}
+.ai-avatar svg{display:block;}
+.ai-head-text{min-width:0;}
+.ai-head-title{font-weight:700;font-size:14.5px;line-height:1.3;}
+.ai-head-status{font-size:11px;color:rgba(255,255,255,.82);display:flex;align-items:center;gap:5px;margin-top:1px;}
+.ai-status-dot{width:6px;height:6px;border-radius:50%;background:#3FCF8E;flex:none;}
+.ai-head-actions{display:flex;gap:6px;flex:none;}
+.ai-head-btn{background:rgba(255,255,255,.2);border:none;color:#fff;width:30px;height:30px;border-radius:50%;cursor:pointer;display:flex;align-items:center;justify-content:center;}
+.ai-head-btn:hover{background:rgba(255,255,255,.32);}
+.ai-minimize-btn svg{transition:transform .2s;}
+.ai-sheet.minimized .ai-minimize-btn svg{transform:rotate(180deg);}
+.ai-body{flex:1;overflow-y:auto;padding:14px;display:flex;flex-direction:column;gap:12px;background:var(--c-bg);}
+.ai-msg-row{display:flex;align-items:flex-end;gap:8px;max-width:100%;}
+.ai-msg-row.user{justify-content:flex-end;}
+.ai-msg-stack{display:flex;flex-direction:column;max-width:82%;}
+.ai-msg-row.user .ai-msg-stack{align-items:flex-end;}
+.ai-msg-row.bot .ai-msg-stack{align-items:flex-start;}
+.ai-msg{font-size:13.5px;line-height:1.6;padding:10px 13px;border-radius:12px;}
+.ai-msg.user{background:var(--c-primary);color:#fff;border-bottom-right-radius:3px;}
+.ai-msg.bot{background:#fff;border:1px solid var(--c-border);color:var(--c-text);border-bottom-left-radius:3px;}
+.ai-msg-time{font-size:10.5px;color:var(--c-muted);margin-top:4px;padding:0 3px;}
+.ai-msg .ai-actions{display:flex;gap:8px;margin-top:10px;flex-wrap:wrap;}
+.ai-msg .ai-actions button,.ai-msg .ai-actions a{font-size:12px;font-weight:700;border-radius:6px;padding:8px 11px;min-height:36px;border:1px solid var(--c-border);background:#fff;cursor:pointer;color:var(--c-text);font-family:inherit;text-decoration:none;display:inline-flex;align-items:center;}
+.ai-msg .ai-thumbs{display:flex;gap:8px;margin-top:8px;align-items:center;}
+.ai-msg .ai-thumbs span{font-size:12px;color:var(--c-muted);}
+.ai-msg .ai-thumbs button{border:none;background:none;cursor:pointer;padding:4px;opacity:.5;color:var(--c-muted);display:flex;align-items:center;}
+.ai-msg .ai-thumbs button.picked{opacity:1;color:var(--c-secondary);}
+.ai-msg .ai-thumbs-thanks{font-size:11.5px;color:var(--c-secondary);margin-top:6px;}
+.ai-typing .ai-typing-dots{display:flex;gap:4px;padding:2px 0;}
+.ai-typing .ai-typing-dots span{width:6px;height:6px;border-radius:50%;background:var(--c-muted);opacity:.5;animation:aiTypingBounce 1.1s infinite ease-in-out;}
+.ai-typing .ai-typing-dots span:nth-child(2){animation-delay:.15s;}
+.ai-typing .ai-typing-dots span:nth-child(3){animation-delay:.3s;}
+@keyframes aiTypingBounce{0%,60%,100%{transform:translateY(0);opacity:.4;}30%{transform:translateY(-4px);opacity:1;}}
+.ai-live-btn{margin-top:8px;background:#fff;border:1px solid var(--c-border);border-radius:6px;padding:8px 11px;font-size:12px;font-weight:700;cursor:pointer;color:var(--c-text);font-family:inherit;}
+.ai-chips{display:flex;flex-wrap:nowrap;gap:8px;padding:10px 14px;flex:none;overflow-x:auto;-ms-overflow-style:none;scrollbar-width:none;}
+.ai-chips::-webkit-scrollbar{display:none;}
+.ai-chip{flex:none;background:#fff;border:1px solid var(--c-border);border-radius:16px;padding:8px 13px;font-size:12.5px;cursor:pointer;font-family:inherit;min-height:36px;white-space:nowrap;}
+.ai-chip:hover{background:var(--c-bg);}
+.ai-chip.ai-chip-primary{border-color:var(--c-accent);color:var(--c-accent-dark);font-weight:700;}
+.ai-quiz-choices{display:flex;flex-wrap:wrap;gap:8px;margin-top:8px;}
+.ai-quiz-choices button{background:#fff;border:1px solid var(--c-border);border-radius:18px;padding:8px 13px;font-size:12.5px;cursor:pointer;font-family:inherit;min-height:36px;}
+.ai-quiz-choices button:hover{background:var(--c-bg);}
+.ai-plan-card{background:#fff;border:1px solid var(--c-accent);border-radius:10px;padding:12px;margin-top:8px;}
+.ai-plan-card h4{font-size:13.5px;font-weight:800;margin-bottom:4px;color:var(--c-accent-dark);}
+.ai-plan-card p{font-size:12px;color:var(--c-muted);margin:0;}
+.ai-plan-card + .ai-plan-card{margin-top:8px;}
+.ai-inputrow{display:flex;gap:8px;padding:12px 14px;border-top:1px solid var(--c-border);background:#fff;flex:none;}
+.ai-inputrow input{flex:1;border:1px solid var(--c-border);border-radius:20px;padding:10px 14px;font-size:13.5px;font-family:inherit;min-width:0;}
+.ai-inputrow button{background:var(--c-accent);color:#fff;border:none;border-radius:20px;padding:9px 16px;font-size:13px;font-weight:700;cursor:pointer;min-height:40px;}
+.ai-inputrow button:disabled{opacity:.45;cursor:not-allowed;}
+.ai-disclaimer{font-size:10.5px;color:var(--c-muted);text-align:center;padding:0 14px 10px;flex:none;background:#fff;}
+.ai-mini-form{background:#fff;border:1px solid var(--c-border);border-radius:10px;padding:12px;margin-top:8px;display:flex;flex-direction:column;gap:8px;}
+.ai-mini-form input{border:1px solid var(--c-border);border-radius:6px;padding:9px 10px;font-size:13px;font-family:inherit;}
+.ai-mini-form button{align-self:flex-start;min-height:38px;}
+.ai-timeline{display:flex;flex-direction:column;gap:10px;margin-top:6px;}
+.ai-tl-step{display:flex;gap:10px;align-items:flex-start;font-size:12.5px;color:var(--c-muted);opacity:.4;transition:opacity .3s;}
+.ai-tl-step.done{opacity:1;color:var(--c-text);}
+.ai-tl-step .dot{flex:none;width:20px;height:20px;border-radius:50%;border:2px solid var(--c-border);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:800;color:transparent;margin-top:1px;}
+.ai-tl-step.done .dot{background:var(--c-secondary);border-color:var(--c-secondary);color:#fff;}
+</style>
+</head>
+<body>
+
+<header class="site-header">
+  <a class="brand" href="p01_home.html"><img src="../assets/tli-logo.svg" alt="TLI"></a>
+  <button class="menu-toggle" onclick="document.querySelector('.site-nav').classList.toggle('open')" aria-label="開啟選單" data-i18n-aria-label="menu_toggle_aria"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg></button>
+  <nav class="site-nav">
+    <a href="p02_courses.html" data-i18n="nav_courses">課程</a>
+    <a href="p10_enterprise.html" data-i18n="nav_enterprise">企業培訓</a>
+    <a href="p15_placement_test.html" data-i18n="nav_placement">程度測驗</a>
+    <a href="p09_events.html" data-i18n="nav_events">活動</a>
+    <a href="p04_teachers.html" data-i18n="nav_teachers">師資</a>
+    <a href="p05_about_locations.html" data-i18n="nav_about">品牌與校區</a>
+    <a href="p08_faq.html" data-i18n="nav_faq">常見問題</a>
+  </nav>
+  <div class="header-right tb-actions">
+    <a class="btn btn-primary btn-sm" data-i18n="btn_consult" href="p06_trial.html?type=consult">預約諮詢</a>
+    <a class="btn btn-accent btn-sm" data-i18n="btn_trial" href="p06_trial.html?type=trial">預約試聽</a>
+    <a class="btn btn-outline btn-sm" data-i18n="btn_login" href="p07_login_register.html">登入</a>
+  </div>
+</header>
+
+<div class="page-banner">
+  <div class="page-banner-inner">
+    <h1 data-i18n="p04_banner_h1">師資介紹</h1>
+    <p data-i18n="p04_banner_p">嚴選大學以上教育背景之母語人士，師資群平均授課經驗達 600 小時以上</p>
+  </div>
+</div>
+
+<main>
+  <div class="filter-bar">
+    <div><label data-i18n="p04_filter_lang_label">語言</label>
+      <select id="tfLang" onchange="applyTeacherFilter()">
+        <option value="" data-i18n="p04_filter_lang_all">全部語言</option>
+        <option value="中文" data-i18n="p04_lang_chinese">中文</option>
+        <option value="英文" data-i18n="p04_lang_english">英文</option>
+        <option value="日文" data-i18n="p04_lang_japanese">日文</option>
+        <option value="韓文" data-i18n="p04_lang_korean">韓文</option>
+        <option value="德文" data-i18n="p04_lang_german">德文</option>
+        <option value="法文" data-i18n="p04_lang_french">法文</option>
+      </select>
+    </div>
+    <div><label data-i18n="p04_filter_campus_label">校區</label>
+      <select id="tfCampus" onchange="applyTeacherFilter()">
+        <option value="" data-i18n="p04_filter_campus_all">全部校區</option>
+        <option value="羅斯福校" data-i18n="p04_campus_roosevelt">羅斯福校</option>
+        <option value="士林校" data-i18n="p04_campus_shilin">士林校</option>
+        <option value="台中校" data-i18n="p04_campus_taichung">台中校</option>
+        <option value="高雄校" data-i18n="p04_campus_kaohsiung">高雄校</option>
+        <option value="線上" data-i18n="p04_campus_online">線上</option>
+      </select>
+    </div>
+    <div class="filter-note" id="tFilterNote">選擇篩選條件後，下方教師列表將即時更新</div>
+  </div>
+
+  <div class="no-results" id="tNoResults"><span data-i18n="p04_no_results_prefix">目前篩選條件下沒有符合的老師，請調整篩選條件或</span><a href="p06_trial.html" style="color:var(--c-primary);font-weight:700;text-decoration:underline;" data-i18n="p04_no_results_link">直接洽詢顧問</a><span data-i18n="p04_no_results_suffix">。</span></div>
+
+  <div class="section-head">
+    <h2 data-i18n="p04_section_h2">教師一覽</h2>
+    <p data-i18n="p04_section_p">教師語言、校區與專長依實際排課持續更新，實際師資與班表以顧問確認之課程安排為準；點擊教師卡可查看簡介</p>
+  </div>
+
+  <div class="teacher-grid" id="teacherGrid">
+    <div class="teacher-card" data-tid="t1" data-lang="中文" data-campus="羅斯福校" data-avatar="林" onclick="openTeacher(this)">
+      <div class="t-top">
+        <div class="t-avatar">林</div>
+        <div><div class="t-name" data-i18n="p04_t1_name">林老師</div><div class="t-campus" data-i18n="p04_t1_campus">羅斯福校</div></div>
+      </div>
+      <div class="t-meta"><span class="chip lang" data-i18n="p04_t1_lang">中文</span><span class="chip" data-i18n="p04_t1_degree">碩士學歷</span></div>
+      <div class="t-tags"><span class="chip" data-i18n="p04_t1_tag1">商用華語</span><span class="chip" data-i18n="p04_t1_tag2">HSK 準備</span></div>
+      <div class="t-stat"><span data-i18n="p04_stat_years_label">資歷</span><b data-i18n="p04_t1_years">8 年</b></div>
+      <div class="t-stat"><span data-i18n="p04_stat_hours_label">平均授課時數</span><b data-i18n="p04_stat_hours_value">600 小時以上</b></div>
+    </div>
+    <div class="teacher-card" data-tid="t2" data-lang="中文" data-campus="士林校" data-avatar="陳" onclick="openTeacher(this)">
+      <div class="t-top">
+        <div class="t-avatar">陳</div>
+        <div><div class="t-name" data-i18n="p04_t2_name">陳老師</div><div class="t-campus" data-i18n="p04_t2_campus">士林校</div></div>
+      </div>
+      <div class="t-meta"><span class="chip lang" data-i18n="p04_t2_lang">中文</span><span class="chip" data-i18n="p04_t2_degree">學士學歷</span></div>
+      <div class="t-tags"><span class="chip" data-i18n="p04_t2_tag1">生活會話</span><span class="chip" data-i18n="p04_t2_tag2">兒少中文</span></div>
+      <div class="t-stat"><span data-i18n="p04_stat_years_label">資歷</span><b data-i18n="p04_t2_years">5 年</b></div>
+      <div class="t-stat"><span data-i18n="p04_stat_hours_label">平均授課時數</span><b data-i18n="p04_stat_hours_value">600 小時以上</b></div>
+    </div>
+    <div class="teacher-card" data-tid="t3" data-lang="英文" data-campus="羅斯福校 線上" data-avatar="JS" onclick="openTeacher(this)">
+      <div class="t-top">
+        <div class="t-avatar">JS</div>
+        <div><div class="t-name" data-i18n="p04_t3_name">John S. 老師</div><div class="t-campus" data-i18n="p04_t3_campus">羅斯福校／線上</div></div>
+      </div>
+      <div class="t-meta"><span class="chip lang" data-i18n="p04_t3_lang">英文</span><span class="chip" data-i18n="p04_t3_degree">母語人士</span></div>
+      <div class="t-tags"><span class="chip" data-i18n="p04_t3_tag1">TOEIC</span><span class="chip" data-i18n="p04_t3_tag2">商用英文</span></div>
+      <div class="t-stat"><span data-i18n="p04_stat_years_label">資歷</span><b data-i18n="p04_t3_years">10 年</b></div>
+      <div class="t-stat"><span data-i18n="p04_stat_hours_label">平均授課時數</span><b data-i18n="p04_stat_hours_value">600 小時以上</b></div>
+    </div>
+    <div class="teacher-card" data-tid="t4" data-lang="日文" data-campus="台中校" data-avatar="佐" onclick="openTeacher(this)">
+      <div class="t-top">
+        <div class="t-avatar">佐</div>
+        <div><div class="t-name" data-i18n="p04_t4_name">佐藤老師</div><div class="t-campus" data-i18n="p04_t4_campus">台中校</div></div>
+      </div>
+      <div class="t-meta"><span class="chip lang" data-i18n="p04_t4_lang">日文</span><span class="chip" data-i18n="p04_t4_degree">母語人士</span></div>
+      <div class="t-tags"><span class="chip" data-i18n="p04_t4_tag1">JLPT</span><span class="chip" data-i18n="p04_t4_tag2">生活日文</span></div>
+      <div class="t-stat"><span data-i18n="p04_stat_years_label">資歷</span><b data-i18n="p04_t4_years">6 年</b></div>
+      <div class="t-stat"><span data-i18n="p04_stat_hours_label">平均授課時數</span><b data-i18n="p04_stat_hours_value">600 小時以上</b></div>
+    </div>
+    <div class="teacher-card" data-tid="t5" data-lang="韓文" data-campus="高雄校" data-avatar="金" onclick="openTeacher(this)">
+      <div class="t-top">
+        <div class="t-avatar">金</div>
+        <div><div class="t-name" data-i18n="p04_t5_name">金老師</div><div class="t-campus" data-i18n="p04_t5_campus">高雄校</div></div>
+      </div>
+      <div class="t-meta"><span class="chip lang" data-i18n="p04_t5_lang">韓文</span><span class="chip" data-i18n="p04_t5_degree">母語人士</span></div>
+      <div class="t-tags"><span class="chip" data-i18n="p04_t5_tag1">TOPIK</span><span class="chip" data-i18n="p04_t5_tag2">旅遊韓文</span></div>
+      <div class="t-stat"><span data-i18n="p04_stat_years_label">資歷</span><b data-i18n="p04_t5_years">4 年</b></div>
+      <div class="t-stat"><span data-i18n="p04_stat_hours_label">平均授課時數</span><b data-i18n="p04_stat_hours_value">600 小時以上</b></div>
+    </div>
+    <div class="teacher-card" data-tid="t6" data-lang="法文" data-campus="線上" data-avatar="MW" onclick="openTeacher(this)">
+      <div class="t-top">
+        <div class="t-avatar">MW</div>
+        <div><div class="t-name" data-i18n="p04_t6_name">Marie W. 老師</div><div class="t-campus" data-i18n="p04_t6_campus">線上</div></div>
+      </div>
+      <div class="t-meta"><span class="chip lang" data-i18n="p04_t6_lang">法文</span><span class="chip" data-i18n="p04_t6_degree">母語人士</span></div>
+      <div class="t-tags"><span class="chip" data-i18n="p04_t6_tag1">DELF／DALF</span><span class="chip" data-i18n="p04_t6_tag2">商用法文</span></div>
+      <div class="t-stat"><span data-i18n="p04_stat_years_label">資歷</span><b data-i18n="p04_t6_years">7 年</b></div>
+      <div class="t-stat"><span data-i18n="p04_stat_hours_label">平均授課時數</span><b data-i18n="p04_stat_hours_value">600 小時以上</b></div>
+    </div>
+  </div>
+
+  <p class="trust-line"><b data-i18n="p04_trust_label">師資培訓：</b><span data-i18n="p04_trust_text">TLI 亦開設國際華語教師認證課程，結業學員逾五萬人。</span></p>
+</main>
+
+<div class="modal-overlay" id="teacherModal" onclick="if(event.target===this) closeTeacher()">
+  <div class="modal-sheet">
+    <button class="modal-close" onclick="closeTeacher()" aria-label="關閉" data-i18n-aria-label="p04_modal_close_aria"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
+    <div class="t-top">
+      <div class="t-avatar" id="mAvatar">林</div>
+      <div><div class="t-name" id="mName">林老師</div><div class="t-campus" id="mCampus">羅斯福校</div></div>
+    </div>
+    <div class="t-meta"><span class="chip lang" id="mLang">中文</span><span class="chip" id="mDegree">碩士學歷</span></div>
+    <div class="t-tags" id="mTags"></div>
+    <p class="modal-bio" id="mBio"></p>
+    <div class="t-stat"><span data-i18n="p04_stat_years_label">資歷</span><b id="mYears">8 年</b></div>
+    <div class="t-stat"><span data-i18n="p04_stat_hours_label">平均授課時數</span><b data-i18n="p04_stat_hours_value">600 小時以上</b></div>
+    <a class="btn btn-accent btn-block" style="margin-top:18px;" href="p06_trial.html" data-i18n="p04_modal_trial_btn">預約與此老師相關課程試聽</a>
+  </div>
+</div>
+
+<footer class="site-footer">
+  <div class="footer-inner">
+    <div>
+      <h4 data-i18n="footer_brand_name">TLI 中華語文研習所</h4>
+      <li data-i18n="footer_brand_line1">1956 年創立於美國紐澤西，同年於台北建校</li>
+      <li data-i18n="footer_brand_line2">1976 年教育部核定校名為「中華語文研習所」</li>
+    </div>
+    <div>
+      <h4 data-i18n="footer_col_courses">課程</h4>
+      <ul>
+        <li><a href="p02_courses.html" data-i18n="footer_link_chinese">中文課程</a></li>
+        <li><a href="p02_courses.html" data-i18n="footer_link_foreign">外語課程</a></li>
+        <li><a href="p04_teachers.html" data-i18n="footer_link_teachers">師資介紹</a></li>
+      </ul>
+    </div>
+    <div>
+      <h4 data-i18n="footer_col_about">關於 TLI</h4>
+      <ul>
+        <li><a href="p05_about_locations.html" data-i18n="footer_link_history">品牌沿革</a></li>
+        <li><a href="p05_about_locations.html" data-i18n="footer_link_locations">四校地址</a></li>
+        <li><a href="p08_faq.html" data-i18n="footer_link_faq">常見問題</a></li>
+      </ul>
+    </div>
+    <div>
+      <h4 data-i18n="footer_col_start">開始學習</h4>
+      <ul>
+        <li><a href="p06_trial.html" data-i18n="footer_link_trial">免費試聽</a></li>
+        <li><a href="p07_login_register.html" data-i18n="footer_link_login">會員登入／註冊</a></li>
+      </ul>
+    </div>
+  </div>
+  <div class="footer-bottom"><img src="../assets/tli-logo.svg" alt="TLI"><span data-i18n="footer_copyright">© 2026 TLI 中華語文研習所．保留所有權利。</span></div>
+</footer>
+
+<div class="toast" id="toast"></div>
+
+<script>
+function showToast(msg){
+  var t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  clearTimeout(window._toastTimer);
+  window._toastTimer = setTimeout(function(){ t.classList.remove('show'); }, 2200);
+}
+
+function applyTeacherFilter(){
+  var lang = document.getElementById('tfLang').value;
+  var campus = document.getElementById('tfCampus').value;
+  var cards = document.querySelectorAll('#teacherGrid .teacher-card');
+  var visible = 0;
+  cards.forEach(function(card){
+    var okLang = !lang || card.getAttribute('data-lang') === lang;
+    var okCampus = !campus || (card.getAttribute('data-campus')||'').split(' ').indexOf(campus) !== -1;
+    var match = okLang && okCampus;
+    card.style.display = match ? '' : 'none';
+    if(match) visible++;
+  });
+  var note = document.getElementById('tFilterNote');
+  note.textContent = (lang || campus)
+    ? tliFmt(T('符合條件的老師共 {n} 位', {en:'{n} teacher(s) match your filters', ja:'条件に一致する講師は{n}名です', de:'{n} Lehrkräfte entsprechen Ihren Filterkriterien'}), {n: visible})
+    : T('選擇篩選條件後，下方教師列表將即時更新', {en:'Select filters to update the teacher list below in real time.', ja:'条件を選択すると、下の講師一覧がリアルタイムで更新されます。', de:'Wählen Sie Filterkriterien aus, um die Lehrerliste unten in Echtzeit zu aktualisieren.'});
+  document.getElementById('tNoResults').classList.toggle('show', visible === 0);
+}
+
+function openTeacher(card){
+  var tid = card.getAttribute('data-tid');
+  document.getElementById('mAvatar').textContent = card.getAttribute('data-avatar');
+  document.getElementById('mName').textContent = card.querySelector('.t-name').textContent;
+  document.getElementById('mCampus').textContent = card.querySelector('.t-campus').textContent;
+  document.getElementById('mLang').textContent = card.querySelector('.chip.lang').textContent;
+  document.getElementById('mDegree').textContent = card.querySelector('.t-meta .chip:not(.lang)').textContent;
+  document.getElementById('mYears').textContent = card.querySelector('.t-stat b').textContent;
+  document.getElementById('mBio').textContent = getTeacherBio(tid);
+  var tagsWrap = document.getElementById('mTags');
+  tagsWrap.innerHTML = '';
+  card.querySelectorAll('.t-tags .chip').forEach(function(tagEl){
+    var span = document.createElement('span');
+    span.className = 'chip';
+    span.textContent = tagEl.textContent;
+    tagsWrap.appendChild(span);
+  });
+  document.getElementById('teacherModal').classList.add('show');
+}
+function closeTeacher(){
+  document.getElementById('teacherModal').classList.remove('show');
+}
+</script>
+
+<button class="ai-fab" onclick="aiOpen('fab')" aria-label="開啟線上諮詢" data-i18n-aria-label="ai_fab_aria"><svg width="23" height="23" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg></button>
+<div class="ai-fab-label" data-i18n="ai_fab_label">線上諮詢</div>
+
+<div class="ai-overlay" id="aiOverlay-fab" onclick="if(event.target===this) aiClose('fab')">
+  <div class="ai-sheet" id="aiSheet-fab">
+    <div class="ai-head">
+      <div class="ai-head-info">
+        <div class="ai-avatar" aria-hidden="true"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l7 3v5c0 4.5-3 8.5-7 10-4-1.5-7-5.5-7-10V6l7-3z"/></svg></div>
+        <div class="ai-head-text">
+          <div class="ai-head-title" data-i18n="ai_title">TLI 小幫手</div>
+          <div class="ai-head-status"><span class="ai-status-dot"></span><span data-i18n="ai_status">線上・通常 1 分鐘內回覆</span></div>
+        </div>
+      </div>
+      <div class="ai-head-actions">
+        <button class="ai-head-btn ai-minimize-btn" onclick="aiMinimize('fab')" aria-label="最小化" title="最小化" data-i18n-aria-label="ai_minimize_aria" data-i18n-title="ai_minimize_aria"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg></button>
+        <button class="ai-head-btn" onclick="aiClose('fab')" aria-label="關閉" title="關閉" data-i18n-aria-label="ai_close_aria" data-i18n-title="ai_close_aria"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
+      </div>
+    </div>
+    <div class="ai-body" id="aiBody-fab"></div>
+    <div class="ai-chips" id="aiChips-fab"></div>
+    <form class="ai-inputrow" onsubmit="return aiSubmitInput(event,'fab')">
+      <input id="aiInput-fab" placeholder="輸入您的問題…" aria-label="輸入問題" oninput="aiToggleSend('fab')" data-i18n-placeholder="ai_input_placeholder" data-i18n-aria-label="ai_input_aria">
+      <button type="submit" id="aiSend-fab" disabled data-i18n="ai_send">送出</button>
+    </form>
+    <div class="ai-disclaimer" data-i18n="ai_disclaimer">回覆由 AI 產生，重要事項請以顧問確認為準</div>
+  </div>
+</div>
+
+<script>window.TLI_I18N_PAGE_LANGS=['zh-TW','zh-CN','en','ja','de'];</script>
+<script src="../assets/_i18n_dict.js"></script>
+<script src="../assets/_i18n_dict_ja.js"></script>
+<script src="../assets/_i18n_dict_de.js"></script>
+<script src="../assets/_i18n_dict_public.js"></script>
+<script src="../assets/_i18n_dict_public_ja.js"></script>
+<script src="../assets/_i18n_dict_public_de.js"></script>
+<script src="../assets/_i18n.js"></script>
+<script>
+function T(zh,obj){ return TLI_I18N.t(zh,obj); }
+
+var TLI_AVATAR_SVG = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l7 3v5c0 4.5-3 8.5-7 10-4-1.5-7-5.5-7-10V6l7-3z"/></svg>';
+
+function tliFmt(str, obj){
+  if(!str) return str;
+  return str.replace(/\{(\w+)\}/g, function(_, k){ return (obj && obj[k] !== undefined) ? obj[k] : ''; });
+}
+/* ===================== i18n：頁面自有共用字典（AI 小幫手介面用），key 與共用詞典檔一致 =====================
+   TLI_I18N_DICT（en／ja／de／zhTWtoCN）由 _i18n_dict.js 系列在本檔之前載入，為全域變數可直接讀取；
+   tliDict() 依目前語言逐 key 查表，查不到則退回英文、再退回原文（不開天窗），邏輯對齊 _i18n.js 內部規則 */
+function tliConvertCN(str){
+  if(!str) return str;
+  var map = (typeof TLI_I18N_DICT !== 'undefined' && TLI_I18N_DICT.zhTWtoCN) || {};
+  var out = '';
+  for(var i=0;i<str.length;i++){ var ch = str.charAt(i); out += map[ch] || ch; }
+  return out;
+}
+function tliDict(){
+  var ZH_COMMON = {
+    ai_chip_trial: '試聽怎麼預約',
+    ai_greeting_default: '您好，我是 TLI 小幫手，歡迎詢問退費、請假改期、簽證、發票、付款、上課方式或老師配對等問題，也可以直接輸入您的問題。',
+    ai_thumbs_prompt: '這有幫助嗎？',
+    ai_thumbs_thanks: '感謝回饋',
+    ai_action_trial: '預約試聽',
+    ai_action_contact: '聯繫顧問',
+    ai_repeat: '剛剛提過「{chip}」的說明，簡單說是：{short}還有其他想了解的嗎？',
+    ai_fallback: '這題我請顧問回覆比較準，留下聯絡方式，顧問將於 1 個工作日內主動聯繫您。',
+    ai_escalate_user_msg: '我想直接聯繫顧問',
+    ai_form_name_ph: '姓名',
+    ai_form_contact_ph: 'Email 或 LINE ID',
+    ai_form_submit: '送出，請顧問聯繫我',
+    ai_live_btn: '轉真人客服',
+    ai_live_queued: '已為您排隊，目前前方 1 位，客服人員上線後將立即為您服務。',
+    ai_toast_fill_required: '請填寫姓名與聯絡方式',
+    ai_ticket_created: '已建立諮詢工單 #{ticket}',
+    ai_tl_assigned: '已指派專責顧問（{advisor}）',
+    ai_tl_followup: '顧問 1 個工作日內聯繫（{contact}）'
+  };
+  var lang = TLI_I18N.currentLang();
+  var enDict = (typeof TLI_I18N_DICT !== 'undefined' && TLI_I18N_DICT.en) || {};
+  var foreignDict = (lang === 'ja' && typeof TLI_I18N_DICT !== 'undefined') ? (TLI_I18N_DICT.ja || {}) :
+    (lang === 'de' && typeof TLI_I18N_DICT !== 'undefined') ? (TLI_I18N_DICT.de || {}) : null;
+  var dict = {};
+  Object.keys(ZH_COMMON).forEach(function(k){
+    var zh = ZH_COMMON[k];
+    if(lang === 'zh-TW'){ dict[k] = zh; }
+    else if(lang === 'zh-CN'){ dict[k] = tliConvertCN(zh); }
+    else if(lang === 'en'){ dict[k] = (k in enDict) ? enDict[k] : zh; }
+    else if(foreignDict){ dict[k] = (k in foreignDict) ? foreignDict[k] : ((k in enDict) ? enDict[k] : zh); }
+    else { dict[k] = zh; }
+  });
+  return dict;
+}
+function applyMetaDesc(){
+  /* <title> 在 <head> 裡，共用模組的 data-i18n 掃描只作用在 document.body，不會處理 <title>，需自行設定 */
+  document.title = T('TLI Connect｜師資介紹', {en:'TLI Connect | Our Teachers', ja:'TLI Connect｜講師紹介', de:'TLI Connect | Unser Lehrerteam'});
+  var m = document.querySelector('meta[name="description"]');
+  if(m) m.setAttribute('content', T('TLI 師資介紹：依語言與校區篩選教師，呈現語言、資歷、平均授課時數與專長標籤。', {en:'Meet TLI\'s teaching team — filter instructors by language and campus, with details on qualifications, experience, and teaching specialties.', ja:'TLIの講師紹介。言語やキャンパスで講師を絞り込み、使用言語、経歴、平均指導時間、専門分野をご確認いただけます。', de:'Lernen Sie das Lehrerteam von TLI kennen – filtern Sie Lehrkräfte nach Sprache und Standort und sehen Sie Details zu Qualifikation, Erfahrung und Unterrichtsschwerpunkten.'}));
+}
+
+/* ===================== i18n：AI 問答庫（五語，函式化以支援語言切換即時重算，內容與 p01 全站共用） ===================== */
+function getKB(){
+  return [
+    {id:'refund', chip:T('退費',{en:'Refunds',ja:'返金',de:'Rückerstattung'}), q:T('如何申請退費？',{en:'How do I request a refund?',ja:'返金の申請方法は？',de:'Wie beantrage ich eine Rückerstattung?'}), a:T('課程開始前 14 天內申請可全額退費；已開始上課者，依實際已上課堂數與合約約定計算可退款金額，請聯繫原承辦顧問辦理。',{en:'Apply at least 14 days before your course starts for a full refund. Once classes have begun, the refundable amount is calculated based on lessons completed and your contract terms — please contact your original advisor to process it.',ja:'開講14日前までのお申し込みで全額返金いたします。開講後は、実際に受講した回数と契約条件に基づき返金額を算出しますので、担当アドバイザーまでご連絡ください。',de:'Bei Antrag mindestens 14 Tage vor Kursbeginn erhalten Sie eine vollständige Rückerstattung. Nach Kursbeginn wird der erstattungsfähige Betrag anhand der bereits absolvierten Unterrichtseinheiten und der Vertragsbedingungen berechnet — bitte wenden Sie sich dazu an Ihren zuständigen Berater.'}), short:T('開課前 14 天內可全額退費，開課後依已上課堂數計算可退金額。',{en:'Full refund if requested 14+ days before start; after that, refunds are based on lessons completed.',ja:'開講14日前までなら全額返金、開講後は受講済み回数に応じて算出します。',de:'Vollständige Rückerstattung bei Antrag 14+ Tage vor Kursbeginn; danach richtet sich der Betrag nach den bereits absolvierten Einheiten.'})},
+    {id:'reschedule', chip:T('請假改期',{en:'Rescheduling',ja:'振替・キャンセル',de:'Terminverschiebung'}), q:T('臨時無法上課，可以退堂或改期嗎？',{en:'Can I cancel or reschedule a class on short notice?',ja:'急に受講できなくなった場合、キャンセルや振替はできますか？',de:'Kann ich eine Unterrichtsstunde kurzfristig absagen oder verschieben?'}), a:T('請於原訂上課時間 12 小時前申請退堂或改期，逾時未通知則視同已上課，不予補課或退還堂數。',{en:'Please cancel or reschedule at least 12 hours before your scheduled class. Requests after that window count as a completed lesson, with no make-up class or refund.',ja:'授業開始の12時間前までにキャンセルまたは振替の申請をお願いします。それ以降のご連絡は受講済みとみなされ、補講や返金の対象にはなりません。',de:'Bitte sagen Sie mindestens 12 Stunden vor dem geplanten Unterricht ab oder verschieben Sie ihn. Anfragen nach Ablauf dieser Frist gelten als abgehaltene Stunde, ohne Nachholtermin oder Rückerstattung.'}), short:T('上課前 12 小時可申請改期或退堂，逾時視同已上課。',{en:'Cancel or reschedule up to 12 hours before class; after that it counts as completed.',ja:'授業12時間前までなら振替・キャンセル可能、それ以降は受講済み扱いです。',de:'Absage oder Verschiebung bis 12 Stunden vor Unterrichtsbeginn möglich; danach gilt die Stunde als abgehalten.'})},
+    {id:'visa', chip:T('簽證',{en:'Student Visa',ja:'学生ビザ',de:'Studentenvisum'}), q:T('上課時數與簽證申請有什麼關係？',{en:'How do class hours relate to visa applications?',ja:'授業時間数はビザ申請にどう関係しますか？',de:'Welchen Einfluss haben die Unterrichtsstunden auf die Visumbeantragung?'}), a:T('台灣校區學期班課程如週時數達 15 小時，即符合申請學生簽證所需之上課證明條件，實際申請流程與文件請洽校區顧問確認。',{en:'Semester courses at our Taiwan campuses with 15+ class hours per week meet the attendance requirement for a student visa application. Please confirm the exact process and documents with your campus advisor.',ja:'台湾キャンパスの学期制コースで週１５時間以上受講する場合、学生ビザ申請に必要な出席証明の条件を満たします。具体的な申請手続きや必要書類はキャンパスのアドバイザーにご確認ください。',de:'Semesterkurse an unseren Taiwan-Standorten mit mindestens 15 Unterrichtsstunden pro Woche erfüllen die Anwesenheitsvoraussetzung für die Beantragung eines Studentenvisums. Den genauen Ablauf und die erforderlichen Unterlagen bestätigt Ihnen bitte Ihr Campus-Berater.'}), short:T('週時數達 15 小時的學期班即符合學生簽證申請條件。',{en:'Semester courses with 15+ weekly hours meet the student visa attendance requirement.',ja:'週１５時間以上の学期制コースは学生ビザの出席条件を満たします。',de:'Semesterkurse mit mindestens 15 Wochenstunden erfüllen die Anwesenheitsvoraussetzung für das Studentenvisum.'})},
+    {id:'invoice', chip:T('發票',{en:'Invoices',ja:'領収書',de:'Rechnungen'}), q:T('會開立發票嗎？',{en:'Will I receive an invoice or receipt?',ja:'領収書は発行されますか？',de:'Erhalte ich eine Rechnung oder Quittung?'}), a:T('是，完成付款後將依規定開立發票；企業包班客戶可申請月結發票，個人課程則於訂單完成後開立。',{en:'Yes — an official invoice is issued after payment is completed. Corporate group-class clients may request monthly billing; individual courses are invoiced once the order is completed.',ja:'はい、お支払い完了後に規定に基づき領収書を発行いたします。法人の団体クラスは月締め請求書の申請が可能で、個人受講は注文完了後に発行されます。',de:'Ja — nach vollständiger Zahlung wird eine offizielle Rechnung ausgestellt. Firmenkunden mit Gruppenkursen können eine monatliche Sammelrechnung beantragen; Einzelkurse werden nach Abschluss der Bestellung in Rechnung gestellt.'}), short:T('付款完成後會開立發票，企業包班可申請月結。',{en:'An invoice is issued after payment; corporate clients can request monthly billing.',ja:'お支払い後に領収書を発行、法人は月締め請求も可能です。',de:'Die Rechnung wird nach der Zahlung ausgestellt; Firmenkunden können eine monatliche Sammelrechnung beantragen.'})},
+    {id:'payment', chip:T('付款方式',{en:'Payment Options',ja:'お支払い方法',de:'Zahlungsmöglichkeiten'}), q:T('有哪些付款方式？',{en:'What payment methods are available?',ja:'どのようなお支払い方法がありますか？',de:'Welche Zahlungsmöglichkeiten gibt es?'}), a:T('提供一次付清、訂金＋尾款、分期三種付款模式，實際適用方式依方案內容與顧問確認之訂單條件為準。',{en:'We offer full payment, deposit + balance, or installment plans. The exact options depend on your course plan and the order terms confirmed with your advisor.',ja:'一括払い、内金＋残金、分割払いの3種類がございます。実際にご利用いただける方法はプラン内容とアドバイザーが確認した注文条件によります。',de:'Wir bieten Zahlung in voller Höhe, Anzahlung + Restbetrag oder Ratenzahlung an. Die genauen Optionen richten sich nach Ihrem Kursplan und den mit Ihrem Berater bestätigten Bestellbedingungen.'}), short:T('可選一次付清、訂金＋尾款或分期，依方案與顧問確認條件為準。',{en:'Choose full payment, deposit + balance, or installments, per your advisor-confirmed plan.',ja:'一括、内金＋残金、分割いずれかを選択でき、詳細はアドバイザーとの確認条件によります。',de:'Wahlweise volle Zahlung, Anzahlung + Restbetrag oder Ratenzahlung, gemäß dem mit dem Berater bestätigten Plan.'})},
+    {id:'format', chip:T('上課方式',{en:'Class Formats',ja:'受講形式',de:'Unterrichtsformen'}), q:T('一對一與彈性團體直播差在哪？',{en:'What’s the difference between 1-on-1 and flexible group livestream classes?',ja:'一対一とグループライブ配信の違いは何ですか？',de:'Was ist der Unterschied zwischen 1:1-Unterricht und flexiblem Gruppen-Livestream?'}), a:T('一對一線上課是預約制，你提出方便的時段，由顧問安排老師；彈性團體直播是固定時段開課、報名即可入班，費用通常更划算，若當期提供回放，錯過直播仍可補看。',{en:'1-on-1 online classes are booking-based — you submit your available times and our advisor arranges a teacher for you. Flexible group livestream classes run at fixed times and you simply enroll to join; they’re usually more affordable, and if a recording is offered that term, you can catch up if you miss the live session.',ja:'一対一のオンライン授業は予約制で、ご都合の良い時間帯をお伝えいただければ、アドバイザーが講師を手配します。グループライブ配信は決まった時間に開講し、申込めばそのまま参加可能で、料金は比較的お得です。その回に録画提供がある場合は、見逃してもあとから視聴できます。',de:'Der 1:1-Online-Unterricht basiert auf Terminvereinbarung — Sie teilen uns Ihre verfügbaren Zeiten mit, und unser Berater stellt Ihnen eine Lehrkraft zusammen. Der flexible Gruppen-Livestream findet zu festen Zeiten statt; Sie melden sich einfach an und nehmen teil. Er ist in der Regel günstiger, und falls in diesem Zeitraum eine Aufzeichnung angeboten wird, können Sie eine verpasste Live-Sitzung nachholen.'}), short:T('一對一是預約制、由顧問安排老師與時段；團體直播是固定時段、費用較划算。',{en:'1-on-1 is booking-based — our advisor arranges the teacher and time based on your availability; group livestream runs on a fixed schedule and costs less.',ja:'一対一は予約制でアドバイザーが講師と時間を手配、グループライブ配信は固定スケジュールで料金がお得です。',de:'1:1 basiert auf Terminvereinbarung — unser Berater stellt Lehrkraft und Zeit nach Ihrer Verfügbarkeit zusammen; der Gruppen-Livestream läuft nach festem Zeitplan und kostet weniger.'})},
+    {id:'classroom', chip:T('線上教室',{en:'Online Classroom',ja:'オンライン教室',de:'Online-Klassenzimmer'}), q:T('線上教室怎麼進入？連結會不會外流？',{en:'How do I join the online classroom? Could the link leak to others?',ja:'オンライン教室にはどうやって入りますか？リンクが流出する心配はありませんか？',de:'Wie betrete ich das Online-Klassenzimmer? Könnte der Link an andere weitergegeben werden?'}), a:T('上課前登入會員區，系統驗證身分後開放「進入教室」按鈕，一鍵進入當堂專屬 Zoom 教室；每堂課使用唯一會議並由老師於等候室放行，不提供可轉傳的連結。',{en:'Log into the member area before class — once your identity is verified, the “Enter Classroom” button unlocks a one-click link to your dedicated Zoom session. Each class uses a unique meeting, and your teacher admits you from the waiting room, so there’s no shareable link that could leak.',ja:'授業前に会員エリアにログインし、本人確認後に「教室に入る」ボタンが表示され、ワンクリックでその回専用のZoom教室に入室できます。各授業は個別のミーティングを使用し、講師が待機室から入室を許可するため、転送可能なリンクは発行されません。',de:'Loggen Sie sich vor dem Unterricht im Mitgliederbereich ein — nach der Identitätsprüfung schaltet die Schaltfläche „Klassenzimmer betreten“ einen Link mit einem Klick zu Ihrer persönlichen Zoom-Sitzung frei. Jede Stunde nutzt ein eigenes Meeting, und Ihre Lehrkraft lässt Sie aus dem Warteraum herein — es gibt also keinen weiterleitbaren Link, der durchsickern könnte.'}), short:T('登入會員區後一鍵進教室，每堂唯一連結、老師等候室放行，不怕連結外流。',{en:'Log in to unlock a one-click link to your unique Zoom session; your teacher admits you from the waiting room.',ja:'ログイン後ワンクリックで専用Zoom教室へ、講師が待機室から許可するためリンク流出の心配はありません。',de:'Nach dem Login erhalten Sie einen Link zu Ihrer persönlichen Zoom-Sitzung; Ihre Lehrkraft lässt Sie aus dem Warteraum herein.'})},
+    {id:'pricing', chip:T('價格與報價',{en:'Pricing',ja:'料金・見積り',de:'Preise & Angebote'}), q:T('課程費用怎麼估算？',{en:'How is the course fee calculated?',ja:'コース料金はどのように算出されますか？',de:'Wie wird die Kursgebühr berechnet?'}), a:T('費用依語言、上課方式（一對一／團體）與堂數而定，建議告知學習目標與時間，由顧問提供試算報價；也可直接預約試聽時一併確認費用。',{en:'Pricing depends on the language, class format (1-on-1 or group), and number of lessons. Share your learning goals and timeline and an advisor will prepare a quote — or confirm pricing when you book a trial class.',ja:'料金は言語、受講形式（一対一／グループ）、レッスン回数によって異なります。学習目標とご希望の時期をお伝えいただければ、アドバイザーが見積りをご案内します。体験レッスンご予約時に料金を確認いただくことも可能です。',de:'Der Preis richtet sich nach der Sprache, der Unterrichtsform (1:1 oder Gruppe) und der Anzahl der Unterrichtseinheiten. Teilen Sie uns Ihre Lernziele und Ihren Zeitrahmen mit, und ein Berater erstellt Ihnen ein Angebot — oder Sie klären den Preis direkt bei der Buchung einer Probestunde.'}), short:T('費用依語言、上課方式與堂數而定，可請顧問提供試算報價。',{en:'Pricing depends on language, format, and lesson count — ask your advisor for a quote.',ja:'料金は言語・受講形式・回数によって異なり、アドバイザーが見積りをご案内します。',de:'Der Preis hängt von Sprache, Unterrichtsform und Stundenzahl ab — fragen Sie Ihren Berater nach einem Angebot.'})},
+    {id:'trial', chip:T('試聽',{en:'Trial Class',ja:'体験レッスン',de:'Probestunde'}), q:T('可以先試聽嗎？',{en:'Can I try a class before signing up?',ja:'事前に体験レッスンを受けられますか？',de:'Kann ich vor der Anmeldung eine Probestunde nehmen?'}), a:T('可以，提供免費試聽課程，由顧問依您的程度與目標安排合適的試聽老師與時段，體驗後再決定是否報名。',{en:'Yes — we offer a free trial class. Your advisor will match you with a suitable teacher and time slot based on your level and goals, so you can decide after experiencing it.',ja:'はい、無料体験レッスンをご用意しています。アドバイザーがレベルと目標に合わせて講師と時間帯をご案内しますので、体験後に受講をご検討いただけます。',de:'Ja — wir bieten eine kostenlose Probestunde an. Ihr Berater ordnet Ihnen passend zu Niveau und Zielen eine geeignete Lehrkraft und einen Termin zu, sodass Sie sich nach dem Ausprobieren entscheiden können.'}), short:T('提供免費試聽，顧問會依程度與目標安排合適老師與時段。',{en:'A free trial is available, matched to your level and goals before you commit.',ja:'無料体験レッスンがあり、レベルと目標に合わせて講師・時間をご案内します。',de:'Eine kostenlose Probestunde wird passend zu Niveau und Zielen angeboten, bevor Sie sich festlegen.'})},
+    {id:'teacher', chip:T('老師配對',{en:'Teacher Matching',ja:'講師のマッチング',de:'Lehrer-Zuordnung'}), q:T('老師怎麼配對？',{en:'How are teachers matched to students?',ja:'講師はどのようにマッチングされますか？',de:'Wie werden Lehrkräfte den Lernenden zugeordnet?'}), a:T('顧問會依您的語言、程度與學習目標，從授證師資中配對合適老師；開課後如覺得不適合，也可申請更換老師。',{en:'Your advisor matches you with a certified teacher based on your language, level, and goals. If it’s not the right fit after classes begin, you can request a change.',ja:'アドバイザーが言語・レベル・学習目標に応じて、資格を持つ講師の中から適切な講師をマッチングします。受講開始後に合わないと感じた場合は、講師の変更も申請できます。',de:'Ihr Berater ordnet Ihnen anhand von Sprache, Niveau und Zielen eine zertifizierte Lehrkraft zu. Falls es nach Unterrichtsbeginn nicht passt, können Sie einen Wechsel beantragen.'}), short:T('依語言、程度與目標配對合適老師，開課後不合適可申請更換。',{en:'Matched to a certified teacher by language, level, and goals; you can request a change later.',ja:'言語・レベル・目標に応じて資格講師をマッチング、開始後の変更申請も可能です。',de:'Zuordnung zu einer zertifizierten Lehrkraft nach Sprache, Niveau und Zielen; ein Wechsel kann später beantragt werden.'})}
+  ];
+}
+
+/* ===================== 教師簡介（五語，函式化以支援語言切換即時重算） ===================== */
+function getTeacherBio(tid){
+  var bios = {
+    t1: T('林老師畢業於國立台灣師範大學華語文教學研究所，累積 8 年教學經驗，專精商用華語與 HSK 檢定準備，擅長引導學員從生活會話銜接至職場應用情境。', {en:'Teacher Lin holds a master\'s degree in Teaching Chinese as a Second Language from National Taiwan Normal University and brings 8 years of teaching experience. She specializes in business Chinese and HSK exam preparation, helping students move confidently from everyday conversation to workplace scenarios.', ja:'林先生は国立台湾師範大学の華語文教学研究所を修了し、8年の指導経験を持つ講師です。ビジネス中国語とHSK対策を得意とし、日常会話からビジネスシーンへの橋渡しとなる指導に定評があります。', de:'Lehrkraft Lin hat einen Masterabschluss in Chinesisch als Fremdsprache von der National Taiwan Normal University und verfügt über 8 Jahre Unterrichtserfahrung. Sie ist auf Wirtschaftschinesisch und die Vorbereitung auf die HSK-Prüfung spezialisiert und hilft Lernenden, sicher von der Alltagskonversation zu berufsbezogenen Situationen überzugehen.'}),
+    t2: T('陳老師專長生活會話與兒少中文教學，擅長運用遊戲與情境教學法引導初學者建立開口說話的信心，深受親子學員喜愛。', {en:'Teacher Chen specializes in everyday conversation and Chinese for children, using games and scenario-based methods to help beginners build the confidence to start speaking. Popular with parent-and-child students alike.', ja:'陳先生は日常会話と子ども向け中国語指導を専門とし、ゲームやシチュエーション学習を取り入れて初心者が話す自信を持てるよう指導しています。親子連れの受講生にも人気です。', de:'Lehrkraft Chen ist auf Alltagskommunikation und Chinesisch für Kinder spezialisiert und setzt Spiele sowie szenariobasierte Methoden ein, damit Anfänger das Selbstvertrauen gewinnen, frei zu sprechen. Besonders beliebt bei Eltern-Kind-Lerngruppen.'}),
+    t3: T('John S. 老師為英語母語人士，擁有 10 年教學資歷，專精多益（TOEIC）與商用英文，課程設計著重實務情境演練與口說流暢度訓練。', {en:'John S. is a native English speaker with 10 years of teaching experience. He specializes in TOEIC and business English, designing lessons around real-world scenarios and fluency-focused speaking practice.', ja:'ジョン・S先生は英語ネイティブスピーカーで、10年の指導歴を持ちます。TOEICとビジネス英語を専門とし、実践的なシーン演習とスピーキング力向上に重点を置いたレッスンを行います。', de:'John S. ist englischer Muttersprachler mit 10 Jahren Unterrichtserfahrung. Er ist auf TOEIC und Wirtschaftsenglisch spezialisiert und gestaltet seine Lektionen anhand realitätsnaher Szenarien mit Schwerpunkt auf Sprechflüssigkeit.'}),
+    t4: T('佐藤老師為日語母語人士，專精 JLPT 檢定準備與生活日文教學，教學風格細膩耐心，適合希望扎實累積文法與聽力的學習者。', {en:'Teacher Sato is a native Japanese speaker specializing in JLPT exam preparation and everyday Japanese. Her teaching style is detailed and patient, ideal for learners looking to build a solid foundation in grammar and listening.', ja:'佐藤先生は日本語ネイティブスピーカーで、JLPT対策と日常日本語指導を専門としています。丁寧で忍耐強い指導スタイルで、文法とリスニング力をしっかり身につけたい学習者に適しています。', de:'Lehrkraft Sato ist japanische Muttersprachlerin und auf die Vorbereitung zur JLPT-Prüfung sowie Alltagsjapanisch spezialisiert. Ihr Unterrichtsstil ist detailliert und geduldig – ideal für Lernende, die eine solide Grundlage in Grammatik und Hörverständnis aufbauen möchten.'}),
+    t5: T('金老師為韓語母語人士，專精 TOPIK 檢定與旅遊韓文教學，擅長以文化情境帶入語言學習，讓課程更貼近生活應用。', {en:'Teacher Kim is a native Korean speaker specializing in TOPIK exam preparation and travel Korean. She weaves cultural context into her lessons, keeping learning grounded in real-life application.', ja:'キム先生は韓国語ネイティブスピーカーで、TOPIK対策と旅行韓国語指導を専門としています。文化的な背景を取り入れた指導が特徴で、実生活に役立つ学びを提供します。', de:'Lehrkraft Kim ist koreanische Muttersprachlerin und auf die Vorbereitung zur TOPIK-Prüfung sowie Reisekoreanisch spezialisiert. Sie bindet kulturelle Hintergründe in ihren Unterricht ein und sorgt so für einen praxisnahen Lernbezug.'}),
+    t6: T('Marie W. 老師為法語母語人士，專精 DELF／DALF 檢定與商用法文，擅長線上教學互動設計，讓遠距學習也能維持高參與度。', {en:'Marie W. is a native French speaker specializing in DELF/DALF exam preparation and business French. She excels at designing interactive online lessons that keep remote learners fully engaged.', ja:'マリー・W先生はフランス語ネイティブスピーカーで、DELF／DALF対策とビジネスフランス語を専門としています。オンライン授業でのインタラクティブな工夫が得意で、遠隔学習でも高い参加度を保ちます。', de:'Marie W. ist französische Muttersprachlerin und auf die Vorbereitung zu DELF/DALF sowie Wirtschaftsfranzösisch spezialisiert. Sie gestaltet interaktive Online-Lektionen, die auch Fernlernende voll einbinden.'})
+  };
+  return bios[tid] || '';
+}
+
+/* ===================== i18n：顧問姓名（五語，示範人名，de 沿用 en 羅馬拼音） ===================== */
+var TLI_ADVISORS_I18N = {
+  'zh-TW': ['王顧問','李顧問','陳顧問','張顧問','林顧問'],
+  en: ['Advisor Wang','Advisor Li','Advisor Chen','Advisor Chang','Advisor Lin'],
+  ja: ['王アドバイザー','李アドバイザー','陳アドバイザー','張アドバイザー','林アドバイザー'],
+  de: ['Advisor Wang','Advisor Li','Advisor Chen','Advisor Chang','Advisor Lin']
+};
+function aiPickAdvisor(){
+  var lang = TLI_I18N.currentLang();
+  var list = TLI_ADVISORS_I18N[lang] || TLI_ADVISORS_I18N['zh-TW'];
+  return list[Math.floor(Math.random() * list.length)];
+}
+
+var TLI_CHAT_KEY = 'tliChatState_v1';
+var aiAskedIntents = {};
+var TLI_AI_GREETING_KEY = 'ai_greeting_default';
+
+function aiTicketNo(){
+  return 'TL-2026' + String(Math.floor(1000 + Math.random() * 9000));
+}
+function aiNowStr(){
+  var d = new Date();
+  return String(d.getHours()).padStart(2,'0') + ':' + String(d.getMinutes()).padStart(2,'0');
+}
+function aiMakeChipBtn(label, handler){
+  var b = document.createElement('button');
+  b.type = 'button';
+  b.className = 'ai-chip';
+  b.textContent = label;
+  b.onclick = handler;
+  return b;
+}
+function aiRenderChips(target){
+  var wrap = document.getElementById('aiChips-'+target);
+  if(!wrap) return;
+  var dict = tliDict();
+  var kb = getKB();
+  wrap.innerHTML = '';
+  wrap.appendChild(aiMakeChipBtn(dict.ai_chip_trial, function(){ aiAsk(dict.ai_chip_trial, target); }));
+  kb.forEach(function(item){
+    if(item.id === 'trial') return;
+    wrap.appendChild(aiMakeChipBtn(item.chip, function(){ aiAsk(item.chip, target); }));
+  });
+}
+function aiToggleSend(target){
+  var input = document.getElementById('aiInput-'+target);
+  var btn = document.getElementById('aiSend-'+target);
+  if(!input || !btn) return;
+  btn.disabled = !input.value.trim();
+}
+function aiInit(target){
+  var body = document.getElementById('aiBody-'+target);
+  if(!body || body.dataset.inited) return;
+  body.dataset.inited = '1';
+  if(aiRestoreState(target)){ aiRenderChips(target); return; }
+  var dict = tliDict();
+  aiAppendBot(target, (window.TLI_AI_GREETING_KEY && dict[window.TLI_AI_GREETING_KEY]) ? dict[window.TLI_AI_GREETING_KEY] : dict.ai_greeting_default);
+  aiRenderChips(target);
+}
+function aiOpen(target){
+  document.getElementById('aiOverlay-'+target).classList.add('show');
+  var sheet = document.getElementById('aiSheet-'+target);
+  if(sheet) sheet.classList.remove('minimized');
+  aiInit(target);
+  setTimeout(function(){ var i=document.getElementById('aiInput-'+target); if(i) i.focus(); }, 100);
+}
+function aiClose(target){
+  document.getElementById('aiOverlay-'+target).classList.remove('show');
+}
+function aiMinimize(target){
+  var sheet = document.getElementById('aiSheet-'+target);
+  if(sheet) sheet.classList.toggle('minimized');
+}
+function aiScrollBottom(target){
+  var body = document.getElementById('aiBody-'+target);
+  if(body) body.scrollTop = body.scrollHeight;
+}
+function aiAppendUser(target, text){
+  var body = document.getElementById('aiBody-'+target);
+  var row = document.createElement('div');
+  row.className = 'ai-msg-row user';
+  row.innerHTML = '<div class="ai-msg-stack"><div class="ai-msg user"></div><div class="ai-msg-time">'+aiNowStr()+'</div></div>';
+  row.querySelector('.ai-msg').textContent = text;
+  body.appendChild(row);
+  aiScrollBottom(target);
+  aiSaveState(target);
+}
+function aiAppendBot(target, html){
+  var body = document.getElementById('aiBody-'+target);
+  var row = document.createElement('div');
+  row.className = 'ai-msg-row bot';
+  row.innerHTML = '<div class="ai-avatar sm" aria-hidden="true">'+TLI_AVATAR_SVG+'</div><div class="ai-msg-stack"><div class="ai-msg bot">'+html+'</div><div class="ai-msg-time">'+aiNowStr()+'</div></div>';
+  body.appendChild(row);
+  aiScrollBottom(target);
+  aiSaveState(target);
+  return row.querySelector('.ai-msg');
+}
+function aiShowTyping(target){
+  var body = document.getElementById('aiBody-'+target);
+  if(!body) return;
+  var row = document.createElement('div');
+  row.className = 'ai-msg-row bot';
+  row.id = 'aiTypingRow-'+target;
+  row.innerHTML = '<div class="ai-avatar sm" aria-hidden="true">'+TLI_AVATAR_SVG+'</div><div class="ai-msg-stack"><div class="ai-msg bot ai-typing"><span class="ai-typing-dots"><span></span><span></span><span></span></span></div></div>';
+  body.appendChild(row);
+  aiScrollBottom(target);
+}
+function aiHideTyping(target){
+  var row = document.getElementById('aiTypingRow-'+target);
+  if(row) row.remove();
+}
+function aiMatch(text){
+  var t = text.trim();
+  var kbTc = getKB(), kbCur = kbTc;
+  var KEYWORDS = {
+    refund:['退費','退款','退學費','可以退','取消課程','退錢','refund','返金'],
+    reschedule:['請假','改期','退堂','取消上課','調課','reschedule','cancel class','振替','キャンセル'],
+    visa:['簽證','visa','學生簽證','居留','ビザ'],
+    invoice:['發票','收據','電子發票','invoice','receipt','領収書'],
+    payment:['付款','付費','分期','刷卡','轉帳','怎麼付錢','payment','pay','installment','支払い'],
+    format:['上課方式','預約制','直播制','怎麼上課','一對一','團體班','class format','1-on-1','group','受講形式'],
+    classroom:['線上教室','怎麼進入','連結','教室連結','外流','Zoom','classroom','教室'],
+    pricing:['價格','報價','費用','學費多少','多少錢','price','pricing','cost','料金'],
+    trial:['試聽','免費體驗','體驗課','試聽怎麼預約','trial','free class','体験'],
+    teacher:['老師','配對','老師怎麼選','指定老師','換老師','teacher','matching','講師']
+  };
+  for(var i=0;i<kbTc.length;i++){
+    var id = kbTc[i].id;
+    var kws = KEYWORDS[id] || [];
+    for(var j=0;j<kws.length;j++){
+      if(t.toLowerCase().indexOf(String(kws[j]).toLowerCase()) !== -1){
+        for(var k=0;k<kbCur.length;k++){ if(kbCur[k].id === id) return kbCur[k]; }
+      }
+    }
+  }
+  return null;
+}
+function aiReplyForMatch(target, match){
+  var dict = tliDict();
+  var asked = aiAskedIntents[match.id];
+  var html;
+  if(asked){
+    html = tliFmt(dict.ai_repeat, {chip: match.chip, short: match.short});
+  }else{
+    html = '<b>'+match.q+'</b><br>'+match.a+
+      '<div class="ai-thumbs"><span>'+dict.ai_thumbs_prompt+'</span>'+
+      '<button type="button" onclick="aiThumb(this,true)"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14 9V5a3 3 0 0 0-3-3l-4 9v11h11.3a2 2 0 0 0 2-1.7l1.4-9a2 2 0 0 0-2-2.3H14z"/><path d="M7 22H4a2 2 0 0 1-2-2v-7a2 2 0 0 1 2-2h3"/></svg></button>'+
+      '<button type="button" onclick="aiThumb(this,false)"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M10 15v4a3 3 0 0 0 3 3l4-9V2H5.7a2 2 0 0 0-2 1.7l-1.4 9a2 2 0 0 0 2 2.3H10z"/><path d="M17 2h3a2 2 0 0 1 2 2v7a2 2 0 0 1-2 2h-3"/></svg></button></div>'+
+      '<div class="ai-actions"><a href="p06_trial.html?type=trial">'+dict.ai_action_trial+'</a><button type="button" onclick="aiEscalate(\''+target+'\')">'+dict.ai_action_contact+'</button></div>';
+    aiAskedIntents[match.id] = true;
+  }
+  aiAppendBot(target, html);
+}
+function aiAsk(text, target){
+  if(!text || !text.trim()) return;
+  aiAppendUser(target, text);
+  var match = aiMatch(text);
+  var dict = tliDict();
+  aiShowTyping(target);
+  var delay = 600 + Math.floor(Math.random()*600);
+  setTimeout(function(){
+    aiHideTyping(target);
+    if(match){
+      aiReplyForMatch(target, match);
+    }else{
+      aiAppendBot(target, dict.ai_fallback);
+      aiShowEscalateForm(target);
+    }
+  }, delay);
+}
+function aiSubmitInput(e, target){
+  e.preventDefault();
+  var input = document.getElementById('aiInput-'+target);
+  var val = input.value;
+  if(!val.trim()) return false;
+  aiAsk(val, target);
+  input.value = '';
+  aiToggleSend(target);
+  return false;
+}
+function aiThumb(btn, helpful){
+  var dict = tliDict();
+  var wrap = btn.parentElement;
+  wrap.querySelectorAll('button').forEach(function(b){ b.classList.remove('picked'); });
+  btn.classList.add('picked');
+  var thanks = wrap.nextElementSibling;
+  if(!thanks || !thanks.classList || !thanks.classList.contains('ai-thumbs-thanks')){
+    thanks = document.createElement('div');
+    thanks.className = 'ai-thumbs-thanks';
+    wrap.insertAdjacentElement('afterend', thanks);
+  }
+  thanks.textContent = dict.ai_thumbs_thanks;
+}
+function aiEscalate(target){
+  var dict = tliDict();
+  aiAppendUser(target, dict.ai_escalate_user_msg);
+  aiShowEscalateForm(target);
+}
+function aiShowEscalateForm(target){
+  var dict = tliDict();
+  var html = '<div class="ai-mini-form">'+
+    '<input id="aiName-'+target+'" placeholder="'+dict.ai_form_name_ph+'" required>'+
+    '<input id="aiContact-'+target+'" placeholder="'+dict.ai_form_contact_ph+'" required>'+
+    '<button type="button" class="btn btn-accent btn-sm" onclick="aiSubmitEscalate(\''+target+'\')">'+dict.ai_form_submit+'</button>'+
+    '</div>'+
+    '<button type="button" class="ai-live-btn" onclick="aiLiveQueue(\''+target+'\')">'+dict.ai_live_btn+'</button>';
+  aiAppendBot(target, html);
+}
+function aiLiveQueue(target){
+  var dict = tliDict();
+  aiAppendUser(target, dict.ai_live_btn);
+  aiShowTyping(target);
+  setTimeout(function(){
+    aiHideTyping(target);
+    aiAppendBot(target, dict.ai_live_queued);
+  }, 700);
+}
+function aiSubmitEscalate(target){
+  var dict = tliDict();
+  var nameEl = document.getElementById('aiName-'+target);
+  var contactEl = document.getElementById('aiContact-'+target);
+  var name = nameEl ? nameEl.value.trim() : '';
+  var contact = contactEl ? contactEl.value.trim() : '';
+  if(!name || !contact){ if(typeof showToast === 'function') showToast(dict.ai_toast_fill_required); return; }
+  var ticket = aiTicketNo();
+  var advisor = aiPickAdvisor();
+  var body = document.getElementById('aiBody-'+target);
+  var row = document.createElement('div');
+  row.className = 'ai-msg-row bot';
+  row.innerHTML = '<div class="ai-avatar sm" aria-hidden="true">'+TLI_AVATAR_SVG+'</div><div class="ai-msg-stack"><div class="ai-msg bot"><b>'+tliFmt(dict.ai_ticket_created,{ticket:ticket})+'</b><div class="ai-timeline" id="aiTl-'+target+'-'+Date.now()+'"></div></div><div class="ai-msg-time">'+aiNowStr()+'</div></div>';
+  body.appendChild(row);
+  var tlId = row.querySelector('.ai-timeline').id;
+  aiScrollBottom(target);
+  aiPlayTimeline(tlId, [tliFmt(dict.ai_tl_assigned,{advisor:advisor}), tliFmt(dict.ai_tl_followup,{contact:contact})], function(){
+    aiSaveState(target);
+  });
+}
+function aiPlayTimeline(containerId, steps, onDone){
+  var el = document.getElementById(containerId);
+  if(!el) return;
+  el.innerHTML = '';
+  steps.forEach(function(s){
+    var row = document.createElement('div');
+    row.className = 'ai-tl-step';
+    row.innerHTML = '<span class="dot"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></span><span>'+s+'</span>';
+    el.appendChild(row);
+  });
+  var rows = el.querySelectorAll('.ai-tl-step');
+  var i = 0;
+  function step(){
+    if(i >= rows.length){ if(onDone) onDone(); return; }
+    rows[i].classList.add('done');
+    var wrap = el.closest('.ai-body');
+    if(wrap) wrap.scrollTop = wrap.scrollHeight;
+    i++;
+    setTimeout(step, 600);
+  }
+  setTimeout(step, 300);
+}
+function aiSaveState(target){
+  try{
+    var body = document.getElementById('aiBody-'+target);
+    if(!body) return;
+    var state = {html: body.innerHTML, asked: aiAskedIntents};
+    sessionStorage.setItem(TLI_CHAT_KEY, JSON.stringify(state));
+  }catch(e){}
+}
+function aiRestoreState(target){
+  try{
+    var raw = sessionStorage.getItem(TLI_CHAT_KEY);
+    if(!raw) return false;
+    var state = JSON.parse(raw);
+    if(!state || !state.html) return false;
+    var body = document.getElementById('aiBody-'+target);
+    body.innerHTML = state.html;
+    aiAskedIntents = state.asked || {};
+    aiScrollBottom(target);
+    return true;
+  }catch(e){ return false; }
+}
+
+/* 按 ESC 關閉目前開啟中的彈窗（師資簡介 modal、AI 小幫手面板） */
+document.addEventListener('keydown', function(e){
+  if(e.key !== 'Escape' && e.key !== 'Esc') return;
+  var teacherModal = document.getElementById('teacherModal');
+  if(teacherModal && teacherModal.classList.contains('show')) closeTeacher();
+  var aiOverlay = document.getElementById('aiOverlay-fab');
+  if(aiOverlay && aiOverlay.classList.contains('show')) aiClose('fab');
+});
+
+/* 篩選提示列為 JS 動態組字串（含 {n} 計數），初次渲染在此執行，並登記 TLI_I18N.onRefresh，
+   讓切換語言時（不論是否已套用篩選條件）都能重新渲染成目前語言版本 */
+applyTeacherFilter();
+TLI_I18N.onRefresh(applyTeacherFilter);
+TLI_I18N.onRefresh(applyMetaDesc);
+applyMetaDesc();
+TLI_I18N.init();
+</script>
+</body>
+</html>

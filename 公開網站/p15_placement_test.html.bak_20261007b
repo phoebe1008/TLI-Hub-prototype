@@ -1,0 +1,469 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>程度測驗｜TLI Connect</title>
+<meta name="description" content="TLI 線上程度測驗：10 題聽力與閱讀，測出目前適合的班級等級，成績報告送顧問參考。">
+<style>
+
+:root{
+  --c-primary:#1B4E8C;--c-primary-dark:#123A66;--c-accent:#E8792B;--c-accent-dark:#CF691F;
+  --c-secondary:#0F9B79;--c-bg:#F5F7FA;--c-border:#E4E7EC;--c-muted:#667085;--c-text:#101828;
+  --radius:10px;--shadow:0 1px 3px rgba(16,24,40,.08),0 1px 2px rgba(16,24,40,.04);--shadow-lg:0 8px 24px rgba(16,24,40,.10);
+}
+*{box-sizing:border-box;}html,body{margin:0;padding:0;}
+body{font-family:"Noto Sans TC","Microsoft JhengHei",system-ui,-apple-system,"Segoe UI",sans-serif;background:var(--c-bg);color:var(--c-text);line-height:1.65;font-size:15px;}
+a{color:inherit;text-decoration:none;}img{max-width:100%;display:block;}ul{margin:0;padding:0;list-style:none;}h1,h2,h3,p{margin:0;}
+
+
+.site-header{background:#fff;border-bottom:1px solid var(--c-border);padding:12px 24px;display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;position:sticky;top:0;z-index:40;}
+.brand{font-weight:700;font-size:20px;color:var(--c-primary);display:flex;align-items:center;gap:8px;}
+.brand img{height:32px;width:auto;display:block;}
+
+.site-nav{display:flex;gap:22px;align-items:center;font-size:14px;font-weight:600;}
+.site-nav a:hover{color:var(--c-primary);}
+.header-right{display:flex;gap:10px;align-items:center;flex-wrap:wrap;}
+.lang-select{border:1px solid var(--c-border);border-radius:6px;padding:6px 8px;font-size:13px;background:#fff;color:var(--c-text);}
+.menu-toggle{display:none;background:none;border:1px solid var(--c-border);border-radius:6px;padding:6px 10px;font-size:16px;cursor:pointer;}
+@media(max-width:780px){
+  .brand img{height:26px;}.site-nav{display:none;width:100%;order:3;flex-direction:column;align-items:flex-start;gap:12px;padding-top:12px;border-top:1px solid var(--c-border);margin-top:10px;}.site-nav.open{display:flex;}.menu-toggle{display:inline-block;min-width:44px;min-height:44px;}
+  .site-nav a{display:flex;align-items:center;width:100%;min-height:44px;box-sizing:border-box;}}
+
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;border:none;border-radius:6px;padding:10px 20px;font-size:14px;font-weight:700;cursor:pointer;font-family:inherit;white-space:nowrap;}
+.btn-primary{background:var(--c-primary);color:#fff;}.btn-primary:hover{background:var(--c-primary-dark);}
+.btn-accent{background:var(--c-accent);color:#fff;}.btn-accent:hover{background:var(--c-accent-dark);}
+.btn-outline{background:#fff;border:1px solid var(--c-border);color:var(--c-text);}.btn-outline:hover{background:var(--c-bg);}
+.btn-sm{padding:7px 14px;font-size:13px;}
+
+.page-banner{background:linear-gradient(120deg,var(--c-primary),#153f70);color:#fff;padding:34px 24px;}
+.page-banner-inner{max-width:1120px;margin:0 auto;}
+.page-banner h1{font-size:26px;font-weight:800;margin-bottom:6px;}
+.page-banner p{color:rgba(255,255,255,.85);font-size:14px;}
+
+.site-footer{background:#101828;color:#CBD3DE;padding:44px 24px 24px;}
+.footer-inner{max-width:1120px;margin:0 auto;display:grid;grid-template-columns:1.4fr 1fr 1fr 1fr;gap:28px;}
+@media(max-width:780px){.footer-inner{grid-template-columns:1fr 1fr;}}
+@media(max-width:480px){.footer-inner{grid-template-columns:1fr;}}
+.footer-inner h4{color:#fff;font-size:14px;margin-bottom:12px;}
+.footer-inner li{font-size:13px;margin-bottom:8px;color:#9AA4B2;}
+.footer-bottom img{display:block;margin:0 auto 10px;height:24px;width:auto;}
+.footer-bottom{max-width:1120px;margin:26px auto 0;padding-top:18px;border-top:1px solid #2A3241;font-size:12px;color:#7C879A;text-align:center;}
+
+
+.toast{position:fixed;left:50%;bottom:28px;transform:translateX(-50%) translateY(20px);background:#101828;color:#fff;font-size:13.5px;padding:12px 20px;border-radius:8px;box-shadow:var(--shadow-lg);opacity:0;pointer-events:none;transition:opacity .2s,transform .2s;z-index:100;max-width:90vw;text-align:center;}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
+
+.site-nav a.cur{color:var(--c-primary);}
+main{max-width:760px;margin:0 auto;padding:28px 16px 56px;}
+.hidden{display:none!important;}
+.card{background:#fff;border:1px solid var(--c-border);border-radius:var(--radius);box-shadow:var(--shadow);padding:22px;margin-bottom:16px;}
+.h2{font-size:18px;font-weight:800;margin-bottom:6px;}
+.h3{font-size:15px;font-weight:800;margin-bottom:8px;}
+.muted{color:var(--c-muted);}.small{font-size:12.5px;}
+.field{margin:14px 0;}
+.field label{display:block;font-size:13px;font-weight:700;margin-bottom:6px;}
+.field select,.field input{width:100%;border:1px solid var(--c-border);border-radius:8px;padding:11px 12px;font-size:15px;font-family:inherit;background:#fff;color:var(--c-text);min-height:44px;}
+.field select:focus,.field input:focus{outline:2px solid var(--c-primary);outline-offset:1px;}
+.note{background:#FFF6EC;border:1px solid #F5CBA1;color:#8A4A12;border-radius:8px;padding:10px 12px;font-size:13px;margin:10px 0;}
+.err{color:#B42318;font-size:13px;margin:6px 0;}
+.meta-list{display:grid;gap:8px;margin:16px 0;font-size:13.5px;}
+.meta-list li{display:flex;gap:8px;align-items:center;color:var(--c-text);}
+.meta-list svg{width:18px;height:18px;color:var(--c-primary);flex:none;}
+.actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:14px;}
+.actions.center{justify-content:center;}
+.actions .btn{min-height:44px;}
+.login-chip{background:#E4F5F0;color:#0B6B52;border:1px solid #BEE6D9;border-radius:8px;padding:8px 12px;font-size:13px;margin-bottom:12px;}
+.q-head{margin-bottom:12px;}
+.q-count{font-size:13px;font-weight:700;color:var(--c-muted);margin-bottom:6px;}
+.progress{height:8px;border-radius:6px;background:var(--c-border);overflow:hidden;flex:1;}
+.progress>div{height:100%;width:0;background:var(--c-primary);border-radius:6px;transition:width .25s;}
+.pill{display:inline-block;background:#E6EEF8;color:var(--c-primary);font-size:12px;font-weight:700;border-radius:20px;padding:2px 10px;margin-bottom:10px;}
+.q-text{font-size:17px;font-weight:700;margin:6px 0 16px;line-height:1.6;}
+.opt{display:flex;align-items:center;gap:10px;width:100%;text-align:left;border:1px solid var(--c-border);border-radius:8px;background:#fff;padding:12px;margin-bottom:8px;font-size:15px;font-family:inherit;cursor:pointer;min-height:48px;}
+.opt:hover{border-color:var(--c-primary);}
+.opt .mk{width:18px;height:18px;border:1.5px solid var(--c-border);border-radius:50%;flex:none;}
+.opt.sel{border-color:var(--c-primary);background:#F7FAFF;}
+.opt.sel .mk{border-color:var(--c-primary);background:radial-gradient(var(--c-primary) 45%,transparent 50%);}
+.q-actions{display:flex;justify-content:space-between;gap:10px;margin-top:16px;}
+.listen-box{background:var(--c-bg);border-radius:10px;padding:14px;display:flex;align-items:center;gap:12px;margin-bottom:14px;}
+.listen-play{width:44px;height:44px;border-radius:50%;background:var(--c-primary);color:#fff;border:none;display:flex;align-items:center;justify-content:center;cursor:pointer;flex:none;}
+.listen-play:disabled{background:#98A2B3;cursor:not-allowed;}
+.listen-meta{flex:1;min-width:0;}
+.lm-title{font-size:12.5px;font-weight:700;margin-bottom:6px;}
+.listen-track{height:5px;border-radius:4px;background:var(--c-border);overflow:hidden;}
+.listen-track>div{height:100%;width:0;background:var(--c-primary);}
+.result-card{text-align:center;}
+.res-label{font-size:13px;color:var(--c-muted);margin-top:6px;}
+.res-level{font-size:52px;font-weight:800;color:var(--c-primary);line-height:1.15;}
+.res-range{font-size:15px;font-weight:700;}
+.res-ref{font-size:12.5px;color:var(--c-muted);margin:4px 0 18px;}
+.skill-row{display:flex;align-items:center;gap:10px;margin-top:10px;text-align:left;}
+.sk-n{width:42px;flex:none;font-size:13px;font-weight:700;}
+.sk-s{width:64px;flex:none;text-align:right;font-size:13px;color:var(--c-muted);font-weight:700;}
+.course-list{display:grid;gap:8px;}
+.course-item{display:flex;justify-content:space-between;align-items:center;gap:10px;border:1px solid var(--c-border);border-radius:8px;padding:10px 12px;font-size:14px;}
+.course-item small{display:block;color:var(--c-muted);font-size:12px;}
+.done-box{background:#E4F5F0;border:1px solid #BEE6D9;color:#0B6B52;border-radius:10px;padding:14px;font-size:14px;display:flex;gap:10px;}
+.done-box svg{width:20px;height:20px;flex:none;margin-top:2px;}
+@media(max-width:480px){.card{padding:16px;}.res-level{font-size:44px;}.q-actions .btn{flex:1;}}
+
+</style>
+</head>
+<body>
+<header class="site-header">
+  <a class="brand" href="p01_home.html"><img src="../assets/tli-logo.svg" alt="TLI"></a>
+  <button class="menu-toggle" onclick="document.querySelector('.site-nav').classList.toggle('open')" aria-label="開啟選單" data-i18n-aria-label="menu_toggle_aria"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg></button>
+  <nav class="site-nav">
+    <a href="p02_courses.html" data-i18n="nav_courses">課程</a>
+    <a href="p10_enterprise.html" data-i18n="nav_enterprise">企業培訓</a>
+    <a href="p09_events.html" data-i18n="nav_events">活動</a>
+    <a href="p04_teachers.html" data-i18n="nav_teachers">師資</a>
+    <a href="p05_about_locations.html" data-i18n="nav_about">品牌與校區</a>
+    <a href="p08_faq.html" data-i18n="nav_faq">常見問題</a>
+  </nav>
+  <div class="header-right tb-actions">
+    <a class="btn btn-primary btn-sm" data-i18n="btn_consult" href="p06_trial.html?type=consult">預約諮詢</a>
+    <a class="btn btn-accent btn-sm" data-i18n="btn_trial" href="p06_trial.html?type=trial">預約試聽</a>
+    <a class="btn btn-outline btn-sm" data-i18n="btn_login" href="p07_login_register.html">登入</a>
+  </div>
+</header>
+<div class="page-banner">
+  <div class="page-banner-inner">
+    <h1 data-i18n="p15_title">程度測驗</h1>
+    <p data-i18n="p15_banner_sub">10 題、約 10 分鐘，測出目前適合的班級等級。成績報告會送給顧問參考。</p>
+  </div>
+</div>
+
+<main>
+  <div id="loginChip" class="login-chip hidden"></div>
+
+  <!-- 步驟 1：選語言 -->
+  <section id="view-start" class="card">
+    <h2 class="h2" data-i18n="p15_start_h2">選擇要測的教學語言</h2>
+    <p class="muted" data-i18n="p15_start_sub">題目含聽力與閱讀各 5 題，不計時，可隨時回上一題修改答案。</p>
+    <div class="field">
+      <label for="langSel" data-i18n="p15_lang_label">教學語言</label>
+      <select id="langSel" onchange="onLangChange()"></select>
+    </div>
+    <div id="langNote" class="note hidden"></div>
+    <ul class="meta-list">
+      <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg><span data-i18n="p15_meta1">約 10 分鐘</span></li>
+      <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 18v-6a9 9 0 0118 0v6"/><path d="M21 19a2 2 0 01-2 2h-1v-6h3zM3 19a2 2 0 002 2h1v-6H3z"/></svg><span data-i18n="p15_meta2">聽力 5 題，請準備耳機</span></li>
+      <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h12a4 4 0 014 4v12H8a4 4 0 01-4-4z"/><path d="M8 9h8M8 13h6"/></svg><span data-i18n="p15_meta3">閱讀 5 題</span></li>
+      <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 6h16v12H4z"/><path d="M4 7l8 6 8-6"/></svg><span data-i18n="p15_meta4">成績單會存入你的會員帳號，顧問也能查看</span></li>
+    </ul>
+    <div class="actions">
+      <button class="btn btn-accent" id="startBtn" onclick="startTest()" data-i18n="p15_start_btn">開始測驗</button>
+    </div>
+  </section>
+
+  <!-- 步驟 2：作答 -->
+  <section id="view-quiz" class="hidden">
+    <div class="q-head">
+      <div class="q-count" id="qCount">第 1 / 10 題</div>
+      <div class="progress"><div id="qBar"></div></div>
+    </div>
+    <div class="card">
+      <span class="pill" id="qSkill">聽力</span>
+      <div id="listenBox" class="listen-box">
+        <button type="button" class="listen-play" id="listenBtn" onclick="playListen()" aria-label="播放音檔" data-i18n-aria-label="p15_play_aria">
+          <svg viewBox="0 0 24 24" fill="currentColor" width="18" height="18"><path d="M8 5v14l11-7z"/></svg>
+        </button>
+        <div class="listen-meta">
+          <div class="lm-title" id="listenTitle">點擊播放，每題可重播 2 次</div>
+          <div class="listen-track"><div id="listenFill"></div></div>
+        </div>
+      </div>
+      <p class="q-text" id="qText"></p>
+      <div id="qOpts"></div>
+      <div class="q-actions">
+        <button type="button" class="btn btn-outline" id="prevBtn" onclick="stepQ(-1)" data-i18n="p15_prev">上一題</button>
+        <button type="button" class="btn btn-primary" id="nextBtn" onclick="stepQ(1)">下一題</button>
+      </div>
+    </div>
+    <p class="muted small" style="text-align:center;margin-top:10px" data-i18n="p15_leave_note">中途離開不會留下紀錄，可隨時重新開始。</p>
+  </section>
+
+  <!-- 步驟 3：結果 -->
+  <section id="view-result" class="hidden">
+    <div class="card result-card">
+      <div class="muted small" id="resLangLine"></div>
+      <div class="res-label" data-i18n="p15_res_label">建議等級</div>
+      <div class="res-level" id="resLevel">Lv.5</div>
+      <div class="res-range" id="resRange"></div>
+      <div class="res-ref" id="resRef"></div>
+      <div class="skill-row"><span class="sk-n" data-i18n="p15_listening">聽力</span><div class="progress"><div id="resBarL"></div></div><span class="sk-s" id="resScoreL"></span></div>
+      <div class="skill-row"><span class="sk-n" data-i18n="p15_reading">閱讀</span><div class="progress"><div id="resBarR"></div></div><span class="sk-s" id="resScoreR"></span></div>
+      <div class="muted small" style="margin-top:12px" id="resNote"></div>
+    </div>
+
+    <div class="card" id="sendCard">
+      <div id="sendDone" class="done-box hidden"></div>
+    </div>
+
+    <div class="actions center">
+      <button class="btn btn-outline" onclick="resetTest()" data-i18n="p15_retake">重新測驗</button>
+      <a class="btn btn-primary" href="../會員區/m20_transcripts.html?tab=placement" data-en="View transcript">查看成績單</a>
+    </div>
+  </section>
+</main>
+
+<footer class="site-footer">
+  <div class="footer-inner">
+    <div>
+      <h4 data-i18n="footer_brand_name">TLI 中華語文研習所</h4>
+      <li data-i18n="footer_brand_line1">1956 年創立於美國紐澤西，同年於台北建校</li>
+      <li data-i18n="footer_brand_line2">1976 年教育部核定校名為「中華語文研習所」</li>
+    </div>
+    <div>
+      <h4 data-i18n="footer_col_courses">課程</h4>
+      <ul>
+        <li><a href="p02_courses.html" data-i18n="footer_link_chinese">中文課程</a></li>
+        <li><a href="p02_courses.html" data-i18n="footer_link_foreign">外語課程</a></li>
+        <li><a href="p04_teachers.html" data-i18n="footer_link_teachers">師資介紹</a></li>
+      </ul>
+    </div>
+    <div>
+      <h4 data-i18n="footer_col_about">關於 TLI</h4>
+      <ul>
+        <li><a href="p05_about_locations.html" data-i18n="footer_link_history">品牌沿革</a></li>
+        <li><a href="p05_about_locations.html" data-i18n="footer_link_locations">四校地址</a></li>
+        <li><a href="p08_faq.html" data-i18n="footer_link_faq">常見問題</a></li>
+      </ul>
+    </div>
+    <div>
+      <h4 data-i18n="footer_col_start">開始學習</h4>
+      <ul>
+        <li><a href="p06_trial.html" data-i18n="footer_link_trial">免費試聽</a></li>
+        <li><a href="p07_login_register.html" data-i18n="footer_link_login">會員登入／註冊</a></li>
+      </ul>
+    </div>
+  </div>
+  <div class="footer-bottom"><img src="../assets/tli-logo.svg" alt="TLI"><span data-i18n="footer_copyright">© 2026 TLI 中華語文研習所．保留所有權利。</span></div>
+</footer>
+<div class="toast" id="toast"></div>
+<script src="../assets/_shared_masters.js"></script>
+<script>
+/* ===== 題庫：zh、en 各 10 題（聽力 5＋閱讀 5），難度由低到高 ===== */
+var BANKS = {
+  zh:{ speech:'zh-TW', qs:[
+    {skill:'L', lv:1, say:'你好，我叫小明，我是學生。', text:'說話的人是誰？', opts:['老師','學生','醫生','司機'], ans:1},
+    {skill:'R', lv:1, text:'請選出正確的字：我＿＿咖啡。', opts:['吃','看','喝','走'], ans:2},
+    {skill:'L', lv:2, say:'請問洗手間在哪裡？在二樓，右邊。', text:'洗手間在哪裡？', opts:['一樓左邊','二樓右邊','三樓右邊','二樓左邊'], ans:1},
+    {skill:'R', lv:3, text:'我昨天晚上十二點＿＿睡覺，所以今天很累。', opts:['就','才','都','也'], ans:1},
+    {skill:'L', lv:4, say:'週末我本來想去爬山，可是天氣預報說會下雨，所以我決定在家看電影。', text:'他週末打算做什麼？', opts:['去爬山','去看電影','在家看電影','去朋友家'], ans:2},
+    {skill:'R', lv:5, text:'小王的手機壞了，他把手機拿去修理，師傅說要三天才能修好。這段話的意思是？', opts:['手機今天就能拿回來','手機三天後才修好','手機不能修了','小王買了新手機'], ans:1},
+    {skill:'L', lv:6, say:'這家公司下個月要搬到新大樓，除了行政部門之外，其他部門都得在月底前整理好辦公室。', text:'哪個部門不用在月底前整理辦公室？', opts:['行政部門','業務部門','財務部門','研發部門'], ans:0},
+    {skill:'R', lv:7, text:'儘管天氣不好，比賽＿＿照常舉行。', opts:['因此','於是','仍然','況且'], ans:2},
+    {skill:'L', lv:8, say:'雖然這項計畫的預算被刪減了三成，但經理認為只要調整時程，仍然有機會如期完成。', text:'經理對這項計畫的看法是？', opts:['一定做不完','調整時程後仍有機會完成','應該直接取消','需要增加預算'], ans:1},
+    {skill:'R', lv:9, text:'下列哪一句話的語氣最委婉？', opts:['你的做法不對。','我不同意這個方案。','這個做法恐怕還有可以商榷的地方。','這樣做是錯的。'], ans:2}
+  ]},
+  en:{ speech:'en-US', qs:[
+    {skill:'L', lv:1, say:'Hello, my name is Anna. I am a student.', text:'Who is speaking?', opts:['A teacher','A student','A doctor','A driver'], ans:1},
+    {skill:'R', lv:1, text:'Choose the correct word: She ___ a cup of coffee every morning.', opts:['drink','drinks','drinking','drunk'], ans:1},
+    {skill:'L', lv:2, say:'Excuse me, where is the restroom? It is on the second floor, on the right.', text:'Where is the restroom?', opts:['First floor, left','Second floor, right','Third floor, right','Second floor, left'], ans:1},
+    {skill:'R', lv:3, text:'I ___ dinner when my friend called me last night.', opts:['cook','was cooking','cooked','have cooked'], ans:1},
+    {skill:'L', lv:4, say:'I wanted to go hiking this weekend, but the forecast says it will rain, so I decided to stay home and watch a movie.', text:'What will the speaker do this weekend?', opts:['Go hiking','Go to the cinema','Watch a movie at home','Visit a friend'], ans:2},
+    {skill:'R', lv:5, text:'Tom took his phone to the shop. The technician said it would take three days to repair. What does this mean?', opts:['The phone is ready today','The phone will be ready in three days','The phone cannot be repaired','Tom bought a new phone'], ans:1},
+    {skill:'L', lv:6, say:'The company is moving to a new building next month. Except for administration, every department has to clear out its office by the end of this month.', text:'Which department does not need to clear its office?', opts:['Administration','Sales','Finance','Research'], ans:0},
+    {skill:'R', lv:7, text:'___ the bad weather, the match went ahead as planned.', opts:['Because of','Despite','Therefore','Unless'], ans:1},
+    {skill:'L', lv:8, say:'Although the budget for this project has been cut by thirty percent, the manager believes it can still be finished on time if the schedule is adjusted.', text:'What is the manager\'s view?', opts:['It cannot be finished','It can still be finished if the schedule is adjusted','It should be cancelled','The budget must be increased'], ans:1},
+    {skill:'R', lv:9, text:'Which sentence is the most tactful way to disagree?', opts:['You are wrong.','I do not agree with this plan.','I wonder whether there might be another angle worth considering.','That will not work.'], ans:2}
+  ]}
+};
+var LV_BY_CORRECT=[1,1,2,3,4,5,6,7,8,9,9];   /* 答對題數 → 建議 Lv */
+var M = window.TLI_MASTERS;
+var STORE_KEY='tliPlacementResults_v1';
+var MEMBER={studentId:'emma01', name:'Emma Johnson', email:'emma.johnson@example.com'};
+var st={lang:'zh', idx:0, ans:[], plays:{}, rec:null};
+/* 語系小工具：i18n 腳本在頁面最後才載入，載入前一律回中文；載入後依目前語言取字 */
+function T(zh,en){ return window.TLI_I18N ? TLI_I18N.t(zh,en) : zh; }
+var LANG_EN={zh:'Chinese',en:'English',ja:'Japanese',ko:'Korean',de:'German',fr:'French',tw:'Taiwanese',wu:'Shanghainese',yue:'Cantonese'};
+function langLabel(id){ var l=langObj(id); if(!l) return ''; return T(l.name, LANG_EN[id]||l.name); }
+var RANGE_EN={'初級':'Beginner','中級':'Intermediate','中高級':'Upper-intermediate','高級':'Advanced'};
+var TOCFL_EN={'準備級–入門基礎級':'Prep–Entry Level','基礎級–進階級':'Basic–Advanced Level','高階級':'Higher Level','流利級':'Fluency Level'};
+var PROD_EN={skuC01:'Chinese 1-on-1 online lesson, 50 min, 1 lesson',skuC02:'English 1-on-1 online lesson, 50 min, 1 lesson',sku01:'Chinese 1-on-1, 50 min, 1 lesson',sku06:'Chinese online lesson, 60 min, 1 lesson',sku08:'English 1-on-1, 50 min, 1 lesson',skuC03:'Chinese flexible live group class, 1 term (8 lessons)',skuC04:'English flexible live group class, 1 term (8 lessons)',sku02:'Semester class Lv.5–8, 1 term',sku05:'Small group (4 students), 90 min, 1 lesson',sku09:'Japanese semester class, 1 term',sku12:'Taiwanese conversation, 10 lessons'};
+function levelRangeEn(s){ return String(s).replace('（全級別）',' (all levels)').replace('初級–商務英語','Beginner–Business English').replace('初級–中級','Beginner–Intermediate').replace('初級會話','Beginner conversation').replace('不分級','All levels'); }
+
+function $(id){return document.getElementById(id);}
+function toast(msg){var t=$('toast');t.textContent=msg;t.classList.add('show');clearTimeout(window._tt);window._tt=setTimeout(function(){t.classList.remove('show');},2400);}
+function loggedIn(){ try{return sessionStorage.getItem('tliLoggedIn')==='1';}catch(e){return false;} }
+function loadStore(){ try{return JSON.parse(localStorage.getItem(STORE_KEY))||[];}catch(e){return [];} }
+function saveStore(a){ try{localStorage.setItem(STORE_KEY,JSON.stringify(a));}catch(e){} }
+function langObj(id){ return M.teachLangs.filter(function(l){return l.id===id;})[0]; }
+function rangeOfLv(lv){ /* lv 為數字 1–9 或 'H' */
+  var key='Lv.'+lv, n=(lv==='H')?99:lv;
+  return M.levelSystems.ranges.filter(function(r){
+    if(!r.enabled) return false;
+    var a=r.levelFrom.replace('Lv.',''), b=r.levelTo.replace('Lv.','');
+    var an=a==='H'?99:+a, bn=b==='H'?99:+b;
+    return n>=an && n<=bn;
+  })[0];
+}
+function today(){ var d=new Date(); return d.getFullYear()+'-'+('0'+(d.getMonth()+1)).slice(-2)+'-'+('0'+d.getDate()).slice(-2); }
+
+/* ===== 初始化 ===== */
+function init(){
+  /* 會員限定：未登入不顯示題目，導向登入／註冊，登入後回到測驗 */
+  if(!loggedIn()){
+    document.querySelector('main').style.display='none';
+    location.replace('p07_login_register.html?next='+encodeURIComponent('p15_placement_test.html'+location.search));
+    return;
+  }
+  var opts=M.teachLangs.filter(function(l){return l.enabled;}).map(function(l){
+    return '<option value="'+l.id+'">'+(T(l.name,LANG_EN[l.id]||l.name)===l.name?l.name+'（'+l.nameMulti.split('／')[0]+'）':LANG_EN[l.id]||l.nameMulti.split('／')[0])+'</option>';
+  }).join('');
+  var keep=$('langSel').value;
+  $('langSel').innerHTML=opts; if(keep) $('langSel').value=keep;
+  var q=new URLSearchParams(location.search).get('lang');
+  if(q && BANKS[q]) $('langSel').value=q;
+  onLangChange();
+  if(loggedIn()){ $('loginChip').classList.remove('hidden'); $('loginChip').textContent=T('已登入：'+MEMBER.name+'。測驗成績會直接存入你的會員帳號。','Logged in as '+MEMBER.name+'. Your test result is saved to your member account automatically.'); }
+}
+function onLangChange(){
+  var id=$('langSel').value, has=!!BANKS[id];
+  st.lang=id;
+  $('startBtn').classList.toggle('hidden',!has);
+  var n=$('langNote');
+  if(has){ n.classList.add('hidden'); }
+  else { n.classList.remove('hidden'); n.textContent=T(langObj(id).name+'的線上程度測驗尚未開放，請預約顧問諮詢，由顧問安排口試或筆試評估。', 'The online placement test for '+langLabel(id)+' is not available yet. Please book a consultation and a consultant will arrange an oral or written assessment.'); }
+}
+
+/* ===== 作答 ===== */
+function startTest(){
+  st.idx=0; st.ans=[]; st.plays={};
+  $('view-start').classList.add('hidden'); $('view-result').classList.add('hidden'); $('view-quiz').classList.remove('hidden');
+  renderQ(); window.scrollTo(0,0);
+}
+function bank(){ return BANKS[st.lang].qs; }
+function renderQ(){
+  var qs=bank(), q=qs[st.idx];
+  $('qCount').textContent=T('第 '+(st.idx+1)+' / '+qs.length+' 題','Question '+(st.idx+1)+' of '+qs.length);
+  $('qBar').style.width=((st.idx+1)/qs.length*100)+'%';
+  $('qSkill').textContent=q.skill==='L'?T('聽力','Listening'):T('閱讀','Reading');
+  $('listenBox').classList.toggle('hidden',q.skill!=='L');
+  resetListen();
+  $('qText').textContent=q.text;
+  $('qOpts').innerHTML=q.opts.map(function(o,i){
+    return '<button type="button" class="opt'+(st.ans[st.idx]===i?' sel':'')+'" onclick="pick('+i+')"><span class="mk"></span><span>'+o+'</span></button>';
+  }).join('');
+  $('prevBtn').disabled=st.idx===0;
+  $('nextBtn').textContent=st.idx===qs.length-1?T('送出答案','Submit answers'):T('下一題','Next');
+}
+function pick(i){ st.ans[st.idx]=i; renderQ(); }
+function stepQ(d){
+  if(d>0 && st.ans[st.idx]===undefined){ toast(T('請先選一個答案','Please choose an answer first')); return; }
+  stopListen();
+  var n=bank().length;
+  if(d>0 && st.idx===n-1){ finish(); return; }
+  st.idx=Math.max(0,Math.min(n-1,st.idx+d)); renderQ();
+}
+
+/* ===== 聽力：用瀏覽器語音朗讀講稿；不支援時以進度條模擬 ===== */
+var listenTimer=null;
+function resetListen(){
+  stopListen();
+  var left=2-(st.plays[st.idx]||0);
+  $('listenFill').style.width='0';
+  $('listenBtn').disabled=left<=0;
+  $('listenTitle').textContent=left>0?T('點擊播放，還可播放 '+left+' 次','Tap to play; '+left+' play'+(left>1?'s':'')+' left'):T('已達播放次數上限','Play limit reached');
+}
+function stopListen(){
+  if(listenTimer){clearInterval(listenTimer);listenTimer=null;}
+  try{ if(window.speechSynthesis) speechSynthesis.cancel(); }catch(e){}
+}
+function playListen(){
+  var q=bank()[st.idx]; if(listenTimer) return;
+  st.plays[st.idx]=(st.plays[st.idx]||0)+1;
+  var btn=$('listenBtn'); btn.disabled=true; $('listenTitle').textContent=T('播放中…','Playing…');
+  try{
+    if(window.speechSynthesis){
+      var u=new SpeechSynthesisUtterance(q.say); u.lang=BANKS[st.lang].speech; u.rate=.9; speechSynthesis.speak(u);
+    }
+  }catch(e){}
+  var t0=Date.now(), dur=Math.max(3500,q.say.length*110);
+  listenTimer=setInterval(function(){
+    var p=Math.min(1,(Date.now()-t0)/dur); $('listenFill').style.width=(p*100)+'%';
+    if(p>=1){ clearInterval(listenTimer); listenTimer=null; resetListen(); }
+  },100);
+}
+
+/* ===== 結果 ===== */
+function finish(){
+  var qs=bank(), cL=0,cR=0,tL=0,tR=0;
+  qs.forEach(function(q,i){ var ok=st.ans[i]===q.ans; if(q.skill==='L'){tL++;if(ok)cL++;}else{tR++;if(ok)cR++;} });
+  var total=cL+cR, lv=LV_BY_CORRECT[total], r=rangeOfLv(lv);
+  st.rec={ id:'pt_'+Date.now().toString(36), lang:st.lang, langName:langObj(st.lang).name, date:today(),
+    listening:cL, listeningMax:tL, reading:cR, readingMax:tR, total:total, totalMax:qs.length,
+    level:'Lv.'+lv, levelNum:lv, rangeName:r?r.name:'', cefr:r?r.cefr:'', hsk:r?r.hsk:'', tocfl:r?r.tocfl:'',
+    studentId:null, name:'', email:'', status:'已測驗', saved:false };
+  $('view-quiz').classList.add('hidden'); $('view-result').classList.remove('hidden');
+  var x=st.rec;
+  renderResult();
+  x.studentId=MEMBER.studentId; x.name=MEMBER.name; x.email=MEMBER.email; commit();
+  showDone('done_member');
+  window.scrollTo(0,0);
+}
+/* 結果畫面文字：語言切換時重新套用，不重算成績 */
+function renderResult(){
+  var x=st.rec; if(!x) return;
+  var lv=x.levelNum, rr=rangeOfLv(lv), cL=x.listening, tL=x.listeningMax, cR=x.reading, tR=x.readingMax;
+  $('resLangLine').textContent=T(x.langName+'程度測驗．'+x.date, langLabel(x.lang)+' placement test · '+x.date);
+  $('resLevel').textContent=x.level;
+  var rn=T(x.rangeName, RANGE_EN[x.rangeName]||x.rangeName);
+  $('resRange').textContent=rn+(rr?'（'+rr.levelFrom+(rr.levelFrom!==rr.levelTo?'–'+rr.levelTo.replace('Lv.',''):'')+'）':'');
+  $('resRef').textContent=T('對應 CEFR ','Maps to CEFR ')+x.cefr+(x.lang==='zh'?'．'+x.hsk+'．TOCFL '+T(x.tocfl,TOCFL_EN[x.tocfl]||x.tocfl):'');
+  $('resScoreL').textContent=cL+' / '+tL; $('resScoreR').textContent=cR+' / '+tR;
+  $('resBarL').style.width=(cL/tL*100)+'%'; $('resBarR').style.width=(cR/tR*100)+'%';
+  $('resNote').textContent=T('線上測驗包含聽力與閱讀兩部分。','The online test covers listening and reading.');
+  if(st.doneKey) showDone(st.doneKey);
+}
+function showDone(key){
+  st.doneKey=key;
+  var msg = key==='done_member'
+    ? T('成績報告已送顧問，已存入「'+MEMBER.name+'」的會員帳號，可在會員區「線上測驗」查看。','Your score report has been sent to a consultant and saved to the member account of "'+MEMBER.name+'". You can view it under Online Tests in the member area.')
+    : '';
+  showDoneMsg(msg);
+}
+function showDoneMsg(msg){
+  var d=$('sendDone'); d.classList.remove('hidden');
+  d.innerHTML='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.1V12a10 10 0 11-5.9-9.1"/><path d="M22 4L12 14.01l-3-3"/></svg><div id="doneMsg"></div>';
+  $('doneMsg').textContent=msg;
+}
+function commit(){
+  var all=loadStore(); all.unshift(st.rec); saveStore(all); st.rec.saved=true;
+}
+function resetTest(){
+  st.idx=0; st.ans=[]; st.rec=null; st.doneKey=null;
+  $('view-result').classList.add('hidden'); $('view-start').classList.remove('hidden'); window.scrollTo(0,0);
+}
+init();
+
+/* 語言切換時重畫由 JS 組出來的文字（選單、題目、結果） */
+function rerenderLang(){
+  var opts=M.teachLangs.filter(function(l){return l.enabled;});
+  var keep=$('langSel').value;
+  $('langSel').innerHTML=opts.map(function(l){
+    return '<option value="'+l.id+'">'+(T(l.name,LANG_EN[l.id]||l.name)===l.name?l.name+'（'+l.nameMulti.split('／')[0]+'）':LANG_EN[l.id]||l.nameMulti.split('／')[0])+'</option>';
+  }).join('');
+  $('langSel').value=keep||st.lang; onLangChange();
+  if(loggedIn()){ $('loginChip').textContent=T('已登入：'+MEMBER.name+'。測驗成績會直接存入你的會員帳號。','Logged in as '+MEMBER.name+'. Your test result is saved to your member account automatically.'); }
+  if(!$('view-quiz').classList.contains('hidden')){ renderQ(); }
+  if(!$('view-result').classList.contains('hidden')){ renderResult(); }
+}
+</script>
+<script>window.TLI_I18N_PAGE_LANGS=['zh-TW','zh-CN','en','ja','de'];</script>
+<script src="../assets/_i18n_dict.js"></script>
+<script src="../assets/_i18n_dict_ja.js"></script>
+<script src="../assets/_i18n_dict_de.js"></script>
+<script src="../assets/_i18n_dict_public.js"></script>
+<script src="../assets/_i18n_dict_public_ja.js"></script>
+<script src="../assets/_i18n_dict_public_de.js"></script>
+<script src="../assets/_i18n.js"></script>
+<script>
+TLI_I18N.onRefresh(rerenderLang);
+TLI_I18N.init();
+</script>
+</body>
+</html>

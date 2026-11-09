@@ -1,0 +1,405 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>結業證書｜TLI Connect 會員區</title>
+<style>
+:root{
+  --c-primary:#1B4E8C;--c-primary-dark:#123A68;--c-accent:#E8792B;--c-accent-dark:#CF691F;--c-secondary:#0F9B79;
+  --c-bg:#F5F7FA;--c-border:#E4E7EC;--c-muted:#667085;--c-text:#101828;
+  --radius:12px;--radius-sm:8px;--shadow:0 1px 3px rgba(16,24,40,.08),0 1px 2px rgba(16,24,40,.04);--shadow-lg:0 8px 24px rgba(16,24,40,.16);
+  --topbar-h:52px;--bottomnav-h:64px;
+}
+*{box-sizing:border-box;}
+html,body{margin:0;padding:0;}
+body{font-family:"Noto Sans TC","Microsoft JhengHei",system-ui,-apple-system,"Segoe UI",sans-serif;background:var(--c-bg);color:var(--c-text);line-height:1.55;font-size:15px;-webkit-tap-highlight-color:transparent;}
+a{color:inherit;text-decoration:none;}
+img,svg{display:block;}
+button{font-family:inherit;}
+button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible{outline:2px solid var(--c-primary);outline-offset:2px;}
+.app{min-height:100vh;position:relative;}
+.topbar{position:sticky;top:0;z-index:60;height:var(--topbar-h);background:#fff;border-bottom:1px solid var(--c-border);display:flex;align-items:center;justify-content:space-between;padding:0 14px;gap:10px;}
+.topbar-left{display:flex;align-items:center;gap:8px;min-width:0;}
+.topbar-logo-wrap{width:26px;height:22px;overflow:hidden;position:relative;flex:none;}
+.topbar-logo-wrap img{position:absolute;left:0;top:0;height:22px;width:auto;max-width:none;}
+.back-btn{width:30px;height:30px;border-radius:50%;border:1px solid var(--c-border);background:#fff;display:flex;align-items:center;justify-content:center;color:var(--c-text);flex:none;cursor:pointer;}
+.back-btn svg{width:16px;height:16px;}
+.topbar-title{font-size:16.5px;font-weight:700;color:var(--c-text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.topbar-actions{display:flex;align-items:center;gap:6px;position:relative;}
+.mini-select{border:1px solid var(--c-border);border-radius:6px;padding:4px 6px;font-size:11.5px;background:#fff;color:var(--c-muted);font-family:inherit;max-width:96px;}
+.bell-btn{position:relative;width:32px;height:32px;border-radius:50%;border:1px solid var(--c-border);background:#fff;cursor:pointer;display:flex;align-items:center;justify-content:center;color:var(--c-muted);}
+.bell-btn svg{width:16px;height:16px;}
+.bell-btn .dot{position:absolute;top:5px;right:6px;width:7px;height:7px;border-radius:50%;background:var(--c-accent);border:1.5px solid #fff;}
+.bell-panel{display:none;position:absolute;right:0;top:40px;width:264px;background:#fff;border:1px solid var(--c-border);border-radius:var(--radius-sm);box-shadow:var(--shadow-lg);padding:6px 0;z-index:90;}
+.bell-panel.open{display:block;}
+.bell-panel h4{margin:0;padding:8px 14px 6px;font-size:12.5px;color:var(--c-muted);font-weight:700;}
+.bell-item{padding:9px 14px;font-size:12.5px;border-top:1px solid var(--c-border);display:flex;gap:8px;}
+.bell-item .b-dot{width:6px;height:6px;border-radius:50%;background:var(--c-accent);margin-top:5px;flex:none;}
+.bell-item p{margin:0;color:var(--c-text);}
+.bell-item span{color:var(--c-muted);font-size:11px;}
+.side-nav{display:none;}
+@media(min-width:1024px){
+  .side-nav{display:flex;flex-direction:column;position:fixed;left:0;top:0;bottom:0;width:310px;background:#fff;border-right:1px solid var(--c-border);padding:18px 12px;z-index:50;}
+  .side-brand{display:flex;align-items:center;padding:0 8px 18px;}
+  .side-brand img{height:28px;width:auto;}
+  .side-identity{padding:0 8px 14px;margin-bottom:6px;font-size:12.5px;font-weight:700;color:var(--c-text);border-bottom:1px solid var(--c-border);}
+  .side-link{display:flex;align-items:center;gap:10px;padding:10px 10px;border-radius:8px;font-size:14px;font-weight:600;color:var(--c-muted);margin-bottom:2px;}
+  .side-link svg{width:19px;height:19px;flex:none;}
+  .side-link.active{background:#E6EEF8;color:var(--c-primary);}
+  .side-link:hover:not(.active){background:var(--c-bg);}
+  .app.has-side .topbar{margin-left:310px;}
+  .app.has-side .content{margin-left:310px;}
+}
+.bottom-nav{position:fixed;left:0;right:0;bottom:0;z-index:70;background:#fff;border-top:1px solid var(--c-border);display:flex;height:var(--bottomnav-h);padding-bottom:env(safe-area-inset-bottom,0);box-shadow:0 -2px 10px rgba(16,24,40,.06);}
+.bottom-nav a{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;font-size:11px;color:var(--c-muted);font-weight:600;min-height:44px;}
+.bottom-nav a svg{width:22px;height:22px;}
+.bottom-nav a.active{color:var(--c-primary);}
+@media(min-width:1024px){.bottom-nav{display:none;}}
+.content{max-width:960px;margin:0 auto;padding:18px 16px calc(var(--bottomnav-h) + 24px);}
+@media(min-width:1024px){.content{padding:26px 32px 40px;}}
+.page-h{font-size:19px;font-weight:700;margin:2px 0 4px;}
+.page-sub{color:var(--c-muted);font-size:13px;margin:0 0 18px;}
+.section-title{font-size:15px;font-weight:700;margin:24px 0 12px;}
+.section-title.first{margin-top:4px;}
+.card{background:#fff;border:1px solid var(--c-border);border-radius:var(--radius);box-shadow:var(--shadow);padding:16px;}
+.card + .card{margin-top:12px;}
+.flex-between{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;}
+.stack{display:flex;flex-direction:column;gap:10px;}
+.muted{color:var(--c-muted);}
+.small{font-size:12px;}
+.divider{border:none;border-top:1px solid var(--c-border);margin:14px 0;}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;border:none;border-radius:var(--radius-sm);padding:11px 18px;font-size:14px;font-weight:700;cursor:pointer;font-family:inherit;transition:background .15s;min-height:44px;}
+.btn-primary{background:var(--c-primary);color:#fff;}
+.btn-primary:hover{background:var(--c-primary-dark);}
+.btn-accent{background:var(--c-accent);color:#fff;}
+.btn-accent:hover{background:var(--c-accent-dark);}
+.btn-outline{background:#fff;border:1px solid var(--c-border);color:var(--c-text);}
+.btn-outline:hover{background:var(--c-bg);}
+.btn-ghost{background:none;color:var(--c-muted);}
+.btn:disabled{background:var(--c-border)!important;color:#98A2B3!important;cursor:not-allowed;border-color:var(--c-border)!important;}
+.btn-sm{padding:7px 12px;font-size:12.5px;min-height:36px;}
+.btn-block{width:100%;}
+.badge{display:inline-block;padding:2px 9px;border-radius:20px;font-size:11.5px;font-weight:700;white-space:nowrap;}
+.badge-info{background:#E6EEF8;color:var(--c-primary);}
+.badge-warn{background:#FCEBDC;color:var(--c-accent-dark);}
+.badge-ok{background:#E4F5F0;color:#0B6B52;}
+.badge-muted{background:var(--c-border);color:var(--c-muted);}
+.badge-full{background:#FBEAEA;color:#B42318;}
+.progress{height:8px;border-radius:6px;background:var(--c-border);overflow:hidden;}
+.progress > div{height:100%;background:var(--c-primary);border-radius:6px;transition:width .25s;}
+.progress.warn > div{background:var(--c-accent);}
+.list-row{display:flex;align-items:center;gap:12px;padding:12px 0;border-top:1px solid var(--c-border);}
+.list-row:first-child{border-top:none;padding-top:0;}
+.list-row .icon-box{width:38px;height:38px;border-radius:9px;background:var(--c-bg);display:flex;align-items:center;justify-content:center;flex:none;color:var(--c-primary);}
+.list-row .icon-box svg{width:18px;height:18px;}
+.list-row .body{flex:1;min-width:0;}
+.list-row .body h4{margin:0;font-size:13.5px;font-weight:700;}
+.list-row .body p{margin:2px 0 0;font-size:12px;color:var(--c-muted);}
+.list-row .trail{flex:none;text-align:right;}
+.lv-row.selected{background:#F7FAFF;box-shadow:inset 3px 0 0 var(--c-primary);border-radius:var(--radius-sm);}
+.tabs{display:flex;gap:4px;border-bottom:1px solid var(--c-border);margin:18px 0 14px;overflow-x:auto;}
+.tab-btn{padding:9px 14px;border:none;background:none;font-size:13.5px;font-weight:700;color:var(--c-muted);cursor:pointer;border-bottom:2px solid transparent;white-space:nowrap;font-family:inherit;min-height:40px;}
+.tab-btn.active{color:var(--c-primary);border-color:var(--c-primary);}
+.tab-panel{display:none;}
+.tab-panel.active{display:block;}
+.banner{border-radius:var(--radius);padding:12px 14px;margin-bottom:14px;font-size:13px;display:flex;gap:9px;align-items:flex-start;}
+.banner-success{background:#E4F5F0;color:#0B6B52;border:1px solid #BEE6D9;}
+.banner-warn{background:#FCEBDC;color:#9A4A0F;border:1px solid #F5CBA1;}
+.banner-info{background:#E6EEF8;color:var(--c-primary-dark);border:1px solid #C7DAF0;}
+.hidden{display:none!important;}
+.toast{position:fixed;left:50%;bottom:calc(var(--bottomnav-h) + 18px);transform:translateX(-50%);background:#101828;color:#fff;padding:10px 20px;border-radius:20px;font-size:13px;font-weight:700;z-index:120;box-shadow:var(--shadow-lg);white-space:nowrap;max-width:88vw;overflow:hidden;text-overflow:ellipsis;}
+.toast.hidden{display:none;}
+@media(min-width:1024px){.toast{bottom:24px;}}
+.explore-link{display:flex;align-items:center;gap:5px;font-size:12px;font-weight:700;color:var(--c-primary);white-space:nowrap;padding:4px 2px;flex:none;}
+.explore-link svg{width:15px;height:15px;flex:none;}
+@media(max-width:639px){.explore-link-text{display:none;}}
+.sheet-overlay{position:fixed;inset:0;background:rgba(16,24,40,.45);z-index:100;display:flex;align-items:flex-end;justify-content:center;}
+.sheet-overlay.hidden{display:none;}
+.sheet{background:#fff;width:100%;max-width:480px;border-radius:18px 18px 0 0;padding:18px 18px calc(18px + env(safe-area-inset-bottom,0));max-height:86vh;overflow-y:auto;animation:sheetUp .18s ease-out;}
+@keyframes sheetUp{from{transform:translateY(16px);opacity:.6;}to{transform:translateY(0);opacity:1;}}
+.sheet-handle{width:36px;height:4px;background:var(--c-border);border-radius:4px;margin:0 auto 14px;}
+.sheet h3{margin:0 0 4px;font-size:16px;}
+@media(min-width:640px){.sheet-overlay{align-items:center;}.sheet{border-radius:16px;}}
+.skill-row{display:flex;align-items:center;gap:10px;margin-top:12px;}
+.skill-row .skill-label{width:34px;flex:none;font-size:13px;font-weight:700;}
+.skill-row .progress{flex:1;}
+.skill-row .skill-score{width:56px;flex:none;text-align:right;font-size:12.5px;color:var(--c-muted);font-weight:700;}
+
+/* ---------- 線上測驗專用 ---------- */
+.quiz-card{cursor:default;}
+.back-list-btn{margin-bottom:12px;}
+.q-topbar{position:sticky;top:var(--topbar-h);z-index:40;background:#F5F7FA;padding:14px 0 4px;margin:0 -16px;padding-left:16px;padding-right:16px;}
+@media(min-width:1024px){.q-topbar{margin:0;padding-left:0;padding-right:0;}}
+.q-progress-row{display:flex;align-items:center;gap:10px;}
+.q-progress-row .progress{flex:1;}
+.q-timer{flex:none;font-size:14px;font-weight:700;color:var(--c-primary);background:#E6EEF8;border-radius:20px;padding:4px 12px;white-space:nowrap;}
+.q-timer.low{color:#B42318;background:#FBEAEA;}
+.qnav{display:flex;gap:6px;flex-wrap:wrap;margin:12px 0 16px;}
+.qnav button{width:32px;height:32px;border-radius:8px;border:1px solid var(--c-border);background:#fff;font-size:12.5px;font-weight:700;color:var(--c-muted);cursor:pointer;position:relative;font-family:inherit;}
+.qnav button.answered{background:#E4F5F0;border-color:#BEE6D9;color:#0B6B52;}
+.qnav button.current{border-color:var(--c-primary);color:var(--c-primary);box-shadow:0 0 0 2px #E6EEF8;}
+.qnav button.flagged::after{content:'';position:absolute;top:-3px;right:-3px;width:8px;height:8px;border-radius:50%;background:var(--c-accent);border:1.5px solid #fff;}
+.q-type-badge{margin-bottom:8px;}
+.q-text{font-size:15.5px;font-weight:700;margin:6px 0 16px;}
+.option-row{display:flex;align-items:center;gap:10px;padding:11px 12px;border:1px solid var(--c-border);border-radius:var(--radius-sm);margin-bottom:8px;cursor:pointer;font-size:13.5px;}
+.option-row:hover{border-color:var(--c-primary);}
+.option-row.selected{border-color:var(--c-primary);background:#F7FAFF;}
+.option-row .opt-mark{width:18px;height:18px;flex:none;border:1.5px solid var(--c-border);display:flex;align-items:center;justify-content:center;color:#fff;}
+.option-row.selected .opt-mark{background:var(--c-primary);border-color:var(--c-primary);}
+.option-row .opt-mark svg{width:12px;height:12px;}
+.opt-mark.circle{border-radius:50%;}
+.opt-mark.square{border-radius:4px;}
+.fill-input{width:100%;border:1px solid var(--c-border);border-radius:var(--radius-sm);padding:11px 12px;font-size:14px;font-family:inherit;}
+.fill-input:focus{border-color:var(--c-primary);}
+.listen-box{background:var(--c-bg);border-radius:var(--radius);padding:16px;display:flex;align-items:center;gap:12px;margin-bottom:14px;}
+.listen-play{width:44px;height:44px;border-radius:50%;background:var(--c-primary);color:#fff;border:none;display:flex;align-items:center;justify-content:center;flex:none;cursor:pointer;}
+.listen-play svg{width:18px;height:18px;}
+.listen-box.playing .listen-play{background:var(--c-accent);}
+.listen-meta{flex:1;min-width:0;}
+.listen-meta .lm-title{font-size:12.5px;font-weight:700;color:var(--c-text);margin-bottom:6px;}
+.listen-track{height:5px;border-radius:4px;background:var(--c-border);overflow:hidden;}
+.listen-track > div{height:100%;width:0%;background:var(--c-primary);transition:width .1s linear;}
+.q-actions{display:flex;justify-content:space-between;align-items:center;gap:8px;margin-top:18px;flex-wrap:wrap;}
+.flag-btn{display:flex;align-items:center;gap:5px;background:none;border:1px solid var(--c-border);border-radius:var(--radius-sm);padding:9px 12px;font-size:12.5px;font-weight:700;color:var(--c-muted);cursor:pointer;font-family:inherit;min-height:40px;}
+.flag-btn svg{width:14px;height:14px;}
+.flag-btn.on{color:var(--c-accent-dark);border-color:#F5CBA1;background:#FCEBDC;}
+.result-score-wrap{text-align:center;padding:8px 0 4px;}
+.result-score{font-size:44px;font-weight:800;color:var(--c-primary);line-height:1;}
+.result-score span{font-size:18px;color:var(--c-muted);font-weight:700;}
+.review-item{border-top:1px solid var(--c-border);padding:12px 0;}
+.review-item:first-child{border-top:none;padding-top:0;}
+.review-head{display:flex;align-items:flex-start;gap:10px;cursor:pointer;}
+.review-head .icon-box{width:30px;height:30px;border-radius:8px;flex:none;display:flex;align-items:center;justify-content:center;}
+.review-head .icon-box.ok{background:#E4F5F0;color:#0B6B52;}
+.review-head .icon-box.no{background:#FBEAEA;color:#B42318;}
+.review-head .icon-box svg{width:15px;height:15px;}
+.review-head p{margin:0;font-size:13.5px;font-weight:600;flex:1;}
+.review-detail{display:none;margin:8px 0 0 40px;font-size:12.5px;color:var(--c-muted);background:var(--c-bg);border-radius:var(--radius-sm);padding:10px 12px;}
+.review-detail.open{display:block;}
+.review-detail p{margin:0 0 4px;color:var(--c-muted);font-size:12.5px;font-weight:400;}
+.review-detail strong{color:var(--c-text);}
+.empty-state{text-align:center;padding:28px 16px;color:var(--c-muted);}
+.empty-state h4{color:var(--c-text);font-size:14px;margin:0 0 4px;}
+.empty-state p{font-size:12.5px;margin:0;}
+.ww-embed-wrap{position:relative;width:100%;padding-top:56%;border:1px solid var(--c-border);border-radius:var(--radius-sm);overflow:hidden;background:var(--c-bg);}
+.ww-embed-wrap iframe{position:absolute;inset:0;width:100%;height:100%;border:0;}
+.badge-ww{background:#FCEBDC;color:#9A4A0F;}
+
+/* ---------- 次層切換（segment，跨頁導覽） ---------- */
+.list-tools{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-bottom:12px;}
+.list-tools input,.list-tools select{border:1px solid var(--c-border);border-radius:8px;padding:9px 10px;font-size:13px;font-family:inherit;background:#fff;color:var(--c-text);min-height:40px;}
+.list-tools input{flex:1;min-width:160px;}
+.pl-detail{display:none;margin-top:10px;background:var(--c-bg);border-radius:8px;padding:10px 12px;font-size:12.5px;color:var(--c-muted);}
+.pl-detail.open{display:block;}
+.pl-detail b{color:var(--c-text);}
+.cd-bar{display:flex;align-items:center;gap:10px;flex-wrap:wrap;}
+.nav-segment{display:flex;gap:4px;border-bottom:1px solid var(--c-border);margin:0 0 16px;overflow-x:auto;}
+.nav-segment-link{padding:9px 14px;font-size:13.5px;font-weight:700;color:var(--c-muted);white-space:nowrap;border-bottom:2px solid transparent;flex:none;}
+.nav-segment-link.active{color:var(--c-primary);border-color:var(--c-primary);}
+.nav-segment-link:hover:not(.active){color:var(--c-text);}
+.cert-layout{display:grid;gap:18px;grid-template-columns:1fr;}
+@media(min-width:1100px){.cert-layout{grid-template-columns:minmax(300px,380px) 1fr;align-items:start;}}
+.list-tools{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px;}
+.list-tools input,.list-tools select{border:1px solid var(--c-border);border-radius:8px;padding:9px 10px;font-size:13px;font-family:inherit;background:#fff;color:var(--c-text);min-height:40px;}
+.list-tools input{flex:1;min-width:140px;}
+.cert-item{display:block;width:100%;text-align:left;background:#fff;border:1px solid var(--c-border);border-radius:var(--radius);padding:12px 14px;cursor:pointer;font-family:inherit;margin-bottom:10px;}
+.cert-item.sel{border-color:var(--c-primary);box-shadow:0 0 0 2px #E6EEF8;}
+.cert-item h4{margin:6px 0 2px;font-size:14.5px;}
+.cert-item p{margin:0;font-size:12px;color:var(--c-muted);}
+.cert-paper{background:#fff;border:1px solid var(--c-border);border-radius:var(--radius);padding:14px;box-shadow:var(--shadow);}
+.cert-frame{border:3px double #B8923A;padding:28px 22px;text-align:center;background:linear-gradient(#FFFEFB,#FBF7EC);display:flex;flex-direction:column;justify-content:center;gap:6px;min-height:300px;}
+.cert-frame img{height:30px;width:auto;margin:0 auto 6px;}
+.cert-frame .c-en{font-size:11px;letter-spacing:.2em;color:#8A6D2B;text-transform:uppercase;}
+.cert-frame .c-title{font-size:26px;font-weight:800;color:#1B4E8C;letter-spacing:.2em;}
+.cert-frame .c-line{font-size:12.5px;color:var(--c-muted);}
+.cert-frame .c-name{font-size:24px;font-weight:800;border-bottom:1px solid #B8923A;display:inline-block;padding:0 24px 4px;margin:6px auto;}
+.cert-frame .c-course{font-size:16px;font-weight:700;}
+.cert-frame .c-foot{display:flex;justify-content:space-between;gap:10px;font-size:11.5px;color:var(--c-muted);margin-top:10px;text-align:left;flex-wrap:wrap;}
+.verify-box{margin-top:18px;}
+.verify-box ol{margin:8px 0 0;padding-left:20px;font-size:13px;color:var(--c-muted);}
+.verify-row{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px;}
+.verify-row input{flex:1;min-width:180px;border:1px solid var(--c-border);border-radius:8px;padding:10px 12px;font-size:14px;font-family:inherit;}
+.dl-bar{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px;}
+@media(max-width:480px){.cert-frame{padding:18px 12px;min-height:260px;}.cert-frame .c-title{font-size:21px;}.cert-frame .c-name{font-size:20px;padding:0 10px 4px;}}
+@media print{body *{visibility:hidden;}#certPaper,#certPaper *{visibility:visible;}#certPaper{position:absolute;left:0;top:0;width:100%;border:none;box-shadow:none;}}
+</style>
+</head>
+<body>
+<div class="app has-side">
+  <nav class="side-nav" aria-label="主導覽" data-i18n-aria-label="member.nav.aria">
+    <div class="side-brand"><a href="../公開網站/p01_home.html" aria-label="TLI 官網" data-i18n-aria-label="member.logoAria"><img src="../assets/tli-logo.svg" alt="TLI"></a></div>
+    <div class="side-identity">Emma Johnson｜<span data-i18n="member.role.student">學員</span></div>
+    <a class="side-link" href="m01_home.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11l9-8 9 8"/><path d="M5 10v10a1 1 0 001 1h3v-6h6v6h3a1 1 0 001-1V10"/></svg><span data-i18n="member.nav.home">首頁</span></a>
+    <a class="side-link" href="m02_booking.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18M12 14v6M9 17h6"/></svg><span data-i18n="member.nav.booking">預約與報名</span></a>
+    <a class="side-link" href="m03_schedule.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg><span data-i18n="member.nav.schedule">課表</span></a>
+    <a class="side-link" href="m08_self_paced.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 3h6a4 4 0 014 4v14a3 3 0 00-3-3H2z"/><path d="M22 3h-6a4 4 0 00-4 4v14a3 3 0 013-3h7z"/></svg><span data-i18n="member.nav.learning">學習</span></a>
+    <a class="side-link" href="m18_learning_dashboard.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/></svg><span data-i18n="m19.nav.dashboard">學習儀表板</span></a>
+    <a class="side-link" href="m20_transcripts.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 3H7a2 2 0 00-2 2v14a2 2 0 002 2h10a2 2 0 002-2V8z"/><path d="M14 3v5h5"/><path d="M9 13h6M9 17h6"/></svg><span data-en="Transcripts">成績單</span></a>
+    <a class="side-link active" href="m19_certificates.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="9" r="6"/><path d="M8.5 14L7 22l5-3 5 3-1.5-8"/></svg><span data-i18n="m19.title">結業證書</span></a>
+    <a class="side-link" href="m04_course_detail.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="5" width="20" height="14" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/><line x1="6" y1="15" x2="10" y2="15"/></svg><span data-i18n="member.nav.myPlan">我的方案</span></a>
+    <a class="side-link" href="m07_profile.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 4-7 8-7s8 3 8 7"/></svg><span data-i18n="member.nav.me">我的</span></a>
+    <a class="side-link" href="../公開網站/p01_home.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg><span data-i18n="member.nav.backToSite">回官網</span></a>
+  </nav>
+
+  <header class="topbar">
+    <div class="topbar-left">
+      <a class="topbar-logo-wrap" href="../公開網站/p01_home.html" aria-label="TLI 官網" data-i18n-aria-label="member.logoAria"><img src="../assets/tli-logo.svg" alt="TLI"></a>
+      <button class="back-btn" onclick="if(history.length>1){history.back();}else{location.href='m08_self_paced.html';}" aria-label="返回" data-i18n-aria-label="member.back"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></button>
+      <div class="topbar-title" data-i18n="m19.title">結業證書</div>
+    </div>
+    <div class="topbar-actions">
+      <a class="explore-link" href="../公開網站/p02_courses.html" aria-label="探索課程" title="探索課程" data-i18n-aria-label="member.explore" data-i18n-title="member.explore">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polygon points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88 16.24 7.76"/></svg>
+        <span class="explore-link-text" data-i18n="member.explore">探索課程</span>
+      </a>
+      <button class="bell-btn" onclick="toggleBell()" aria-label="通知" data-i18n-aria-label="member.notifications">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8a6 6 0 10-12 0c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.7 21a2 2 0 01-3.4 0"/></svg>
+        <span class="dot"></span>
+      </button>
+      <div class="bell-panel" id="bellPanel">
+        <h4 data-i18n="member.notifications">通知</h4>
+        <div class="bell-item"><span class="b-dot"></span><div><p data-i18n="m19.notif">結業證書已核發，可下載 PDF</p><span><span data-i18n="member.today">今天</span> 09:20</span></div></div>
+      </div>
+    </div>
+  </header>
+
+  <main class="content">
+    <nav class="nav-segment" aria-label="次選單" data-i18n-aria-label="m11.subnavAria">
+      <a class="nav-segment-link" href="m08_self_paced.html" data-i18n="m11.seg.selfpaced">自學課程</a>
+      <a class="nav-segment-link" href="m11_quiz.html" data-i18n="m11.title">線上測驗</a>
+      <a class="nav-segment-link active" href="m19_certificates.html" data-i18n="m19.title">結業證書</a>
+      <a class="nav-segment-link" href="m17_feedback.html" data-i18n="m11.seg.feedback">課堂回饋</a>
+    </nav>
+    <p class="page-h" data-i18n="m19.title">結業證書</p>
+    <p class="page-sub" data-i18n="m19.sub">通過結業考後核發的證書，可預覽、下載 PDF。</p>
+
+    <div id="certEmpty" class="empty-state hidden card">
+      <h4 data-i18n="m19.emptyT">尚未取得證書</h4>
+      <p data-i18n="m19.emptyD">完成階段考／結業考後會顯示在這裡。</p>
+      <a class="btn btn-accent btn-sm" style="margin-top:12px" href="m11_quiz.html?tab=stage" data-i18n="m19.goStage">前往階段考／結業考</a>
+    </div>
+
+    <div class="cert-layout" id="certLayout">
+      <div>
+        <div class="list-tools">
+          <input type="search" id="cSearch" placeholder="搜尋課程或證書編號" data-i18n-placeholder="m19.searchPh" oninput="renderList()" aria-label="搜尋證書" data-i18n-aria-label="m19.searchAria">
+          <select id="cSort" onchange="renderList()" aria-label="排序" data-i18n-aria-label="m11.sortAria"><option value="new" data-i18n="m19.sortNew">核發日新到舊</option><option value="old" data-i18n="m19.sortOld">核發日舊到新</option><option value="score" data-i18n="m19.sortScore">成績高到低</option></select>
+        </div>
+        <div id="certList"></div>
+        <p class="muted small hidden" id="certNone" data-i18n="m19.none">沒有符合條件的證書。</p>
+      </div>
+      <div>
+        <div class="cert-paper" id="certPaper">
+          <div class="cert-frame">
+            <img src="../assets/tli-logo.svg" alt="TLI">
+            <div class="c-en">Certificate of Completion</div>
+            <div class="c-title" data-i18n="m19.paperTitle">結業證書</div>
+            <div class="c-line" data-i18n="m19.certify">茲證明</div>
+            <div><span class="c-name" id="pvName">－</span></div>
+            <div class="c-line" data-i18n="m19.completed">已完成下列課程並通過結業考核</div>
+            <div class="c-course" id="pvCourse">－</div>
+            <div class="c-foot"><span><span data-i18n="m19.issueDate">核發日期：</span><b id="pvDate">－</b></span><span><span data-i18n="m19.score">考核成績：</span><b id="pvScore">－</b></span><span><span data-i18n="m19.certNo">證書編號：</span><b id="pvNo">－</b></span></div>
+            <div class="c-foot"><span data-i18n="m19.brand">TLI 中華語文研習所</span><span data-i18n="m19.office">教務處</span></div>
+          </div>
+        </div>
+        <div class="dl-bar">
+          <button class="btn btn-primary" id="dlBtn" onclick="downloadPdf()" data-i18n="m19.dl">下載 PDF</button>
+          <button class="btn btn-outline" onclick="copyNo()" data-i18n="m19.copy">複製證書編號</button>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <nav class="bottom-nav">
+    <a href="m01_home.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11l9-8 9 8"/><path d="M5 10v10a1 1 0 001 1h3v-6h6v6h3a1 1 0 001-1V10"/></svg><span data-i18n="member.nav.home">首頁</span></a>
+    <a href="m02_booking.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18M12 14v6M9 17h6"/></svg><span data-i18n="member.nav.booking">預約與報名</span></a>
+    <a href="m03_schedule.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg><span data-i18n="member.nav.schedule">課表</span></a>
+    <a href="m08_self_paced.html" class="active"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 3h6a4 4 0 014 4v14a3 3 0 00-3-3H2z"/><path d="M22 3h-6a4 4 0 00-4 4v14a3 3 0 013-3h7z"/></svg><span data-i18n="member.nav.learning">學習</span></a>
+    <a href="m07_profile.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 4-7 8-7s8 3 8 7"/></svg><span data-i18n="member.nav.me">我的</span></a>
+  </nav>
+</div>
+<div class="toast hidden" id="toast"></div>
+<script>window.TLI_I18N_PAGE_LANGS=['zh-TW','zh-CN','en','ja','de'];</script>
+<script src="../assets/_shared_masters.js"></script>
+<script src="../assets/_i18n_dict.js"></script>
+<script src="../assets/_i18n_dict_member.js"></script>
+<script src="../assets/_i18n_dict_ja.js"></script>
+<script src="../assets/_i18n_dict_de.js"></script>
+<script src="_project_learning.js"></script>
+<script src="../assets/_i18n.js"></script>
+<script>
+var CERT_KEY='tliCertificates_v1';
+var SEED=[
+  {no:'TLI-C-202608-0107', examId:'s1', title:'發音基礎 20 講', course:'發音基礎 20 講', name:'Emma Johnson', date:'2026-08-20', score:91, passScore:70, level:'Lv.5'},
+  {no:'TLI-C-202511-0042', examId:'s0', title:'台灣文化與生活 10 講', course:'台灣文化與生活 10 講', name:'Emma Johnson', date:'2025-11-10', score:84, passScore:70, level:'Lv.5'}
+];
+var sel=null;
+/* 課程／評量名稱英文對照（示範資料名稱；英文模式用，查不到就維持原文） */
+var NAME_EN_LIST=[
+ ['企業華語線上培訓（團體班）','Corporate Chinese Online Training (Group Class)'],['企業華語線上培訓','Corporate Chinese Online Training'],
+ ['商務華語情境 16 講','Business Chinese in Context (16 lectures)'],['發音基礎 20 講','Pronunciation Basics (20 lectures)'],
+ ['中文一對一－會話進階','Chinese 1-on-1: Advanced Conversation'],['旅遊華語會話 12 講','Travel Chinese Conversation (12 lectures)'],
+ ['商務書信寫作 8 講','Business Letter Writing (8 lectures)'],['台灣文化與生活 10 講','Taiwan Culture and Life (10 lectures)'],
+ ['成語與慣用語 12 講','Idioms and Expressions (12 lectures)'],['職場面試會話 10 講','Job Interview Conversation (10 lectures)'],
+ ['中華文化與歷史 8 講','Chinese Culture and History (8 lectures)'],
+ ['L05 商務會議開場','L05 Opening a Business Meeting'],['L12 語調練習','L12 Intonation Practice'],['L05 兒化音','L05 Erhua Sounds'],
+ ['語調練習隨堂評量','Intonation Practice Quick Quiz'],['緊急狀況求助評量','Asking for Help in Emergencies Quiz'],['商務會議開場評量','Business Meeting Opening Quiz'],
+ ['開會用語評量','Meeting Vocabulary Quiz'],['期中複習評量','Midterm Review Quiz'],['期末情境評量','Final Scenario Quiz'],['兒化音評量','Erhua Sounds Quiz'],
+ ['第一階複習評量','Stage 1 Review Quiz'],['總複習評量','Comprehensive Review Quiz'],['入門單元評量','Intro Unit Quiz'],['單元評量','Unit Quiz'],['期末評量','Final Quiz'],
+ ['第二階段考','Stage 2 Exam'],['第一階段考','Stage 1 Exam'],['結業考','Final Exam'],['期末','Final']
+];
+function nameEn(zh){ var s=String(zh); NAME_EN_LIST.forEach(function(p){ s=s.split(p[0]).join(p[1]); }); return s.split('・').join(' · '); }
+function NM(zh){ return TLI_I18N.t(zh, nameEn(zh)); }
+var TT=function(zh,en){ return TLI_I18N.t(zh,en); };
+function $(i){return document.getElementById(i);}
+function showToast(m){var t=$('toast');t.textContent=m;t.classList.remove('hidden');clearTimeout(window._tt);window._tt=setTimeout(function(){t.classList.add('hidden');},2400);}
+function toggleBell(){$('bellPanel').classList.toggle('open');}
+function allCerts(){
+  var st=[]; try{st=JSON.parse(localStorage.getItem(CERT_KEY))||[];}catch(e){}
+  var who=window.TLI_PL?TLI_PL.me():{mode:'general'};
+  if(who.mode==='project'){ return st.filter(function(c){return c.name===who.name;}); }
+  var nos={}; st.forEach(function(c){nos[c.no]=1;});
+  return st.concat(SEED.filter(function(c){return !nos[c.no];}));
+}
+function renderList(){
+  var q=$('cSearch').value.trim().toLowerCase(), sort=$('cSort').value;
+  var list=allCerts().filter(function(c){return !q||(c.title+' '+c.course+' '+c.no).toLowerCase().indexOf(q)>-1;});
+  list.sort(function(a,b){ if(sort==='score') return b.score-a.score; return sort==='old'?a.date.localeCompare(b.date):b.date.localeCompare(a.date); });
+  $('certList').innerHTML=list.map(function(c){
+    return '<button type="button" class="cert-item'+(sel&&sel.no===c.no?' sel':'')+'" onclick="pick(\''+c.no+'\')"><span class="badge badge-ok">'+TT('已核發','Issued')+'</span><h4>'+TT(c.title+'結業證書',nameEn(c.title)+' Completion Certificate')+'</h4><p>'+c.no+'・'+c.date+'・'+c.score+TT(' 分',' pts')+'</p></button>';
+  }).join('');
+  $('certNone').classList.toggle('hidden',list.length>0);
+  if(list.length && (!sel || !list.some(function(c){return c.no===sel.no;}))){ sel=list[0]; fillPreview(); renderList(); }
+}
+function pick(no){ sel=allCerts().filter(function(c){return c.no===no;})[0]; fillPreview(); renderList(); if(window.innerWidth<1100) $('certPaper').scrollIntoView({behavior:'smooth',block:'start'}); }
+function fillPreview(){
+  if(!sel) return;
+  $('pvName').textContent=sel.name; $('pvCourse').textContent=NM(sel.title); $('pvDate').textContent=sel.date;
+  $('pvScore').textContent=sel.score+TT(' 分',' pts'); $('pvNo').textContent=sel.no;
+}
+function downloadPdf(){
+  if(!sel) return;
+  showToast(TT('已產生 PDF：','PDF generated: ')+sel.no+'.pdf');
+  setTimeout(function(){ try{ window.print(); }catch(e){} },350);
+}
+function copyNo(){
+  if(!sel) return;
+  try{ navigator.clipboard.writeText(sel.no).then(function(){showToast(TT('已複製證書編號','Certificate number copied'));},function(){showToast(TT('證書編號：','Certificate number: ')+sel.no);}); }catch(e){ showToast(TT('證書編號：','Certificate number: ')+sel.no); }
+}
+(function(){
+  var all=allCerts();
+  if(!all.length){ $('certEmpty').classList.remove('hidden'); $('certLayout').classList.add('hidden'); return; }
+  var q=new URLSearchParams(location.search).get('cert');
+  if(q){ sel=all.filter(function(c){return c.no===q;})[0]||null; }
+  renderList(); fillPreview();
+})();
+document.addEventListener('keydown',function(e){ if(e.key==='Escape') $('bellPanel').classList.remove('open'); });
+</script>
+<script>
+/* 語言切換時：重畫證書清單與預覽，並重跑驗證結果（若已顯示） */
+TLI_I18N.onRefresh(function(){ renderList(); fillPreview(); var b=$('vResult'); if(b && !b.classList.contains('hidden') && $('vNo').value.trim()) verifyNo(); });
+TLI_I18N.init();
+</script>
+</body>
+</html>

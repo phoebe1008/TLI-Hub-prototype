@@ -1,0 +1,562 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>TLI Hub 教師端－可授課時段</title>
+<script>if(/[?&]view=lounge\b/.test(location.search)) location.replace("t11_lounge_sessions.html?view=1a");</script>
+<style>
+:root{
+  --c-primary:#1B4E8C;--c-primary-dark:#123A68;--c-accent:#E8792B;--c-accent-dark:#CF691F;--c-secondary:#0F9B79;
+  --c-bg:#F5F7FA;--c-border:#E4E7EC;--c-muted:#667085;--c-text:#101828;
+  --radius:12px;--radius-sm:8px;--shadow:0 1px 3px rgba(16,24,40,.08),0 1px 2px rgba(16,24,40,.04);--shadow-lg:0 8px 24px rgba(16,24,40,.16);
+  --topbar-h:52px;--bottomnav-h:64px;
+}
+*{box-sizing:border-box;}
+html,body{margin:0;padding:0;}
+body{font-family:"Noto Sans TC","Microsoft JhengHei",system-ui,-apple-system,"Segoe UI",sans-serif;background:var(--c-bg);color:var(--c-text);line-height:1.55;font-size:15px;-webkit-tap-highlight-color:transparent;}
+a{color:inherit;text-decoration:none;}
+img,svg{display:block;}
+button{font-family:inherit;}
+button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible{outline:2px solid var(--c-primary);outline-offset:2px;}
+.app{min-height:100vh;position:relative;}
+.topbar{position:sticky;top:0;z-index:60;height:var(--topbar-h);background:#fff;border-bottom:1px solid var(--c-border);display:flex;align-items:center;justify-content:space-between;padding:0 14px;gap:10px;}
+.topbar-left{display:flex;align-items:center;gap:8px;min-width:0;}
+.topbar-logo-wrap{width:26px;height:22px;overflow:hidden;position:relative;flex:none;}
+.topbar-logo-wrap img{position:absolute;left:0;top:0;height:22px;width:auto;max-width:none;}
+.topbar-title{font-size:16.5px;font-weight:700;color:var(--c-text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.topbar-actions{display:flex;align-items:center;gap:6px;position:relative;}
+.bell-btn{position:relative;width:32px;height:32px;border-radius:50%;border:1px solid var(--c-border);background:#fff;cursor:pointer;display:flex;align-items:center;justify-content:center;color:var(--c-muted);}
+.bell-btn svg{width:16px;height:16px;}
+.bell-btn .dot{position:absolute;top:5px;right:6px;width:7px;height:7px;border-radius:50%;background:var(--c-accent);border:1.5px solid #fff;}
+.bell-panel{display:none;position:absolute;right:0;top:40px;width:264px;background:#fff;border:1px solid var(--c-border);border-radius:var(--radius-sm);box-shadow:var(--shadow-lg);padding:6px 0;z-index:90;}
+.bell-panel.open{display:block;}
+.bell-panel h4{margin:0;padding:8px 14px 6px;font-size:12.5px;color:var(--c-muted);font-weight:700;}
+.bell-item{padding:9px 14px;font-size:12.5px;border-top:1px solid var(--c-border);display:flex;gap:8px;}
+.bell-item .b-dot{width:6px;height:6px;border-radius:50%;background:var(--c-accent);margin-top:5px;flex:none;}
+.bell-item p{margin:0;color:var(--c-text);}
+.bell-item span{color:var(--c-muted);font-size:11px;}
+.side-nav{display:none;}
+@media(min-width:1024px){
+  .side-nav{display:flex;flex-direction:column;position:fixed;left:0;top:0;bottom:0;width:310px;background:#fff;border-right:1px solid var(--c-border);padding:18px 12px;z-index:50;}
+  .side-role{padding:0 10px 14px;margin-bottom:10px;border-bottom:1px solid var(--c-border);}
+.side-role strong{display:block;font-size:14px;color:var(--c-primary);font-weight:700;}
+.side-role span{display:block;font-size:12px;color:var(--c-muted);margin-top:2px;}
+.side-brand{display:flex;align-items:center;padding:0 8px 18px;}
+  .side-brand img{height:28px;width:auto;}
+  .side-link{display:flex;align-items:center;gap:10px;padding:10px 10px;border-radius:8px;font-size:14px;font-weight:600;color:var(--c-muted);margin-bottom:2px;}
+  .side-link svg{width:19px;height:19px;flex:none;}
+  .side-link.active{background:#E6EEF8;color:var(--c-primary);}
+  .side-link:hover:not(.active){background:var(--c-bg);}
+  .app.has-side .topbar{margin-left:310px;}
+  .app.has-side .content{margin-left:310px;}
+}
+.bottom-nav{position:fixed;left:0;right:0;bottom:0;z-index:70;background:#fff;border-top:1px solid var(--c-border);display:flex;height:var(--bottomnav-h);padding-bottom:env(safe-area-inset-bottom,0);box-shadow:0 -2px 10px rgba(16,24,40,.06);}
+.bottom-nav a{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;font-size:11px;color:var(--c-muted);font-weight:600;min-height:44px;}
+.bottom-nav a svg{width:22px;height:22px;}
+.bottom-nav a.active{color:var(--c-primary);}
+@media(min-width:1024px){.bottom-nav{display:none;}}
+.content{max-width:960px;margin:0 auto;padding:18px 16px calc(var(--bottomnav-h) + 24px);}
+@media(min-width:1024px){.content{padding:26px 32px 40px;}}
+.page-sub{color:var(--c-muted);font-size:13px;margin:0 0 18px;}
+.card{background:#fff;border:1px solid var(--c-border);border-radius:var(--radius);box-shadow:var(--shadow);padding:16px;}
+.card + .card{margin-top:12px;}
+.muted{color:var(--c-muted);}
+.small{font-size:12px;}
+.banner{border-radius:var(--radius);padding:12px 14px;margin-bottom:14px;font-size:13px;line-height:1.7;}
+.banner-info{background:#E6EEF8;color:var(--c-primary-dark);border:1px solid #C7DAF0;}
+.banner-info b{color:var(--c-primary);}
+.banner-info ul{margin:6px 0 0 18px;padding:0;}
+.top-controls{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;flex-wrap:wrap;gap:10px;}
+.repeat-toggle{display:flex;align-items:center;gap:8px;font-size:13px;font-weight:700;}
+.switch{position:relative;width:42px;height:24px;flex:none;}
+.switch input{opacity:0;width:0;height:0;}
+.switch .track{position:absolute;inset:0;background:var(--c-border);border-radius:20px;transition:.15s;cursor:pointer;}
+.switch .track::after{content:"";position:absolute;width:18px;height:18px;left:3px;top:3px;background:#fff;border-radius:50%;transition:.15s;box-shadow:0 1px 2px rgba(0,0,0,.2);}
+.switch input:checked + .track{background:var(--c-secondary);}
+.switch input:checked + .track::after{transform:translateX(18px);}
+/* ---------- 時段格（教師端專用，沿用共用色票／圓角） ---------- */
+.legend{display:flex;gap:14px;font-size:11.5px;color:var(--c-muted);margin-bottom:14px;flex-wrap:wrap;}
+.legend span{display:inline-flex;align-items:center;gap:5px;}
+.legend i{width:11px;height:11px;border-radius:3px;display:inline-block;border:1px solid var(--c-border);}
+.legend .open{background:rgba(15,155,121,.25);border-color:var(--c-secondary);}
+.legend .closed{background:#fff;}
+.legend .locked{background:var(--c-primary);border-color:var(--c-primary);}
+.legend .flexmark{background:#7C3AED;border-color:#7C3AED;}
+.grid-wrap{overflow-x:auto;}
+.avail-grid{display:grid;grid-template-columns:74px repeat(7,1fr);gap:4px;min-width:680px;}
+.gcell{font-size:11px;color:var(--c-muted);display:flex;align-items:center;justify-content:center;padding:6px 2px;text-align:center;}
+.gcell.dowhead{font-weight:700;color:var(--c-text);}
+.slot-cell{height:34px;border-radius:var(--radius-sm);border:1px solid var(--c-border);background:#fff;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:#98A2B3;position:relative;}
+.slot-cell.open{background:rgba(15,155,121,.22);border-color:var(--c-secondary);color:#0B6B52;}
+.slot-cell.locked{background:var(--c-primary);border-color:var(--c-primary);color:#fff;cursor:pointer;}
+.slot-cell.flexmark::after{content:"";position:absolute;top:3px;right:3px;width:7px;height:7px;border-radius:50%;background:#7C3AED;}
+.slot-cell.repeatuntil{border-style:dashed;}
+.gcell.rowlabel{cursor:pointer;border-radius:6px;padding:4px 2px;flex-direction:column;line-height:1.3;}
+.gcell.rowlabel:hover{background:var(--c-bg);color:var(--c-primary);font-weight:700;}
+.toast{position:fixed;left:50%;bottom:calc(var(--bottomnav-h) + 18px);transform:translateX(-50%);background:#101828;color:#fff;padding:10px 20px;border-radius:20px;font-size:13px;font-weight:700;z-index:120;box-shadow:var(--shadow-lg);white-space:nowrap;}
+.toast.hidden{display:none;}
+@media(min-width:1024px){.toast{bottom:24px;}}
+/* ---------- B2B 雙時區刻度／海外學員可約區間（v2 新增） ---------- */
+.demo-tag{font-size:10.5px;color:#98A2B3;font-weight:400;}
+.plant-row{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;margin-bottom:12px;}
+.plant-row .pr-label{font-size:12px;color:var(--c-muted);font-weight:700;}
+.plant-select{border:1px solid var(--c-border);border-radius:6px;padding:7px 9px;font-size:12.5px;background:#fff;color:var(--c-text);font-family:inherit;}
+.rt-taipei{font-weight:700;color:var(--c-text);}
+.rt-local{font-size:9px;color:var(--c-muted);margin-top:1px;white-space:normal;word-break:break-word;line-height:1.25;}
+.rt-local .cross-day{color:var(--c-accent-dark);font-weight:700;display:block;}
+.legend .overseas-swatch{background:#fff;position:relative;overflow:hidden;}
+.legend .overseas-swatch::before{content:"";position:absolute;inset:0;background:repeating-linear-gradient(45deg,rgba(124,58,237,.35) 0 3px,transparent 3px 6px);}
+.slot-cell.overseas-hl{position:relative;}
+.slot-cell.overseas-hl::before{content:"";position:absolute;inset:0;border-radius:inherit;background:repeating-linear-gradient(45deg,rgba(124,58,237,.22) 0 3px,transparent 3px 6px);pointer-events:none;}
+/* ---------- 按鈕（補齊：原檔缺 .btn 定義，儲存鍵原本無樣式） ---------- */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;border:none;border-radius:var(--radius-sm);padding:11px 18px;font-size:14px;font-weight:700;cursor:pointer;font-family:inherit;transition:background .15s;min-height:44px;}
+.btn-primary{background:var(--c-primary);color:#fff;}
+.btn-primary:hover{background:var(--c-primary-dark);}
+.btn-outline{background:#fff;border:1px solid var(--c-border);color:var(--c-text);}
+.btn-outline:hover{background:var(--c-bg);}
+.btn-danger{background:#fff;border:1px solid #F5B0A6;color:#B42318;}
+.btn-danger:hover{background:#FBE5E1;}
+.btn:disabled{background:var(--c-border)!important;color:#98A2B3!important;cursor:not-allowed;border-color:var(--c-border)!important;}
+.btn-block{width:100%;}
+/* ---------- 浮層小表單 ---------- */
+.hidden{display:none!important;}
+.sheet-overlay{position:fixed;inset:0;background:rgba(16,24,40,.45);z-index:100;display:flex;align-items:flex-end;justify-content:center;}
+.sheet-overlay.hidden{display:none;}
+.sheet{background:#fff;width:100%;max-width:460px;border-radius:18px 18px 0 0;padding:18px 18px calc(18px + env(safe-area-inset-bottom,0));max-height:86vh;overflow-y:auto;animation:sheetUp .18s ease-out;}
+@keyframes sheetUp{from{transform:translateY(16px);opacity:.6;}to{transform:translateY(0);opacity:1;}}
+.sheet-handle{width:36px;height:4px;background:var(--c-border);border-radius:4px;margin:0 auto 14px;}
+.sheet h3{margin:0 0 4px;font-size:16px;}
+@media(min-width:640px){.sheet-overlay{align-items:center;}.sheet{border-radius:16px;}}
+.sheet-sec{margin-bottom:14px;}
+.sheet-sec .lbl{font-size:12px;font-weight:700;color:var(--c-muted);margin-bottom:6px;}
+.field-input,.field-select{width:100%;border:1px solid var(--c-border);border-radius:var(--radius-sm);padding:10px 12px;font-size:14px;font-family:inherit;color:var(--c-text);background:#fff;}
+.field-static{font-size:13px;color:var(--c-muted);background:var(--c-bg);border-radius:var(--radius-sm);padding:9px 12px;}
+.stack{display:flex;flex-direction:column;gap:10px;}
+/* ---------- 頁內次層分頁籤（segment，底線式） ---------- */
+.page-tabs{display:flex;gap:4px;border-bottom:1px solid var(--c-border);margin:0 0 16px;overflow-x:auto;}
+.page-tab{padding:9px 14px;font-size:13.5px;font-weight:700;color:var(--c-muted);border-bottom:2px solid transparent;white-space:nowrap;}
+.page-tab.active{color:var(--c-primary);border-color:var(--c-primary);}
+/* ---------- 可收合的規則說明 ---------- */
+.rule-box{border:1px solid var(--c-border);border-radius:var(--radius);background:#fff;margin-bottom:10px;font-size:13px;}
+.rule-box summary{cursor:pointer;padding:10px 14px;font-weight:700;color:var(--c-primary);list-style:none;}
+.rule-box summary::-webkit-details-marker{display:none;}
+.rule-box summary::before{content:"＋ ";}
+.rule-box[open] summary::before{content:"－ ";}
+.rule-box ul{margin:0;padding:0 14px 12px 32px;line-height:1.7;color:var(--c-text);}
+</style>
+</head>
+<body>
+<div class="app has-side">
+  <nav class="side-nav" aria-label="主導覽">
+    <div class="side-brand"><a href="../公開網站/p01_home.html" aria-label="回官網" data-i18n-aria-label="nav_t.backToWebsite"><img src="../assets/tli-logo.svg" alt="TLI"></a></div>
+    <div class="side-role"><strong>林老師</strong><span><span data-i18n="today.profile.role">TLI 中心教師</span> · <span data-i18n="today.profile.city">台北</span></span></div>
+    <a class="side-link" href="t01_today.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11l9-8 9 8"/><path d="M5 10v10a1 1 0 001 1h3v-6h6v6h3a1 1 0 001-1V10"/></svg><span data-i18n="nav_t.today">今天</span></a>
+    <a class="side-link" href="t02_schedule.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg><span data-i18n="nav_t.schedule">課表</span></a>
+    <a class="side-link" href="t03_lesson_record.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 4-7 8-7s8 3 8 7"/></svg><span data-i18n="nav_t.lessonRecord">課後紀錄與回饋</span></a>
+    <a class="side-link" href="t07_students.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg><span data-i18n="nav_t.students">學生</span></a>
+    <a class="side-link active" href="t04_availability.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18M12 14v6M9 17h6"/></svg><span data-i18n="nav_t.availability">時段與薪資</span></a>
+    <a class="side-link" href="t11_lounge_sessions.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H8l-5 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg><span data-en="Mandarin Lounge">Mandarin Lounge</span></a>
+    <a class="side-link" href="t12_stage_exams.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 5H7a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-2"/><rect x="9" y="3" width="6" height="4" rx="1"/><path d="M9 14l2 2 4-4"/></svg><span data-en="Stage Exams">階段考</span></a>
+    <a class="side-link" href="../公開網站/p01_home.html" style="margin-top:auto;"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg><span data-i18n="nav_t.backToWebsite">回官網</span></a>
+  </nav>
+
+  <header class="topbar">
+    <div class="topbar-left"><a class="topbar-logo-wrap" href="../公開網站/p01_home.html" aria-label="回官網" data-i18n-aria-label="nav_t.backToWebsite"><img src="../assets/tli-logo.svg" alt="TLI"></a><div class="topbar-title" data-i18n="avail.pageTitle">可授課時段</div></div>
+    <div class="topbar-actions">
+      <button class="bell-btn" onclick="toggleBell()" aria-label="通知" data-i18n-aria-label="common.notifications">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8a6 6 0 10-12 0c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.7 21a2 2 0 01-3.4 0"/></svg>
+        <span class="dot"></span>
+      </button>
+      <div class="bell-panel" id="bellPanel">
+        <h4 data-i18n="common.notifications">通知</h4>
+        <div class="bell-item"><span class="b-dot"></span><div><p data-i18n="t04.notif.text">王同學已預約週四 09:00 時段</p><span data-i18n="teacher.notif.yesterday">昨天</span></div></div>
+      </div>
+    </div>
+  </header>
+
+  <main class="content">
+    <div class="page-tabs" role="tablist" aria-label="頁內切換">
+      <a class="page-tab active" href="t04_availability.html" data-i18n="avail.pageTitle">可授課時段</a>
+      <a class="page-tab" href="t06_hours_pay.html" data-i18n="avail.tabHoursPay">時數與薪資</a>
+    </div>
+    <p class="page-sub" style="margin:0 0 14px;" data-en="Set the times you can teach one-on-one. Advisors schedule lessons into these slots; students do not book you directly. Click an open slot to edit its details.">設定你可提供一對一授課的時段：由顧問依此時段排課，學生不會直接預約你。點已開放的時段可編輯細節。</p>
+    <div class="card">
+      <details class="rule-box">
+        <summary data-en="Slot rules">時段規則</summary>
+        <ul>
+          <li data-en="Each lesson is 50 minutes (adjustable from 30 to 180 minutes by course).">每堂課 50 分鐘（可依課程調整為 30–180 分鐘）</li>
+          <li data-en="One-on-one lessons: the open slots are a reference for advisors. The advisor assigns students and times, so you are never booked directly by students.">一對一課程：開放的時段是提供顧問排課的參考，實際由顧問安排學生與時間，你不會被學生直接預約</li>
+          <li data-en="After you close a slot, it can be reopened only 2 hours later (cooling period).">時段一旦關閉，需間隔 <b>2 小時</b>後才能重新開放（關閉冷卻）</li>
+          <li data-en="Slots already scheduled by an advisor are locked. For changes, the advisor handles it through the leave and substitute process.">已被顧問排定一對一課程的時段會鎖定，如需異動由顧問透過「請假／代課」流程處理</li>
+          <li data-en="Click an open slot to set a repeat-until date or remove it (this week only, until a date, or all). Past open slots are never removed.">點擊已開放時段可設定「重複至」某日期；移除時段可選擇：只移除本週／移除至指定日期／移除全部，<b>過去已發生的開放時段不會被移除</b></li>
+        </ul>
+      </details>
+
+      <details class="rule-box">
+        <summary data-en="Time zone notes">時區說明</summary>
+        <ul>
+          <li data-i18n="avail.tz1">時段格左側刻度同步顯示台北時間與所選海外廠區當地時間，跨日以「（前一天）」「（隔天）」標示</li>
+          <li data-i18n="avail.tz2">取消時限以企業慣用時區（合約設定）計算；本頁時段格以台北時間為主、海外廠區當地時間為輔並列顯示</li>
+          <li data-i18n="avail.tz3">海外對照時間以台北當週對應星期換算，實際跨星期對應以正式排課邏輯為準</li>
+        </ul>
+      </details>
+
+      <div class="plant-row">
+        <span class="pr-label" data-i18n="avail.plantLabel">海外廠區時區對照</span>
+        <select class="plant-select" id="plantSelect" onchange="onPlantChange(this.value)" aria-label="海外廠區時區" data-i18n-aria-label="avail.plantAriaLabel">
+          <option value="us" data-i18n="avail.plantUS">美國廠區（美國西部時間，UTC-7）</option>
+          <option value="jp" data-i18n="avail.plantJP">日本廠區（日本時間，UTC+9）</option>
+        </select>
+      </div>
+
+      <div class="top-controls">
+        <div class="repeat-toggle">
+          <span data-i18n="avail.toggle.repeatWeekly">重複每週</span>
+          <label class="switch"><input type="checkbox" id="repeatSwitch" checked><span class="track"></span></label>
+        </div>
+        <div class="repeat-toggle">
+          <span data-i18n="avail.toggle.overseas">顯示海外學員可約區間</span>
+          <label class="switch"><input type="checkbox" id="overseasToggle" onchange="onOverseasToggle(this.checked)"><span class="track"></span></label>
+        </div>
+      </div>
+
+      <div class="legend">
+        <span><i class="open"></i><span data-i18n="avail.legend.open">已開放（可授課時段）</span></span>
+        <span><i class="closed"></i><span data-i18n="avail.legend.closed">未開放</span></span>
+        <span><i class="locked"></i><span data-i18n="avail.legend.locked">已排定一對一課程（鎖定）</span></span>
+        <span><i class="flexmark"></i><span data-i18n="avail.legend.flexmark">可帶直播班</span></span>
+        <span><i class="overseas-swatch"></i><span data-i18n="avail.legend.overseas">海外學員下班後可約區間</span></span>
+      </div>
+
+      <div class="grid-wrap">
+        <div class="avail-grid" id="availGrid"></div>
+      </div>
+      <button class="btn btn-primary btn-block" style="margin-top:16px;" onclick="saveAvailability()" data-i18n="common.save">儲存</button>
+    </div>
+  </main>
+
+  <nav class="bottom-nav">
+    <a href="t01_today.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11l9-8 9 8"/><path d="M5 10v10a1 1 0 001 1h3v-6h6v6h3a1 1 0 001-1V10"/></svg><span data-i18n="nav_t.today">今天</span></a>
+    <a href="t02_schedule.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg><span data-i18n="nav_t.schedule">課表</span></a>
+    <a href="t03_lesson_record.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 4-7 8-7s8 3 8 7"/></svg><span data-i18n="nav_t.lessonRecord">課後紀錄與回饋</span></a>
+    <a href="t07_students.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg><span data-i18n="nav_t.students">學生</span></a>
+    <a href="t04_availability.html" class="active"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18M12 14v6M9 17h6"/></svg><span data-i18n="nav_t.availability">時段與薪資</span></a>
+    <a href="t11_lounge_sessions.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H8l-5 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg><span data-en="Lounge">Lounge</span></a>
+    <a href="t12_stage_exams.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 5H7a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-2"/><rect x="9" y="3" width="6" height="4" rx="1"/><path d="M9 14l2 2 4-4"/></svg><span data-en="Exams">階段考</span></a>
+  </nav>
+</div>
+
+<div class="sheet-overlay hidden" id="slotDetailOverlay">
+  <div class="sheet">
+    <div class="sheet-handle"></div>
+    <h3 id="slotDetailTitle">時段設定</h3>
+    <p class="small muted" id="slotDetailSlotLabel" style="margin:2px 0 14px;">—</p>
+    <div class="sheet-sec" style="display:flex;align-items:center;justify-content:space-between;gap:10px;">
+      <div><div class="lbl" style="margin:0;" data-i18n="avail.toggle.flexMark">標記可帶直播班</div><div class="small muted" data-en="Mark this slot as available for flexible group livestream classes.">這個時段可帶彈性團體直播班。</div></div>
+      <label class="switch"><input type="checkbox" id="slotFlexSwitch"><span class="track"></span></label>
+    </div>
+    <div class="divider"></div>
+    <div class="sheet-sec">
+      <div class="lbl" data-i18n="avail.field.repeatUntil">重複至（留空＝永久重複每週）</div>
+      <input type="date" class="field-input" id="slotDetailRepeatUntil">
+      <div class="small muted" style="margin-top:4px;" data-i18n="avail.hint.repeatUntilNote">設定後，此時段只會重複開放到這個日期為止；之後自動視為未開放。</div>
+    </div>
+    <div class="stack">
+      <button class="btn btn-primary btn-block" onclick="saveSlotDetailRepeatUntil()" data-i18n="avail.saveRepeatUntilBtn">儲存重複至設定</button>
+    </div>
+    <div class="divider"></div>
+    <div class="sheet-sec">
+      <div class="lbl" data-i18n="avail.field.removeSlot">移除此時段</div>
+      <div class="small muted" style="margin-bottom:8px;" data-i18n="avail.removeSlotHint">過去已發生的開放時段不會被移除，以下三種方式只影響今天以後的時段。</div>
+      <div class="stack">
+        <button class="btn btn-outline btn-block" onclick="removeSlotThisWeekOnly()" data-i18n="avail.removeThisWeekBtn">只移除本週</button>
+        <button class="btn btn-outline btn-block" onclick="removeSlotUntilDate()" data-i18n="avail.removeUntilDateBtn">移除至指定日期（依上方「重複至」日期）</button>
+        <button class="btn btn-danger btn-block" onclick="removeSlotAll()" data-i18n="avail.removeAllBtn">移除全部（含往後所有重複）</button>
+      </div>
+    </div>
+    <button class="btn btn-outline btn-block" style="margin-top:14px;" onclick="closeSlotDetailSheet()" data-i18n="common.close">關閉</button>
+  </div>
+</div>
+
+<div class="toast hidden" id="toast"></div>
+
+<script src="../assets/_shared_masters.js"></script>
+<script src="../會員區/_project_learning.js"></script>
+<script src="../assets/_i18n_dict.js"></script>
+<script src="../assets/_i18n_dict_teacher.js"></script>
+<script src="../assets/_i18n.js"></script>
+<script>
+function toggleBell(){document.getElementById('bellPanel').classList.toggle('open');}
+document.addEventListener('click',function(e){
+  if(!e.target.closest('.bell-btn')&&!e.target.closest('.bell-panel'))document.getElementById('bellPanel').classList.remove('open');
+});
+
+/* 星期字 -> 詞典 key（表頭僅建立一次，直接標 data-i18n，不受建立時機影響） */
+var DOW_KEYS = {'一':'avail.dow.mon','二':'avail.dow.tue','三':'avail.dow.wed','四':'avail.dow.thu','五':'avail.dow.fri','六':'avail.dow.sat','日':'avail.dow.sun'};
+var days = ['一','二','三','四','五','六','日'];
+var times = ['09:00','10:00','11:00','13:00','14:00','15:00','16:00','17:00','18:00','19:00'];
+function tt(zh, en){ return window.TLI_I18N ? TLI_I18N.t(zh, en) : zh; }
+
+/* 提早呼叫一次 init()：讓 curLang 在 rowLabelHtml() 等初始動態渲染（用 tt() 組字串）
+   跑之前就先讀出使用者實際保存的語言，避免這些函式在頁面剛載入時仍用預設 zh-TW 組字串。
+   init() 內部 mountSwitcher()／render() 皆可重複呼叫不出錯，結尾仍保留一次 init() 供收尾。 */
+if (window.TLI_I18N) TLI_I18N.init();
+
+/* ================= B2B 雙時區刻度／海外學員可約區間（v2 新增，資料為模擬數字） ================= */
+var PLANTS = {
+  us:{label:'美國廠區',labelEn:'US Plant',tzLabel:'美國西部時間（UTC-7）',tzLabelEn:'US Pacific Time (UTC-7)',offsetFromTaipei:-15,highlightHours:['09:00','10:00','11:00','13:00']},
+  jp:{label:'日本廠區',labelEn:'Japan Plant',tzLabel:'日本時間（UTC+9）',tzLabelEn:'Japan Time (UTC+9)',offsetFromTaipei:1,highlightHours:['17:00','18:00','19:00']}
+};
+var currentPlant='us';
+var rowLabelEls=[];
+function shiftTime(timeStr, offsetHours){
+  var parts=timeStr.split(':');
+  var totalMin = parseInt(parts[0],10)*60 + parseInt(parts[1],10) + offsetHours*60;
+  var dayShift = Math.floor(totalMin/1440);
+  var mod = ((totalMin%1440)+1440)%1440;
+  var hh=Math.floor(mod/60), mm=mod%60;
+  return {time:String(hh).padStart(2,'0')+':'+String(mm).padStart(2,'0'), dayShift:dayShift};
+}
+function rowLabelHtml(t){
+  var plant=PLANTS[currentPlant];
+  var local=shiftTime(t, plant.offsetFromTaipei);
+  var dayTag = local.dayShift<0 ? '<span class="cross-day">'+tt('（前一天）','(prev. day)')+'</span>' : (local.dayShift>0 ? '<span class="cross-day">'+tt('（隔天）','(next day)')+'</span>' : '');
+  return '<div class="rt-taipei">'+t+'</div><div class="rt-local">'+tt(plant.label, plant.labelEn)+' '+local.time+dayTag+'</div>';
+}
+function renderRowLabels(){
+  rowLabelEls.forEach(function(el, ti){ el.innerHTML=rowLabelHtml(times[ti]); });
+}
+// 預先鎖定的時段（day index, time index）：字串代表學生縮寫
+var locked = {
+  '0-0':'王', '0-1':'陳', '1-0':'王', '3-0':'王', '3-6':'陳',
+  '2-4':'張', '5-2':'班'
+};
+// 開放狀態（其餘未列出者預設關閉）
+var openState = {
+  '0-0':1,'0-1':1,'0-2':1,'1-0':1,'1-2':1,'1-3':1,'1-4':1,'1-5':1,
+  '2-4':1,'2-5':1,'2-6':1,'3-0':1,'3-6':1,'3-7':1,
+  '4-1':1,'4-2':1,'5-2':1,'5-3':1,'5-4':1
+};
+// 已標記可帶 彈性團體直播班的時段（僅限已開放時段）
+var flexMarked = {'1-4':1,'2-5':1};
+// 每個開放時段各自的「重複至」日期（YYYY-MM-DD）；沒有 key＝永久重複每週。key 格式同 openState（日-時段索引）
+var slotRepeatUntil = {};
+// 本週被「只移除本週」處理過的時段（示範用：僅記錄哪些格子本週被單次關閉，不影響其餘週的重複規則）
+var slotThisWeekRemoved = {};
+/* 時段格的「開」狀態文字：用 data-i18n key 切換而非 t() 字面值，
+   避免格子在頁面剛載入（TLI_I18N.init() 尚未讀出實際語言）時就被 t() 寫死成錯誤語言。 */
+function markCellOpen(cell, isOpen){
+  cell.textContent = isOpen ? '開' : '';
+  if(isOpen) cell.setAttribute('data-i18n','avail.slotOpenMark');
+  else cell.removeAttribute('data-i18n');
+}
+
+var grid = document.getElementById('availGrid');
+// header row
+grid.appendChild(document.createElement('div'));
+days.forEach(function(d){
+  var h = document.createElement('div');
+  h.className='gcell dowhead';
+  h.textContent='週'+d;
+  h.setAttribute('data-i18n', DOW_KEYS[d]);
+  grid.appendChild(h);
+});
+times.forEach(function(t, ti){
+  var lbl = document.createElement('div');
+  lbl.className='gcell rowlabel';
+  lbl.innerHTML=rowLabelHtml(t);
+  lbl.title=tt('點擊選取整列（'+t+'・台北時間）','Click to select the whole row ('+t+' · Taipei Time)');
+  lbl.onclick = function(){ toggleRow(ti); };
+  grid.appendChild(lbl);
+  rowLabelEls[ti]=lbl;
+  days.forEach(function(d, di){
+    var key = di+'-'+ti;
+    var cell = document.createElement('div');
+    cell.dataset.key = key;
+    if(locked[key] !== undefined){
+      cell.className='slot-cell locked';
+      cell.textContent = locked[key];
+      cell.title = tt('已由顧問排定 '+locked[key]+'○○ 的一對一課程','One-on-one class already scheduled by the advisor for '+locked[key]+'○○');
+      cell.onclick = function(){
+        showToast(tt('此時段已由顧問排定一對一課程，如需異動請至「請假／代課」申請，需經顧問確認','This slot has already been scheduled for a one-on-one class by the advisor. To make changes, please submit a Leave/Substitute request for advisor confirmation.'));
+      };
+    }else{
+      cell.className='slot-cell'+(openState[key] ? ' open':'')+(flexMarked[key] ? ' flexmark':'')+(slotRepeatUntil[key] ? ' repeatuntil':'');
+      markCellOpen(cell, !!openState[key]);
+      if(slotRepeatUntil[key]) cell.title = tt('重複開放至 ','Repeats until ')+slotRepeatUntil[key];
+      cell.onclick = function(){
+        if(!this.classList.contains('open')){
+          this.classList.add('open'); markCellOpen(this, true);
+          showToast(tt('已開放此時段（點此時段可編輯細節）','Slot opened (click it again to edit details)'));
+          if (window.TLI_I18N) TLI_I18N.refresh();
+          return;
+        }
+        openSlotDetailSheet(this.dataset.key);
+      };
+    }
+    grid.appendChild(cell);
+  });
+});
+if (window.TLI_I18N) TLI_I18N.onRefresh(renderRowLabels);
+
+function toggleRow(ti){
+  var rowCells = grid.querySelectorAll('.slot-cell[data-key$="-'+ti+'"]');
+  var anyClosed = false;
+  rowCells.forEach(function(c){
+    if(!c.classList.contains('locked') && !c.classList.contains('open')) anyClosed = true;
+  });
+  rowCells.forEach(function(c){
+    if(c.classList.contains('locked')) return;
+    if(anyClosed){
+      c.classList.add('open');
+      markCellOpen(c, true);
+    }else{
+      c.classList.remove('open');
+      markCellOpen(c, false);
+    }
+  });
+  showToast(anyClosed ? tt('已整列開放此時段','Opened the whole row') : tt('已整列關閉此時段','Closed the whole row'));
+  if (window.TLI_I18N) TLI_I18N.refresh();
+}
+
+function onPlantChange(plantKey){
+  currentPlant=plantKey;
+  renderRowLabels();
+  if(document.getElementById('overseasToggle').checked){
+    applyOverseasHighlight(true);
+  }
+  showToast(tt('已切換對照廠區為「'+PLANTS[currentPlant].label+'」（'+PLANTS[currentPlant].tzLabel+'）','Switched reference plant to "'+PLANTS[currentPlant].labelEn+'" ('+PLANTS[currentPlant].tzLabelEn+')'));
+}
+
+function applyOverseasHighlight(on){
+  var plant=PLANTS[currentPlant];
+  times.forEach(function(t, ti){
+    var isHl = plant.highlightHours.indexOf(t)>-1;
+    var rowCells = grid.querySelectorAll('.slot-cell[data-key$="-'+ti+'"]');
+    rowCells.forEach(function(c){
+      if(c.classList.contains('locked')) return;
+      c.classList.toggle('overseas-hl', on && isHl);
+    });
+  });
+}
+
+function onOverseasToggle(checked){
+  applyOverseasHighlight(checked);
+  showToast(checked ? tt('已顯示海外學員（'+PLANTS[currentPlant].label+'）下班後可約區間','Showing after-hours availability window for overseas students ('+PLANTS[currentPlant].labelEn+')') : tt('已關閉海外學員可約區間顯示','Hid the overseas student availability window'));
+}
+
+document.getElementById('repeatSwitch').addEventListener('change', function(){
+  showToast(this.checked ? tt('已設定為：每週重複套用','Set to: repeat weekly') : tt('已設定為：僅套用本週','Set to: this week only'));
+});
+
+var slotDetailKey = null;
+function openSlotDetailSheet(key){
+  slotDetailKey = key;
+  document.getElementById('slotDetailTitle').textContent = tt('時段設定','Slot Settings');
+  document.getElementById('slotDetailSlotLabel').textContent = slotLabel(key);
+  document.getElementById('slotDetailRepeatUntil').value = slotRepeatUntil[key] || '';
+  document.getElementById('slotFlexSwitch').checked = !!flexMarked[key];
+  document.getElementById('slotDetailOverlay').classList.remove('hidden');
+}
+/* 讓已開啟的「時段設定」浮層在切換語言時立即重新套用文字，且不動使用者尚未儲存的輸入值 */
+function refreshSlotDetailSheetIfOpen(){
+  if (slotDetailKey && !document.getElementById('slotDetailOverlay').classList.contains('hidden')){
+    document.getElementById('slotDetailTitle').textContent = tt('時段設定','Slot Settings');
+    document.getElementById('slotDetailSlotLabel').textContent = slotLabel(slotDetailKey);
+  }
+}
+if (window.TLI_I18N) TLI_I18N.onRefresh(refreshSlotDetailSheetIfOpen);
+document.getElementById('slotFlexSwitch').addEventListener('change', function(){
+  if(!slotDetailKey) return;
+  var cell = grid.querySelector('.slot-cell[data-key="'+slotDetailKey+'"]');
+  if(this.checked){ flexMarked[slotDetailKey]=1; if(cell) cell.classList.add('flexmark'); } else { delete flexMarked[slotDetailKey]; if(cell) cell.classList.remove('flexmark'); }
+  showToast(this.checked ? tt('已標記可帶直播班','Marked as available for livestream classes') : tt('已取消標記可帶直播班','Unmarked as available for livestream classes'));
+});
+function closeSlotDetailSheet(){
+  document.getElementById('slotDetailOverlay').classList.add('hidden');
+  slotDetailKey = null;
+}
+function saveSlotDetailRepeatUntil(){
+  if(!slotDetailKey) return;
+  var val = document.getElementById('slotDetailRepeatUntil').value;
+  var cell = grid.querySelector('.slot-cell[data-key="'+slotDetailKey+'"]');
+  if(val){
+    slotRepeatUntil[slotDetailKey] = val;
+    if(cell){ cell.classList.add('repeatuntil'); cell.title = tt('重複開放至 ','Repeats until ')+val; }
+    showToast(tt('已設定此時段重複開放至 '+val+' 為止，之後自動視為未開放','Set this slot to repeat until '+val+'; it will automatically become unavailable after that date'));
+  }else{
+    delete slotRepeatUntil[slotDetailKey];
+    if(cell){ cell.classList.remove('repeatuntil'); cell.removeAttribute('title'); }
+    showToast(tt('已改回永久每週重複','Reverted to permanent weekly repeat'));
+  }
+  closeSlotDetailSheet();
+}
+function removeSlotThisWeekOnly(){
+  if(!slotDetailKey) return;
+  slotThisWeekRemoved[slotDetailKey] = true;
+  showToast(tt('已只移除本週此時段，其餘週次仍依原規則開放（過去已發生的開放時段不受影響）','Removed only this week\'s slot; other weeks still follow the original rule (past open slots are unaffected)'));
+  closeSlotDetailSheet();
+}
+function removeSlotUntilDate(){
+  if(!slotDetailKey) return;
+  var val = document.getElementById('slotDetailRepeatUntil').value;
+  if(!val){
+    showToast(tt('請先在上方選擇「重複至」日期，再選擇「移除至指定日期」','Please select a "repeat until" date above before choosing "remove until date"'));
+    return;
+  }
+  slotRepeatUntil[slotDetailKey] = val;
+  var cell = grid.querySelector('.slot-cell[data-key="'+slotDetailKey+'"]');
+  if(cell){ cell.classList.add('repeatuntil'); cell.title = tt('重複開放至 ','Repeats until ')+val; }
+  showToast(tt('已設定此時段開放至 '+val+' 為止，'+val+' 之後自動視為未開放（過去已發生的開放時段不受影響）','Set this slot to stay open until '+val+'; it will automatically become unavailable after '+val+' (past open slots are unaffected)'));
+  closeSlotDetailSheet();
+}
+function removeSlotAll(){
+  if(!slotDetailKey) return;
+  var key = slotDetailKey;
+  var cell = grid.querySelector('.slot-cell[data-key="'+key+'"]');
+  if(cell){
+    cell.classList.remove('open','flexmark','chatmark','repeatuntil');
+    markCellOpen(cell, false);
+    cell.removeAttribute('title');
+  }
+  delete slotRepeatUntil[key];
+  delete slotThisWeekRemoved[key]; delete flexMarked[key];
+  showToast(tt('已移除全部（含往後所有重複），過去已發生的開放時段不會被移除','Removed all (including all future repeats); past open slots will not be removed'));
+  closeSlotDetailSheet();
+}
+
+function saveAvailability(){
+  var flexCount = grid.querySelectorAll('.slot-cell.flexmark').length;
+  showToast(tt('已儲存可授課時段設定（可帶直播班時段：'+flexCount+'）','Saved your availability settings (livestream-enabled slots: '+flexCount+')'));
+}
+
+/* ---------- 時段標籤 ---------- */
+var DOW_EN_MAP = {'一':'Mon','二':'Tue','三':'Wed','四':'Thu','五':'Fri','六':'Sat','日':'Sun'};
+function slotLabel(key){
+  var parts = key.split('-');
+  var di = parseInt(parts[0],10), ti = parseInt(parts[1],10);
+  return tt('週'+days[di]+'・'+times[ti]+'（台北時間）', DOW_EN_MAP[days[di]]+' '+times[ti]+' (Taipei Time)');
+}
+
+document.getElementById('slotDetailOverlay').addEventListener('click', function(e){
+  if(e.target.id === 'slotDetailOverlay') closeSlotDetailSheet();
+});
+/* ESC 鍵關閉目前開啟中的 sheet-overlay */
+document.addEventListener('keydown', function(e){
+  if (e.key !== 'Escape') return;
+  document.querySelectorAll('.sheet-overlay').forEach(function(el){ el.classList.add('hidden'); });
+});
+
+var toastTimer=null;
+function showToast(msg){
+  var t=document.getElementById('toast');
+  t.textContent=msg;
+  t.classList.remove('hidden');
+  clearTimeout(toastTimer);
+  toastTimer=setTimeout(function(){t.classList.add('hidden');},2400);
+}
+if (window.TLI_I18N) TLI_I18N.init();
+</script>
+</body>
+</html>

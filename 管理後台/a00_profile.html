@@ -1,0 +1,243 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<title>個人設定｜TLI Hub 管理後台</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<!--
+  後台個人設定（2026-11-05）。入口：各後台頁頂欄／側欄使用者選單的「個人設定」。兩個頁籤：個人資料、變更密碼，各自獨立儲存。
+  變更密碼需輸入原密碼（原型不驗證原密碼是否正確）。用一次性密碼登入的人不在這裡改密碼，改走 a00_reset_password.html。
+  欄位依使用者提供的舊系統個人設定截圖（登入ID、用戶名稱、學生端顯示名稱、角色、電話、信箱、WeChat、Line、WhatsApp、所屬分校、頭像）。
+  - 角色在此只讀：角色由「權限管理」（a09）指派，個人設定不能自行調整，避免自行提權；截圖中的可選角色雙欄選單未帶入。
+  - 密碼規則（長度、複雜度、是否不可與舊密碼相同）、頭像格式與大小限制、「學生端顯示名稱」對後台人員的用途：文件未定義，待確認。
+  - 示範資料：王大明（總公司管理者，a09 使用者 u1、a01 顧問 adv1 羅斯福校區）；儲存只寫 localStorage tliAdminProfile_v1，沒有後端。
+  - 回後台：頂端「返回管理後台」，回到進來前的後台頁（同資料夾 a*.html 的 referrer），沒有則回 a02_products.html。
+-->
+<style>
+:root{--navy:#1B4E8C;--navy-dark:#123a68;--orange:#E8792B;--teal:#0F9B79;
+--g50:#F5F7FA;--g200:#E4E7EC;--g500:#667085;--g900:#101828;--red:#C0392B;}
+*{box-sizing:border-box;}
+[hidden]{display:none!important;}
+body{margin:0;font-family:"Noto Sans TC","Microsoft JhengHei",system-ui,-apple-system,sans-serif;background:var(--g50);color:var(--g900);}
+a{color:var(--navy);}
+.top{position:relative;background:#fff;border-bottom:1px solid var(--g200);padding:12px 24px;display:flex;align-items:center;gap:14px;}
+.top img{height:26px;width:auto;display:block;}
+.top .sp{flex:1;}
+.top .tb-actions{display:flex;align-items:center;gap:10px;}
+.top .back{display:inline-block;background:var(--navy);color:#fff;border-radius:6px;padding:7px 14px;font-size:13px;font-weight:600;text-decoration:none;white-space:nowrap;}
+.top .back:hover{background:var(--navy-dark);}
+.wrap{max-width:760px;margin:0 auto;padding:26px 16px 60px;}
+h1{font-size:20px;margin:0 0 6px;}
+.desc{font-size:12.5px;color:var(--g500);line-height:1.6;margin:0 0 18px;}
+.tabs{display:flex;gap:4px;border-bottom:1px solid var(--g200);margin-bottom:16px;}
+.tab{background:none;border:none;border-bottom:2px solid transparent;padding:10px 16px;font-size:14px;font-family:inherit;color:var(--g500);cursor:pointer;margin-bottom:-1px;}
+.tab.on{color:var(--navy);border-bottom-color:var(--navy);font-weight:600;}
+.card{background:#fff;border:1px solid var(--g200);border-radius:12px;padding:20px 22px;margin-bottom:16px;box-shadow:0 1px 3px rgba(16,24,40,.06);}
+.card h2{font-size:15px;margin:0 0 14px;}
+.fr{display:grid;grid-template-columns:150px 1fr;gap:6px 16px;align-items:start;margin-bottom:14px;}
+.fr>label{font-size:13px;font-weight:600;padding-top:9px;text-align:right;}
+.req{color:var(--red);}
+input[type=text],input[type=password],select{width:100%;max-width:420px;padding:9px 11px;border:1px solid var(--g200);border-radius:6px;
+font-size:14px;font-family:inherit;color:var(--g900);background:#fff;}
+input:focus,select:focus{outline:2px solid #BFD3EC;border-color:var(--navy);}
+input[readonly]{background:var(--g50);color:var(--g500);}
+.phone{display:flex;gap:8px;max-width:420px;}
+.phone select{width:120px;flex-shrink:0;}
+.phone input{flex:1;min-width:0;}
+.chip{display:inline-block;background:#E7EEF8;color:var(--navy);border-radius:10px;padding:3px 10px;font-size:12.5px;font-weight:600;margin-top:6px;}
+.hint{font-size:12px;color:var(--g500);line-height:1.6;margin-top:5px;}
+.avatar{width:96px;height:96px;border:1px dashed #C5CBD4;border-radius:8px;display:flex;align-items:center;justify-content:center;
+overflow:hidden;cursor:pointer;background:#fff;color:#C5CBD4;font-size:40px;}
+.avatar img{width:100%;height:100%;object-fit:cover;}
+.banner{background:#FDEDD9;border:1px solid #F3DFB8;color:#7a5b1f;border-radius:8px;padding:10px 14px;font-size:13px;line-height:1.6;margin-bottom:16px;}
+.err{background:#FDECEC;border:1px solid #F0B7B7;color:var(--red);border-radius:6px;padding:8px 10px;font-size:12.5px;margin-bottom:14px;}
+.btn{background:var(--navy);color:#fff;border:none;padding:9px 20px;border-radius:6px;font-size:14px;cursor:pointer;font-family:inherit;}
+.btn:hover{background:var(--navy-dark);}
+.btn.ghost{background:#fff;border:1px solid var(--g200);color:var(--g900);}
+.actions{display:flex;gap:10px;justify-content:flex-end;}
+.toast{position:fixed;left:50%;bottom:28px;transform:translateX(-50%);background:var(--g900);color:#fff;border-radius:8px;padding:10px 18px;font-size:13px;z-index:100;}
+@media(max-width:600px){.fr{grid-template-columns:1fr;}.fr>label{text-align:left;padding-top:0;}}
+</style>
+</head>
+<body>
+<header class="top">
+  <a href="a02_products.html" aria-label="TLI" style="display:block;line-height:0"><img src="../assets/tli-logo.svg" alt="TLI"></a>
+  <span class="sp"></span>
+  <div class="tb-actions"><a class="back" id="backLink" href="a02_products.html" data-i18n="a00p.back">&larr; 返回管理後台</a></div>
+</header>
+
+<main class="wrap">
+  <h1 data-i18n="a00p.title">個人設定</h1>
+  <p class="desc" data-i18n="a00p.desc">管理你自己的後台帳號資料與密碼。</p>
+
+  <div class="err" id="err" hidden></div>
+
+  <div class="tabs" id="tabs" role="tablist">
+    <button type="button" class="tab on" id="tabProfile" data-tab="profile" role="tab" data-i18n="a00p.tabProfile">個人資料</button>
+    <button type="button" class="tab" id="tabPw" data-tab="pw" role="tab" data-i18n="a00p.tabPw">變更密碼</button>
+  </div>
+
+  <form id="f" novalidate>
+    <section class="card">
+      <h2 data-i18n="a00p.secBasic">基本資料</h2>
+      <div class="fr"><label data-i18n="a00p.loginId">登入 ID</label>
+        <div><input type="text" id="loginId" readonly></div></div>
+      <div class="fr"><label for="name"><span data-i18n="a00p.name">用戶名稱</span><span class="req">*</span></label>
+        <div><input type="text" id="name"></div></div>
+      <div class="fr"><label for="studentName"><span data-i18n="a00p.studentName">學生端顯示名稱</span><span class="req">*</span></label>
+        <div><input type="text" id="studentName"></div></div>
+      <div class="fr"><label data-i18n="a00p.role">角色</label>
+        <div><span class="chip" id="roleChip"></span>
+        <div class="hint" data-i18n="a00p.roleHint">角色由「權限管理」指派，無法在此修改。</div></div></div>
+      <div class="fr"><label data-i18n="a00p.phone">電話</label>
+        <div class="phone">
+          <select id="phoneCode" aria-label="區碼">
+            <option value="">—</option><option>+886</option><option>+86</option><option>+852</option><option>+1</option><option>+81</option><option>+60</option><option>+84</option><option>+82</option>
+          </select>
+          <input type="text" id="phone"></div></div>
+      <div class="fr"><label for="email" data-i18n="a00p.email">信箱</label>
+        <div><input type="text" id="email"></div></div>
+      <div class="fr"><label for="wechat">WeChat</label><div><input type="text" id="wechat"></div></div>
+      <div class="fr"><label for="line">Line</label><div><input type="text" id="line"></div></div>
+      <div class="fr"><label for="whatsapp">WhatsApp</label><div><input type="text" id="whatsapp"></div></div>
+      <div class="fr"><label for="campus" data-i18n="a00p.campus">所屬分校</label>
+        <div><select id="campus"></select></div></div>
+      <div class="fr"><label data-i18n="a00p.avatar">頭像</label>
+        <div>
+          <div class="avatar" id="avatarBox" title="上傳頭像" data-i18n-title="a00p.avatarTitle"><span id="avatarPlus">+</span></div>
+          <input type="file" id="avatarFile" accept="image/*" hidden>
+        </div></div>
+    </section>
+    <div class="actions">
+      <button type="button" class="btn ghost" id="cancel" data-i18n="a00p.cancel">取消</button>
+      <button type="submit" class="btn" data-i18n="a00p.save">儲存</button>
+    </div>
+  </form>
+
+  <form id="fpw" novalidate hidden>
+    <section class="card">
+      <h2 data-i18n="a00p.secPw">變更密碼</h2>
+      <div class="fr"><label for="pwOld"><span data-i18n="a00p.oldPw">原密碼</span><span class="req">*</span></label>
+        <div><input type="password" id="pwOld" autocomplete="current-password"></div></div>
+      <div class="fr"><label for="pw1"><span data-i18n="a00p.newPw">新密碼</span><span class="req">*</span></label>
+        <div><input type="password" id="pw1" autocomplete="new-password">
+</div></div>
+      <div class="fr"><label for="pw2" data-i18n="a00p.newPw2">確認新密碼</label>
+        <div><input type="password" id="pw2" autocomplete="new-password"></div></div>
+    </section>
+
+    <div class="actions">
+      <button type="submit" class="btn" data-i18n="a00p.savePw">儲存新密碼</button>
+    </div>
+  </form>
+</main>
+
+<script src="../assets/_shared_masters.js"></script>
+<script src="../assets/_i18n_dict.js"></script>
+<script>
+Object.assign(TLI_I18N_DICT.en, {
+"a00p.back":"← Back to admin",
+"a00p.oldPw":"Current password",
+"a00p.title":"Personal Settings",
+"a00p.desc":"Manage your own admin account details and password.",
+"a00p.secBasic":"Profile",
+"a00p.loginId":"Login ID",
+"a00p.name":"User name",
+"a00p.studentName":"Name shown to students",
+"a00p.role":"Role",
+"a00p.roleHint":"Roles are assigned in Permissions and cannot be changed here.",
+"a00p.phone":"Phone",
+"a00p.email":"Email",
+"a00p.campus":"Campus",
+"a00p.avatar":"Avatar",
+"a00p.avatarTitle":"Upload avatar",
+"a00p.secPw":"Change Password",
+"a00p.newPw":"New password",
+"a00p.newPw2":"Confirm new password",
+"a00p.tabProfile":"Profile",
+"a00p.tabPw":"Change Password",
+"a00p.savePw":"Save new password",
+"a00p.cancel":"Cancel",
+"a00p.save":"Save"
+});
+</script>
+<script src="../assets/_i18n.js"></script>
+<script>
+(function(){
+  var $ = function(id){ return document.getElementById(id); };
+  var KEY = 'tliAdminProfile_v1';
+  var t = function(zh,en){ return window.TLI_I18N ? TLI_I18N.t(zh,en) : zh; };
+
+  /* 預設示範資料：王大明（a09 使用者 u1、總公司管理者） */
+  var data = { loginId:'daming.wang@tli.example', name:'王大明', studentName:'王大明', role:'總公司管理者',
+    phoneCode:'', phone:'', email:'daming.wang@tli.example', wechat:'', line:'', whatsapp:'', campus:'羅斯福校區', avatar:'' };
+  try{ var saved = JSON.parse(localStorage.getItem(KEY)); if(saved) for(var k in saved) data[k] = saved[k]; }catch(e){}
+
+  var ROLE_EN = {'總公司管理者':'HQ Administrator','校區主管':'Campus Manager','行政人員':'Admin Staff','財務':'Finance','顧問':'Advisor'};
+  function roleLabel(){ $('roleChip').textContent = t(data.role, ROLE_EN[data.role]); }
+
+  var campuses = (window.TLI_MASTERS && TLI_MASTERS.campuses || []).filter(function(c){ return c.enabled; });
+  $('campus').innerHTML = campuses.map(function(c){ return '<option value="'+c.name+'">'+c.name+'</option>'; }).join('');
+
+  ['loginId','name','studentName','phoneCode','phone','email','wechat','line','whatsapp','campus'].forEach(function(id){ $(id).value = data[id]; });
+  roleLabel();
+  function showAvatar(){
+    $('avatarBox').innerHTML = data.avatar ? '<img src="'+data.avatar+'" alt="">' : '<span>+</span>';
+  }
+  showAvatar();
+  $('avatarBox').onclick = function(){ $('avatarFile').click(); };
+  $('avatarFile').onchange = function(){
+    var f = this.files[0]; if(!f) return;
+    var rd = new FileReader();
+    rd.onload = function(){ data.avatar = rd.result; showAvatar(); };
+    rd.readAsDataURL(f);
+  };
+
+  function showTab(name){
+    $('f').hidden = name !== 'profile';
+    $('fpw').hidden = name !== 'pw';
+    $('tabProfile').classList.toggle('on', name === 'profile');
+    $('tabPw').classList.toggle('on', name === 'pw');
+    showErr('');
+  }
+  $('tabProfile').onclick = function(){ showTab('profile'); };
+  $('tabPw').onclick = function(){ showTab('pw'); };
+  function showErr(msg){ $('err').textContent = msg || ''; $('err').hidden = !msg; if(msg) window.scrollTo(0,0); }
+  function toast(msg){
+    var el = document.createElement('div'); el.className = 'toast'; el.textContent = msg;
+    document.body.appendChild(el); setTimeout(function(){ el.remove(); }, 1800);
+  }
+  /* 回後台：回到進來前的後台頁（同資料夾 a*.html），否則回產品管理 */
+  var back = 'a02_products.html';
+  try{
+    var m = /\/(a\d{2}_[a-z0-9_]+\.html)(\?[^#]*)?(#.*)?$/i.exec(document.referrer);
+    if(m && m[1] !== 'a00_admin_login.html' && m[1] !== 'a00_reset_password.html' && m[1] !== 'a00_profile.html') back = m[1] + (m[2]||'');
+  }catch(e){}
+  $('backLink').href = back;
+  $('cancel').onclick = function(){ location.href = back; };
+
+  $('f').onsubmit = function(e){
+    e.preventDefault();
+    showErr('');
+    if(!$('name').value.trim() || !$('studentName').value.trim()){ showErr(t('請填寫用戶名稱與學生端顯示名稱','Please fill in User name and Name shown to students')); return; }
+    ['name','studentName','phoneCode','phone','email','wechat','line','whatsapp','campus'].forEach(function(id){ data[id] = $(id).value.trim(); });
+    try{ localStorage.setItem(KEY, JSON.stringify(data)); }catch(x){}
+    toast(t('已儲存','Saved'));
+  };
+
+  $('fpw').onsubmit = function(e){
+    e.preventDefault();
+    showErr('');
+    var p1 = $('pw1').value, p2 = $('pw2').value;
+    if(!$('pwOld').value){ showErr(t('請輸入原密碼','Please enter your current password')); return; }
+    if(!p1){ showErr(t('請輸入新密碼','Please enter a new password')); return; }
+    if(p1 !== p2){ showErr(t('兩次輸入的新密碼不一致','The two new passwords do not match')); return; }
+    $('pwOld').value = ''; $('pw1').value = ''; $('pw2').value = '';
+    toast(t('密碼已更新','Password updated'));
+  };
+
+  if(window.TLI_I18N){ TLI_I18N.onRefresh(roleLabel); TLI_I18N.init(); }
+})();
+</script>
+</body>
+</html>

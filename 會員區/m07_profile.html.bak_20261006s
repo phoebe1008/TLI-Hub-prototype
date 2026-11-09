@@ -1,0 +1,635 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>TLI Connect 會員區－我的</title>
+<style>
+:root{
+  --c-primary:#1B4E8C;--c-primary-dark:#123A68;--c-accent:#E8792B;--c-accent-dark:#CF691F;--c-secondary:#0F9B79;
+  --c-bg:#F5F7FA;--c-border:#E4E7EC;--c-muted:#667085;--c-text:#101828;
+  --radius:12px;--radius-sm:8px;--shadow:0 1px 3px rgba(16,24,40,.08),0 1px 2px rgba(16,24,40,.04);--shadow-lg:0 8px 24px rgba(16,24,40,.16);
+  --topbar-h:52px;--bottomnav-h:64px;
+}
+*{box-sizing:border-box;}
+html,body{margin:0;padding:0;}
+body{font-family:"Noto Sans TC","Microsoft JhengHei",system-ui,-apple-system,"Segoe UI",sans-serif;background:var(--c-bg);color:var(--c-text);line-height:1.55;font-size:15px;-webkit-tap-highlight-color:transparent;}
+a{color:inherit;text-decoration:none;}
+img,svg{display:block;}
+button{font-family:inherit;}
+button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible{outline:2px solid var(--c-primary);outline-offset:2px;}
+.app{min-height:100vh;position:relative;}
+.topbar{position:sticky;top:0;z-index:60;height:var(--topbar-h);background:#fff;border-bottom:1px solid var(--c-border);display:flex;align-items:center;justify-content:space-between;padding:0 14px;gap:10px;}
+.topbar-left{display:flex;align-items:center;gap:8px;min-width:0;}
+.topbar-logo-wrap{width:26px;height:22px;overflow:hidden;position:relative;flex:none;}
+.topbar-logo-wrap img{position:absolute;left:0;top:0;height:22px;width:auto;max-width:none;}
+.topbar-title{font-size:16.5px;font-weight:700;color:var(--c-text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.topbar-actions{display:flex;align-items:center;gap:6px;position:relative;}
+.mini-select{border:1px solid var(--c-border);border-radius:6px;padding:4px 6px;font-size:11.5px;background:#fff;color:var(--c-muted);font-family:inherit;max-width:96px;}
+.bell-btn{position:relative;width:32px;height:32px;border-radius:50%;border:1px solid var(--c-border);background:#fff;cursor:pointer;display:flex;align-items:center;justify-content:center;color:var(--c-muted);}
+.bell-btn svg{width:16px;height:16px;}
+.bell-btn .dot{position:absolute;top:5px;right:6px;width:7px;height:7px;border-radius:50%;background:var(--c-accent);border:1.5px solid #fff;}
+.bell-panel{display:none;position:absolute;right:0;top:40px;width:264px;background:#fff;border:1px solid var(--c-border);border-radius:var(--radius-sm);box-shadow:var(--shadow-lg);padding:6px 0;z-index:90;}
+.bell-panel.open{display:block;}
+.bell-panel h4{margin:0;padding:8px 14px 6px;font-size:12.5px;color:var(--c-muted);font-weight:700;}
+.bell-item{padding:9px 14px;font-size:12.5px;border-top:1px solid var(--c-border);display:flex;gap:8px;}
+.bell-item .b-dot{width:6px;height:6px;border-radius:50%;background:var(--c-accent);margin-top:5px;flex:none;}
+.bell-item p{margin:0;color:var(--c-text);}
+.bell-item span{color:var(--c-muted);font-size:11px;}
+.side-nav{display:none;}
+@media(min-width:1024px){
+  .side-nav{display:flex;flex-direction:column;position:fixed;left:0;top:0;bottom:0;width:310px;background:#fff;border-right:1px solid var(--c-border);padding:18px 12px;z-index:50;}
+  .side-brand{display:flex;align-items:center;padding:0 8px 18px;}
+  .side-brand img{height:28px;width:auto;}
+  .side-identity{padding:0 8px 14px;margin-bottom:6px;font-size:12.5px;font-weight:700;color:var(--c-text);border-bottom:1px solid var(--c-border);}
+  .side-link{display:flex;align-items:center;gap:10px;padding:10px 10px;border-radius:8px;font-size:14px;font-weight:600;color:var(--c-muted);margin-bottom:2px;}
+  .side-link svg{width:19px;height:19px;flex:none;}
+  .side-link.active{background:#E6EEF8;color:var(--c-primary);}
+  .side-link:hover:not(.active){background:var(--c-bg);}
+  .app.has-side .topbar{margin-left:310px;}
+  .app.has-side .content{margin-left:310px;}
+}
+.bottom-nav{position:fixed;left:0;right:0;bottom:0;z-index:70;background:#fff;border-top:1px solid var(--c-border);display:flex;height:var(--bottomnav-h);padding-bottom:env(safe-area-inset-bottom,0);box-shadow:0 -2px 10px rgba(16,24,40,.06);}
+.bottom-nav a{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;font-size:11px;color:var(--c-muted);font-weight:600;min-height:44px;}
+.bottom-nav a svg{width:22px;height:22px;}
+.bottom-nav a.active{color:var(--c-primary);}
+@media(min-width:1024px){.bottom-nav{display:none;}}
+.content{max-width:960px;margin:0 auto;padding:18px 16px calc(var(--bottomnav-h) + 24px);}
+@media(min-width:1024px){.content{padding:26px 32px 40px;}}
+.page-h{font-size:19px;font-weight:700;margin:2px 0 4px;}
+.page-sub{color:var(--c-muted);font-size:13px;margin:0 0 14px;}
+.notif-table{width:100%;border-collapse:collapse;font-size:12.5px;}
+.notif-table th{text-align:center;padding:6px 8px;color:var(--c-muted);font-weight:700;font-size:11.5px;border-bottom:1px solid var(--c-border);}
+.notif-table th:first-child{text-align:left;}
+.notif-table td{padding:8px;text-align:center;border-top:1px solid var(--c-border);}
+.notif-table td:first-child{text-align:left;font-weight:600;}
+.notif-table .switch{margin:0 auto;}
+.section-title{font-size:15px;font-weight:700;margin:13px 0 7px;}
+.section-title.first{margin-top:0;}
+.card{background:#fff;border:1px solid var(--c-border);border-radius:var(--radius);box-shadow:var(--shadow);padding:11px;}
+.card + .card{margin-top:12px;}
+.panel-block{background:#fff;border:1px solid var(--c-border);border-radius:var(--radius);box-shadow:var(--shadow);padding:11px;margin-top:12px;}
+.flex-between{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;}
+.stack{display:flex;flex-direction:column;gap:10px;}
+.muted{color:var(--c-muted);}
+.small{font-size:12px;}
+.divider{border:none;border-top:1px solid var(--c-border);margin:7px 0;}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;border:none;border-radius:var(--radius-sm);padding:11px 18px;font-size:14px;font-weight:700;cursor:pointer;font-family:inherit;transition:background .15s;min-height:44px;}
+.btn-primary{background:var(--c-primary);color:#fff;}
+.btn-primary:hover{background:var(--c-primary-dark);}
+.btn-outline{background:#fff;border:1px solid var(--c-border);color:var(--c-text);}
+.btn-outline:hover{background:var(--c-bg);}
+.btn-danger-outline{background:#fff;border:1px solid #F5B0A6;color:#B42318;}
+.btn-sm{padding:7px 12px;font-size:12.5px;min-height:36px;}
+.btn-block{width:100%;}
+.badge{display:inline-block;padding:2px 9px;border-radius:20px;font-size:11.5px;font-weight:700;white-space:nowrap;}
+.badge-info{background:#E6EEF8;color:var(--c-primary);}
+.badge-warn{background:#FCEBDC;color:var(--c-accent-dark);}
+.badge-ok{background:#E4F5F0;color:#0B6B52;}
+.list-row{display:flex;align-items:center;gap:12px;padding:7px 0;border-top:1px solid var(--c-border);}
+.list-row:first-child{border-top:none;padding-top:0;}
+.list-row .icon-box{width:38px;height:38px;border-radius:9px;background:var(--c-bg);display:flex;align-items:center;justify-content:center;flex:none;color:var(--c-primary);}
+.list-row .icon-box svg{width:18px;height:18px;}
+.list-row .body{flex:1;min-width:0;}
+.list-row .body h4{margin:0;font-size:13.5px;font-weight:700;}
+.list-row .body p{margin:2px 0 0;font-size:12px;color:var(--c-muted);}
+.list-row .trail{flex:none;text-align:right;}
+.hidden{display:none!important;}
+.doc-detail{margin-top:0;padding:10px 12px;background:var(--c-bg);border-radius:var(--radius-sm);font-size:12.5px;color:var(--c-muted);display:none;}
+.doc-detail.open{display:block;}
+.switch{position:relative;width:40px;height:22px;flex:none;}
+.switch input{opacity:0;width:0;height:0;}
+.switch .track{position:absolute;inset:0;background:var(--c-border);border-radius:20px;transition:.15s;cursor:pointer;}
+.switch .track::after{content:"";position:absolute;width:18px;height:18px;left:2px;top:2px;background:#fff;border-radius:50%;transition:.15s;box-shadow:0 1px 2px rgba(0,0,0,.2);}
+.switch input:checked + .track{background:var(--c-secondary);}
+.switch input:checked + .track::after{transform:translateX(18px);}
+.check-line{display:flex;align-items:center;gap:10px;padding:11px 0;border-top:1px solid var(--c-border);font-size:13.5px;}
+.check-line:first-child{border-top:none;}
+.check-line .cl-body{flex:1;}
+.check-line .cl-note{font-size:11.5px;color:var(--c-muted);margin-top:2px;}
+.sheet-overlay{position:fixed;inset:0;background:rgba(16,24,40,.45);z-index:100;display:flex;align-items:flex-end;justify-content:center;}
+.sheet-overlay.hidden{display:none;}
+.sheet{background:#fff;width:100%;max-width:480px;border-radius:18px 18px 0 0;padding:18px 18px calc(18px + env(safe-area-inset-bottom,0));max-height:86vh;overflow-y:auto;animation:sheetUp .18s ease-out;}
+@keyframes sheetUp{from{transform:translateY(16px);opacity:.6;}to{transform:translateY(0);opacity:1;}}
+.sheet-handle{width:36px;height:4px;background:var(--c-border);border-radius:4px;margin:0 auto 14px;}
+.sheet h3{margin:0 0 4px;font-size:16px;}
+@media(min-width:640px){.sheet-overlay{align-items:center;}.sheet{border-radius:16px;}}
+.avatar-lg{width:52px;height:52px;border-radius:50%;background:var(--c-primary);color:#fff;font-size:18px;display:flex;align-items:center;justify-content:center;font-weight:700;flex:none;}
+.field{display:flex;flex-direction:column;gap:5px;margin-bottom:14px;}
+.field label{font-size:13px;font-weight:700;}
+.field label .hint{display:block;font-size:11.5px;color:var(--c-muted);font-weight:400;margin-top:2px;}
+.field input,.field select,.field textarea{border:1px solid var(--c-border);border-radius:var(--radius-sm);padding:10px 11px;font-size:14px;font-family:inherit;color:var(--c-text);background:#fff;min-height:44px;width:100%;}
+.field textarea{resize:vertical;min-height:0;}
+.toast{position:fixed;left:50%;bottom:calc(var(--bottomnav-h) + 18px);transform:translateX(-50%);background:#101828;color:#fff;padding:10px 20px;border-radius:20px;font-size:13px;font-weight:700;z-index:120;box-shadow:var(--shadow-lg);white-space:nowrap;}
+.toast.hidden{display:none;}
+@media(min-width:1024px){.toast{bottom:24px;}}
+.explore-link{display:flex;align-items:center;gap:5px;font-size:12px;font-weight:700;color:var(--c-primary);white-space:nowrap;padding:4px 2px;flex:none;}
+.explore-link svg{width:15px;height:15px;flex:none;}
+@media(max-width:639px){.explore-link-text{display:none;}}
+/* ---------- B2B 所屬組織卡／顯示時區偏好（v2 新增） ---------- */
+.demo-tag{font-size:10.5px;color:#98A2B3;font-weight:400;}
+.seg{display:inline-flex;border:1px solid var(--c-border);border-radius:20px;overflow:hidden;flex:none;}
+.seg button{border:none;background:#fff;padding:6px 14px;font-size:12.5px;font-weight:700;color:var(--c-muted);cursor:pointer;font-family:inherit;}
+.seg button.active{background:var(--c-primary);color:#fff;}
+.privacy-row{display:flex;align-items:flex-start;justify-content:space-between;gap:10px;flex-wrap:wrap;}
+.hr-list{margin:4px 0 0 18px;padding:0;}
+.hr-list li{margin-bottom:2px;}
+/* ---------- 篩選 chips（訂單／合約等清單通用，v2 新增） ---------- */
+.chip-row{display:flex;gap:8px;overflow-x:auto;padding-bottom:2px;-webkit-overflow-scrolling:touch;margin-bottom:12px;}
+.chip-row::-webkit-scrollbar{height:0;}
+.chip{flex:none;padding:8px 14px;border-radius:20px;border:1px solid var(--c-border);background:#fff;font-size:12.5px;font-weight:700;cursor:pointer;min-height:36px;font-family:inherit;color:var(--c-muted);}
+.chip.selected{border-color:var(--c-primary);background:#E6EEF8;color:var(--c-primary);}
+.empty-state{text-align:center;padding:28px 16px;color:var(--c-muted);}
+.empty-state h4{color:var(--c-text);font-size:14px;margin:0 0 4px;}
+.empty-state p{font-size:12.5px;margin:0;}
+.list-group-label{font-size:11.5px;font-weight:700;color:var(--c-muted);margin:14px 0 4px;}
+.list-group-label:first-child{margin-top:0;}
+</style>
+</head>
+<body>
+<div class="app has-side">
+  <nav class="side-nav" aria-label="主導覽" data-i18n-aria-label="member.nav.aria">
+    <div class="side-brand"><a href="../公開網站/p01_home.html" aria-label="TLI 官網" data-i18n-aria-label="member.logoAria"><img src="../assets/tli-logo.svg" alt="TLI"></a></div>
+    <div class="side-identity">Emma Johnson｜<span data-i18n="member.role.student">學員</span></div>
+    <a class="side-link" href="m01_home.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11l9-8 9 8"/><path d="M5 10v10a1 1 0 001 1h3v-6h6v6h3a1 1 0 001-1V10"/></svg><span data-i18n="member.nav.home">首頁</span></a>
+    <a class="side-link" href="m02_booking.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18M12 14v6M9 17h6"/></svg><span data-i18n="member.nav.booking">預約與報名</span></a>
+    <a class="side-link" href="m03_schedule.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg><span data-i18n="member.nav.schedule">課表</span></a>
+    <a class="side-link" href="m08_self_paced.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 3h6a4 4 0 014 4v14a3 3 0 00-3-3H2z"/><path d="M22 3h-6a4 4 0 00-4 4v14a3 3 0 013-3h7z"/></svg><span data-i18n="member.nav.learning">學習</span></a>
+    <a class="side-link" href="m18_learning_dashboard.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="4" y1="20" x2="20" y2="20"/><rect x="5" y="11" width="3" height="7" rx="1"/><rect x="10.5" y="6" width="3" height="12" rx="1"/><rect x="16" y="9" width="3" height="9" rx="1"/></svg><span data-en="Learning Dashboard">學習儀表板</span></a>
+    <a class="side-link" href="m20_transcripts.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 3H7a2 2 0 00-2 2v14a2 2 0 002 2h10a2 2 0 002-2V8z"/><path d="M14 3v5h5"/><path d="M9 13h6M9 17h6"/></svg><span data-en="Transcripts">成績單</span></a>
+    <a class="side-link" href="m19_certificates.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="9" r="6"/><path d="M8.5 14.5L7 22l5-3 5 3-1.5-7.5"/></svg><span data-en="Certificates">結業證書</span></a>
+    <a class="side-link" href="m04_course_detail.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="5" width="20" height="14" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/><line x1="6" y1="15" x2="10" y2="15"/></svg><span data-i18n="member.nav.myPlan">我的方案</span></a>
+    <a class="side-link active" href="m07_profile.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 4-7 8-7s8 3 8 7"/></svg><span data-i18n="member.nav.me">我的</span></a>
+    <a class="side-link" href="../公開網站/p01_home.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg><span data-i18n="member.nav.backToSite">回官網</span></a>
+  </nav>
+
+  <header class="topbar">
+    <div class="topbar-left"><a class="topbar-logo-wrap" href="../公開網站/p01_home.html" aria-label="TLI 官網" data-i18n-aria-label="member.logoAria"><img src="../assets/tli-logo.svg" alt="TLI"></a><div class="topbar-title" data-i18n="m07.title">我的</div></div>
+    <div class="topbar-actions">
+      <a class="explore-link" href="../公開網站/p02_courses.html" aria-label="探索課程" title="探索課程" data-i18n-aria-label="member.explore" data-i18n-title="member.explore">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polygon points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88 16.24 7.76"/></svg>
+        <span class="explore-link-text" data-i18n="member.explore">探索課程</span>
+      </a>
+      <button class="bell-btn" onclick="toggleBell()" aria-label="通知" data-i18n-aria-label="member.notifications">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8a6 6 0 10-12 0c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.7 21a2 2 0 01-3.4 0"/></svg>
+        <span class="dot"></span>
+      </button>
+      <div class="bell-panel" id="bellPanel">
+        <h4 data-i18n="member.notifications">通知</h4>
+        <div class="bell-item"><span class="b-dot"></span><div><p data-i18n="m07.notif.tzUpdated">你的上課時區設定已更新</p><span><span data-i18n="member.today">今天</span> 09:20</span></div></div>
+      </div>
+    </div>
+  </header>
+
+  <main class="content">
+    <p class="page-h" data-i18n="m07.pageTitle">帳號與設定</p>
+    <p class="page-sub" data-i18n="m07.pageSub">個人資料、上課時區與語言、通知偏好、登入安全與付款方式管理</p>
+
+    <div class="card" id="profileCard">
+      <div class="flex-between">
+        <div style="display:flex;gap:12px;align-items:center;">
+          <div class="avatar-lg" id="avatarInitials">EJ</div>
+          <div>
+            <h3 style="margin:0 0 2px;font-size:16px;" id="profileNameDisplay">Emma Johnson</h3>
+            <span class="small muted" id="profileEmailDisplay">emma.johnson@example.com</span>
+          </div>
+        </div>
+        <button class="btn btn-outline btn-sm" onclick="openProfileEdit()" data-i18n="m07.btn.edit">編輯</button>
+      </div>
+      <div class="divider"></div>
+      <div class="small"><strong data-i18n="m07.label.phone">手機</strong>：<span id="profilePhoneDisplay">+886 912-345-678</span></div>
+    </div>
+
+    <div class="section-title first" data-i18n="m07.section.records">學習紀錄</div>
+    <div class="card">
+      <a class="list-row" href="m18_learning_dashboard.html" style="text-decoration:none;color:inherit;">
+        <div class="icon-box"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="4" y1="20" x2="20" y2="20"/><rect x="5" y="11" width="3" height="7" rx="1"/><rect x="10.5" y="6" width="3" height="12" rx="1"/><rect x="16" y="9" width="3" height="9" rx="1"/></svg></div>
+        <div class="body"><h4 data-i18n="m19.nav.dashboard">學習儀表板</h4><p data-i18n="m07.records.dashDesc">自學進度、學習時數與 Mandarin Lounge 使用狀況</p></div>
+        <div class="trail"><span class="small muted">›</span></div>
+      </a>
+      <a class="list-row" href="m19_certificates.html" style="text-decoration:none;color:inherit;">
+        <div class="icon-box"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="9" r="6"/><path d="M8.5 14.5L7 22l5-3 5 3-1.5-7.5"/></svg></div>
+        <div class="body"><h4 data-i18n="m19.title">結業證書</h4><p data-i18n="m07.records.certDesc">查看、下載已核發的結業證書</p></div>
+        <div class="trail"><span class="small muted">›</span></div>
+      </a>
+    </div>
+
+    <div class="section-title" data-i18n="m07.section.langTz">上課時區與語言</div>
+    <div class="card">
+      <div class="small"><strong data-i18n="m07.label.lang">語言</strong>：<span id="profileLangDisplay">中文</span></div>
+      <div class="small" style="margin-top:6px;"><strong data-i18n="m07.label.tz">時區</strong>：<span id="profileTzDisplay">Asia/Taipei（UTC+8）</span></div>
+    </div>
+
+    <div class="section-title" data-i18n="m07.section.notifPref">通知偏好</div>
+    <div class="panel-block">
+      <div style="overflow-x:auto;">
+      <table class="notif-table">
+        <thead><tr><th></th><th>Email</th><th>LINE</th><th data-i18n="m07.col.inApp">站內</th></tr></thead>
+        <tbody>
+          <tr>
+            <td data-i18n="m07.notif.classReminder">課程提醒</td>
+            <td><label class="switch"><input type="checkbox" checked><span class="track"></span></label></td>
+            <td><label class="switch"><input type="checkbox" checked><span class="track"></span></label></td>
+            <td><label class="switch"><input type="checkbox" checked><span class="track"></span></label></td>
+          </tr>
+          <tr>
+            <td data-i18n="m07.notif.expiryReminder">課程到期提醒</td>
+            <td><label class="switch"><input type="checkbox" checked><span class="track"></span></label></td>
+            <td><label class="switch"><input type="checkbox"><span class="track"></span></label></td>
+            <td><label class="switch"><input type="checkbox" checked><span class="track"></span></label></td>
+          </tr>
+          <tr>
+            <td data-i18n="m07.notif.promotions">活動與課程訊息</td>
+            <td><label class="switch"><input type="checkbox"><span class="track"></span></label></td>
+            <td><label class="switch"><input type="checkbox"><span class="track"></span></label></td>
+            <td><label class="switch"><input type="checkbox" checked><span class="track"></span></label></td>
+          </tr>
+        </tbody>
+      </table>
+      </div>
+    </div>
+
+    <div class="section-title" data-i18n="m07.section.security">登入與安全</div>
+    <div class="card">
+      <div class="list-row" style="cursor:pointer;" onclick="openPasswordSheet()">
+        <div class="icon-box"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="10" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg></div>
+        <div class="body"><h4 data-i18n="m07.security.changePw.title">變更密碼</h4><p data-i18n="m07.security.changePw.desc">定期更換密碼可提升帳號安全性</p></div>
+        <div class="trail"><span class="small muted">›</span></div>
+      </div>
+      <div class="list-row" style="cursor:pointer;" onclick="openSecuritySheet()">
+        <div class="icon-box"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2l8 4v6c0 5-3.4 8.4-8 10-4.6-1.6-8-5-8-10V6l8-4z"/></svg></div>
+        <div class="body"><h4 data-i18n="m07.security.devices.title">登入裝置與安全</h4><p><span data-i18n="m07.lastLogin">上次登入：</span><span data-i18n="member.today">今天</span> 08:12・iPhone 15・台北</p></div>
+        <div class="trail"><span class="small muted">›</span></div>
+      </div>
+      <div class="list-row">
+        <div class="icon-box"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M23 7l-7 5 7 5V7z"/><rect x="1" y="5" width="15" height="14" rx="2"/></svg></div>
+        <div class="body"><h4 data-i18n="m07.security.zoom.title">Zoom 帳號綁定</h4><p id="zoomBindStatus">尚未綁定</p><p class="small muted" style="margin:1px 0 0;" data-i18n="m07.security.zoom.desc">依此 Email 自動放行進教室，不必等老師核准</p></div>
+        <div class="trail"><button class="btn btn-outline btn-sm" id="zoomBindActionBtn" onclick="openZoomBindSheet()">更換</button></div>
+      </div>
+    </div>
+
+    <div class="section-title" style="margin-bottom:8px;" data-i18n="m07.section.payment">付款方式</div>
+    <div class="card">
+      <div class="small muted" style="margin:0 0 10px;" data-i18n="m07.payment.desc">卡片資料由金流平台（藍新／Stripe）代管，TLI 系統不會儲存完整卡號或安全碼；新增或更換付款方式請於下次結帳時在金流頁面操作，或點下方前往管理既有卡片。</div>
+      <button class="btn btn-outline btn-block" onclick="openPaymentGateway()" data-i18n="m07.btn.gotoGateway">前往金流平台管理付款方式</button>
+      <div class="divider"></div>
+      <div class="flex-between">
+        <div class="small"><strong data-i18n="m07.label.invoiceDefault">收據載具預設：</strong><span id="invoiceCarrierDisplay">/ABC-1234</span></div>
+        <button class="btn btn-outline btn-sm" onclick="openInvoiceEdit()" data-i18n="m07.btn.edit">編輯</button>
+      </div>
+    </div>
+
+    <div class="section-title" data-i18n="m07.section.account">帳號</div>
+    <button class="btn btn-danger-outline btn-block" onclick="document.getElementById('logoutOverlay').classList.remove('hidden')" data-i18n="m07.btn.logout">登出</button>
+  </main>
+
+  <nav class="bottom-nav">
+    <a href="m01_home.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11l9-8 9 8"/><path d="M5 10v10a1 1 0 001 1h3v-6h6v6h3a1 1 0 001-1V10"/></svg><span data-i18n="member.nav.home">首頁</span></a>
+    <a href="m02_booking.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18M12 14v6M9 17h6"/></svg><span data-i18n="member.nav.booking">預約與報名</span></a>
+    <a href="m03_schedule.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg><span data-i18n="member.nav.schedule">課表</span></a>
+    <a href="m08_self_paced.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 3h6a4 4 0 014 4v14a3 3 0 00-3-3H2z"/><path d="M22 3h-6a4 4 0 00-4 4v14a3 3 0 013-3h7z"/></svg><span data-i18n="member.nav.learning">學習</span></a>
+    <a href="m07_profile.html" class="active"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 4-7 8-7s8 3 8 7"/></svg><span data-i18n="member.nav.me">我的</span></a>
+  </nav>
+</div>
+
+<div class="sheet-overlay hidden" id="logoutOverlay" onclick="if(event.target===this) this.classList.add('hidden')">
+  <div class="sheet">
+    <div class="sheet-handle"></div>
+    <h3 data-i18n="m07.logout.title">確定要登出嗎？</h3>
+    <p class="muted small" data-i18n="m07.logout.desc">登出後需要重新登入才能繼續使用會員區各項功能。</p>
+    <div class="stack" style="margin-top:14px;">
+      <button class="btn btn-danger-outline btn-block" onclick="doLogout()" data-i18n="m07.btn.confirmLogout">確認登出</button>
+      <button class="btn btn-outline btn-block" onclick="document.getElementById('logoutOverlay').classList.add('hidden')" data-i18n="member.cancel">取消</button>
+    </div>
+  </div>
+</div>
+
+<div class="sheet-overlay hidden" id="securityOverlay" onclick="if(event.target===this) this.classList.add('hidden')">
+  <div class="sheet">
+    <div class="sheet-handle"></div>
+    <h3 data-i18n="m07.security.devices.title">登入裝置與安全</h3>
+    <p class="muted small" data-i18n="m07.security.intro">為保護你的線上教室與課程資料，每堂線上教室採註冊制個人入口，需以綁定的 Zoom Email 登入後開啟，入口 60 秒內有效、不可轉傳。</p>
+    <div class="divider"></div>
+    <div class="stack" style="gap:0;">
+      <div class="list-row">
+        <div class="icon-box"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="2" width="14" height="20" rx="2"/><line x1="12" y1="18" x2="12" y2="18.01"/></svg></div>
+        <div class="body"><h4>iPhone 15・台北</h4><p><span data-i18n="m07.currentDevice">目前裝置</span>・<span data-i18n="m07.lastLogin">上次登入</span> <span data-i18n="member.today">今天</span> 08:12</p></div>
+        <div class="trail"><span class="badge badge-ok" data-i18n="m07.badge.inUse">使用中</span></div>
+      </div>
+      <div class="list-row">
+        <div class="icon-box"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg></div>
+        <div class="body"><h4>MacBook Pro・台北</h4><p><span data-i18n="m07.lastLogin">上次登入</span> 08/22<span data-i18n="member.wdSat">（六）</span>19:40</p></div>
+        <div class="trail"><button class="btn btn-outline btn-sm" onclick="revokeDevice(this)" data-i18n="m07.btn.logoutDevice">登出此裝置</button></div>
+      </div>
+    </div>
+    <div class="divider"></div>
+    <button class="btn btn-danger-outline btn-block" onclick="revokeAllOtherDevices()" data-i18n="m07.btn.logoutAllOthers">登出所有其他裝置</button>
+    <button class="btn btn-outline btn-block" style="margin-top:10px;" onclick="document.getElementById('securityOverlay').classList.add('hidden')" data-i18n="member.close">關閉</button>
+  </div>
+</div>
+
+<div class="sheet-overlay hidden" id="passwordOverlay" onclick="if(event.target===this) this.classList.add('hidden')">
+  <div class="sheet">
+    <div class="sheet-handle"></div>
+    <h3 data-i18n="m07.security.changePw.title">變更密碼</h3>
+    <div class="field" style="margin-top:14px;"><label for="pwCurrent" data-i18n="m07.pw.current">目前密碼</label><input id="pwCurrent" type="password"></div>
+    <div class="field"><label for="pwNew" data-i18n="m07.pw.new">新密碼</label><input id="pwNew" type="password"></div>
+    <div class="field"><label for="pwConfirm" data-i18n="m07.pw.confirm">確認新密碼</label><input id="pwConfirm" type="password"></div>
+    <div class="stack" style="margin-top:8px;">
+      <button class="btn btn-primary btn-block" onclick="savePassword()" data-i18n="member.save">儲存</button>
+      <button class="btn btn-outline btn-block" onclick="document.getElementById('passwordOverlay').classList.add('hidden')" data-i18n="member.cancel">取消</button>
+    </div>
+  </div>
+</div>
+
+<div class="sheet-overlay hidden" id="zoomBindOverlay" onclick="if(event.target===this) this.classList.add('hidden')">
+  <div class="sheet">
+    <div class="sheet-handle"></div>
+    <h3 data-i18n="m07.security.zoom.title">Zoom 帳號綁定</h3>
+    <p class="muted small" data-i18n="m07.zoom.instructions">線上教室採註冊制個人入口，需以此 Email 登入 Zoom 才能進入教室；請填寫與你 Zoom 帳號相同的 Email。</p>
+    <div class="divider"></div>
+    <div class="field"><label for="zoomBindInput" data-i18n="m07.zoom.emailLabel">Zoom 登入 Email</label><input id="zoomBindInput" type="email" placeholder="you@example.com"></div>
+    <div class="stack" style="margin-top:14px;">
+      <button class="btn btn-primary btn-block" onclick="saveZoomBind()" data-i18n="member.save">儲存</button>
+      <button class="btn btn-outline btn-block" onclick="document.getElementById('zoomBindOverlay').classList.add('hidden')" data-i18n="member.cancel">取消</button>
+    </div>
+  </div>
+</div>
+
+<div class="sheet-overlay hidden" id="profileEditOverlay" onclick="if(event.target===this) closeProfileEdit()">
+  <div class="sheet">
+    <div class="sheet-handle"></div>
+    <h3 data-i18n="m07.profile.editTitle">編輯個人資料</h3>
+    <div class="flex-between" style="margin:10px 0 16px;">
+      <div class="avatar-lg" id="avatarEditPreview">EJ</div>
+      <button class="btn btn-outline btn-sm" onclick="cycleAvatarColor()" data-i18n="m07.profile.changeAvatar">更換大頭貼樣式</button>
+    </div>
+    <div class="field"><label for="editName" data-i18n="m07.field.name">姓名</label><input id="editName" type="text"></div>
+    <div class="field"><label for="editEmail" data-i18n="m07.field.email">Email</label><input id="editEmail" type="email"></div>
+    <div class="field"><label for="editPhone" data-i18n="m07.field.phone">手機</label><input id="editPhone" type="tel"></div>
+    <div class="field"><label for="editLang" data-i18n="m07.field.lang">語言</label>
+      <!-- 20260930：選項改由 JS 依本頁宣告的 TLI_I18N_PAGE_LANGS（五語）產生，值改用語系代碼與主檔 uiLocales 對齊 -->
+      <select id="editLang"></select>
+    </div>
+    <div class="field"><label for="editTz" data-i18n="m07.field.tz">時區</label>
+      <select id="editTz">
+        <option value="Asia/Taipei（UTC+8）">Asia/Taipei（UTC+8）</option>
+        <option value="Asia/Tokyo（UTC+9）">Asia/Tokyo（UTC+9）</option>
+        <option value="America/Los_Angeles（UTC-7）">America/Los_Angeles（UTC-7）</option>
+      </select>
+    </div>
+    <div class="stack">
+      <button class="btn btn-primary btn-block" onclick="saveProfile()" data-i18n="member.save">儲存</button>
+      <button class="btn btn-outline btn-block" onclick="closeProfileEdit()" data-i18n="member.cancel">取消</button>
+    </div>
+  </div>
+</div>
+
+<div class="sheet-overlay hidden" id="invoiceEditOverlay" onclick="if(event.target===this) this.classList.add('hidden')">
+  <div class="sheet">
+    <div class="sheet-handle"></div>
+    <h3 data-i18n="m07.invoice.editTitle">編輯收據載具預設</h3>
+    <div class="field"><label for="editInvoiceType" data-i18n="m07.invoice.type">收據類型</label>
+      <select id="editInvoiceType" onchange="toggleInvoiceTaxField()">
+        <option value="carrier" data-i18n="m07.invoice.opt.personal">個人・電子收據（手機條碼載具）</option>
+        <option value="company" data-i18n="m07.invoice.opt.company">公司・統一編號（三聯式）</option>
+      </select>
+    </div>
+    <div class="field" id="invoiceCarrierField"><label for="editInvoiceCarrier" data-i18n="m07.invoice.carrierLabel">手機條碼載具</label><input id="editInvoiceCarrier" type="text" placeholder="/ABC-1234"></div>
+    <div class="field hidden" id="invoiceTaxField"><label for="editInvoiceTax" data-i18n="m07.invoice.taxLabel">統一編號／抬頭</label><input id="editInvoiceTax" type="text" placeholder="統編／公司抬頭" data-i18n-placeholder="m07.invoice.taxPlaceholder"></div>
+    <div class="stack" style="margin-top:8px;">
+      <button class="btn btn-primary btn-block" onclick="saveInvoiceDefault()" data-i18n="member.save">儲存</button>
+      <button class="btn btn-outline btn-block" onclick="document.getElementById('invoiceEditOverlay').classList.add('hidden')" data-i18n="member.cancel">取消</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast hidden" id="toast">已儲存</div>
+
+<script>window.TLI_I18N_PAGE_LANGS=['zh-TW','zh-CN','en','ja','de'];</script>
+<script src="../assets/_shared_masters.js"></script>
+<script src="../assets/_i18n_dict.js"></script>
+<script src="../assets/_i18n_dict_member.js"></script>
+<script src="../assets/_i18n_dict_ja.js"></script>
+<script src="../assets/_i18n_dict_de.js"></script>
+<script src="_project_learning.js"></script>
+<script src="../assets/_i18n.js"></script>
+<script>
+function toggleBell(){document.getElementById('bellPanel').classList.toggle('open');}
+document.addEventListener('click',function(e){
+  if(!e.target.closest('.bell-btn')&&!e.target.closest('.bell-panel'))document.getElementById('bellPanel').classList.remove('open');
+});
+function toggleDoc(id){document.getElementById(id).classList.toggle('open');}
+
+function doLogout(){
+  location.href='../公開網站/p07_login_register.html';
+}
+
+/* 20260930：語言偏好改用語系代碼（對齊 window.TLI_I18N_PAGE_LANGS／主檔 uiLocales），
+   原本存中文顯示字串（'中文'）改存代碼 'zh-TW'，僅示範資料的表示法改變，語意不變 */
+var PROFILE={name:'Emma Johnson',email:'emma.johnson@example.com',phone:'+886 912-345-678',lang:'zh-TW',tz:'Asia/Taipei（UTC+8）',avatarStyle:0};
+/* 直營頁支援 5 語（見本頁宣告的 TLI_I18N_PAGE_LANGS），主檔 uiLocales 固定只有 3 語，
+   ja／de 沒有主檔可查，這裡只補這兩語的顯示名稱，其餘一律以主檔 name 為準 */
+var PROFILE_LANG_EXTRA_NAMES = {ja:'日本語', de:'Deutsch'};
+function profileLangLabel(code){
+  var loc = TLI_MASTERS.byId('uiLocales', code);
+  return (loc && loc.name) || PROFILE_LANG_EXTRA_NAMES[code] || code;
+}
+function renderEditLangOptions(){
+  var sel = document.getElementById('editLang');
+  if (!sel) return;
+  var langs = (window.TLI_I18N_PAGE_LANGS && window.TLI_I18N_PAGE_LANGS.length) ? window.TLI_I18N_PAGE_LANGS : TLI_MASTERS.uiLocales.map(function(l){return l.id;});
+  sel.innerHTML = langs.map(function(code){ return '<option value="'+code+'">'+profileLangLabel(code)+'</option>'; }).join('');
+}
+renderEditLangOptions();
+var AVATAR_COLORS=['var(--c-primary)','var(--c-accent)','var(--c-secondary)'];
+var toastTimer=null;
+
+function initials(name){
+  var parts=name.trim().split(/\s+/);
+  if(parts.length>=2) return (parts[0][0]+parts[1][0]).toUpperCase();
+  return name.slice(0,2).toUpperCase();
+}
+function renderProfile(){
+  document.getElementById('profileNameDisplay').textContent=PROFILE.name;
+  document.getElementById('profileEmailDisplay').textContent=PROFILE.email;
+  document.getElementById('profilePhoneDisplay').textContent=PROFILE.phone;
+  document.getElementById('profileLangDisplay').textContent=profileLangLabel(PROFILE.lang);
+  document.getElementById('profileTzDisplay').textContent=PROFILE.tz;
+  var av=document.getElementById('avatarInitials');
+  av.textContent=initials(PROFILE.name);
+  av.style.background=AVATAR_COLORS[PROFILE.avatarStyle % AVATAR_COLORS.length];
+}
+function openProfileEdit(){
+  document.getElementById('editName').value=PROFILE.name;
+  document.getElementById('editEmail').value=PROFILE.email;
+  document.getElementById('editPhone').value=PROFILE.phone;
+  document.getElementById('editLang').value=PROFILE.lang;
+  document.getElementById('editTz').value=PROFILE.tz;
+  var avp=document.getElementById('avatarEditPreview');
+  avp.textContent=initials(PROFILE.name);
+  avp.style.background=AVATAR_COLORS[PROFILE.avatarStyle % AVATAR_COLORS.length];
+  document.getElementById('profileEditOverlay').classList.remove('hidden');
+}
+function closeProfileEdit(){
+  document.getElementById('profileEditOverlay').classList.add('hidden');
+}
+function cycleAvatarColor(){
+  PROFILE.avatarStyle=(PROFILE.avatarStyle+1)%AVATAR_COLORS.length;
+  document.getElementById('avatarEditPreview').style.background=AVATAR_COLORS[PROFILE.avatarStyle];
+}
+function saveProfile(){
+  PROFILE.name=document.getElementById('editName').value.trim()||PROFILE.name;
+  PROFILE.email=document.getElementById('editEmail').value.trim()||PROFILE.email;
+  PROFILE.phone=document.getElementById('editPhone').value.trim()||PROFILE.phone;
+  PROFILE.lang=document.getElementById('editLang').value;
+  PROFILE.tz=document.getElementById('editTz').value;
+  renderProfile();
+  closeProfileEdit();
+  showToast(TLI_I18N.t('個人資料已儲存',{en:'Profile saved',ja:'個人情報を保存しました',de:'Profil gespeichert'}));
+}
+function openPasswordSheet(){
+  document.getElementById('pwCurrent').value='';
+  document.getElementById('pwNew').value='';
+  document.getElementById('pwConfirm').value='';
+  document.getElementById('passwordOverlay').classList.remove('hidden');
+}
+function savePassword(){
+  var cur=document.getElementById('pwCurrent').value;
+  var nw=document.getElementById('pwNew').value;
+  var confirm=document.getElementById('pwConfirm').value;
+  if(!cur||!nw){ showToast(TLI_I18N.t('請輸入目前密碼與新密碼',{en:'Please enter your current and new password',ja:'現在のパスワードと新しいパスワードを入力してください',de:'Bitte aktuelles und neues Passwort eingeben'})); return; }
+  if(nw!==confirm){ showToast(TLI_I18N.t('兩次輸入的新密碼不一致',{en:'The new passwords don\'t match',ja:'新しいパスワードが一致しません',de:'Die neuen Passwörter stimmen nicht überein'})); return; }
+  document.getElementById('passwordOverlay').classList.add('hidden');
+  showToast(TLI_I18N.t('密碼已更新',{en:'Password updated',ja:'パスワードを更新しました',de:'Passwort aktualisiert'}));
+}
+
+/* ===== 付款方式：不在 TLI 系統內維護卡片資料（資安考量），只提供前往金流平台的入口 ===== */
+function openPaymentGateway(){
+  showToast(TLI_I18N.t('將導轉至藍新／Stripe 金流平台管理付款方式（正式串接後為外部頁面）',{en:'Redirecting to NewebPay/Stripe payment platform to manage payment methods (external page once integrated)',ja:'ニューウェブペイ／Stripe 決済プラットフォームへ移動します（本番連携後は外部ページになります）',de:'Weiterleitung zur NewebPay/Stripe-Zahlungsplattform (nach echter Integration eine externe Seite)'}));
+}
+
+/* ===== 收據載具預設 ===== */
+var INVOICE_DEFAULT={type:'carrier',carrier:'/ABC-1234',tax:''};
+function renderInvoiceDefault(){
+  var el=document.getElementById('invoiceCarrierDisplay');
+  if(!el) return;
+  el.textContent = INVOICE_DEFAULT.type==='carrier' ? INVOICE_DEFAULT.carrier : (TLI_I18N.t('統一編號 ',{en:'Tax ID ',ja:'統一番号 ',de:'Steuernummer '})+(INVOICE_DEFAULT.tax||TLI_I18N.t('未設定',{en:'not set',ja:'未設定',de:'nicht festgelegt'})));
+}
+function toggleInvoiceTaxField(){
+  var isCompany=document.getElementById('editInvoiceType').value==='company';
+  document.getElementById('invoiceTaxField').classList.toggle('hidden', !isCompany);
+  document.getElementById('invoiceCarrierField').classList.toggle('hidden', isCompany);
+}
+function openInvoiceEdit(){
+  document.getElementById('editInvoiceType').value=INVOICE_DEFAULT.type;
+  document.getElementById('editInvoiceCarrier').value=INVOICE_DEFAULT.carrier;
+  document.getElementById('editInvoiceTax').value=INVOICE_DEFAULT.tax;
+  toggleInvoiceTaxField();
+  document.getElementById('invoiceEditOverlay').classList.remove('hidden');
+}
+function saveInvoiceDefault(){
+  INVOICE_DEFAULT.type=document.getElementById('editInvoiceType').value;
+  INVOICE_DEFAULT.carrier=document.getElementById('editInvoiceCarrier').value.trim();
+  INVOICE_DEFAULT.tax=document.getElementById('editInvoiceTax').value.trim();
+  renderInvoiceDefault();
+  document.getElementById('invoiceEditOverlay').classList.add('hidden');
+  showToast(TLI_I18N.t('收據載具已儲存',{en:'Default receipt carrier saved',ja:'デフォルトの領収書キャリアを保存しました',de:'Standard-Belegträger gespeichert'}));
+}
+function showToast(msg){
+  var t=document.getElementById('toast');
+  t.textContent=msg;
+  t.classList.remove('hidden');
+  clearTimeout(toastTimer);
+  toastTimer=setTimeout(function(){t.classList.add('hidden');},2200);
+}
+function openSecuritySheet(){
+  document.getElementById('securityOverlay').classList.remove('hidden');
+}
+function revokeDevice(btn){
+  var row=btn.closest('.list-row');
+  row.querySelector('.trail').innerHTML='<span class="small muted">'+TLI_I18N.t('已登出',{en:'Logged out',ja:'ログアウト済み',de:'Abgemeldet'})+'</span>';
+  showToast(TLI_I18N.t('已登出該裝置',{en:'That device has been logged out',ja:'その端末をログアウトしました',de:'Dieses Gerät wurde abgemeldet'}));
+}
+function revokeAllOtherDevices(){
+  document.getElementById('securityOverlay').classList.add('hidden');
+  showToast(TLI_I18N.t('已登出所有其他裝置，僅保留目前裝置登入',{en:'All other devices logged out — only this device remains signed in',ja:'他のすべての端末をログアウトしました。現在の端末のみログイン中です',de:'Alle anderen Geräte abgemeldet — nur dieses Gerät bleibt angemeldet'}));
+}
+// Zoom Email 綁定（前端以 localStorage 模擬；若尚未有值則預設為已綁定，示範用）
+(function(){
+  try{ if(localStorage.getItem('tli_zoom_email')===null){ localStorage.setItem('tli_zoom_email','emma.johnson@example.com'); } }catch(e){}
+})();
+function getZoomEmail(){
+  try{ return localStorage.getItem('tli_zoom_email'); }catch(e){ return null; }
+}
+function maskEmail(email){
+  var parts=(email||'').split('@');
+  if(parts.length!==2||!parts[0]) return email||'';
+  return parts[0].charAt(0)+'***@'+parts[1];
+}
+function renderZoomBindStatus(){
+  var email=getZoomEmail();
+  var el=document.getElementById('zoomBindStatus');
+  var btn=document.getElementById('zoomBindActionBtn');
+  el.textContent = email ? (TLI_I18N.t('已綁定：',{en:'Linked: ',ja:'連携済み：',de:'Verknüpft: '})+maskEmail(email)) : TLI_I18N.t('尚未綁定',{en:'Not linked',ja:'未連携',de:'Nicht verknüpft'});
+  if(btn) btn.textContent = email ? TLI_I18N.t('更換',{en:'Change',ja:'変更',de:'Ändern'}) : TLI_I18N.t('設定 Zoom 登入 Email',{en:'Set Up Zoom Login Email',ja:'Zoomログインメールを設定',de:'Zoom-E-Mail einrichten'});
+}
+function openZoomBindSheet(){
+  document.getElementById('zoomBindInput').value = getZoomEmail() || '';
+  document.getElementById('zoomBindOverlay').classList.remove('hidden');
+}
+function saveZoomBind(){
+  var val=document.getElementById('zoomBindInput').value.trim();
+  if(!val || val.indexOf('@')===-1){
+    showToast(TLI_I18N.t('請輸入有效的 Email',{en:'Please enter a valid email',ja:'有効なメールアドレスを入力してください',de:'Bitte eine gültige E-Mail eingeben'}));
+    return;
+  }
+  try{ localStorage.setItem('tli_zoom_email', val); }catch(e){}
+  renderZoomBindStatus();
+  document.getElementById('zoomBindOverlay').classList.add('hidden');
+  showToast(TLI_I18N.t('Zoom 帳號綁定已更新',{en:'Zoom account link updated',ja:'Zoomアカウント連携を更新しました',de:'Zoom-Kontoverknüpfung aktualisiert'}));
+}
+var TLI_RATES={TWD:{rate:1,symbol:'NT$'},USD:{rate:31.5,symbol:'US$'},JPY:{rate:0.211,symbol:'¥'},CNY:{rate:4.4,symbol:'CN¥'},EUR:{rate:35.5,symbol:'€'}};
+var CURRENT_CURRENCY='TWD';
+function tliFmt(amountTWD,cur){
+  var r=TLI_RATES[cur]||TLI_RATES.TWD;
+  var v=amountTWD/r.rate;
+  var decimals=cur==='TWD'?0:(cur==='JPY'?0:2);
+  return r.symbol+v.toLocaleString('en-US',{minimumFractionDigits:decimals,maximumFractionDigits:decimals});
+}
+/* 五語共用模組：幣別跟著介面語言連動（沿用舊 handleLangChange 的幣別對照表） */
+var LANG_TO_CURRENCY={'zh-TW':'TWD','zh-CN':'CNY','en':'USD','ja':'JPY','de':'EUR'};
+function recalcMoney(){
+  CURRENT_CURRENCY = LANG_TO_CURRENCY[TLI_I18N.currentLang()] || 'TWD';
+  document.querySelectorAll('[data-money]').forEach(function(el){
+    el.textContent=tliFmt(parseFloat(el.getAttribute('data-money')),CURRENT_CURRENCY);
+  });
+}
+renderProfile();
+renderInvoiceDefault();
+renderZoomBindStatus();
+TLI_I18N.onRefresh(recalcMoney);
+TLI_I18N.onRefresh(renderInvoiceDefault);
+TLI_I18N.onRefresh(renderZoomBindStatus);
+TLI_I18N.init();
+recalcMoney();
+document.addEventListener('DOMContentLoaded', function(){
+  var opts=document.querySelectorAll('.tli-i18n-opt');
+  for(var i=0;i<opts.length;i++){
+    opts[i].addEventListener('click', function(){
+      var name=this.textContent.trim();
+      showToast(TLI_I18N.t('顯示語言／幣別已切換為',{en:'Display language/currency switched to',ja:'表示言語と通貨を切り替えました：',de:'Sprache und Währung umgestellt auf'})+' '+name);
+    });
+  }
+});
+
+// 全域 ESC 關閉：關閉目前開啟中的 sheet-overlay
+document.addEventListener('keydown', function(e){
+  if(e.key !== 'Escape') return;
+  document.querySelectorAll('.sheet-overlay:not(.hidden)').forEach(function(el){
+    el.classList.add('hidden');
+  });
+});
+</script>
+</body>
+</html>
