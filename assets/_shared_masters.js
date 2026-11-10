@@ -648,12 +648,16 @@ projectRoster.forEach(function(r){
    使用者指示「先列幾種常見的語言」：以下 8 種是 AI 依常見語言列出，無文件依據；
    可在 a17 基礎資料設定「教材語系」維護，教材編輯頁新增語系時也可手動輸入（會一併寫進這份清單）。
    code 是檔案版本鍵的一部分（例：tc-en＝主語系 tc × 輔助語系 en）；tc／sc／en／ja 沿用原本的鍵，已使用的 code 不可改。
-   存 localStorage tliMaterialLangs_v1，寫入後呼叫 TLI_MASTERS.saveMaterialLangs()。 */
+   存 localStorage tliMaterialLangs_v1，寫入後呼叫 TLI_MASTERS.saveMaterialLangs()。
+   20261110 使用者提供 TLI 文案截圖「TLI教材分繁體、簡體及漢語拼音、注音符號版本，基礎教材則提供英、日、泰、德、法語對譯版本」並指示照此調整：
+   主語系 tc＝繁體＋注音、sc＝簡體＋拼音（字體與標音綁在一起，使用者選定）；輔助語系預設英、日，泰、德、法用新增的方式加入（清單補上泰文 th）。
+   「基礎教材才有對譯」：沒有對譯的教材怎麼放檔案，使用者決定先不處理。 */
 var materialLangs = [
- {code:'tc', name:'繁體中文', nameEn:'Traditional Chinese', abbr:'繁', enabled:true},
- {code:'sc', name:'簡體中文', nameEn:'Simplified Chinese', abbr:'簡', enabled:true},
+ {code:'tc', name:'繁體＋注音', nameEn:'Traditional + Zhuyin', abbr:'繁', enabled:true},
+ {code:'sc', name:'簡體＋拼音', nameEn:'Simplified + Pinyin', abbr:'簡', enabled:true},
  {code:'en', name:'英文', nameEn:'English', abbr:'EN', enabled:true},
  {code:'ja', name:'日文', nameEn:'Japanese', abbr:'JP', enabled:true},
+ {code:'th', name:'泰文', nameEn:'Thai', abbr:'TH', enabled:true},
  {code:'ko', name:'韓文', nameEn:'Korean', abbr:'KO', enabled:true},
  {code:'de', name:'德文', nameEn:'German', abbr:'DE', enabled:true},
  {code:'fr', name:'法文', nameEn:'French', abbr:'FR', enabled:true},
@@ -665,6 +669,12 @@ var ML_KEY = 'tliMaterialLangs_v1';
     var a = JSON.parse(global.localStorage.getItem(ML_KEY) || 'null');
     if (Array.isArray(a) && a.length){ materialLangs.length = 0; a.forEach(function(x){ materialLangs.push(x); }); }
   } catch(e){}
+  /* 20261110 改版前存過的清單：補上泰文、主語系改名（使用者若已在 a17 自行改名則不動） */
+  var byCode = function(c){ return materialLangs.filter(function(l){ return l.code === c; })[0]; };
+  if (!byCode('th')){ var ja = materialLangs.indexOf(byCode('ja')); materialLangs.splice(ja > -1 ? ja + 1 : materialLangs.length, 0, {code:'th', name:'泰文', nameEn:'Thai', abbr:'TH', enabled:true}); }
+  var tc = byCode('tc'), sc = byCode('sc');
+  if (tc && tc.name === '繁體中文'){ tc.name = '繁體＋注音'; tc.nameEn = 'Traditional + Zhuyin'; }
+  if (sc && sc.name === '簡體中文'){ sc.name = '簡體＋拼音'; sc.nameEn = 'Simplified + Pinyin'; }
 })();
 function saveMaterialLangs(){
   try { global.localStorage.setItem(ML_KEY, JSON.stringify(materialLangs)); } catch(e){}
@@ -715,6 +725,18 @@ function saveMaterialBooks(){
   try { global.localStorage.setItem(MB_KEY, JSON.stringify(materialBooks)); } catch(e){}
 }
 loadMaterialBooks();
+/* 20261110 檔案版本語系改成 TLI 文案（使用者提供截圖）：主語系 繁體＋注音／簡體＋拼音；輔助語系預設只放英、日，
+   泰、德、法等其他語系由使用者用「＋ 新增輔助語系」加入（使用者同日指示）。
+   每本教材都套用；已存過其他輔助語系且已放檔案的，保留在後面，不丟資料。 */
+var MATERIAL_DEF_MAINS = ['tc','sc'], MATERIAL_DEF_AUXS = ['en','ja'];
+materialBooks.forEach(function(b){
+  if (b.langPreset === '20261110b') return;
+  var usedAux = Object.keys(b.versions || {}).map(function(k){ return k.split('-')[1]; });
+  var usedMain = Object.keys(b.versions || {}).map(function(k){ return k.split('-')[0]; });
+  b.auxLangs = MATERIAL_DEF_AUXS.concat(usedAux.filter(function(c, i, a){ return MATERIAL_DEF_AUXS.indexOf(c) < 0 && a.indexOf(c) === i; }));
+  b.mainLangs = MATERIAL_DEF_MAINS.concat(usedMain.filter(function(c, i, a){ return MATERIAL_DEF_MAINS.indexOf(c) < 0 && a.indexOf(c) === i; }));
+  b.langPreset = '20261110b';
+});
 
 /* ---- 21. 會員結構：人 × 來源（20261013 新增，欄位定義見檔頭註解；契約檔 _契約_會員結構與啟用_20261013.md） ---- */
 var sourceTypes = [
@@ -1103,6 +1125,8 @@ global.TLI_MASTERS = {
   materialBooks: materialBooks,
   saveMaterialBooks: saveMaterialBooks,
   materialLangs: materialLangs,
+  materialDefMains: MATERIAL_DEF_MAINS,
+  materialDefAuxs: MATERIAL_DEF_AUXS,
   saveMaterialLangs: saveMaterialLangs,
   reloadMaterialBooks: loadMaterialBooks,
   saveProjectData: saveProjectData,

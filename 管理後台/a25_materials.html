@@ -351,7 +351,6 @@ align-items:center;justify-content:center;font-size:13px;font-weight:600;flex-sh
 .mcell.na{border-style:dashed;background:transparent;align-items:center;justify-content:center;color:var(--g200);}
 .mlx{background:none;border:none;color:var(--g500);cursor:pointer;font-size:13px;padding:0 3px;line-height:1;font-family:inherit;}
 .mlx:hover{color:#C0392B;}
-.maddcol{display:flex;align-items:center;}
 .maddrow{grid-column:1 / -1;}
 .iconbtn{background:#fff;border:1px solid var(--g200);border-radius:6px;padding:3px 8px;font-size:12px;cursor:pointer;font-family:inherit;color:var(--g900);}
 .iconbtn:hover{border-color:var(--navy);color:var(--navy);}
@@ -610,7 +609,8 @@ var TITLE_LOCS = [
 ];
 function locKey(){ var l = TITLE_LOCS.find(function(x){ return x.id === curLoc; }); return l ? l.key : 'titleZh'; }
 /* 檔案版本：主語系（列）× 輔助語系（欄），每本教材各自設定；未設定時沿用原本的繁／簡 × EN／JP */
-var DEF_MAINS = ['tc','sc'], DEF_AUXS = ['en','ja'];
+/* 預設語系在共用主檔（20261110 依使用者提供的 TLI 文案：繁體＋注音、簡體＋拼音 × 英、日；其他輔助語系用新增的方式加入） */
+var DEF_MAINS = TLI_MASTERS.materialDefMains || ['tc','sc'], DEF_AUXS = TLI_MASTERS.materialDefAuxs || ['en','ja'];
 function bookMains(b){ return (b && b.mainLangs && b.mainLangs.length) ? b.mainLangs : DEF_MAINS; }
 function bookAuxs(b){ return (b && b.auxLangs && b.auxLangs.length) ? b.auxLangs : DEF_AUXS; }
 function matLang(code){ return (TLI_MASTERS.materialLangs || []).find(function(l){ return l.code === code; }); }
@@ -735,7 +735,7 @@ function openEditor(){
     if (!b){ toast(T('找不到這筆教材','Material not found')); return false; }
     draft = JSON.parse(JSON.stringify(b)); isNew = false;
   } else {
-    draft = {id:'', titleZh:'', titleEn:'', status:'啟用', versions:{}, audios:[]}; isNew = true;
+    draft = {id:'', titleZh:'', titleEn:'', status:'啟用', versions:{}, audios:[], langPreset:'20261110b'}; isNew = true;
   }
   draft.mainLangs = bookMains(draft).slice(); draft.auxLangs = bookAuxs(draft).slice();
   snapshot = JSON.stringify(draft);
@@ -789,10 +789,11 @@ function onTitleInput(v){ draft[locKey()] = v; }
 /* ---- 2 檔案版本（矩陣） ---- */
 function renderMatrix(){
   var mains = bookMains(draft), auxs = bookAuxs(draft);
-  var h = '<div class="sechead"><h2>' + T('2　檔案版本','2  File Versions') + '</h2></div>' +
-    '<div id="flashVer"></div><div class="matrix" style="grid-template-columns:auto repeat(' + auxs.length + ',minmax(160px,1fr)) auto"><div></div>' +
-    auxs.map(function(x){ return '<div class="mhead">' + auxLabel(x) + langRemoveBtn('aux', x) + '</div>'; }).join('') +
-    '<div class="maddcol"><button class="btn ghost sm" onclick="openAddLang(\'aux\')">' + T('＋ 新增輔助語系','+ Add support language') + '</button></div>';
+  /* 20261110 使用者要求：「新增輔助語系」按鈕移到區塊標題右側，表格不再多佔一欄 */
+  var h = '<div class="sechead" style="justify-content:space-between;align-items:center"><h2>' + T('2　檔案版本','2  File Versions') + '</h2>' +
+    '<button class="btn ghost sm" onclick="openAddLang(\'aux\')">' + T('＋ 新增輔助語系','+ Add support language') + '</button></div>' +
+    '<div id="flashVer"></div><div class="matrix" style="grid-template-columns:auto repeat(' + auxs.length + ',minmax(160px,1fr))"><div></div>' +
+    auxs.map(function(x){ return '<div class="mhead">' + auxLabel(x) + langRemoveBtn('aux', x) + '</div>'; }).join('');
   mains.forEach(function(s){
     h += '<div class="mside">' + scriptLabel(s) + langRemoveBtn('main', s) + '</div>';
     auxs.forEach(function(x){
@@ -806,7 +807,6 @@ function renderMatrix(){
         h += '<div class="mcell miss"><span class="small" style="color:var(--g500)">' + T('未提供','Not provided') + '</span><button class="btn ghost sm" onclick="addVersion(\'' + k + '\')">' + T('＋ 加入','+ Add') + '</button></div>';
       }
     });
-    h += '<div></div>';
   });
   h += '<div class="maddrow"><button class="btn ghost sm" onclick="openAddLang(\'main\')">' + T('＋ 新增主語系','+ Add main language') + '</button></div></div>';
   document.getElementById('secVer').innerHTML = h;
