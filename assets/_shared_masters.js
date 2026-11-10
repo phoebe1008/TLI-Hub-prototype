@@ -34,7 +34,7 @@
    代理來源帳號（20261013）：註冊時輸入優惠碼（＝partners.code，type 'agent'）→ 帳號 sourceType 'agent'、sourceUnitId＝該代理 id；已有其他來源帳號者另建一筆。agentByCode(code)、agentById(id)。
    工具函式：memberScope(a)、sourceUnitName(a)、sourceTypeName(id)、accountsByEmail(email)、accountsOfOrder(orderId)、
             findOrgByCode(code)、newActivationCode()、activationCodeOf(a)、ensureActivationCode(a)、activationLinkOf(a, prefix)、saveMemberData()（寫入 localStorage，key 見下方）。
-   a20 經銷「匯入學員名單」會把新帳號 push 進 memberAccounts 並存檔，a01 會員管理讀同一份。
+   a20 經銷「匯入學員名單」會把新帳號 push 進 memberAccounts 並存檔，a01 學員管理讀同一份。
    ------------------------------------------------------------------ */
 (function(global){
 
@@ -139,7 +139,7 @@ var videoTools = [
  {id:'teams', name:'Microsoft Teams', licenses:10, inUse:3, owner:'TLI'}
 ];
 
-/* ---- 8. 產品分類：固定五類（來源 a02「產品管理」；程度測驗已於 2026-10-05 客戶會議恢復為一階段 B，測驗走 a22 測驗管理，不掛產品分類） ---- */
+/* ---- 8. 產品分類：固定五類（來源 a02「課程管理」；程度測驗已於 2026-10-05 客戶會議恢復為一階段 B，測驗走 a22 測驗管理，不掛產品分類） ---- */
 /* 產品分類的三個大類（固定；2026-11-08 使用者指示）：子分類（productCategories）各歸屬其一，order 為大類內的排序，三大類下都可自行新增子分類 */
 /* 資源庫六類的可選項目（供產品「使用資源」挑選用）。id 前綴與名稱沿用 a18 資源庫的示範資料（img／vid／aud／mat／hw／qz + 序號）；
    a18 目前仍自行產生這批資料，兩邊改名稱時要同步。這裡只放名稱，不含狀態、標籤等欄位。 */
@@ -164,7 +164,7 @@ var productCategories = [
  {id:'c_chat', groupId:'g_appt', name:'Mandarin Lounge 團體場次', desc:'會員權益型的會話練習，只有 Mandarin Lounge 團體場次（每場 30 分鐘、6–10 人）。', order:3, status:'啟用'}
 ];
 
-/* ---- 9. 產品（來源 a02「產品管理」＋a04「銷售方案設定」SKU 明細合併，消除兩頁各自一套產品清單的問題）
+/* ---- 9. 產品（來源 a02「課程管理」＋a04「銷售方案設定」SKU 明細合併，消除兩頁各自一套產品清單的問題）
    categoryId／teachLangId／deliveryModeId／needsVideoRoom／levelId 為新增的跨頁對照欄位；
    unit／feeCat／tax／courseType／line 為 a04 計價與型態欄位；沿用兩邊原始資料，欄位名稱不變，頁面邏輯不用改 ---- */
 var products = [

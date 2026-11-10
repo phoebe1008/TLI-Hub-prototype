@@ -5,7 +5,7 @@
  *   2. 側欄／底部導覽：選定階段還沒上線的頁變灰並標「XX 上線」，仍可點
  *   3. 本頁晚於選定階段才上線 → 蓋說明層，可一鍵切到該階段
  *   4. 本頁涉及多個階段的功能 → 展開可看各功能上線階段
- *   5. 同一頁依階段換身分或檢視：會員區 1A＝專案合作學生、其他＝直營學生；t11 1A＝中心教師版；h01 1C 起顯示老師評語 */
+ *   5. 同一頁依階段換身分或檢視：會員區 1A＝專案合作學員、其他＝直營學生；t11 1A＝中心教師版；h01 1C 起顯示老師評語 */
 (function () {
   var MAP = window.TLI_PHASE_MAP || {};
   var ORDER = ['1A', '1B', '1C', '2'];
@@ -32,7 +32,7 @@
     '教師端/t11_lounge_sessions.html': function (p) { var on = p === '1A', has = /[?&]view=1a\b/.test(location.search); return on === has ? null : (on ? withQuery({ view: '1a' }) : withQuery(null, ['view'])); },
     '組織端/h01_dashboard.html': function (p) { var on = rank(p) >= 2, has = /[?&]phase=1c\b/.test(location.search); return on === has ? null : (on ? withQuery({ phase: '1c' }) : withQuery(null, ['phase'])); }
   };
-  /* 1A 只有專案合作學生；1B 起兩種學生並存，所以只在「從 1A 切出去」時才換回直營學生 */
+  /* 1A 只有專案合作學員；1B 起兩種學生並存，所以只在「從 1A 切出去」時才換回直營學生 */
   function memberRedirect(p, leaving1A) {
     if (!/^會員區\//.test(page) || !window.TLI_PL || !window.TLI_PL.me) { return null; }
     var isPj = window.TLI_PL.me().mode === 'project';

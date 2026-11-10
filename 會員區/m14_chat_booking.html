@@ -252,7 +252,7 @@ button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible{ou
 <script src="../assets/_i18n.js"></script>
 <script>
 var PL = TLI_PL, T = PL.T, U = PL.me();
-/* 1A 專案合作學生只有 Mandarin Lounge，不顯示直營才有的團體與活動報名、活動分頁 */
+/* 1A 專案合作學員只有 Mandarin Lounge，不顯示直營才有的團體與活動報名、活動分頁 */
 if(U.mode==='project'){ var _ns=document.querySelector('.nav-segment'); if(_ns) _ns.style.display='none'; }
 if(U.mode==='project'){ var _st=document.getElementById('subTxt'); _st.textContent='團體場次，每場 30 分鐘、6–10 人，由 TLI 中心教師帶領。每週有預約額度。'; _st.setAttribute('data-en','Group speaking sessions of 30 minutes, 6 to 10 learners each, led by TLI center teachers. A weekly quota applies.'); }
 function $(i){ return document.getElementById(i); }

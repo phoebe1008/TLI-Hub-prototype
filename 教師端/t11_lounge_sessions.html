@@ -420,7 +420,7 @@ var CURRENT_TEACHER_INTRO_DEFAULT = '資深中文教師，擅長生活會話與�
 function chatAudienceLabel(session){
   if (session.audienceGroup === 'enterprise') return tt('指定企業：','Enterprise: ')+(session.audienceTarget||tt('（未指定）','(unspecified)'));
   if (session.audienceGroup === 'institution') return tt('指定學校：','Institution: ')+(session.audienceTarget||tt('（未指定）','(unspecified)'));
-  if (session.audienceGroup === 'project') return tt('專案合作學生','Project-partnership students');
+  if (session.audienceGroup === 'project') return tt('專案合作學員','Project-partnership students');
   if (session.audienceGroup === 'direct') return tt('直營學員','Direct students');
   return tt('全部直營學員','All direct students');
 }

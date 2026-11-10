@@ -606,11 +606,11 @@ document.querySelectorAll('#attendStatusRow .quick-chip').forEach(function(btn){
 });
 updateAttendHint();
 
-/* ---------- 完成回饋後「下一堂／回我的學生」按鈕：語言切換時需重跑，抽成函式 ---------- */
+/* ---------- 完成回饋後「下一堂／回我的學員」按鈕：語言切換時需重跑，抽成函式 ---------- */
 function applyNextBtnLabel(){
   var nextBtn = document.getElementById('successNextBtn');
   if(fromPage === 't07'){
-    nextBtn.textContent = TLI_I18N.t('回我的學生','Back to My Students');
+    nextBtn.textContent = TLI_I18N.t('回我的學員','Back to My Students');
     nextBtn.href = 't07_students.html?done=1';
   }else{
     nextBtn.textContent = TLI_I18N.t('下一堂','Next Lesson');

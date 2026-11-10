@@ -37,7 +37,7 @@ Object.assign(TLI_I18N_DICT.en, {
 "page.title.a20":"Partner Management",
 
 /* a11_categories */
-"nav.backToMemberMgmt":"← Back to Member Management",
+"nav.backToMemberMgmt":"← Back to Student Management",
 "page.desc.categories":"Categories are member attributes, used for sales plan eligibility and reports; payment methods are independent of category.",
 "btn.addCategory":"＋ Add Category",
 "h2.categoryList":"Category List",
@@ -229,7 +229,7 @@ Object.assign(TLI_I18N_DICT.en, {
 "col.avgScore":"Avg. Score",
 
 /* a02/a03/a04/a05/a07/a08/a10/a14 三語切換擴充（20260929） */
-"btn.backToProducts":"← Back to Product Management",
+"btn.backToProducts":"← Back to Course Management",
 "btn.editProduct":"Edit Product",
 "h2.productSpec":"Product Specifications",
 "page.desc.productDetail":"Products are the “product” layer of the three-tier supply structure, recording only sellable specifications and attributes. Quantity, validity period, price and listing status belong to “Sales Plan Settings” — changing attributes here does not affect the price of plans already sold.",
@@ -682,7 +682,7 @@ Object.assign(TLI_I18N_DICT.en, {
 
 /* a16_events */
 "page.desc.events":"Manage event registration, rosters, and online classroom settings",
-"hint.eventFeeQtip":"Event fees can be set to free, or linked to a course in Product Management whose billing category is “Event” (automatically taxable).",
+"hint.eventFeeQtip":"Event fees can be set to free, or linked to a course in Course Management whose billing category is “Event” (automatically taxable).",
 "btn.addEvent":"＋ Add Event",
 "search.eventNamePlaceholder":"Search event name",
 "btn.clearFilters":"Clear Filters",
@@ -695,7 +695,7 @@ Object.assign(TLI_I18N_DICT.en, {
 "hint.masterDataMoved1":"Materials and content have moved to ",
 "link.a18code":"Resource Library (a18)",
 "hint.masterDataMoved2":"; delivery mode is maintained under product categories in ",
-"link.a02code":"Product Management (a02)",
+"link.a02code":"Course Management (a02)",
 "hint.masterDataMoved3":"; capacity limits and duration are set per product or per class.",
 "h2.levelUpRules":"Level-Up Rules",
 "hint.levelUpRules":"The basis for leveling up can be “pass this level's test” or “complete this level's course” (attendance ratio and required assessment thresholds follow settings); the two can be set to require either one or both.",

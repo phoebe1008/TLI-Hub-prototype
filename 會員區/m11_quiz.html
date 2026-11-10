@@ -1074,7 +1074,7 @@ function setPageTab(name){
 
 /* ================= 初始化 ================= */
 renderCourseList(); renderStageList(); renderPlacement();
-/* 一階段 A 專案合作學生不提供程度測驗：隱藏分頁與面板 */
+/* 一階段 A 專案合作學員不提供程度測驗：隱藏分頁與面板 */
 (function(){ var proj=false; try{ var ss=JSON.parse(sessionStorage.getItem('tliPLSession_v1')||'{}'); proj=ss.mode==='project'; }catch(e){}
   if(proj){ var tb=document.querySelector('[data-pt="placement"]'); if(tb) tb.style.display='none'; var pp=document.getElementById('pagepanel-placement'); if(pp) pp.remove(); var q=new URLSearchParams(location.search); if(q.get('tab')==='placement') history.replaceState(null,'','m11_quiz.html'); }
 })();

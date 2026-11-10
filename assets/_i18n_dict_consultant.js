@@ -374,7 +374,7 @@ Object.assign(TLI_I18N_DICT.en, {
 "c08.aiQ1":"Which requests are overdue for contact today?",
 "c08.aiQ2":"How many were converted to orders this week?",
 
-/* ---- c02 學生列表／c09 申訴覆核：頁面專屬 ---- */
+/* ---- c02 學員列表／c09 申訴覆核：頁面專屬 ---- */
 "c02.pageTitle":"Student List",
 "c02.pageSub":"Search and filter students; click a row to open the 360 profile.",
 "c02.searchPlaceholder":"Search name / phone / email",
@@ -414,7 +414,7 @@ Object.assign(TLI_I18N_DICT.en, {
 "c09.aiQ1":"How many appeals are currently pending review?",
 "c09.aiQ2":"Which company has the most appeal cases?",
 
-/* ---- c03 學生詳情／c06 續約與到期提醒：頁面專屬（agent 官方回報版本） ---- */
+/* ---- c03 學員詳情／c06 續約與到期提醒：頁面專屬（agent 官方回報版本） ---- */
 "c03.title":"Student Details",
 "c03.breadcrumbStudents":"Student List",
 "c03.btnAddNote":"Add Note",

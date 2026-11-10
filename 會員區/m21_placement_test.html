@@ -492,7 +492,7 @@ function today(){ var d=new Date(); return d.getFullYear()+'-'+('0'+(d.getMonth(
 
 /* ===== 初始化 ===== */
 function init(){
-  /* 會員區頁面：專案合作學生不開放此功能，顯示空狀態 */
+  /* 會員區頁面：專案合作學員不開放此功能，顯示空狀態 */
   if(IS_PROJ){ $('ptMain').classList.add('hidden'); $('ptClosed').classList.remove('hidden'); return; }
   var opts=M.teachLangs.filter(function(l){return l.enabled;}).map(function(l){
     return '<option value="'+l.id+'">'+(T(l.name,LANG_EN[l.id]||l.name)===l.name?l.name+'（'+l.nameMulti.split('／')[0]+'）':LANG_EN[l.id]||l.nameMulti.split('／')[0])+'</option>';

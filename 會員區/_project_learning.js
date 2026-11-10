@@ -14,7 +14,7 @@
   var OPEN_KEY = 'tliLoungeOpened_v1';             /* 中心教師開設的團體場次（直營）；專案合作場次由 TLI 中心教師帶，一階段 A 由新達於資料庫設定 */
   var FRESH_KEY = 'tliPLFreshActivated_v1';       /* 由開通頁剛啟用、尚無學習紀錄的名單 id */
   var SS_KEY = 'tliPLSession_v1';
-  var LS_KEY = 'tliPLLessons_v1';                  /* 專案合作學生單元學習紀錄：{ 名單id: { '單元-課次': { watched, score, passed, minutes, at, hm } } }，passed＝看完影片且測驗達標 */
+  var LS_KEY = 'tliPLLessons_v1';                  /* 專案合作學員單元學習紀錄：{ 名單id: { '單元-課次': { watched, score, passed, minutes, at, hm } } }，passed＝看完影片且測驗達標 */
   var PASS_SCORE = 60;
   /* 單元測驗（課內作答）先隱藏：false 時課程頁不顯示測驗與達標條件，看完影片即完成本課。待確認出現階段後再開（docs/05 R31、R43、R98；m11_quiz 隨堂考／單元考為 1B） */
   var SHOW_UNIT_QUIZ = false;
@@ -77,7 +77,7 @@
   function qs(name) { try { return new URLSearchParams(g.location.search).get(name); } catch (e) { return null; } }
 
   function firstActiveStudent() { return students().filter(function (r) { return r.status === '已啟用' && !isFresh(r.id); })[0] || students()[0]; }
-  /* 回傳目前會員：project（專案合作學生）或 general（一般學生 Emma） */
+  /* 回傳目前會員：project（專案合作學員）或 general（一般學生 Emma） */
   function me() {
     var ss = getSS();
     var sid = qs('sid');
@@ -147,7 +147,7 @@
   function behind(p) { return p.active && p.started && (p.pct < 25 || p.lastGap >= 7); }
 
   /* ---------- Mandarin Lounge 場次與預約 ---------- */
-  /* 示範預約：專案合作學生第一次開啟時，依名單 id 決定性放 1–2 筆已預約的班級場次（寫入同一份 localStorage，m03 與 m14 讀同一份） */
+  /* 示範預約：專案合作學員第一次開啟時，依名單 id 決定性放 1–2 筆已預約的班級場次（寫入同一份 localStorage，m03 與 m14 讀同一份） */
   var _seeding = false;
   function seedBookings() {
     var out = [];
@@ -200,7 +200,7 @@
     return out;
   }
 
-  /* 場次以台北時間排定；依使用者所在時區顯示（專案合作學生：亞利桑那 UTC-7） */
+  /* 場次以台北時間排定；依使用者所在時區顯示（專案合作學員：亞利桑那 UTC-7） */
   var TOPICS = [['日常對話：自我介紹', 'Everyday Talk: Self-introduction'], ['點餐與購物', 'Ordering Food and Shopping'], ['週末計畫', 'Weekend Plans'], ['交通與問路', 'Transport and Directions'], ['校園生活', 'Campus Life'], ['天氣與季節', 'Weather and Seasons'], ['節慶與習俗', 'Festivals and Customs']];
   function fmtLocal(utcMs, off) { var d = new Date(utcMs + off * 3600000); return { date: ymd(d), time: pad(d.getUTCHours()) + ':' + pad(d.getUTCMinutes()), hm: d.getUTCHours() * 60 + d.getUTCMinutes() }; }
   /* 全部團體場次（與使用者無關）。off：顯示時區偏移。每場 30 分鐘、名額 6–10、視訊工具由場次設定 */
@@ -326,7 +326,7 @@
   }
   if (g.TLI_I18N && g.TLI_I18N.onRefresh) { g.TLI_I18N.onRefresh(function () { xl(document); }); }
 
-  /* 會員區各頁：側欄身分列帶入專案合作學生姓名 */
+  /* 會員區各頁：側欄身分列帶入專案合作學員姓名 */
   function decorateMember() {
     var u = me();
     if (u.mode === 'project') {
@@ -338,7 +338,7 @@
   }
   document.addEventListener('DOMContentLoaded', function () { if (document.querySelector('.side-nav .side-identity')) { decorateMember(); } else { xl(document); } });
 
-  /* ---------- 專案合作學生：會員區各頁改讀本人資料（無付費入口） ---------- */
+  /* ---------- 專案合作學員：會員區各頁改讀本人資料（無付費入口） ---------- */
   var PJ_CSS = '[data-pj-hidden]{display:none!important}' +
     '.pj-row{display:flex;justify-content:space-between;gap:12px;padding:10px 0;border-top:1px solid var(--c-border);font-size:13.5px;flex-wrap:wrap}.pj-row:first-child{border-top:none}.pj-row span{color:var(--c-muted)}.pj-row b{text-align:right}' +
     '.pj-unit{border-top:1px solid var(--c-border);padding:12px 0}.pj-unit:first-child{border-top:none}.pj-top{display:flex;justify-content:space-between;align-items:center;gap:8px;cursor:pointer;font-size:14px;font-weight:700}' +
@@ -638,7 +638,7 @@
     var map = { 'm02_booking.html': ['m14_chat_booking.html', 'Mandarin Lounge'], 'm03_schedule.html': [null, T('我的課表', 'My Schedule')], 'm04_course_detail.html': [null, T('我的專案', 'My Program')] };
     document.querySelectorAll('.side-nav a.side-link, .bottom-nav a').forEach(function (a) {
       var href = a.getAttribute('href') || '';
-      /* 成績單、證書、我的（個人資料）屬一階段 B，1A 專案合作學生不顯示 */
+      /* 成績單、證書、我的（個人資料）屬一階段 B，1A 專案合作學員不顯示 */
       if (/m06_renew|m13_checkout|m19_certificates|m20_transcripts|m07_profile/.test(href)) { a.style.display = 'none'; return; }
       Object.keys(map).forEach(function (k) {
         if (href.indexOf(k) < 0) { return; }

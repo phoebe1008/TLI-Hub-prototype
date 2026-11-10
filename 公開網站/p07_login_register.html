@@ -1281,7 +1281,7 @@ function agOnInput(){
   else { AG.unit = null; msg.dataset.applied = ''; msg.textContent = ''; msg.style.color = ''; }
   agSyncRef(); agRender();
 }
-/* 註冊成功後建立帳號（示範：寫進主檔 memberAccounts，a01 會員管理讀同一份） */
+/* 註冊成功後建立帳號（示範：寫進主檔 memberAccounts，a01 學員管理讀同一份） */
 function agCreateAccount(reg){
   var M = TLI_MASTERS, mx = 0;
   M.memberAccounts.forEach(function(a){ var n = parseInt(String(a.id).replace(/\D/g,''),10); if(n>mx) mx=n; });

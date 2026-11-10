@@ -4,7 +4,7 @@
 <script src="../assets/_phase_core.js"></script>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>TLI Hub 教師端－我的學生</title>
+<title>TLI Hub 教師端－我的學員</title>
 <style>
 :root{
   --c-primary:#1B4E8C;--c-primary-dark:#123A68;--c-accent:#E8792B;--c-accent-dark:#CF691F;--c-secondary:#0F9B79;
@@ -95,7 +95,7 @@ button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible{ou
 .toast{position:fixed;left:50%;bottom:calc(var(--bottomnav-h) + 18px);transform:translateX(-50%);background:#101828;color:#fff;padding:10px 20px;border-radius:20px;font-size:13px;font-weight:700;z-index:120;box-shadow:var(--shadow-lg);white-space:nowrap;}
 .toast.hidden{display:none;}
 @media(min-width:1024px){.toast{bottom:24px;}}
-/* ---------- 學生列表（教師端專用，沿用 pick-card／badge 樣式） ---------- */
+/* ---------- 學員列表（教師端專用，沿用 pick-card／badge 樣式） ---------- */
 .searchbox{position:relative;margin-bottom:12px;}
 .searchbox input{width:100%;border:1px solid var(--c-border);border-radius:var(--radius-sm);padding:10px 12px 10px 34px;font-size:14px;font-family:inherit;color:var(--c-text);background:#fff;min-height:44px;}
 .searchbox .sicon{position:absolute;left:11px;top:50%;transform:translateY(-50%);color:var(--c-muted);font-size:14px;pointer-events:none;}
@@ -111,7 +111,7 @@ button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible{ou
 .stu-card .body .meta{font-size:12px;color:var(--c-muted);}
 .stu-card .trail{flex:none;color:#98A2B3;font-size:16px;}
 .stu-empty{text-align:center;padding:30px 16px;color:var(--c-muted);font-size:13px;}
-/* ---------- 學生詳情 sheet ---------- */
+/* ---------- 學員詳情 sheet ---------- */
 .skill-bar-row{display:flex;align-items:center;gap:10px;margin-bottom:8px;}
 .skill-bar-row .sb-name{width:32px;flex:none;font-size:12.5px;font-weight:700;color:var(--c-muted);}
 .skill-bar-track{flex:1;height:8px;border-radius:4px;background:var(--c-border);overflow:hidden;}
@@ -157,7 +157,7 @@ button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible{ou
   </nav>
 
   <header class="topbar">
-    <div class="topbar-left"><a class="topbar-logo-wrap" href="../公開網站/p01_home.html" aria-label="回官網" data-i18n-aria-label="nav_t.backToWebsite"><img src="../assets/tli-logo.svg" alt="TLI"></a><div class="topbar-title" data-i18n="tstud.pageTitle">我的學生</div></div>
+    <div class="topbar-left"><a class="topbar-logo-wrap" href="../公開網站/p01_home.html" aria-label="回官網" data-i18n-aria-label="nav_t.backToWebsite"><img src="../assets/tli-logo.svg" alt="TLI"></a><div class="topbar-title" data-i18n="tstud.pageTitle">我的學員</div></div>
     <div class="topbar-actions">
       <button class="bell-btn" onclick="toggleBell()" aria-label="通知" data-i18n-aria-label="common.notifications">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8a6 6 0 10-12 0c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.7 21a2 2 0 01-3.4 0"/></svg>
@@ -201,7 +201,7 @@ button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible{ou
 <div class="sheet-overlay hidden" id="detailOverlay">
   <div class="sheet">
     <div class="sheet-handle"></div>
-    <h3 id="dTitle">學生詳情</h3>
+    <h3 id="dTitle">學員詳情</h3>
     <p class="muted small" id="dMeta" style="margin:2px 0 14px;">—</p>
 
     <div class="sheet-sec hidden" id="dEntRuleSec">
@@ -438,7 +438,7 @@ function openDetail(id){
 function closeDetail(){
   document.getElementById('detailOverlay').classList.add('hidden');
 }
-/* 學生詳情浮層目前開著時，語言切換要用當下語言重新渲染內容（不只是重繪既有 DOM） */
+/* 學員詳情浮層目前開著時，語言切換要用當下語言重新渲染內容（不只是重繪既有 DOM） */
 function refreshOpenDetail(){
   var overlay = document.getElementById('detailOverlay');
   if(overlay && !overlay.classList.contains('hidden') && currentStudentId){
@@ -471,7 +471,7 @@ function showToast(msg){
 /* 先讀取已儲存的語言偏好再首次渲染，避免「英文偏好」重新整理頁面時，學生清單短暫顯示中文 */
 if (window.TLI_I18N) TLI_I18N.init();
 renderList();
-/* 語言切換時：學生清單要重新產生（含結構性文字）；已開啟的學生詳情浮層要重新渲染 */
+/* 語言切換時：學生清單要重新產生（含結構性文字）；已開啟的學員詳情浮層要重新渲染 */
 if (window.TLI_I18N) TLI_I18N.onRefresh(renderList);
 if (window.TLI_I18N) TLI_I18N.onRefresh(refreshOpenDetail);
 if(new URLSearchParams(location.search).get('done') === '1'){

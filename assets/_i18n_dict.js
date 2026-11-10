@@ -32,7 +32,7 @@ en: {
 "common.advisor":"Advisor",
 "common.status":"Status",
 
-/* ---- 管理後台 a01 會員管理 ---- */
+/* ---- 管理後台 a01 學員管理 ---- */
 "brand.adminPortal":"Admin Portal",
 "role.hqAdmin":"HQ Administrator",
 "nav_ext.consultantWorkbench":"Go to Advisor Workspace",
@@ -45,15 +45,16 @@ en: {
 "nav.a04":"Sales Plans",
 "nav.a05":"Orders",
 "nav.a20":"Partners",
-"nav.a01":"Member Management",
+"nav.a01":"Student Management",
 "nav.a19":"Organization Customers",
 "nav.a14":"Student Feedback",
-"nav.a02":"Product Management",
+"nav.a02":"Course Management",
 "nav.a25":"Materials",
 "nav.a10":"Teacher Management",
 "nav.a18":"Resource Library",
 "nav.a16":"Event Management",
 "nav.a22":"Quiz Management",
+"nav.a26":"Scheduling Management",
 "nav.a23":"Payments & Invoices",
 "nav.a24":"Settlement & Reconciliation",
 "nav.a07":"Operations Reports",

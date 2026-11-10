@@ -296,7 +296,7 @@ function payerLabelFor(payer, org){
   return T('自費',{en:'Self-paid',ja:'自己負担',de:'Selbstzahler'});
 }
 
-/* 1A 只有專案合作學生：不帶參數開啟時，預設呈現 Mandarin Lounge 團體場次教室（與 index 的場次連結一致） */
+/* 1A 只有專案合作學員：不帶參數開啟時，預設呈現 Mandarin Lounge 團體場次教室（與 index 的場次連結一致） */
 if (TLI_PHASE.is('1A') && !qs('lesson') && !qs('sid') && window.TLI_PL) {
   var _dq = 'lesson=lounge&type=chat&state=open';
   if (TLI_PL.me().mode !== 'project') { _dq = 'sid=pr12&acct=ma03&' + _dq; }
