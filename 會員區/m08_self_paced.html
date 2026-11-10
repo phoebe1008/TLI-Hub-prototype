@@ -128,6 +128,21 @@ button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible{ou
 .chapter-toggle svg{width:16px;height:16px;transition:transform .15s;}
 .chapter-toggle.open svg{transform:rotate(180deg);}
 #chapterListCard{margin-top:10px;}
+/* 章節清單：章 › 節 › 項目（20261110） */
+.unit-tools{display:flex;gap:6px;justify-content:flex-end;margin-bottom:6px;}
+.unit-block{border-top:1px solid var(--c-border);}
+.unit-block:first-of-type{border-top:none;}
+.unit-head{display:flex;align-items:center;gap:8px;padding:12px 2px;cursor:pointer;}
+.unit-head h4{margin:0;font-size:14px;font-weight:800;flex:1;min-width:0;}
+.unit-car{display:inline-flex;flex:none;color:var(--c-muted);}
+.unit-car svg{width:15px;height:15px;transition:transform .15s;}
+.unit-head.open .unit-car svg{transform:rotate(90deg);}
+.unit-secs{padding:0 0 8px 22px;}
+.item-chips{display:flex;flex-wrap:wrap;gap:6px;margin-top:6px;}
+.item-chip{display:inline-flex;align-items:center;gap:4px;font-size:11.5px;color:var(--c-muted);background:var(--c-bg);border:1px solid var(--c-border);border-radius:12px;padding:2px 8px;}
+.item-chip svg{width:13px;height:13px;color:var(--c-primary);flex:none;}
+.item-chip em{font-style:normal;margin-left:4px;}
+.mat-note{font-size:12px;color:var(--c-muted);margin:0 0 6px;}
 @media(max-width:1023px){
   #chapterListCard.collapsed{display:none;}
   .chapter-toggle{display:flex;}
@@ -165,6 +180,7 @@ button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible{ou
 .course-row:first-child{border-top:none;}
 .course-row:hover{background:var(--c-bg);}
 .badge-topic{background:var(--c-bg);color:var(--c-muted);border:1px solid var(--c-border);flex:none;}
+.cr-cover{flex:none;width:88px;aspect-ratio:16/9;border-radius:6px;display:block;}
 .cr-top{display:flex;align-items:center;gap:8px;flex:1 1 260px;min-width:0;}
 .cr-title{min-width:0;flex:1;display:flex;flex-direction:column;}
 .cr-title h4{margin:0;font-size:13.5px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
@@ -179,6 +195,7 @@ button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible{ou
   .course-row{flex-direction:column;align-items:stretch;gap:6px;padding:10px 12px;}
   .cr-top,.cr-bottom{flex:none;width:100%;}
   .cr-date{display:none;}
+  .cr-cover{display:none;}
   .cr-progress{width:56px;}
 }
 /* ---------- 方案徽章／依方案調整入口（v4 新增，把自學課程還原為方案內權益） ---------- */
@@ -214,7 +231,7 @@ button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible{ou
     <div class="side-identity">Emma Johnson｜<span data-i18n="member.role.student">學員</span></div>
     <a class="side-link" href="m01_home.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11l9-8 9 8"/><path d="M5 10v10a1 1 0 001 1h3v-6h6v6h3a1 1 0 001-1V10"/></svg><span data-i18n="member.nav.home">首頁</span></a>
     <a class="side-link" href="m02_booking.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18M12 14v6M9 17h6"/></svg><span data-i18n="member.nav.booking">預約與報名</span></a>
-    <a class="side-link active" href="m08_self_paced.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 3h6a4 4 0 014 4v14a3 3 0 00-3-3H2z"/><path d="M22 3h-6a4 4 0 00-4 4v14a3 3 0 013-3h7z"/></svg><span data-i18n="member.nav.learning">學習</span></a>
+    <a class="side-link active" href="m08_self_paced.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 3h6a4 4 0 014 4v14a3 3 0 00-3-3H2z"/><path d="M22 3h-6a4 4 0 00-4 4v14a3 3 0 013-3h7z"/></svg><span data-i18n="member.nav.learning">我的課程</span></a>
     <a class="side-link" href="m03_schedule.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg><span data-i18n="member.nav.schedule">課表</span></a>
     <a class="side-link" href="m18_learning_dashboard.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="4" y1="20" x2="20" y2="20"/><rect x="5" y="11" width="3" height="7" rx="1"/><rect x="10.5" y="6" width="3" height="12" rx="1"/><rect x="16" y="9" width="3" height="9" rx="1"/></svg><span data-en="Learning Dashboard">學習儀表板</span></a>
     <a class="side-link" href="m20_transcripts.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 3H7a2 2 0 00-2 2v14a2 2 0 002 2h10a2 2 0 002-2V8z"/><path d="M14 3v5h5"/><path d="M9 13h6M9 17h6"/></svg><span data-en="Transcripts">成績單</span></a>
@@ -227,7 +244,7 @@ button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible{ou
   <header class="topbar">
     <div class="topbar-left">
       <a class="topbar-logo-wrap" href="../公開網站/p01_home.html" aria-label="TLI 官網" data-i18n-aria-label="member.logoAria"><img src="../assets/tli-logo.svg" alt="TLI"></a>
-      <div class="topbar-title" data-i18n="m08.title">自學課程</div>
+      <div class="topbar-title" data-i18n="member.nav.learning">我的課程</div>
     </div>
     <div class="topbar-actions">
       <a class="explore-link" href="../公開網站/p02_courses.html" aria-label="探索課程" title="探索課程" data-i18n-aria-label="member.explore" data-i18n-title="member.explore">
@@ -324,9 +341,9 @@ button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible{ou
           <div class="player-title" id="playerTitle"></div>
         </div>
         <div class="player-controls flex-between">
-          <button class="btn btn-outline btn-sm" id="prevBtn" onclick="stepChapter(-1)" data-i18n="m08.prevChapter">‹ 上一章</button>
+          <button class="btn btn-outline btn-sm" id="prevBtn" onclick="stepChapter(-1)">‹ 上一節</button>
           <span class="small muted" id="chapterCount"></span>
-          <button class="btn btn-outline btn-sm" id="nextBtn" onclick="stepChapter(1)" data-i18n="m08.nextChapter">下一章 ›</button>
+          <button class="btn btn-outline btn-sm" id="nextBtn" onclick="stepChapter(1)">下一節 ›</button>
         </div>
       </div>
 
@@ -339,7 +356,7 @@ button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible{ou
       </div>
 
       <div class="tabs">
-        <button class="tab-btn active" onclick="setTab('files',this)" data-i18n="m08.tab.materials">教材下載</button>
+        <button class="tab-btn active" onclick="setTab('files',this)" data-i18n="m08.tab.materials">教材資源</button>
         <button class="tab-btn" onclick="setTab('log',this)" data-i18n="m08.tab.log">完成紀錄</button>
         <button class="tab-btn" onclick="setTab('notes',this)" data-i18n="m08.tab.notes">筆記</button>
       </div>
@@ -354,7 +371,7 @@ button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible{ou
         <div class="card">
           <div class="field">
             <label for="noteInput" data-i18n="m08.addNote.label">新增筆記</label>
-            <textarea id="noteInput" rows="3" placeholder="記下這一講的重點或問題…" data-i18n-placeholder="m08.addNote.placeholder"></textarea>
+            <textarea id="noteInput" rows="3" placeholder="記下這一節的重點或問題…" data-i18n-placeholder="m08.addNote.placeholder"></textarea>
           </div>
           <button class="btn btn-primary btn-sm" onclick="addNote()" data-i18n="m08.btn.saveNote">儲存筆記</button>
           <div class="divider"></div>
@@ -372,7 +389,7 @@ button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible{ou
     <a href="m01_home.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11l9-8 9 8"/><path d="M5 10v10a1 1 0 001 1h3v-6h6v6h3a1 1 0 001-1V10"/></svg><span data-i18n="member.nav.home">首頁</span></a>
     <a href="m02_booking.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18M12 14v6M9 17h6"/></svg><span data-i18n="member.nav.booking">預約與報名</span></a>
     <a href="m03_schedule.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg><span data-i18n="member.nav.schedule">課表</span></a>
-    <a href="m08_self_paced.html" class="active"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 3h6a4 4 0 014 4v14a3 3 0 00-3-3H2z"/><path d="M22 3h-6a4 4 0 00-4 4v14a3 3 0 013-3h7z"/></svg><span data-i18n="member.nav.learning">學習</span></a>
+    <a href="m08_self_paced.html" class="active"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 3h6a4 4 0 014 4v14a3 3 0 00-3-3H2z"/><path d="M22 3h-6a4 4 0 00-4 4v14a3 3 0 013-3h7z"/></svg><span data-i18n="member.nav.learning">我的課程</span></a>
     <a href="m07_profile.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 4-7 8-7s8 3 8 7"/></svg><span data-i18n="member.nav.me">我的</span></a>
   </nav>
 </div>
@@ -426,12 +443,18 @@ document.addEventListener('click',function(e){
 });
 
 var ICON_CHECK='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.1V12a10 10 0 11-5.9-9.1"/><path d="M22 4L12 14.01l-3-3"/></svg>';
+var ICON_CARET='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg>';
+var ITEM_ICON={
+  video:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M10 9.5v5l4.5-2.5z" fill="currentColor" stroke="none"/></svg>',
+  material:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 3h8l4 4v14H6z"/><path d="M14 3v4h4M9 13h6M9 17h6"/></svg>',
+  quiz:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="3" width="16" height="18" rx="2"/><path d="M8 9l2 2 4-4M8 16h8"/></svg>'
+};
 var ICON_PLAY='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><polygon points="10 8 16 12 10 16 10 8" fill="currentColor" stroke="none"/></svg>';
 var ICON_CIRCLE='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/></svg>';
 var ICON_PDF='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 12h6M9 16h6M9 8h6"/><path d="M6 2h9l5 5v15H6z"/></svg>';
 var ICON_AUDIO='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg>';
 
-/* 各主題章節標題庫（示範用，依主題輪流套用，最後一講固定為期末情境測驗） */
+/* 各主題「節」標題庫（示範用，依主題輪流套用，最後一節固定為期末情境測驗） */
 var TOPIC_CHAPTER_BANK = {
   '發音':['聲調總覽','聲母發音','韻母發音','語調練習','常見發音誤區','對話跟讀','繞口令練習','連讀技巧','停頓與重音','情緒語氣'],
   '商務':['商務會議開場','電話聯繫','Email 用語','產品簡報','價格協商','簽約流程','商務餐敘','客訴處理','跨部門溝通','出差安排'],
@@ -450,20 +473,53 @@ var TOPIC_LABELS = {
   '聽力':{en:'Listening',ja:'リスニング',de:'Hören'}
 };
 function tTopic(topic){ return TLI_I18N.t(topic, TOPIC_LABELS[topic]||{}); }
-/* 依主題與總講數自動產生章節（確保「總講數＝標題講數」，避免手動維護時數字對不上） */
-function buildChapters(topic,total){
+/* 20261110 改為「課程 › 章 › 節 › 項目」四層（客戶規格 4.4 §2-1，與後台 a03「課程內容」同結構）：
+   課名中的「N」為節數，每 4 節一章；每節示範兩個項目（教學影片＋學習講義），最後一節為期末測驗（一個測驗項目）。
+   「第 N 章」「N-N」為系統標示；章名、節名、時長、頁數皆為示範資料。 */
+var TOPIC_UNIT_BANK = {
+  '發音':['聲調入門','聲母與韻母','語調與節奏','發音綜合練習','發音進階挑戰'],
+  '商務':['商務開場與聯繫','書信與簡報','協商與簽約','商務社交','職場溝通'],
+  '生活':['抵達與住宿','交通與問路','飲食與購物','生活應變','在地生活'],
+  '文化':['節慶與習俗','藝術與傳統','歷史與故事','禮儀與文化差異','民俗與信仰'],
+  '寫作':['書信格式','商務書信','段落與結構','應用寫作','修辭與範例'],
+  '聽力':['新聞聽力入門','財經與國際新聞','聽力技巧','情境聽寫','理解與推論']
+};
+var SECTIONS_PER_UNIT = 4;
+function fmtDur(sec){ return Math.floor(sec/60)+':'+String(sec%60).padStart(2,'0'); }
+/* 依主題與節數自動產生章節（確保「節數＝課名數字」，避免手動維護時數字對不上）；回傳 {outline:[章], sections:[攤平的節]} */
+function buildOutline(topic,total){
   var bank = TOPIC_CHAPTER_BANK[topic] || TOPIC_CHAPTER_BANK['生活'];
-  var chapters = [];
-  var lessonTpl = TLI_I18N.t('第 {n} 講：',{en:'Lesson {n}: ',ja:'第{n}講：',de:'Lektion {n}: '});
+  var unitBank = TOPIC_UNIT_BANK[topic] || TOPIC_UNIT_BANK['生活'];
+  var outline = [], sections = [];
   for(var i=0;i<total;i++){
+    var ci = Math.floor(i/SECTIONS_PER_UNIT), si = i%SECTIONS_PER_UNIT;
+    if(!outline[ci]) outline[ci] = {title:unitBank[ci % unitBank.length], sections:[]};
     var isLast = i===total-1;
     var label = isLast ? '期末情境測驗' : bank[i % bank.length];
     var sec = 280 + ((i*23)%220); // 4:40～8:20 之間變化，示範用秒數
-    var mm = Math.floor(sec/60), ss = sec%60;
-    chapters.push({title:lessonTpl.replace('{n}',i+1)+label, dur:mm+':'+String(ss).padStart(2,'0')});
+    var items = isLast ? [{type:'quiz', title:label}]
+      : [{type:'video', title:'教學影片', dur:fmtDur(sec)}, {type:'material', title:'學習講義', pages:2+(i%3)}];
+    var s = {idx:i, ci:ci, si:si, no:(ci+1)+'-'+(si+1), title:label, items:items};
+    outline[ci].sections.push(s);
+    sections.push(s);
   }
-  return chapters;
+  return {outline:outline, sections:sections};
 }
+function itemCount(sections){ return sections.reduce(function(a,s){ return a+s.items.length; },0); }
+/* 已完成前 n 節時，已完成的項目數 */
+function doneItems(c){ return itemCount(c.sections.slice(0,c.completed)); }
+var ITEM_TYPE_LABEL = {
+  video:{zh:'影片',en:'Video',ja:'動画',de:'Video'},
+  material:{zh:'教材',en:'Material',ja:'教材',de:'Material'},
+  quiz:{zh:'測驗',en:'Quiz',ja:'テスト',de:'Test'}
+};
+function tType(t){ var x = ITEM_TYPE_LABEL[t]||{zh:t}; return TLI_I18N.t(x.zh,{en:x.en,ja:x.ja,de:x.de}); }
+function tItemTitle(t){
+  if(t==='教學影片') return TLI_I18N.t(t,{en:'Teaching video',ja:'授業動画',de:'Lehrvideo'});
+  if(t==='學習講義') return TLI_I18N.t(t,{en:'Study handout',ja:'学習プリント',de:'Lernhandout'});
+  return t;
+}
+function tUnitNo(ci){ return TLI_I18N.t('第 {n} 章',{en:'Lesson {n}',ja:'第{n}章',de:'Lektion {n}'}).replace('{n}',ci+1); }
 /* 自學課程所屬的方案（自學課程不單賣，是方案內含的權益，方案由顧問組合） */
 var PLANS = {
   'plan-e':      {name:'自學影音組合包', payer:'self'},
@@ -471,14 +527,14 @@ var PLANS = {
   'plan-adv':    {name:'商務華語進階方案', payer:'self'},
   'plan-culture':{name:'文化與聽力強化方案', payer:'self'}
 };
-/* 依課名內「N 講」自動決定章節數，確保已完成數不會超過總講數 */
+/* 依課名內的數字決定節數（課名沿用既有示範產品名稱），確保已完成節數不會超過總節數 */
 function makeCourse(id,name,topic,completed,lastWatched,purchasedAt,planId){
   var m = /([0-9]+)\s*講/.exec(name);
   var total = m ? parseInt(m[1],10) : 10;
-  var chapters = buildChapters(topic,total);
+  var built = buildOutline(topic,total);
   var current = Math.min(completed, total-1);
   return {
-    id:id, name:name, topic:topic, chapters:chapters, planId:planId,
+    id:id, name:name, topic:topic, outline:built.outline, sections:built.sections, planId:planId,
     completed:completed, current:current, lastWatched:lastWatched, purchasedAt:purchasedAt,
     materials:[
       {type:'pdf', baseName:name.replace(/\s*[0-9]+\s*講$/,''), pages:total, updated:(purchasedAt||'2025-01-10')}
@@ -486,7 +542,7 @@ function makeCourse(id,name,topic,completed,lastWatched,purchasedAt,planId){
   };
 }
 /* 我已擁有的自學課程（示範資料，25 門，各自對應一個方案；涵蓋進行中／尚未開始／已完成三種狀態） */
-/* 章節標題含「第 N 講」骨架字樣，語言切換時要重新產生，所以包成 buildCourses() 供 onRefresh 呼叫 */
+/* 章節標示含「第 N 章」等骨架字樣，語言切換時要重新產生，所以包成 buildCourses() 供 onRefresh 呼叫 */
 var COURSES = {};
 var COURSE_DATA_ROWS = [
   ['c1','發音基礎 20 講','發音',12,'2026-08-23','2026-05-01','plan-e'],
@@ -526,8 +582,8 @@ buildCourses();
 
 /* 新學員空狀態的免費試看影片（示範資料） */
 var PREVIEW_VIDEOS = [
-  {name:'發音基礎 20 講・第 1 講試看', dur:'5:20'},
-  {name:'商務華語情境 16 講・第 1 講試看', dur:'5:40'}
+  {name:'發音基礎 20 講・1-1 試看', dur:'5:20'},
+  {name:'商務華語情境 16 講・1-1 試看', dur:'5:40'}
 ];
 
 var state = { courseId:null, idx:0, notes:{}, deepLink:false };
@@ -614,7 +670,7 @@ function onCourseSortChange(v){
   renderCourseList();
 }
 function courseStatusOf(c){
-  var total=c.chapters.length;
+  var total=c.sections.length;
   return c.completed===0 ? 'notstarted' : (c.completed>=total ? 'done' : 'ongoing');
 }
 /* 依目前排序方式排序（預設「最近觀看」在前，未觀看排最後） */
@@ -629,7 +685,7 @@ function sortCourses(list){
     });
   } else if(courseSort==='progress'){
     arr.sort(function(a,b){
-      var pa=a.completed/a.chapters.length, pb=b.completed/b.chapters.length;
+      var pa=a.completed/a.sections.length, pb=b.completed/b.sections.length;
       return pb-pa;
     });
   } else if(courseSort==='name'){
@@ -671,12 +727,12 @@ function renderCourseList(){
   listWrap.classList.remove('hidden');
   empty.classList.add('hidden');
   var shown = list.slice(0,courseShown);
-  var completedTpl = TLI_I18N.t('已完成 {c}／{t} 講',{en:'{c} of {t} completed',ja:'{c}／{t}講完了',de:'{c}/{t} abgeschlossen'});
+  var completedTpl = TLI_I18N.t('已完成 {c}／{t} 個項目',{en:'{c} of {t} items completed',ja:'{c}／{t}項目完了',de:'{c}/{t} Elemente abgeschlossen'});
   var lastWatchedTpl = TLI_I18N.t('上次觀看 {d}',{en:'Watched {d}',ja:'前回視聴 {d}',de:'Gesehen {d}'});
   var notWatched = TLI_I18N.t('尚未觀看',{en:'Not watched',ja:'未視聴',de:'Nicht gesehen'});
   wrap.innerHTML = shown.map(function(c){
-    var total = c.chapters.length;
-    var pct = Math.round(c.completed/total*100);
+    var total = itemCount(c.sections);
+    var pct = Math.round(doneItems(c)/total*100);
     var status = courseStatusOf(c);
     var statusBadge = status==='done' ? '<span class="badge badge-ok cr-status-badge">'+TLI_I18N.t('已完成',{en:'Completed',ja:'完了',de:'Abgeschlossen'})+'</span>'
       : (status==='ongoing' ? '<span class="badge badge-info cr-status-badge">'+TLI_I18N.t('進行中',{en:'In progress',ja:'受講中',de:'In Bearbeitung'})+'</span>'
@@ -688,6 +744,7 @@ function renderCourseList(){
     var planLine = '<p class="cr-plan-line">'+payerBadgeHtml(plan)+'<span class="cr-plan-name">'+plan.name+'</span></p>';
     return '' +
       '<div class="course-row" onclick="openCourse(\''+c.id+'\')">' +
+        '<img class="cr-cover" src="'+COURSE_COVER+'" alt="">' +
         '<div class="cr-top">' +
           '<span class="badge badge-topic">'+tTopic(c.topic)+'</span>' +
           '<div class="cr-title"><h4>'+c.name+'</h4>'+planLine+'</div>' +
@@ -695,7 +752,7 @@ function renderCourseList(){
         '</div>' +
         '<div class="cr-bottom">' +
           '<div class="cr-progress"><div class="progress"><div style="width:'+pct+'%;"></div></div></div>' +
-          '<span class="cr-progress-label">'+completedTpl.replace('{c}',c.completed).replace('{t}',total)+'</span>' +
+          '<span class="cr-progress-label">'+completedTpl.replace('{c}',doneItems(c)).replace('{t}',total)+'</span>' +
           '<span class="cr-date">'+dateLine+'</span>' +
           '<button class="btn btn-sm '+actionClass+' cr-action" onclick="event.stopPropagation();openCourse(\''+c.id+'\')">'+actionLabel+'</button>' +
         '</div>' +
@@ -709,24 +766,27 @@ function renderCourseList(){
     moreWrap.classList.add('hidden');
   }
 }
+/* 課程封面（客戶 4.4 SS-C6）：示範課程未個別設定封面，帶入「自學課程」類型預設圖 */
+var COURSE_COVER = TLI_MASTERS.productTypeCover ? TLI_MASTERS.productTypeCover('c_selfpace','desktop') : '';
 function showMoreCourses(){ courseShown += COURSE_PAGE_SIZE; renderCourseList(); }
 
 function openCourse(id,opts){
   opts = opts || {};
   var c = COURSES[id];
   state.courseId = id;
-  // 若帶有指定講次（深連結），優先定位到該講；否則沿用上次進度
+  // 若帶有指定節次（深連結，lesson＝第幾節，沿用舊參數名），優先定位到該節；否則沿用上次進度
   var explicitIdx = null;
   if(opts.lesson!==undefined && opts.lesson!==null){
     var li = parseInt(opts.lesson,10) - 1;
-    if(!isNaN(li) && li>=0 && li<c.chapters.length) explicitIdx = li;
+    if(!isNaN(li) && li>=0 && li<c.sections.length) explicitIdx = li;
   }
-  state.idx = explicitIdx!==null ? explicitIdx : Math.min(c.current, c.chapters.length-1);
+  state.idx = explicitIdx!==null ? explicitIdx : Math.min(c.current, c.sections.length-1);
+  openUnits = {};
   state.deepLink = explicitIdx!==null;
   document.getElementById('view-list').classList.add('hidden');
   document.getElementById('view-detail').classList.remove('hidden');
   if(state.deepLink){
-    // 深連結指定講次：展開章節清單，直接看到定位結果
+    // 深連結指定節次：展開章節清單，直接看到定位結果
     document.getElementById('chapterListCard').classList.remove('collapsed');
     document.getElementById('chapterToggleBtn').classList.add('open');
   }else{
@@ -754,8 +814,8 @@ function refreshDetailView(){
   if(!state.courseId) return;
   var c = COURSES[state.courseId];
   document.getElementById('detailTitle').textContent = c.name;
-  var detailSubTpl = TLI_I18N.t('・共 {t} 講・已完成 {c} 講',{en:' · {t} lessons total · {c} completed',ja:'・全{t}講・{c}講完了',de:' · {t} Lektionen insgesamt · {c} abgeschlossen'});
-  document.getElementById('detailSub').textContent = tTopic(c.topic)+detailSubTpl.replace('{t}',c.chapters.length).replace('{c}',c.completed);
+  var detailSubTpl = TLI_I18N.t('・{u} 章・{s} 節・已完成 {d}／{n} 個項目',{en:' · {u} lessons · {s} sections · {d} of {n} items completed',ja:'・{u}章・{s}節・{d}／{n}項目完了',de:' · {u} Lektionen · {s} Abschnitte · {d}/{n} Elemente abgeschlossen'});
+  document.getElementById('detailSub').textContent = tTopic(c.topic)+detailSubTpl.replace('{u}',c.outline.length).replace('{s}',c.sections.length).replace('{d}',doneItems(c)).replace('{n}',itemCount(c.sections));
   renderChapterList();
   renderMaterials();
   renderLog();
@@ -763,29 +823,61 @@ function refreshDetailView(){
   updatePlayer();
 }
 
+/* 章節清單：章 › 節 › 項目三層，與後台 a03「課程內容」同結構；章可收合，預設展開目前所在的章（4.4 §2-2） */
+var openUnits = {};
+function toggleUnit(ci){
+  var c = COURSES[state.courseId];
+  var cur = c.sections[state.idx].ci;
+  var isOpen = openUnits[ci]!=null ? openUnits[ci] : ci===cur;
+  openUnits[ci] = !isOpen;
+  renderChapterList();
+}
+function setAllUnits(on){
+  var c = COURSES[state.courseId];
+  c.outline.forEach(function(u,ci){ openUnits[ci] = on; });
+  renderChapterList();
+}
 function renderChapterList(){
   var c = COURSES[state.courseId];
   var wrap = document.getElementById('chapterList');
-  wrap.innerHTML = c.chapters.map(function(ch,i){
-    var done = i < c.completed;
-    var isCurrent = i === state.idx;
-    var isDeepTarget = state.deepLink && isCurrent;
-    var icon = done ? ICON_CHECK : (isCurrent ? ICON_PLAY : ICON_CIRCLE);
-    var lastSeenLabel = TLI_I18N.t('上次看到這裡',{en:'You left off here',ja:'前回はここまで',de:'Hier zuletzt gesehen'});
-    var doneLabel = TLI_I18N.t('已完成',{en:'Completed',ja:'完了',de:'Abgeschlossen'});
-    var watchingLabel = TLI_I18N.t('正在看',{en:'Watching',ja:'視聴中',de:'Wird angesehen'});
-    var notWatchedLabel = TLI_I18N.t('尚未觀看',{en:'Not watched yet',ja:'未視聴',de:'Noch nicht angesehen'});
-    var statusText = isDeepTarget ? lastSeenLabel : (done ? doneLabel : (isCurrent ? watchingLabel : notWatchedLabel));
-    var cls = 'list-row chapter-row'+(done?' done':'')+(isCurrent?' current':'');
-    var trail = isDeepTarget ? '<div class="trail"><span class="badge badge-info">'+lastSeenLabel+'</span></div>'
-      : (isCurrent ? '<div class="trail"><span class="badge badge-info">'+watchingLabel+'</span></div>' : '');
-    return '' +
-      '<div class="'+cls+'" id="chapter-row-'+i+'" onclick="selectChapter('+i+')">' +
-        '<div class="icon-box">'+icon+'</div>' +
-        '<div class="body"><h4>'+ch.title+'</h4><p>'+ch.dur+'・'+statusText+'</p></div>' +
-        trail +
-      '</div>';
+  var cur = c.sections[state.idx].ci;
+  var lastSeenLabel = TLI_I18N.t('上次看到這裡',{en:'You left off here',ja:'前回はここまで',de:'Hier zuletzt gesehen'});
+  var doneLabel = TLI_I18N.t('已完成',{en:'Completed',ja:'完了',de:'Abgeschlossen'});
+  var watchingLabel = TLI_I18N.t('目前這節',{en:'Current',ja:'現在のセクション',de:'Aktuell'});
+  var notWatchedLabel = TLI_I18N.t('尚未學習',{en:'Not started',ja:'未学習',de:'Noch nicht begonnen'});
+  var secDoneTpl = TLI_I18N.t('{d}／{n} 節',{en:'{d}/{n} sections',ja:'{d}／{n}節',de:'{d}/{n} Abschnitte'});
+  var html = '<div class="unit-tools"><button class="btn btn-outline btn-sm" onclick="setAllUnits(true)">'+TLI_I18N.t('全部展開',{en:'Expand all',ja:'すべて展開',de:'Alle aufklappen'})+'</button>' +
+    '<button class="btn btn-outline btn-sm" onclick="setAllUnits(false)">'+TLI_I18N.t('全部收合',{en:'Collapse all',ja:'すべて折りたたむ',de:'Alle zuklappen'})+'</button></div>';
+  html += c.outline.map(function(u,ci){
+    var isOpen = openUnits[ci]!=null ? openUnits[ci] : ci===cur;
+    var secDone = u.sections.filter(function(s){ return s.idx < c.completed; }).length;
+    var head = '<div class="unit-head'+(isOpen?' open':'')+'" onclick="toggleUnit('+ci+')"><span class="unit-car">'+ICON_CARET+'</span>' +
+      '<h4>'+tUnitNo(ci)+'　'+u.title+'</h4><span class="small muted">'+secDoneTpl.replace('{d}',secDone).replace('{n}',u.sections.length)+'</span></div>';
+    if(!isOpen) return '<div class="unit-block">'+head+'</div>';
+    var secs = u.sections.map(function(s){
+      var i = s.idx;
+      var done = i < c.completed;
+      var isCurrent = i === state.idx;
+      var isDeepTarget = state.deepLink && isCurrent;
+      var icon = done ? ICON_CHECK : (isCurrent ? ICON_PLAY : ICON_CIRCLE);
+      var statusText = isDeepTarget ? lastSeenLabel : (done ? doneLabel : (isCurrent ? watchingLabel : notWatchedLabel));
+      var cls = 'list-row chapter-row'+(done?' done':'')+(isCurrent?' current':'');
+      var trail = isDeepTarget ? '<div class="trail"><span class="badge badge-info">'+lastSeenLabel+'</span></div>'
+        : (isCurrent ? '<div class="trail"><span class="badge badge-info">'+watchingLabel+'</span></div>' : '');
+      var items = s.items.map(function(it){
+        var meta = it.dur ? it.dur : (it.pages ? TLI_I18N.t('{n} 頁',{en:'{n} pages',ja:'{n}ページ',de:'{n} Seiten'}).replace('{n}',it.pages) : '');
+        return '<span class="item-chip">'+(ITEM_ICON[it.type]||'')+tType(it.type)+'・'+tItemTitle(it.title)+(meta?'<em>'+meta+'</em>':'')+'</span>';
+      }).join('');
+      return '' +
+        '<div class="'+cls+'" id="chapter-row-'+i+'" onclick="selectChapter('+i+')">' +
+          '<div class="icon-box">'+icon+'</div>' +
+          '<div class="body"><h4>'+s.no+'　'+s.title+'</h4><p>'+statusText+'</p><div class="item-chips">'+items+'</div></div>' +
+          trail +
+        '</div>';
+    }).join('');
+    return '<div class="unit-block">'+head+'<div class="unit-secs">'+secs+'</div></div>';
   }).join('');
+  wrap.innerHTML = html;
 }
 
 function selectChapter(i){
@@ -798,21 +890,25 @@ function selectChapter(i){
 function stepChapter(delta){
   var c = COURSES[state.courseId];
   var next = state.idx + delta;
-  if(next < 0 || next >= c.chapters.length) return;
+  if(next < 0 || next >= c.sections.length) return;
   state.idx = next;
   state.deepLink = false;
+  openUnits[c.sections[next].ci] = true;
   renderChapterList();
   updatePlayer();
 }
 
 function updatePlayer(){
   var c = COURSES[state.courseId];
-  var ch = c.chapters[state.idx];
-  document.getElementById('playerTitle').textContent = ch.title;
-  var chapterCountTpl = TLI_I18N.t('第 {i}／{n} 講',{en:'Lesson {i} of {n}',ja:'第{i}／{n}講',de:'Lektion {i} von {n}'});
-  document.getElementById('chapterCount').textContent = chapterCountTpl.replace('{i}',state.idx+1).replace('{n}',c.chapters.length);
-  document.getElementById('prevBtn').disabled = state.idx===0;
-  document.getElementById('nextBtn').disabled = state.idx===c.chapters.length-1;
+  var s = c.sections[state.idx];
+  document.getElementById('playerTitle').textContent = tUnitNo(s.ci)+'　'+c.outline[s.ci].title+'｜'+s.no+'　'+s.title;
+  var chapterCountTpl = TLI_I18N.t('第 {i}／{n} 節',{en:'Section {i} of {n}',ja:'第{i}／{n}節',de:'Abschnitt {i} von {n}'});
+  document.getElementById('chapterCount').textContent = chapterCountTpl.replace('{i}',state.idx+1).replace('{n}',c.sections.length);
+  var prev = document.getElementById('prevBtn'), next = document.getElementById('nextBtn');
+  prev.textContent = TLI_I18N.t('‹ 上一節',{en:'‹ Previous section',ja:'‹ 前の節',de:'‹ Vorheriger Abschnitt'});
+  next.textContent = TLI_I18N.t('下一節 ›',{en:'Next section ›',ja:'次の節 ›',de:'Nächster Abschnitt ›'});
+  prev.disabled = state.idx===0;
+  next.disabled = state.idx===c.sections.length-1;
 }
 
 function toggleChapters(){
@@ -839,13 +935,15 @@ function renderMaterials(){
         '<div class="trail"><button class="btn btn-outline btn-sm" onclick="showToast(\''+toastMsg.replace(/'/g,"\\'")+'\')">'+downloadLabel+'</button></div>' +
       '</div>';
   }).join('');
+  /* 課程層教材資源：不在章節學習路徑上，不計入學習進度（客戶規格 4.4 §2-5） */
+  wrap.innerHTML = '<p class="mat-note">'+TLI_I18N.t('整門課共用的教材，不計入學習進度；各節講義請見章節清單。',{en:'Course-wide materials. They do not count toward progress; section handouts are listed in the lesson outline.',ja:'コース共通の教材で、学習進捗には含まれません。各節のプリントは章節リストにあります。',de:'Kursweite Materialien; sie zählen nicht zum Fortschritt. Abschnitts-Handouts finden Sie in der Gliederung.'})+'</p>' + wrap.innerHTML;
 }
 
 function renderLog(){
   var c = COURSES[state.courseId];
   var wrap = document.getElementById('logList');
   if(c.completed===0){
-    wrap.innerHTML = '<p class="small muted" style="margin:0;">'+TLI_I18N.t('尚未有完成紀錄，開始觀看第 1 講後會出現在這裡。',{en:'No completion records yet. They will appear here once you start Lesson 1.',ja:'まだ完了記録がありません。第1講の視聴を始めるとここに表示されます。',de:'Noch keine Abschlussdatensätze. Sie erscheinen hier, sobald Sie mit Lektion 1 beginnen.'})+'</p>';
+    wrap.innerHTML = '<p class="small muted" style="margin:0;">'+TLI_I18N.t('尚未有完成紀錄，開始學習 1-1 後會出現在這裡。',{en:'No completion records yet. They will appear here once you start section 1-1.',ja:'まだ完了記録がありません。1-1 の学習を始めるとここに表示されます。',de:'Noch keine Abschlussdatensätze. Sie erscheinen hier, sobald Sie mit Abschnitt 1-1 beginnen.'})+'</p>';
     return;
   }
   var base = new Date(2026,7,23);
@@ -858,7 +956,7 @@ function renderLog(){
     rows.push('' +
       '<div class="list-row">' +
         '<div class="icon-box">'+ICON_CHECK+'</div>' +
-        '<div class="body"><h4>'+c.chapters[i].title+'</h4><p>'+completedOnTpl.replace('{d}',mm+'/'+dd)+'</p></div>' +
+        '<div class="body"><h4>'+c.sections[i].no+'　'+c.sections[i].title+'</h4><p>'+completedOnTpl.replace('{d}',mm+'/'+dd)+'</p></div>' +
       '</div>');
   }
   wrap.innerHTML = rows.join('');
@@ -899,7 +997,7 @@ function addNote(){
   if(!text) return;
   if(!state.notes[state.courseId]) state.notes[state.courseId] = [];
   var c = COURSES[state.courseId];
-  state.notes[state.courseId].unshift({text:text, time:c.chapters[state.idx].title+TLI_I18N.t(' 筆記',{en:' note',ja:' メモ',de:' Notiz'})});
+  state.notes[state.courseId].unshift({text:text, time:c.sections[state.idx].no+'　'+c.sections[state.idx].title+TLI_I18N.t(' 筆記',{en:' note',ja:' メモ',de:' Notiz'})});
   input.value='';
   renderNotes();
 }
@@ -945,7 +1043,7 @@ function submitAdvisorForm(){
   showToast(TLI_I18N.t('已送出給你的顧問',{en:'Sent to your advisor',ja:'コンサルタントに送信しました',de:'An Ihren Berater gesendet'}));
 }
 
-// ===== 深連結：?course=<id>&lesson=<n> 直達該課程該講 =====
+// ===== 深連結：?course=<id>&lesson=<n> 直達該課程第 n 節 =====
 function locateCourseFromQuery(){
   var params=new URLSearchParams(window.location.search);
   var courseId=params.get('course');

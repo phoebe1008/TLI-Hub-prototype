@@ -129,7 +129,17 @@ button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible{ou
 @media(max-width:900px){.two-col{grid-template-columns:1fr;}}
 .two-col .card+.card{margin-top:0;}
 .card h3.ct{margin:0 0 12px;font-size:15px;}
+.flex-between{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;}
+.ch-tools{display:flex;gap:8px;align-items:center;flex-wrap:wrap;}
+.course-sel{border:1px solid var(--c-border);border-radius:8px;padding:6px 8px;font-size:12.5px;font-family:inherit;background:#fff;max-width:220px;}
 .unit-row{padding:10px 0;border-top:1px solid var(--c-border);}
+.unit-top.tog{cursor:pointer;}
+.u-car{display:inline-block;color:var(--c-muted);margin-right:4px;transition:transform .15s;}
+.unit-row.open .u-car{transform:rotate(90deg);}
+.u-secs{display:none;margin-top:8px;}
+.unit-row.open .u-secs{display:block;}
+.u-sec{display:flex;justify-content:space-between;gap:10px;font-size:12.5px;padding:5px 10px;border-radius:6px;background:var(--c-bg);margin-top:4px;}
+.u-sec .ok{color:#067647;font-weight:700;}
 .unit-row:first-of-type{border-top:none;padding-top:0;}
 .unit-top{display:flex;justify-content:space-between;gap:10px;align-items:center;margin-bottom:6px;font-size:13.5px;font-weight:700;}
 .unit-top .u-n{min-width:0;overflow-wrap:anywhere;}
@@ -155,7 +165,7 @@ button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible{ou
     <div class="side-identity">Emma Johnson｜<span data-i18n="member.role.student">學員</span></div>
     <a class="side-link" href="m01_home.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11l9-8 9 8"/><path d="M5 10v10a1 1 0 001 1h3v-6h6v6h3a1 1 0 001-1V10"/></svg><span data-i18n="member.nav.home">首頁</span></a>
     <a class="side-link" href="m02_booking.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18M12 14v6M9 17h6"/></svg><span data-i18n="member.nav.booking">預約與報名</span></a>
-    <a class="side-link" href="m08_self_paced.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 3h6a4 4 0 014 4v14a3 3 0 00-3-3H2z"/><path d="M22 3h-6a4 4 0 00-4 4v14a3 3 0 013-3h7z"/></svg><span data-i18n="member.nav.learning">學習</span></a>
+    <a class="side-link" href="m08_self_paced.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 3h6a4 4 0 014 4v14a3 3 0 00-3-3H2z"/><path d="M22 3h-6a4 4 0 00-4 4v14a3 3 0 013-3h7z"/></svg><span data-i18n="member.nav.learning">我的課程</span></a>
     <a class="side-link" href="m03_schedule.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg><span data-i18n="member.nav.schedule">課表</span></a>
     <a class="side-link active" href="m18_learning_dashboard.html" aria-current="page"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="4" y1="20" x2="20" y2="20"/><rect x="5" y="11" width="3" height="7" rx="1"/><rect x="10.5" y="6" width="3" height="12" rx="1"/><rect x="16" y="9" width="3" height="9" rx="1"/></svg><span data-en="Learning Dashboard">學習儀表板</span></a>
     <a class="side-link" href="m20_transcripts.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 3H7a2 2 0 00-2 2v14a2 2 0 002 2h10a2 2 0 002-2V8z"/><path d="M14 3v5h5"/><path d="M9 13h6M9 17h6"/></svg><span data-en="Transcripts">成績單</span></a>
@@ -195,7 +205,7 @@ button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible{ou
 
     <div class="banner banner-info hidden" id="emptyBanner">
       <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
-      <div><span data-en="You have not started the self-paced course yet. Your progress and study time will show here after your first lesson.">你還沒開始自學課程，完成第一課後，進度與學習時數會顯示在這裡。</span> <a href="m08_self_paced.html" style="text-decoration:underline;font-weight:700;" data-en="Start learning">開始學習</a></div>
+      <div><span data-en="You have not started this course yet. Your progress and study time will show here after your first item.">你還沒開始這門課，完成第一個項目後，進度與學習時數會顯示在這裡。</span> <a href="m08_self_paced.html" style="text-decoration:underline;font-weight:700;" data-en="Start learning">開始學習</a></div>
     </div>
 
     <div class="kpi-grid" id="kpiGrid"></div>
@@ -203,8 +213,8 @@ button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible{ou
     <div class="two-col">
       <div class="card">
         <div class="flex-between" style="margin-bottom:12px;">
-          <h3 class="ct" style="margin:0;" data-en="Progress by unit">各單元進度</h3>
-          <a class="btn btn-outline btn-sm no-print" href="m08_self_paced.html" data-en="Continue learning">繼續學習</a>
+          <h3 class="ct" style="margin:0;" data-en="Progress by lesson">各章進度</h3>
+          <div class="ch-tools"><select class="course-sel no-print" id="courseSel" aria-label="選擇課程" data-en-ph=""></select><a class="btn btn-outline btn-sm no-print" id="continueBtn" href="m08_self_paced.html" data-en="Continue learning">繼續學習</a></div>
         </div>
         <div id="unitList"></div>
       </div>
@@ -234,7 +244,7 @@ button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible{ou
     <a href="m01_home.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11l9-8 9 8"/><path d="M5 10v10a1 1 0 001 1h3v-6h6v6h3a1 1 0 001-1V10"/></svg><span data-i18n="member.nav.home">首頁</span></a>
     <a href="m02_booking.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18M12 14v6M9 17h6"/></svg><span data-i18n="member.nav.booking">預約與報名</span></a>
     <a href="m03_schedule.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg><span data-i18n="member.nav.schedule">課表</span></a>
-    <a href="m08_self_paced.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 3h6a4 4 0 014 4v14a3 3 0 00-3-3H2z"/><path d="M22 3h-6a4 4 0 00-4 4v14a3 3 0 013-3h7z"/></svg><span data-i18n="member.nav.learning">學習</span></a>
+    <a href="m08_self_paced.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 3h6a4 4 0 014 4v14a3 3 0 00-3-3H2z"/><path d="M22 3h-6a4 4 0 00-4 4v14a3 3 0 013-3h7z"/></svg><span data-i18n="member.nav.learning">我的課程</span></a>
     <a href="m07_profile.html" ><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 4-7 8-7s8 3 8 7"/></svg><span data-i18n="member.nav.me">我的</span></a>
   </nav>
 </div>
@@ -254,19 +264,28 @@ function $(i){ return document.getElementById(i); }
 function showToast(msg){ var t=$('toast'); t.textContent=msg; t.classList.remove('hidden'); clearTimeout(window._tt); window._tt=setTimeout(function(){ t.classList.add('hidden'); },2400); }
 function toggleBell(){ var b=$('bellPanel'); if(b) b.classList.toggle('open'); }
 function barCls(p){ return p>=100?' ok':(p<25?' warn':''); }
+/* 章層進度條：完成＝綠、其餘一般色（章的進度低不代表落後，不用警示色） */
+function chBarCls(p){ return p>=100?' ok':''; }
+/* 課程選擇：專案合作學員可能有多門自學課程（20261110），KPI、各章進度、最近學習、匯出都跟著選到的課程 */
+var SEL = (function(){ var c = PL.qs('course'); return (c && PL.COURSES.some(function(x){ return x.id===c; })) ? c : PL.COURSES[0].id; })();
+var OPEN = {};
 function statusBadge(u){ return u.pct>=100 ? '<span class="badge badge-ok">'+T('已完成','Completed')+'</span>' : (u.done>0 ? '<span class="badge badge-info">'+T('進行中','In progress')+'</span>' : '<span class="badge badge-muted">'+T('未開始','Not started')+'</span>'); }
 
-var P = PL.progress(U.rid), LG = PL.lounge(U.rid, U.perWeek);
+var P = PL.progress(U.rid, SEL), LG = PL.lounge(U.rid, U.perWeek);
 var NEXT = null;
 
 function nextBooking(){
   var arr = PL.myBookings(U.rid).filter(function(b){ return b.status==='booked' && b.utc > PL.nowUtc; }).sort(function(a,b){ return a.utc-b.utc; });
   return arr[0] || null;
 }
+function toggleCh(id, el){ var row = el.parentNode; row.classList.toggle('open'); OPEN[id] = row.classList.contains('open'); }
+function nSec(){ return P.chapters.reduce(function(a,c){ return a+c.sections.length; },0); }
 function typeLbl(t){ return T('團體場次（6–10 人）','Group session (6–10)'); }
 
 function render(){
-  P = PL.progress(U.rid); LG = PL.lounge(U.rid, U.perWeek); NEXT = nextBooking();
+  P = PL.progress(U.rid, SEL); LG = PL.lounge(U.rid, U.perWeek); NEXT = nextBooking();
+  $('courseSel').innerHTML = PL.COURSES.map(function(c){ return '<option value="'+c.id+'"'+(c.id===SEL?' selected':'')+'>'+PL.esc(PL.courseName(c.id))+'</option>'; }).join('');
+  $('continueBtn').setAttribute('href','m08_self_paced.html?course='+encodeURIComponent(SEL));
   /* 抬頭 */
   $('dashSub').textContent = U.mode==='project'
     ? T('依你的班級統計，資料每次學習後更新。','Based on your class. Updated after every study session.')
@@ -278,7 +297,7 @@ function render(){
     ctx.push('<span>'+T('班級：','Class: ')+'<b>'+PL.esc(U.className)+'</b></span>');
     ctx.push('<span>'+T('班級老師：','Class teacher: ')+'<b>'+PL.esc(U.teacherName)+'</b></span>');
   }
-  ctx.push('<span>'+T('課程：','Course: ')+'<b>'+PL.esc(PL.courseName())+'</b></span>');
+  ctx.push('<span>'+T('課程：','Course: ')+'<b>'+PL.esc(PL.courseName(SEL))+'</b></span>');
   $('ctxLine').innerHTML = ctx.join('');
   $('printHead').innerHTML = '<b>TLI Connect '+T('學習報告','Learning Report')+'</b>　'+PL.esc(U.name)+'　'+PL.today;
   $('emptyBanner').classList.toggle('hidden', P.started);
@@ -288,20 +307,23 @@ function render(){
   $('kpiGrid').innerHTML =
     '<div class="kpi"><div class="k-label">'+T('自學完成率','Course completion')+'</div><div class="k-val">'+P.pct+'<small>%</small></div><div class="progress'+barCls(P.pct)+'"><div style="width:'+P.pct+'%"></div></div></div>'+
     '<div class="kpi"><div class="k-label">'+T('累計學習時數','Total study time')+'</div><div class="k-val">'+P.hours+'<small>'+T('小時','hrs')+'</small></div><div class="k-sub">'+(P.last ? T('最後學習 ','Last study ')+PL.mdLabel(P.last.date)+' '+P.last.time : T('尚無學習紀錄','No study yet'))+'</div></div>'+
-    '<div class="kpi"><div class="k-label">'+T('已完成課數','Lessons completed')+'</div><div class="k-val">'+P.done+'<small>／'+P.total+'</small></div><div class="k-sub">'+T('共 8 個單元','8 units in total')+'</div></div>'+
+    '<div class="kpi"><div class="k-label">'+T('已完成項目','Items completed')+'</div><div class="k-val">'+P.done+'<small>／'+P.total+'</small></div><div class="k-sub">'+T('共 '+P.chapters.length+' 章・'+nSec()+' 節',P.chapters.length+' lessons · '+nSec()+' sections')+'</div></div>'+
     '<div class="kpi"><div class="k-label">'+T('Mandarin Lounge 本週剩餘','Mandarin Lounge left this week')+'</div><div class="k-val">'+LG.remaining+'<small>／'+LG.quota+' '+T('次','sessions')+'</small></div><div class="progress'+(LG.remaining===0?' warn':' ok')+'"><div style="width:'+lgPct+'%"></div></div></div>';
 
-  /* 單元 */
+  /* 各章（章 › 節 › 項目，與自學課程頁同一份結構） */
+  /* 點章可展開各節完成數；預設展開進行中的章 */
   $('unitList').innerHTML = P.units.map(function(u,i){
-    return '<div class="unit-row"><div class="unit-top"><span class="u-n">'+T('單元 ','Unit ')+(i+1)+'　'+PL.esc(T(u.zh,u.en))+'</span>'+statusBadge(u)+'</div>'+
-      '<div class="progress'+barCls(u.pct)+'"><div style="width:'+u.pct+'%"></div></div>'+
-      '<div class="unit-meta"><span>'+T('已完成 ','Done ')+u.done+'／'+u.lessons+T(' 課',' lessons')+'</span><span>'+u.pct+'%</span></div></div>';
+    var open = OPEN[u.id]!=null ? OPEN[u.id] : (u.done>0 && u.pct<100);
+    var secs = u.sections.map(function(sx){ var fin = sx.done>=sx.total; return '<div class="u-sec"><span>'+sx.no+'　'+PL.esc(T(sx.zh,sx.en))+'</span><span class="'+(fin?'ok':'')+'">'+(fin?T('已完成','Done'):sx.done+'／'+sx.total)+'</span></div>'; }).join('');
+    return '<div class="unit-row'+(open?' open':'')+'"><div class="unit-top tog" onclick="toggleCh(\''+u.id+'\',this)"><span class="u-n"><span class="u-car">▸</span>'+PL.chapterLabel(i)+'　'+PL.esc(T(u.zh,u.en))+'</span>'+statusBadge(u)+'</div>'+
+      '<div class="progress'+chBarCls(u.pct)+'"><div style="width:'+u.pct+'%"></div></div>'+
+      '<div class="unit-meta"><span>'+T('已完成 ','Done ')+u.done+'／'+u.total+T(' 個項目・'+u.sections.length+' 節',' items · '+u.sections.length+' sections')+'</span><span>'+u.pct+'%</span></div><div class="u-secs">'+secs+'</div></div>';
   }).join('');
 
   /* 最近學習 */
   $('recentList').innerHTML = P.recent.length ? P.recent.map(function(r){
     return '<div class="list-row"><div class="icon-box"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><polygon points="10 8 16 12 10 16 10 8" fill="currentColor" stroke="none"/></svg></div>'+
-      '<div class="body"><h4>'+PL.esc(T(r.zh,r.en))+T('　第 ','  Lesson ')+r.lesson+T(' 課','')+'</h4><p>'+PL.mdLabel(r.date)+' '+PL.wd(r.date)+'・'+r.minutes+T(' 分鐘',' min')+'</p></div></div>';
+      '<div class="body"><h4>'+r.sec+'　'+PL.esc(T(r.secZh,r.secEn))+'・'+PL.typeName(r.type)+'</h4><p>'+PL.mdLabel(r.date)+' '+PL.wd(r.date)+'・'+r.minutes+T(' 分鐘',' min')+'</p></div></div>';
   }).join('') : '<div class="empty-box">'+T('還沒有學習紀錄。','No study activity yet.')+'</div>';
 
   /* Lounge */
@@ -325,11 +347,11 @@ $('cancelOk').addEventListener('click', function(){ if(NEXT && PL.cancel(NEXT.id
 $('btnCsv').addEventListener('click', function(){
   var rows = [[T('TLI Connect 學習報告','TLI Connect Learning Report')],[T('學員','Student'),U.name],[T('Email','Email'),U.email]];
   if(U.mode==='project'){ rows.push([T('單位','Institution'),U.partnerName],[T('班級','Class'),U.className],[T('老師','Teacher'),U.teacherName]); }
-  rows.push([T('課程','Course'),PL.courseName()],[T('報告日期','Report date'),PL.today],[],
-    [T('自學完成率','Completion'),P.pct+'%'],[T('累計學習時數（小時）','Study hours'),P.hours],[T('已完成課數','Lessons done'),P.done+'/'+P.total],
+  rows.push([T('課程','Course'),PL.courseName(SEL)],[T('報告日期','Report date'),PL.today],[],
+    [T('自學完成率','Completion'),P.pct+'%'],[T('累計學習時數（小時）','Study hours'),P.hours],[T('已完成項目','Items done'),P.done+'/'+P.total],
     [T('Mandarin Lounge 本週已用','Lounge used this week'),LG.used+'/'+LG.quota],[T('Mandarin Lounge 累計場次','Lounge total'),LG.term],[],
-    [T('單元','Unit'),T('已完成課數','Done'),T('總課數','Lessons'),T('完成率','Rate')]);
-  P.units.forEach(function(u,i){ rows.push([(i+1)+' '+T(u.zh,u.en),u.done,u.lessons,u.pct+'%']); });
+    [T('章','Lesson'),T('已完成項目','Done'),T('項目數','Items'),T('完成率','Rate')]);
+  P.units.forEach(function(u,i){ rows.push([PL.chapterLabel(i)+' '+T(u.zh,u.en),u.done,u.total,u.pct+'%']); });
   PL.download('learning_report_'+U.name.replace(/\s+/g,'_')+'_'+PL.today+'.csv', PL.csv(rows));
   showToast(T('學習報告已下載','Report downloaded'));
 });
@@ -337,6 +359,7 @@ $('btnPrint').addEventListener('click', function(){ window.print(); });
 document.addEventListener('keydown', function(e){ if(e.key==='Escape') closeCancel(); });
 document.addEventListener('click', function(e){ if(!e.target.closest('.bell-btn')&&!e.target.closest('.bell-panel')){ var b=$('bellPanel'); if(b) b.classList.remove('open'); } });
 
+$('courseSel').addEventListener('change', function(){ SEL = this.value; OPEN = {}; render(); });
 TLI_I18N.onRefresh(render);
 render();
 TLI_I18N.init();

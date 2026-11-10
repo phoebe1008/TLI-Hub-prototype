@@ -41,12 +41,10 @@ border-radius:6px;font-size:13.5px;box-sizing:border-box;font-family:inherit;}
 .hint{font-size:11.5px;color:var(--g500);margin-top:4px;}
 .req-mark{color:#C0392B;margin-left:2px;}
 .field-required-note{font-size:12px;color:var(--g500);margin-bottom:16px;}
-.pwmeter{height:5px;border-radius:3px;background:var(--g200);margin-top:8px;overflow:hidden;}
-.pwmeter i{display:block;height:100%;width:0%;background:#C0392B;transition:.2s;}
-.pwmeter.weak i{width:33%;background:#C0392B;}
-.pwmeter.medium i{width:66%;background:var(--orange);}
-.pwmeter.strong i{width:100%;background:var(--teal);}
-.pwmeterlbl{font-size:11.5px;margin-top:4px;color:var(--g500);}
+.pwrules{list-style:none;margin:8px 0 0;padding:0;display:flex;flex-wrap:wrap;gap:4px 14px;font-size:11.5px;color:var(--g500);}
+.pwrules li::before{content:"○";display:inline-block;width:14px;}
+.pwrules li.ok{color:var(--teal);}
+.pwrules li.ok::before{content:"✓";font-weight:700;}
 .errmsg{font-size:12px;color:#C0392B;margin-top:5px;display:none;}
 .errmsg.show{display:block;}
 .btnrow{display:flex;justify-content:space-between;gap:10px;margin-top:24px;}
@@ -111,12 +109,12 @@ opacity:0;pointer-events:none;transition:.2s;z-index:200;max-width:80vw;text-ali
 
 <div id="stepPane2" style="display:none">
 <h1 class="sth" data-i18n="h00.step2Title">步驟 2／3　設定密碼</h1>
-<div class="stdesc" data-i18n="h00.step2Desc">密碼將用於登入企業管理後台，請設定至少 8 碼、包含英文與數字的密碼。</div>
+<div class="stdesc" data-i18n="h00.step2Desc">密碼將用於登入企業管理後台，請設定至少 8 碼，且大寫英文、小寫英文、數字、符號各至少 1 個的密碼。</div>
 <div class="field-required-note"><span class="req-mark">*</span> <span data-i18n="common.requiredNote">為必填欄位</span></div>
-<div class="formrow"><label><span data-i18n="h00.lblSetPw">設定密碼</span><span class="req-mark">*</span></label><input type="password" id="pw1" oninput="onPwInput()" placeholder="至少 8 碼，含英文與數字" data-i18n-placeholder="h00.pw1Placeholder">
-<div class="pwmeter" id="pwmeter"><i></i></div><div class="pwmeterlbl" id="pwmeterlbl">尚未輸入</div></div>
+<div class="formrow"><label><span data-i18n="h00.lblSetPw">設定密碼</span><span class="req-mark">*</span></label><input type="password" id="pw1" oninput="onPwInput()" placeholder="至少 8 碼，含大小寫英文、數字與符號" data-i18n-placeholder="h00.pw1Placeholder">
+<ul class="pwrules" id="pwrules"></ul></div>
 <div class="formrow"><label><span data-i18n="h00.lblConfirmPw">再次輸入密碼</span><span class="req-mark">*</span></label><input type="password" id="pw2" oninput="clearPwErr()" placeholder="請再輸入一次" data-i18n-placeholder="h00.pw2Placeholder">
-<div class="errmsg" id="pwErr" data-i18n="h00.pwErr">兩次輸入的密碼不一致，或密碼強度不足，請重新確認。</div></div>
+<div class="errmsg" id="pwErr" data-i18n="h00.pwErr">兩次輸入的密碼不一致，或密碼不符合規則，請重新確認。</div></div>
 <div class="btnrow"><button class="btn ghost" onclick="goStep(1)" data-i18n="btn.prevStep">上一步</button><button class="btn" onclick="goStep3()" data-i18n="btn.nextStep">下一步</button></div>
 </div>
 
@@ -212,26 +210,23 @@ function goStep2(){
   goStep(2);
 }
 
-/* ===== 步驟 2：密碼強度與一致性 ===== */
-function pwStrength(pw){
-  if (!pw) return 0;
-  var score = 0;
-  if (pw.length>=8) score++;
-  if (/[a-zA-Z]/.test(pw) && /[0-9]/.test(pw)) score++;
-  if (pw.length>=12 && /[^a-zA-Z0-9]/.test(pw)) score++;
-  return score; /* 0~3 */
-}
+/* ===== 步驟 2：密碼規則與一致性 =====
+   密碼規則（2026-11-10 使用者指定）：至少 8 碼，大寫英文、小寫英文、數字、符號各至少 1 個 */
+var PW_RULES=[
+  {zh:'至少 8 碼', en:'At least 8 characters', test:function(v){ return v.length>=8; }},
+  {zh:'大寫英文', en:'Uppercase letter', test:function(v){ return /[A-Z]/.test(v); }},
+  {zh:'小寫英文', en:'Lowercase letter', test:function(v){ return /[a-z]/.test(v); }},
+  {zh:'數字', en:'Number', test:function(v){ return /[0-9]/.test(v); }},
+  {zh:'符號（如 ! @ # $）', en:'Symbol (e.g. ! @ # $)', test:function(v){ return /[!-\/:-@\[-`{-~]/.test(v); }}
+];
+function pwOk(v){ return PW_RULES.every(function(r){ return r.test(v); }); }
 function onPwInput(){
   clearPwErr();
   var pw = document.getElementById('pw1').value;
-  var s = pwStrength(pw);
-  var meter = document.getElementById('pwmeter'), lbl = document.getElementById('pwmeterlbl');
   var t = window.TLI_I18N ? TLI_I18N.t : function(zh){ return zh; };
-  meter.className = 'pwmeter';
-  if (!pw){ lbl.textContent = t('尚未輸入','Not entered yet'); return; }
-  if (s<=1){ meter.classList.add('weak'); lbl.textContent = t('強度：弱（建議至少 8 碼，混合英文與數字）','Strength: Weak (use at least 8 characters, mixing letters and numbers)'); }
-  else if (s===2){ meter.classList.add('medium'); lbl.textContent = t('強度：中','Strength: Medium'); }
-  else { meter.classList.add('strong'); lbl.textContent = t('強度：強','Strength: Strong'); }
+  document.getElementById('pwrules').innerHTML = PW_RULES.map(function(r){
+    return '<li class="'+(r.test(pw)?'ok':'')+'">'+t(r.zh, r.en)+'</li>';
+  }).join('');
 }
 if (window.TLI_I18N) TLI_I18N.onRefresh(onPwInput);
 function clearPwErr(){
@@ -242,7 +237,7 @@ function clearPwErr(){
 function goStep3(){
   var pw1El = document.getElementById('pw1'), pw2El = document.getElementById('pw2');
   var pw1 = pw1El.value, pw2 = pw2El.value;
-  if (!pw1 || pwStrength(pw1)<1 || pw1!==pw2){
+  if (!pw1 || !pwOk(pw1) || pw1!==pw2){
     document.getElementById('pwErr').classList.add('show');
     pw1El.classList.add('invalid');
     pw2El.classList.add('invalid');

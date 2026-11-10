@@ -347,7 +347,12 @@ align-items:center;justify-content:center;font-size:13px;font-weight:600;flex-sh
 .mcell .mfoot{display:flex;align-items:center;gap:6px;margin-top:auto;}
 .mcell .okt{font-size:12px;color:var(--teal);white-space:nowrap;}
 .mhead{font-size:11.5px;color:var(--g500);display:flex;align-items:center;justify-content:center;}
-.mside{font-size:12.5px;color:var(--g500);display:flex;align-items:center;padding-right:6px;}
+.mside{font-size:12.5px;color:var(--g500);display:flex;align-items:center;padding-right:6px;gap:4px;}
+.mcell.na{border-style:dashed;background:transparent;align-items:center;justify-content:center;color:var(--g200);}
+.mlx{background:none;border:none;color:var(--g500);cursor:pointer;font-size:13px;padding:0 3px;line-height:1;font-family:inherit;}
+.mlx:hover{color:#C0392B;}
+.maddcol{display:flex;align-items:center;}
+.maddrow{grid-column:1 / -1;}
 .iconbtn{background:#fff;border:1px solid var(--g200);border-radius:6px;padding:3px 8px;font-size:12px;cursor:pointer;font-family:inherit;color:var(--g900);}
 .iconbtn:hover{border-color:var(--navy);color:var(--navy);}
 .iconbtn:disabled{opacity:.4;cursor:not-allowed;}
@@ -449,7 +454,7 @@ html,body{overflow-x:hidden;}
 </head>
 <body>
 <div class="app">
-<div class="sidebar" id="sidebar"><a class="brand" href="a02_products.html"><img class="brand-logo" src="../assets/tli-logo.svg" alt="TLI"><small class="navtext" data-i18n="brand.adminPortal">管理後台</small></a><nav><div class="navgroup" data-group="sales"><div class="sec-label" onclick="toggleNavGroup(event,'sales')"><span class="navtext" data-i18n="nav.group.sales">銷售</span><button type="button" class="sec-toggle navtext" onclick="toggleNavGroup(event,'sales')" aria-label="收合銷售" data-i18n-aria-label="aria.collapseSales"><svg width="12" height="12" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 8 10 12 14 8"/></svg></button></div><div class="navgroup-items"><a data-nav="a21" href="a21_projects.html"><svg class="navicon" width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="14" height="13" rx="2"/><line x1="3" y1="8" x2="17" y2="8"/><line x1="7" y1="12" x2="13" y2="12"/><line x1="7" y1="14.6" x2="11" y2="14.6"/></svg><span class="navtext" data-i18n="nav.a21">專案設定</span></a><a data-nav="a04" href="a04_packages.html"><svg class="navicon" width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="7" width="14" height="10" rx="1"/><path d="M3 7l7-4 7 4"/><line x1="10" y1="7" x2="10" y2="17"/></svg><span class="navtext" data-i18n="nav.a04">銷售方案</span></a><a data-nav="a05" href="a05_orders.html"><svg class="navicon" width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 2h10v16l-2-1.3L11 18l-2-1.3L7 18l-2-1.3V2z"/><line x1="7.5" y1="6" x2="12.5" y2="6"/><line x1="7.5" y1="9" x2="12.5" y2="9"/></svg><span class="navtext" data-i18n="nav.a05">訂單</span></a><a data-nav="a20" href="a20_agents.html"><svg class="navicon" width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="6.5" cy="6" r="2.3"/><path d="M2.5 16c0-2.6 1.8-4.3 4-4.3s4 1.7 4 4.3"/><circle cx="14.5" cy="8.5" r="1.8"/><path d="M17.3 16c0-1.9-1.3-3.4-2.8-3.4"/><path d="M9 6l3-1.5"/></svg><span class="navtext" data-i18n="nav.a20">合作夥伴</span></a></div></div><div class="navgroup" data-group="customer"><div class="sec-label" onclick="toggleNavGroup(event,'customer')"><span class="navtext" data-i18n="nav.group.customer">客戶</span><button type="button" class="sec-toggle navtext" onclick="toggleNavGroup(event,'customer')" aria-label="收合客戶" data-i18n-aria-label="aria.collapseCustomer"><svg width="12" height="12" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 8 10 12 14 8"/></svg></button></div><div class="navgroup-items"><a data-nav="a01" href="a01_member_rules.html"><svg class="navicon" width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="10" cy="6.5" r="3"/><path d="M4 17c0-3 2.7-5 6-5s6 2 6 5"/></svg><span class="navtext" data-i18n="nav.a01">學員管理</span></a><a data-nav="a19" href="a19_b2b_enterprise.html"><svg class="navicon" width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="3.5" y="3" width="7" height="14" rx="1"/><rect x="10.5" y="7.5" width="6" height="9.5" rx="1"/><line x1="5.5" y1="6" x2="7.5" y2="6"/><line x1="5.5" y1="9" x2="7.5" y2="9"/><line x1="5.5" y1="12" x2="7.5" y2="12"/><line x1="12.5" y1="10.5" x2="14.5" y2="10.5"/><line x1="12.5" y1="13.5" x2="14.5" y2="13.5"/></svg><span class="navtext" data-i18n="nav.a19">組織客戶</span></a><a data-nav="a14" href="a14_feedback.html"><svg class="navicon" width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M3 4h14a1 1 0 0 1 1 1v8a1 1 0 0 1-1 1H8l-4 3v-3H3a1 1 0 0 1-1-1V5a1 1 0 0 1 1-1z"/></svg><span class="navtext" data-i18n="nav.a14">學員回饋</span></a></div></div><div class="navgroup" data-group="teaching"><div class="sec-label" onclick="toggleNavGroup(event,'teaching')"><span class="navtext" data-i18n="nav.group.teaching">教學</span><button type="button" class="sec-toggle navtext" onclick="toggleNavGroup(event,'teaching')" aria-label="收合教學" data-i18n-aria-label="aria.collapseTeaching"><svg width="12" height="12" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 8 10 12 14 8"/></svg></button></div><div class="navgroup-items"><a data-nav="a02" href="a02_products.html"><svg class="navicon" width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6l7-3.5L17 6v8l-7 3.5L3 14V6z"/><path d="M3 6l7 3.5L17 6"/><line x1="10" y1="9.5" x2="10" y2="17.5"/></svg><span class="navtext" data-i18n="nav.a02">課程管理</span></a><a data-nav="a25" class="active" href="a25_materials.html"><svg class="navicon" width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 3.5h8.5A2.5 2.5 0 0 1 15 6v10.5H6.5A2.5 2.5 0 0 1 4 14V3.5z"/><path d="M4 14a2.5 2.5 0 0 1 2.5-2.5H15"/><line x1="7.5" y1="6.5" x2="12" y2="6.5"/></svg><span class="navtext" data-i18n="nav.a25">教材管理</span></a><a data-nav="a10" href="a10_teachers.html"><svg class="navicon" width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="2.5" y="6.5" width="15" height="9.5" rx="1.5"/><path d="M7 6.5V5a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2v1.5"/><line x1="2.5" y1="10.5" x2="17.5" y2="10.5"/></svg><span class="navtext" data-i18n="nav.a10">老師管理</span></a><a data-nav="a18" href="a18_resource_library.html"><svg class="navicon" width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><ellipse cx="10" cy="4.5" rx="7" ry="2.5"/><path d="M3 4.5v5c0 1.4 3.1 2.5 7 2.5s7-1.1 7-2.5v-5"/><path d="M3 9.5v5c0 1.4 3.1 2.5 7 2.5s7-1.1 7-2.5v-5"/></svg><span class="navtext" data-i18n="nav.a18">資源庫</span></a><a data-nav="a16" href="a16_events.html"><svg class="navicon" width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="14" height="13" rx="1.5"/><line x1="3" y1="8" x2="17" y2="8"/><line x1="6.5" y1="2" x2="6.5" y2="5.5"/><line x1="13.5" y1="2" x2="13.5" y2="5.5"/><circle cx="10" cy="12.3" r="2"/></svg><span class="navtext" data-i18n="nav.a16">活動管理</span></a><a data-nav="a22" href="a22_quizzes.html"><svg class="navicon" width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="2.5" width="12" height="15" rx="1.5"/><path d="M7 7l1.5 1.5L11 6"/><line x1="12.5" y1="7.5" x2="14" y2="7.5"/><path d="M7 12l1.5 1.5L11 11"/><line x1="12.5" y1="12.5" x2="14" y2="12.5"/></svg><span class="navtext" data-i18n="nav.a22">測驗管理</span></a><a data-nav="a26" href="a26_scheduling.html"><svg class="navicon" width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="14" height="13" rx="1.5"/><line x1="3" y1="8" x2="17" y2="8"/><line x1="6.5" y1="2" x2="6.5" y2="5.5"/><line x1="13.5" y1="2" x2="13.5" y2="5.5"/><path d="M7 12.5l2 2 4-4"/></svg><span class="navtext" data-i18n="nav.a26">排課管理</span></a></div></div><div class="navgroup" data-group="finance"><div class="sec-label" onclick="toggleNavGroup(event,'finance')"><span class="navtext" data-i18n="nav.group.finance">財務</span><button type="button" class="sec-toggle navtext" onclick="toggleNavGroup(event,'finance')" aria-label="收合財務" data-i18n-aria-label="aria.collapseFinance"><svg width="12" height="12" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 8 10 12 14 8"/></svg></button></div><div class="navgroup-items"><a data-nav="a23" href="a23_payment_gateways.html"><svg class="navicon" width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="2.5" y="5" width="15" height="10" rx="1.5"/><line x1="2.5" y1="8.5" x2="17.5" y2="8.5"/><circle cx="13.5" cy="12" r="1.2"/></svg><span class="navtext" data-i18n="nav.a23">收款與發票</span></a><a data-nav="a24" href="a24_partner_settlement.html"><svg class="navicon" width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="2.5" y="4" width="15" height="12" rx="1.5"/><line x1="6" y1="8" x2="14" y2="8"/><line x1="6" y1="11" x2="11" y2="11"/><path d="M12.5 13.5l1.2 1.2 2.3-2.4"/></svg><span class="navtext" data-i18n="nav.a24">結算與對帳</span></a><a data-nav="a07" href="a07_reports.html"><svg class="navicon" width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><line x1="4" y1="17" x2="4" y2="10"/><line x1="10" y1="17" x2="10" y2="5"/><line x1="16" y1="17" x2="16" y2="12"/></svg><span class="navtext" data-i18n="nav.a07">營運報表</span></a></div></div><div class="navgroup" data-group="system"><div class="sec-label" onclick="toggleNavGroup(event,'system')"><span class="navtext" data-i18n="nav.group.system">系統</span><button type="button" class="sec-toggle navtext" onclick="toggleNavGroup(event,'system')" aria-label="收合系統" data-i18n-aria-label="aria.collapseSystem"><svg width="12" height="12" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 8 10 12 14 8"/></svg></button></div><div class="navgroup-items"><a data-nav="a17" href="a17_master_data.html"><svg class="navicon" width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><line x1="4" y1="5" x2="16" y2="5"/><circle cx="8" cy="5" r="1.6"/><line x1="4" y1="10" x2="16" y2="10"/><circle cx="13" cy="10" r="1.6"/><line x1="4" y1="15" x2="16" y2="15"/><circle cx="10" cy="15" r="1.6"/></svg><span class="navtext" data-i18n="nav.a17">基礎資料設定</span></a><a data-nav="a09" href="a09_permissions_notify.html"><svg class="navicon" width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M10 2l6.5 2.5v5C16.5 14 13.8 17 10 18c-3.8-1-6.5-4-6.5-8.5v-5L10 2z"/></svg><span class="navtext" data-i18n="nav.a09">權限管理</span></a><a data-nav="a15" href="a15_notifications.html"><svg class="navicon" width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M10 2.5c-2.2 0-4 1.8-4 4v2.3c0 .6-.2 1.2-.6 1.7L4 12.5h12l-1.4-2c-.4-.5-.6-1.1-.6-1.7V6.5c0-2.2-1.8-4-4-4z"/><path d="M8.2 15.5a1.8 1.8 0 0 0 3.6 0"/></svg><span class="navtext" data-i18n="nav.a15">通知管理</span></a><a data-nav="a08" href="a08_content_cms.html"><svg class="navicon" width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="2.5" y="3" width="15" height="14" rx="1.5"/><line x1="8" y1="3" x2="8" y2="17"/></svg><span class="navtext" data-i18n="nav.a08">內容管理</span></a></div></div></nav><div class="sidebar-user" id="sidebarUser"><div class="su-row" onclick="toggleSuMenu(event)"><span class="su-avatar" id="suAvatar">王</span><span class="navtext su-info"><span class="su-name" id="suName">王大明</span><span class="su-roletag" id="suRoleTag" data-i18n="role.hqAdmin">總公司管理者</span></span><svg class="navtext su-chevron" width="14" height="14" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 8 10 12 14 8"/></svg></div><div class="tb-panel su-menu" id="suMenu"><a href="a00_profile.html" data-i18n="common.settings">個人設定</a><a href="../公開網站/p01_home.html" data-i18n="common.gotoWebsite">前往官網</a><a href="../顧問工作台/c01_today.html" data-i18n="nav_ext.consultantWorkbench">前往顧問工作台</a><a href="javascript:void(0)" onclick="doLogout()" data-i18n="common.logout">登出</a></div></div></div><div class="main"><div class="topbar"><button class="hamburger" onclick="toggleSidebar()" aria-label="開啟選單" data-i18n-aria-label="common.openMenu"><svg class="navicon" width="18" height="18" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="5.5" x2="17" y2="5.5"/><line x1="3" y1="10" x2="17" y2="10"/><line x1="3" y1="14.5" x2="17" y2="14.5"/></svg></button><div class="tb-title" data-i18n="nav.a25">教材管理</div><div class="tb-actions"><div class="tb-search"><svg class="navicon" width="15" height="15" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="8.5" cy="8.5" r="5.5"/><line x1="16.5" y1="16.5" x2="12.6" y2="12.6"/></svg><input type="text" placeholder="搜尋" data-i18n-placeholder="search.genericPlaceholder"></div><button class="tb-bellbtn" onclick="toggleNotif(event)" aria-label="通知" data-i18n-aria-label="common.notifications"><svg class="navicon" width="17" height="17" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M10 2.5c-2.2 0-4 1.8-4 4v2.3c0 .6-.2 1.2-.6 1.7L4 12.5h12l-1.4-2c-.4-.5-.6-1.1-.6-1.7V6.5c0-2.2-1.8-4-4-4z"/><path d="M8.2 15.5a1.8 1.8 0 0 0 3.6 0"/></svg><span class="tb-dot" id="tbDot"></span></button><div class="tb-panel tb-notifpanel" id="notifPanel"></div><button class="tb-avatarbtn" onclick="toggleAvatarMenu(event)" aria-label="使用者選單" data-i18n-aria-label="common.userMenu">王</button><div class="tb-panel tb-avatarmenu" id="avatarMenu"><a href="a00_profile.html" data-i18n="common.settings">個人設定</a><a href="../公開網站/p01_home.html" data-i18n="common.gotoWebsite">前往官網</a><a href="javascript:void(0)" onclick="doLogout()" data-i18n="common.logout">登出</a></div></div></div><div class="sidebar-backdrop" id="sidebarBackdrop" onclick="closeSidebar()"></div>
+<div class="sidebar" id="sidebar"><a class="brand" href="a02_products.html"><img class="brand-logo" src="../assets/tli-logo.svg" alt="TLI"><small class="navtext" data-i18n="brand.adminPortal">管理後台</small></a><nav><div class="navgroup" data-group="sales"><div class="sec-label" onclick="toggleNavGroup(event,'sales')"><span class="navtext" data-i18n="nav.group.sales">銷售</span><button type="button" class="sec-toggle navtext" onclick="toggleNavGroup(event,'sales')" aria-label="收合銷售" data-i18n-aria-label="aria.collapseSales"><svg width="12" height="12" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 8 10 12 14 8"/></svg></button></div><div class="navgroup-items"><a data-nav="a21" href="a21_projects.html"><svg class="navicon" width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="14" height="13" rx="2"/><line x1="3" y1="8" x2="17" y2="8"/><line x1="7" y1="12" x2="13" y2="12"/><line x1="7" y1="14.6" x2="11" y2="14.6"/></svg><span class="navtext" data-i18n="nav.a21">專案設定</span></a><a data-nav="a04" href="a04_packages.html"><svg class="navicon" width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="7" width="14" height="10" rx="1"/><path d="M3 7l7-4 7 4"/><line x1="10" y1="7" x2="10" y2="17"/></svg><span class="navtext" data-i18n="nav.a04">銷售方案</span></a><a data-nav="a05" href="a05_orders.html"><svg class="navicon" width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 2h10v16l-2-1.3L11 18l-2-1.3L7 18l-2-1.3V2z"/><line x1="7.5" y1="6" x2="12.5" y2="6"/><line x1="7.5" y1="9" x2="12.5" y2="9"/></svg><span class="navtext" data-i18n="nav.a05">訂單</span></a><a data-nav="a20" href="a20_agents.html"><svg class="navicon" width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="6.5" cy="6" r="2.3"/><path d="M2.5 16c0-2.6 1.8-4.3 4-4.3s4 1.7 4 4.3"/><circle cx="14.5" cy="8.5" r="1.8"/><path d="M17.3 16c0-1.9-1.3-3.4-2.8-3.4"/><path d="M9 6l3-1.5"/></svg><span class="navtext" data-i18n="nav.a20">合作夥伴</span></a></div></div><div class="navgroup" data-group="customer"><div class="sec-label" onclick="toggleNavGroup(event,'customer')"><span class="navtext" data-i18n="nav.group.customer">客戶</span><button type="button" class="sec-toggle navtext" onclick="toggleNavGroup(event,'customer')" aria-label="收合客戶" data-i18n-aria-label="aria.collapseCustomer"><svg width="12" height="12" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 8 10 12 14 8"/></svg></button></div><div class="navgroup-items"><a data-nav="a01" href="a01_member_rules.html"><svg class="navicon" width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="10" cy="6.5" r="3"/><path d="M4 17c0-3 2.7-5 6-5s6 2 6 5"/></svg><span class="navtext" data-i18n="nav.a01">學員管理</span></a><a data-nav="a19" href="a19_b2b_enterprise.html"><svg class="navicon" width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="3.5" y="3" width="7" height="14" rx="1"/><rect x="10.5" y="7.5" width="6" height="9.5" rx="1"/><line x1="5.5" y1="6" x2="7.5" y2="6"/><line x1="5.5" y1="9" x2="7.5" y2="9"/><line x1="5.5" y1="12" x2="7.5" y2="12"/><line x1="12.5" y1="10.5" x2="14.5" y2="10.5"/><line x1="12.5" y1="13.5" x2="14.5" y2="13.5"/></svg><span class="navtext" data-i18n="nav.a19">組織客戶</span></a><a data-nav="a14" href="a14_feedback.html"><svg class="navicon" width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M3 4h14a1 1 0 0 1 1 1v8a1 1 0 0 1-1 1H8l-4 3v-3H3a1 1 0 0 1-1-1V5a1 1 0 0 1 1-1z"/></svg><span class="navtext" data-i18n="nav.a14">學員回饋</span></a></div></div><div class="navgroup" data-group="teaching"><div class="sec-label" onclick="toggleNavGroup(event,'teaching')"><span class="navtext" data-i18n="nav.group.teaching">教學</span><button type="button" class="sec-toggle navtext" onclick="toggleNavGroup(event,'teaching')" aria-label="收合教學" data-i18n-aria-label="aria.collapseTeaching"><svg width="12" height="12" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 8 10 12 14 8"/></svg></button></div><div class="navgroup-items"><a data-nav="a02" href="a02_products.html"><svg class="navicon" width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6l7-3.5L17 6v8l-7 3.5L3 14V6z"/><path d="M3 6l7 3.5L17 6"/><line x1="10" y1="9.5" x2="10" y2="17.5"/></svg><span class="navtext" data-i18n="nav.a02">課程管理</span></a><a data-nav="a25" class="active" href="a25_materials.html"><svg class="navicon" width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 3.5h8.5A2.5 2.5 0 0 1 15 6v10.5H6.5A2.5 2.5 0 0 1 4 14V3.5z"/><path d="M4 14a2.5 2.5 0 0 1 2.5-2.5H15"/><line x1="7.5" y1="6.5" x2="12" y2="6.5"/></svg><span class="navtext" data-i18n="nav.a25">教材管理</span></a><a data-nav="a10" href="a10_teachers.html"><svg class="navicon" width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="2.5" y="6.5" width="15" height="9.5" rx="1.5"/><path d="M7 6.5V5a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2v1.5"/><line x1="2.5" y1="10.5" x2="17.5" y2="10.5"/></svg><span class="navtext" data-i18n="nav.a10">老師管理</span></a><a data-nav="a18" href="a18_resource_library.html"><svg class="navicon" width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><ellipse cx="10" cy="4.5" rx="7" ry="2.5"/><path d="M3 4.5v5c0 1.4 3.1 2.5 7 2.5s7-1.1 7-2.5v-5"/><path d="M3 9.5v5c0 1.4 3.1 2.5 7 2.5s7-1.1 7-2.5v-5"/></svg><span class="navtext" data-i18n="nav.a18">資源庫</span></a><a data-nav="a16" href="a16_events.html"><svg class="navicon" width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="14" height="13" rx="1.5"/><line x1="3" y1="8" x2="17" y2="8"/><line x1="6.5" y1="2" x2="6.5" y2="5.5"/><line x1="13.5" y1="2" x2="13.5" y2="5.5"/><circle cx="10" cy="12.3" r="2"/></svg><span class="navtext" data-i18n="nav.a16">活動管理</span></a><a data-nav="a22" href="a22_quizzes.html"><svg class="navicon" width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="2.5" width="12" height="15" rx="1.5"/><path d="M7 7l1.5 1.5L11 6"/><line x1="12.5" y1="7.5" x2="14" y2="7.5"/><path d="M7 12l1.5 1.5L11 11"/><line x1="12.5" y1="12.5" x2="14" y2="12.5"/></svg><span class="navtext" data-i18n="nav.a22">測驗管理</span></a><a data-nav="a26" href="a26_scheduling.html"><svg class="navicon" width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="14" height="13" rx="1.5"/><line x1="3" y1="8" x2="17" y2="8"/><line x1="6.5" y1="2" x2="6.5" y2="5.5"/><line x1="13.5" y1="2" x2="13.5" y2="5.5"/><path d="M7 12.5l2 2 4-4"/></svg><span class="navtext" data-i18n="nav.a26">排課管理</span></a></div></div><div class="navgroup" data-group="finance"><div class="sec-label" onclick="toggleNavGroup(event,'finance')"><span class="navtext" data-i18n="nav.group.finance">財務</span><button type="button" class="sec-toggle navtext" onclick="toggleNavGroup(event,'finance')" aria-label="收合財務" data-i18n-aria-label="aria.collapseFinance"><svg width="12" height="12" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 8 10 12 14 8"/></svg></button></div><div class="navgroup-items"><a data-nav="a23" href="a23_payment_gateways.html"><svg class="navicon" width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="2.5" y="5" width="15" height="10" rx="1.5"/><line x1="2.5" y1="8.5" x2="17.5" y2="8.5"/><circle cx="13.5" cy="12" r="1.2"/></svg><span class="navtext" data-i18n="nav.a23">收款與發票</span></a><a data-nav="a24" href="a24_partner_settlement.html"><svg class="navicon" width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="2.5" y="4" width="15" height="12" rx="1.5"/><line x1="6" y1="8" x2="14" y2="8"/><line x1="6" y1="11" x2="11" y2="11"/><path d="M12.5 13.5l1.2 1.2 2.3-2.4"/></svg><span class="navtext" data-i18n="nav.a24">結算與對帳</span></a><a data-nav="a07" href="a07_reports.html"><svg class="navicon" width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><line x1="4" y1="17" x2="4" y2="10"/><line x1="10" y1="17" x2="10" y2="5"/><line x1="16" y1="17" x2="16" y2="12"/></svg><span class="navtext" data-i18n="nav.a07">營運報表</span></a></div></div><div class="navgroup" data-group="system"><div class="sec-label" onclick="toggleNavGroup(event,'system')"><span class="navtext" data-i18n="nav.group.system">系統</span><button type="button" class="sec-toggle navtext" onclick="toggleNavGroup(event,'system')" aria-label="收合系統" data-i18n-aria-label="aria.collapseSystem"><svg width="12" height="12" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 8 10 12 14 8"/></svg></button></div><div class="navgroup-items"><a data-nav="a17" href="a17_master_data.html"><svg class="navicon" width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><line x1="4" y1="5" x2="16" y2="5"/><circle cx="8" cy="5" r="1.6"/><line x1="4" y1="10" x2="16" y2="10"/><circle cx="13" cy="10" r="1.6"/><line x1="4" y1="15" x2="16" y2="15"/><circle cx="10" cy="15" r="1.6"/></svg><span class="navtext" data-i18n="nav.a17">基礎資料設定</span></a><a data-nav="a09" href="a09_permissions_notify.html"><svg class="navicon" width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M10 2l6.5 2.5v5C16.5 14 13.8 17 10 18c-3.8-1-6.5-4-6.5-8.5v-5L10 2z"/></svg><span class="navtext" data-i18n="nav.a09">帳號管理</span></a><a data-nav="a27" href="a27_roles.html"><svg class="navicon" width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="7" cy="12.5" r="3.5"/><path d="M9.6 10L16 3.5"/><path d="M13.5 6l2 2"/><path d="M11.6 7.9l1.5 1.5"/></svg><span class="navtext" data-i18n="nav.a27">角色管理</span></a><a data-nav="a28" href="a28_activity_logs.html"><svg class="navicon" width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M3.5 10a6.5 6.5 0 1 0 1.9-4.6"/><polyline points="3 3 3.4 6 6.4 5.6"/><polyline points="10 6.5 10 10 12.5 11.5"/></svg><span class="navtext" data-i18n="nav.a28">操作紀錄</span></a><a data-nav="a15" href="a15_notifications.html"><svg class="navicon" width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M10 2.5c-2.2 0-4 1.8-4 4v2.3c0 .6-.2 1.2-.6 1.7L4 12.5h12l-1.4-2c-.4-.5-.6-1.1-.6-1.7V6.5c0-2.2-1.8-4-4-4z"/><path d="M8.2 15.5a1.8 1.8 0 0 0 3.6 0"/></svg><span class="navtext" data-i18n="nav.a15">通知管理</span></a><a data-nav="a08" href="a08_content_cms.html"><svg class="navicon" width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="2.5" y="3" width="15" height="14" rx="1.5"/><line x1="8" y1="3" x2="8" y2="17"/></svg><span class="navtext" data-i18n="nav.a08">內容管理</span></a></div></div></nav><div class="sidebar-user" id="sidebarUser"><div class="su-row" onclick="toggleSuMenu(event)"><span class="su-avatar" id="suAvatar">王</span><span class="navtext su-info"><span class="su-name" id="suName">王大明</span><span class="su-roletag" id="suRoleTag" data-i18n="role.hqAdmin">總公司管理者</span></span><svg class="navtext su-chevron" width="14" height="14" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 8 10 12 14 8"/></svg></div><div class="tb-panel su-menu" id="suMenu"><a href="a00_profile.html" data-i18n="common.settings">個人設定</a><a href="../公開網站/p01_home.html" data-i18n="common.gotoWebsite">前往官網</a><a href="../顧問工作台/c01_today.html" data-i18n="nav_ext.consultantWorkbench">前往顧問工作台</a><a href="javascript:void(0)" onclick="doLogout()" data-i18n="common.logout">登出</a></div></div></div><div class="main"><div class="topbar"><button class="hamburger" onclick="toggleSidebar()" aria-label="開啟選單" data-i18n-aria-label="common.openMenu"><svg class="navicon" width="18" height="18" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="5.5" x2="17" y2="5.5"/><line x1="3" y1="10" x2="17" y2="10"/><line x1="3" y1="14.5" x2="17" y2="14.5"/></svg></button><div class="tb-title" data-i18n="nav.a25">教材管理</div><div class="tb-actions"><div class="tb-search"><svg class="navicon" width="15" height="15" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="8.5" cy="8.5" r="5.5"/><line x1="16.5" y1="16.5" x2="12.6" y2="12.6"/></svg><input type="text" placeholder="搜尋" data-i18n-placeholder="search.genericPlaceholder"></div><button class="tb-bellbtn" onclick="toggleNotif(event)" aria-label="通知" data-i18n-aria-label="common.notifications"><svg class="navicon" width="17" height="17" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M10 2.5c-2.2 0-4 1.8-4 4v2.3c0 .6-.2 1.2-.6 1.7L4 12.5h12l-1.4-2c-.4-.5-.6-1.1-.6-1.7V6.5c0-2.2-1.8-4-4-4z"/><path d="M8.2 15.5a1.8 1.8 0 0 0 3.6 0"/></svg><span class="tb-dot" id="tbDot"></span></button><div class="tb-panel tb-notifpanel" id="notifPanel"></div><button class="tb-avatarbtn" onclick="toggleAvatarMenu(event)" aria-label="使用者選單" data-i18n-aria-label="common.userMenu">王</button><div class="tb-panel tb-avatarmenu" id="avatarMenu"><a href="a00_profile.html" data-i18n="common.settings">個人設定</a><a href="../公開網站/p01_home.html" data-i18n="common.gotoWebsite">前往官網</a><a href="javascript:void(0)" onclick="doLogout()" data-i18n="common.logout">登出</a></div></div></div><div class="sidebar-backdrop" id="sidebarBackdrop" onclick="closeSidebar()"></div>
 <div class="pagehead">
 <div><h1 data-i18n="nav.a25">教材管理</h1><div class="desc" id="pgDesc"></div></div>
 <div style="display:flex;gap:8px" id="headActions"></div>
@@ -463,7 +468,7 @@ html,body{overflow-x:hidden;}
 <button class="modal-x" onclick="closePicker()" aria-label="關閉" data-i18n-aria-label="common.close">&times;</button>
 <h3 id="pkTitle"></h3>
 <div style="display:flex;align-items:center;gap:10px;margin-bottom:12px;flex-wrap:wrap;padding-bottom:10px;border-bottom:1px solid var(--g200)">
-<span style="font-size:13px;color:var(--g500)" id="pkTypeLbl">素材類型</span><span class="badge blue" id="pkType"></span><span class="hint" style="margin:0" id="pkLockHint">類型已鎖定，此處不提供切換</span>
+<span style="font-size:13px;color:var(--g500)" id="pkTypeLbl">素材類型</span><span class="badge blue" id="pkType"></span>
 </div>
 <div class="ptabs"><button type="button" class="on" id="pkTabLib" onclick="pkTab('lib')">資源庫</button><button type="button" id="pkTabNew" onclick="pkTab('new')">新增</button></div>
 <div id="pkLibPane">
@@ -475,14 +480,13 @@ html,body{overflow-x:hidden;}
 <div id="pkNewPane" style="display:none">
 <div class="dropbox" id="pkDrop">選擇新的素材檔案</div>
 <div class="hint" id="pkFmt" style="margin-top:6px"></div>
-<p style="margin:12px 0 6px;font-size:13px;color:var(--g500)" id="pkUrlLbl">或　輸入網址／嵌入碼</p>
-<textarea id="pkUrl" rows="2" oninput="pkUrlInput()" style="width:100%;padding:8px 10px;border:1px solid var(--g200);border-radius:6px;font-size:13px;font-family:inherit" placeholder="https://example.com/asset.pdf"></textarea>
+<!-- 20261110 使用者要求與資源庫 a18 一致，拿掉「輸入網址／嵌入碼」，只能上傳檔案 -->
 <div style="margin-top:14px;padding-top:12px;border-top:1px solid var(--g200)">
 <label style="font-size:13px;color:var(--g500);display:block;margin-bottom:4px" id="pkNameLbl">素材名稱</label>
 <input type="text" id="pkName" style="width:100%;padding:8px 10px;border:1px solid var(--g200);border-radius:6px;font-size:13px;font-family:inherit">
 <div class="hint" id="pkNameHint">預設帶入檔名，可改為更好辨識的名稱；不強制，日後可在資源庫修改。</div>
 <div style="margin-top:12px"><span style="font-size:13px;color:var(--g500)" id="pkTagLbl">內容標籤</span> <span class="req">*</span>
-<div id="pkTags" style="margin-top:6px"></div><div class="hint" id="pkTagHint">至少選一個。素材數量一多，標籤是唯一有效的篩選方式。</div></div>
+<div id="pkTags" style="margin-top:6px"></div><div class="hint" id="pkTagHint">至少選一個。</div></div>
 </div>
 <div class="mfootbar"><span class="hint" style="margin:0" id="pkWhy"></span><span class="sp"></span><button type="button" class="btn" id="pkInsert" onclick="pkInsert()" disabled>新增並插入</button></div>
 </div>
@@ -498,6 +502,7 @@ html,body{overflow-x:hidden;}
 <script src="../assets/_i18n_dict.js"></script>
 <script src="../assets/_i18n_dict_admin.js"></script>
 <script src="../assets/_i18n.js"></script>
+<script src="../assets/_tag_dd.js"></script>
 <script>
 function toggleSidebar(){
   document.getElementById('sidebar').classList.toggle('open');
@@ -572,8 +577,13 @@ document.addEventListener('click', function(){ document.querySelectorAll('.morem
 /* ================= 教材管理（一階段 A）=================
    依客戶 Connect 2.0 規格書 4.8-教材管理 與「教材管理編輯原型」。
    一筆教材＝一本書：多語標題（繁中、英文）＋檔案版本矩陣（字體 × 輔助語言，每格引用一個教材素材 PDF）＋全版本共用的附屬音檔。
+   20261110 使用者要求：
+   - 標題語系增加到前台五種（繁體中文、简体中文、English、日本語、Deutsch，同公開網站語系切換 TLI_I18N_PAGE_LANGS）；音檔標題同。
+   - 檔案版本的輔助語系（欄）可往右新增、主語系（列）可往下新增，只套用到這本教材；可選語言來自 TLI_MASTERS.materialLangs
+     （a17 基礎資料設定「教材語系」維護），也可在這裡手動輸入（一併寫進共用清單）。
+   - 拿掉非使用者該看到的說明文字（設計規則、資料結構說明）。
    資料在共用主檔 TLI_MASTERS.materialBooks（欄位說明見 _shared_masters.js 第 22 項），存檔寫 localStorage。
-   教材素材、音頻素材屬資源庫（a18）；此頁的挑選庫是示範用，正式串接時改讀 a18 教材庫與音頻庫。 */
+   教材素材、音頻素材屬資源庫（a18）；此頁的挑選庫是示範用，正式串接時改讀 a18 文件庫與音頻庫。 */
 var T = function(zh, en){ return TLI_I18N.t(zh, en); };
 var BOOKS = TLI_MASTERS.materialBooks;
 
@@ -590,12 +600,29 @@ var LIB_AUDIO = [
 /* 新增素材時的內容標籤選項（必填至少一個）：先沿用 a18 示範資料出現過的標籤；客戶「4.2 標籤系統」我們尚無資料，待確認 */
 var ASSET_TAGS = (window.TLI_MASTERS && TLI_MASTERS.activeContentTagNames) ? TLI_MASTERS.activeContentTagNames() : ['情境圖','初級','詞彙卡','文化','中級','會話講解','聽力','朗讀'];   // 詞彙來自共用主檔（a17「標籤管理」維護）
 
-var SCRIPTS = ['tc','sc'], AUXS = ['en','ja'];
-function scriptLabel(s){ return s === 'tc' ? T('繁體','Traditional') : T('簡體','Simplified'); }
-function auxLabel(x){ return x === 'en' ? T('EN 輔助','EN support') : T('JP 輔助','JP support'); }
+/* 標題語系＝前台五種語系；English 為回退語系（★） */
+var TITLE_LOCS = [
+  {id:'zh', key:'titleZh', label:'繁體中文'},
+  {id:'cn', key:'titleCn', label:'简体中文'},
+  {id:'en', key:'titleEn', label:'English', star:true},
+  {id:'ja', key:'titleJa', label:'日本語'},
+  {id:'de', key:'titleDe', label:'Deutsch'}
+];
+function locKey(){ var l = TITLE_LOCS.find(function(x){ return x.id === curLoc; }); return l ? l.key : 'titleZh'; }
+/* 檔案版本：主語系（列）× 輔助語系（欄），每本教材各自設定；未設定時沿用原本的繁／簡 × EN／JP */
+var DEF_MAINS = ['tc','sc'], DEF_AUXS = ['en','ja'];
+function bookMains(b){ return (b && b.mainLangs && b.mainLangs.length) ? b.mainLangs : DEF_MAINS; }
+function bookAuxs(b){ return (b && b.auxLangs && b.auxLangs.length) ? b.auxLangs : DEF_AUXS; }
+function matLang(code){ return (TLI_MASTERS.materialLangs || []).find(function(l){ return l.code === code; }); }
+function langName(code){ var l = matLang(code); return l ? T(l.name, l.nameEn || l.name) : code; }
+function langAbbr(code){ var l = matLang(code); return l ? (l.abbr || l.name) : code.toUpperCase(); }
+function scriptLabel(s){ return langName(s); }
+function auxLabel(x){ return T(langName(x) + ' 輔助', langName(x) + ' support'); }
 function verKey(s, x){ return s + '-' + x; }
-function verLabelShort(k){ var p = k.split('-'); return (p[0] === 'tc' ? T('繁','繁') : T('簡','簡')) + '·' + (p[1] === 'ja' ? 'JP' : p[1].toUpperCase()); }   /* 顯示為 JP（與 auxLabel 一致）；資料鍵維持 'ja' */
+function verLabelShort(k){ var p = k.split('-'); return langAbbr(p[0]) + '·' + langAbbr(p[1]); }
 function verLabelFull(k){ var p = k.split('-'); return scriptLabel(p[0]) + ' · ' + auxLabel(p[1]); }
+/* 可放檔案的格數（主語系與輔助語系相同的格子不適用） */
+function versionSlots(b){ var n = 0; bookMains(b).forEach(function(m){ bookAuxs(b).forEach(function(x){ if (m !== x) n++; }); }); return n; }
 function escHtml(s){ return String(s == null ? '' : s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
 function escAttr(s){ return escHtml(s).replace(/"/g,'&quot;'); }
 
@@ -662,7 +689,7 @@ function renderListTable(){
   var rows = list.map(function(b){
     var u = usageOf(b).length;
     return '<tr class="rowlink" onclick="location.href=\'a25_materials.html?id=' + b.id + '\'"><td>' + escHtml(b.titleZh) + '</td><td>' + (b.titleEn ? escHtml(b.titleEn) : '<span class="small">—</span>') + '</td>' +
-      '<td>' + versionCount(b) + ' / 4</td><td>' + T((b.audios || []).length + ' 筆', (b.audios || []).length + ' audio') + '</td>' +
+      '<td>' + versionCount(b) + ' / ' + versionSlots(b) + '</td><td>' + T((b.audios || []).length + ' 筆', (b.audios || []).length + ' audio') + '</td>' +
       '<td>' + (u ? T(u + ' 個產品', u + ' product(s)') : '<span class="small">' + T('未被引用','Not referenced') + '</span>') + '</td><td>' + statusBadge(b.status) + '</td>' +
       '<td><a class="btn ghost sm" href="a25_materials.html?id=' + b.id + '" onclick="event.stopPropagation()">' + T('編輯','Edit') + '</a> ' +
       '<button class="btn ghost sm" onclick="event.stopPropagation();toggleBookStatus(\'' + b.id + '\')">' + T(b.status === '啟用' ? '停用' : '啟用', b.status === '啟用' ? 'Disable' : 'Enable') + '</button></td></tr>';
@@ -672,7 +699,7 @@ function renderListTable(){
 function clearListFilter(){ LF = {q:'', st:''}; renderPage(); }
 function renderList(){
   document.getElementById('headActions').innerHTML = '<a class="btn" href="a25_materials.html?new=1">' + T('＋ 新增教材','+ Add Material') + '</a>';
-  document.getElementById('pgDesc').textContent = T('教材是獨立實體：一筆教材＝一本書，包含多語標題、檔案版本與共用的附屬音檔，可被多個產品引用。檔案本身（教材素材、音頻素材）在資源庫。','A material is an entity of its own: one book with multilingual titles, file versions and shared audio, and it can be referenced by multiple products. The files themselves (material and audio assets) live in the Resource Library.');
+  document.getElementById('pgDesc').textContent = '';
   document.getElementById('pageBody').innerHTML = '<div class="card">' +
     '<div class="filterbar"><input type="text" id="lf_q" value="' + escAttr(LF.q) + '" placeholder="' + T('搜尋教材名稱','Search material title') + '" oninput="LF.q=this.value;renderListTable()">' +
     '<select id="lf_st" onchange="LF.st=this.value;renderListTable()" aria-label="' + T('狀態','Status') + '"><option value="">' + T('全部狀態','All statuses') + '</option><option value="啟用"' + (LF.st === '啟用' ? ' selected' : '') + '>' + T('啟用','Enabled') + '</option><option value="停用"' + (LF.st === '停用' ? ' selected' : '') + '>' + T('停用','Disabled') + '</option></select>' +
@@ -710,6 +737,7 @@ function openEditor(){
   } else {
     draft = {id:'', titleZh:'', titleEn:'', status:'啟用', versions:{}, audios:[]}; isNew = true;
   }
+  draft.mainLangs = bookMains(draft).slice(); draft.auxLangs = bookAuxs(draft).slice();
   snapshot = JSON.stringify(draft);
   return true;
 }
@@ -732,10 +760,11 @@ function renderBasic(){
   var zh = curLoc === 'zh';
   document.getElementById('secBasic').innerHTML =
     '<div class="sechead"><h2>' + T('1　基本資訊','1  Basic Information') + '</h2></div>' +
-    '<p class="secwhy">' + T('標題依資料語系分別維護：繁體中文與英文。簡體不是資料語系，簡體版是檔案的字體版本（見下方檔案版本）。','Titles are kept per data locale: Traditional Chinese and English. Simplified Chinese is not a data locale; it is a font version of the file (see File Versions below).') + '</p>' +
-    '<div class="loctabs"><button class="' + (zh ? 'on' : '') + '" onclick="setLoc(\'zh\')">' + T('繁體中文','Traditional Chinese') + '</button><button class="' + (!zh ? 'on' : '') + '" onclick="setLoc(\'en\')">English <span title="' + T('回退語系','Fallback locale') + '" style="color:var(--navy);font-size:12px">★</span></button></div>' +
-    '<div class="formrow"><label>' + T('標題','Title') + '</label><span class="req">*</span>' +
-    '<input type="text" id="bk_title" value="' + escAttr(zh ? draft.titleZh : draft.titleEn) + '" oninput="onTitleInput(this.value)">' +
+    '<div class="loctabs">' + TITLE_LOCS.map(function(l){
+      return '<button class="' + (curLoc === l.id ? 'on' : '') + '" onclick="setLoc(\'' + l.id + '\')">' + l.label + (l.star ? ' <span title="' + T('回退語系','Fallback locale') + '" style="color:var(--navy);font-size:12px">★</span>' : '') + '</button>';
+    }).join('') + '</div>' +
+    '<div class="formrow"><label>' + T('標題','Title') + '</label>' + (zh ? '<span class="req">*</span>' : '') +
+    '<input type="text" id="bk_title" value="' + escAttr(draft[locKey()] || '') + '" oninput="onTitleInput(this.value)">' +
     (zh ? '' : '<div class="refbox"><div class="rl">' + T('對照語系：繁體中文（唯讀）','Reference locale: Traditional Chinese (read-only)') + '</div><div class="rt' + (draft.titleZh ? '' : ' empty') + '">' + (draft.titleZh ? escHtml(draft.titleZh) : T('（尚未填寫）','(not filled in)')) + '</div></div>') + '</div>' +
     '<div class="formrow"><label>' + T('狀態','Status') + '</label><select id="bk_status" style="max-width:160px" onchange="draft.status=this.value"><option value="啟用"' + (draft.status === '啟用' ? ' selected' : '') + '>' + T('啟用','Enabled') + '</option><option value="停用"' + (draft.status === '停用' ? ' selected' : '') + '>' + T('停用','Disabled') + '</option></select>' +
     '<div class="hint" style="font-size:12.5px;color:var(--g500)">' + T('停用後前台取用不到，後台仍可查詢與編輯。用於不再使用但需保留的教材。','When disabled, the front end can no longer access it, while the back office can still view and edit it. Use it for materials that are no longer in use but must be kept.') + '</div></div>';
@@ -755,17 +784,20 @@ function toggleStatusInEditor(){
   if (to === '停用' && usageOf(orig).length) confirmDisable(orig, apply); else apply();
 }
 function setLoc(l){ curLoc = l; renderBasic(); renderAudio(); }
-function onTitleInput(v){ if (curLoc === 'zh') draft.titleZh = v; else draft.titleEn = v; }
+function onTitleInput(v){ draft[locKey()] = v; }
 
 /* ---- 2 檔案版本（矩陣） ---- */
 function renderMatrix(){
+  var mains = bookMains(draft), auxs = bookAuxs(draft);
   var h = '<div class="sechead"><h2>' + T('2　檔案版本','2  File Versions') + '</h2></div>' +
-    '<p class="secwhy">' + T('版本＝字體（繁／簡）×輔助語言（EN／JP）。每格引用一筆教材素材（資源庫的教材庫），可就地新增。不強制所有組合都要有。','A version = font (Traditional / Simplified) × support language (EN / JP). Each cell references one material asset from the Resource Library; you can add a new one on the spot. Not every combination is required.') + '</p>' +
-    '<div id="flashVer"></div><div class="matrix"><div></div>' + AUXS.map(function(x){ return '<div class="mhead">' + auxLabel(x) + '</div>'; }).join('');
-  SCRIPTS.forEach(function(s){
-    h += '<div class="mside">' + scriptLabel(s) + '</div>';
-    AUXS.forEach(function(x){
+    '<div id="flashVer"></div><div class="matrix" style="grid-template-columns:auto repeat(' + auxs.length + ',minmax(160px,1fr)) auto"><div></div>' +
+    auxs.map(function(x){ return '<div class="mhead">' + auxLabel(x) + langRemoveBtn('aux', x) + '</div>'; }).join('') +
+    '<div class="maddcol"><button class="btn ghost sm" onclick="openAddLang(\'aux\')">' + T('＋ 新增輔助語系','+ Add support language') + '</button></div>';
+  mains.forEach(function(s){
+    h += '<div class="mside">' + scriptLabel(s) + langRemoveBtn('main', s) + '</div>';
+    auxs.forEach(function(x){
       var k = verKey(s, x), asset = draft.versions[k];
+      if (s === x){ h += '<div class="mcell na">—</div>'; return; }
       if (asset){
         h += '<div class="mcell"><span class="fn">' + escHtml(asset) + '</span><span class="mfoot"><span class="okt">✓ ' + T('已提供','Provided') + '</span><span style="flex:1"></span>' +
           '<button class="iconbtn" title="' + T('更換素材','Replace asset') + '" onclick="replaceVersion(\'' + k + '\')">⇄</button>' +
@@ -774,9 +806,58 @@ function renderMatrix(){
         h += '<div class="mcell miss"><span class="small" style="color:var(--g500)">' + T('未提供','Not provided') + '</span><button class="btn ghost sm" onclick="addVersion(\'' + k + '\')">' + T('＋ 加入','+ Add') + '</button></div>';
       }
     });
+    h += '<div></div>';
   });
-  h += '</div><div class="hint" style="margin-top:12px">' + T('虛線格＝未提供；已提供的格子可更換素材或移除引用。移除的是關聯，不是教材庫裡的檔案。','Dashed cell = not provided; provided cells can be replaced or unlinked. Removing deletes the link only, never the file in the library.') + '</div>';
+  h += '<div class="maddrow"><button class="btn ghost sm" onclick="openAddLang(\'main\')">' + T('＋ 新增主語系','+ Add main language') + '</button></div></div>';
   document.getElementById('secVer').innerHTML = h;
+}
+/* 語系的「×」：該列／欄沒有任何檔案、且不是最後一個時才可移除（有檔案時請先移除檔案） */
+function langRemoveBtn(axis, code){
+  var list = axis === 'main' ? bookMains(draft) : bookAuxs(draft);
+  if (list.length < 2) return '';
+  var used = Object.keys(draft.versions).some(function(k){ var p = k.split('-'); return axis === 'main' ? p[0] === code : p[1] === code; });
+  if (used) return '';
+  return '<button class="mlx" title="' + T('移除此語系','Remove this language') + '" onclick="removeLang(\'' + axis + '\',\'' + code + '\')">×</button>';
+}
+function removeLang(axis, code){
+  var key = axis === 'main' ? 'mainLangs' : 'auxLangs';
+  draft[key] = draft[key].filter(function(c){ return c !== code; });
+  renderMatrix(); renderAudio();
+}
+/* 新增主語系／輔助語系：從教材語系清單挑，或手動輸入（手動輸入的會一併加入 a17「教材語系」） */
+function openAddLang(axis){
+  var key = axis === 'main' ? 'mainLangs' : 'auxLangs';
+  var cur = draft[key], other = axis === 'main' ? draft.auxLangs : draft.mainLangs;
+  /* 20261110 使用者要求：輔助語系不列出已是主語系的語言（反之亦然），已在表格中的也不列 */
+  var opts = (TLI_MASTERS.materialLangs || []).filter(function(l){ return l.enabled !== false && cur.indexOf(l.code) < 0 && other.indexOf(l.code) < 0; });
+  openConfirm({kind:'normal', title: axis === 'main' ? T('新增主語系','Add main language') : T('新增輔助語系','Add support language'), okText:T('新增','Add'),
+    body:'<div class="formrow"><label>' + T('語系','Language') + '</label><select id="alSel" onchange="document.getElementById(\'alManual\').style.display=this.value===\'__manual\'?\'\':\'none\'">' +
+      opts.map(function(l){ return '<option value="' + l.code + '">' + escHtml(T(l.name, l.nameEn || l.name)) + '</option>'; }).join('') +
+      '<option value="__manual">' + T('其他（手動輸入）','Other (type it in)') + '</option></select></div>' +
+      '<div class="formrow" id="alManual" style="display:' + (opts.length ? 'none' : '') + '"><label>' + T('語系名稱','Language name') + '</label><input type="text" id="alName" placeholder="' + T('例：越南文','e.g. Vietnamese') + '">' +
+      '<div class="hint">' + T('手動輸入的語系會一併加入「基礎資料設定 › 教材語系」。','A language typed in here is also added to Master Data › Material Languages.') + '</div></div>',
+    onOk:function(){ addLang(axis, opts.length ? document.getElementById('alSel').value : '__manual', (document.getElementById('alName') || {}).value || ''); }});
+  if (!opts.length) document.getElementById('alSel').value = '__manual';
+}
+function addLang(axis, code, manualName){
+  var key = axis === 'main' ? 'mainLangs' : 'auxLangs';
+  if (code === '__manual'){
+    var name = String(manualName).trim();
+    if (!name){ toast(T('請輸入語系名稱','Please enter a language name')); openAddLang(axis); return; }
+    var hit = (TLI_MASTERS.materialLangs || []).find(function(l){ return l.name === name || String(l.nameEn || '').toLowerCase() === name.toLowerCase(); });
+    if (hit) code = hit.code;
+    else {
+      code = 'x' + Date.now().toString(36);
+      TLI_MASTERS.materialLangs.push({code:code, name:name, nameEn:name, abbr:name, enabled:true});
+      TLI_MASTERS.saveMaterialLangs();
+    }
+  }
+  if (draft[key].indexOf(code) > -1){ toast(T('「' + langName(code) + '」已在表格中','“' + langName(code) + '” is already in the table')); return; }
+  var otherList = axis === 'main' ? draft.auxLangs : draft.mainLangs;
+  if (otherList.indexOf(code) > -1){ toast(T('「' + langName(code) + '」已是' + (axis === 'main' ? '輔助語系' : '主語系') + '，不能重複加入','“' + langName(code) + '” is already a ' + (axis === 'main' ? 'support' : 'main') + ' language')); return; }
+  draft[key].push(code);
+  renderMatrix(); renderAudio();
+  toast(T('已新增' + (axis === 'main' ? '主語系' : '輔助語系') + '「' + langName(code) + '」','Added ' + (axis === 'main' ? 'main' : 'support') + ' language “' + langName(code) + '”'));
 }
 function addVersion(k){
   openPicker('pdf', T('為 [' + verLabelFull(k) + '] 挑選教材素材','Pick a material asset for [' + verLabelFull(k) + ']'), function(a){
@@ -789,13 +870,13 @@ function addVersion(k){
 function replaceVersion(k){
   openPicker('pdf', T('更換 [' + verLabelFull(k) + '] 的教材素材','Replace the material asset of [' + verLabelFull(k) + ']'), function(a){
     draft.versions[k] = a.n; renderMatrix();
-    flash('flashVer', T('已更換引用','Reference replaced'), '<p style="margin:0">[' + verLabelFull(k) + '] ' + T('現在引用 ','now references ') + '<code>' + escHtml(a.n) + '</code>。' + T('教材庫裡的檔案未被更動。','The file in the library is unchanged.') + '</p>');
+    flash('flashVer', T('已更換引用','Reference replaced'), '<p style="margin:0">[' + verLabelFull(k) + '] ' + T('現在引用 ','now references ') + '<code>' + escHtml(a.n) + '</code>。</p>');
   }, false);
 }
 function removeVersion(k){
   var n = (draft.audios || []).filter(function(a){ return a.pages && a.pages[k] != null && a.pages[k] !== ''; }).length;
   openConfirm({kind:'destructive', title:T('移除版本 [' + verLabelFull(k) + ']？','Remove version [' + verLabelFull(k) + ']?'), okText:T('移除','Remove'),
-    body:'<ul style="margin:0;padding-left:19px;font-size:13.5px;line-height:1.7"><li>' + T('移除的是關聯，教材庫裡的 ','This removes the link only; ') + '<code>' + escHtml(draft.versions[k]) + '</code>' + T(' 仍在。',' stays in the library.') + '</li>' +
+    body:'<ul style="margin:0;padding-left:19px;font-size:13.5px;line-height:1.7"><li>' + T('移除的是關聯，文件庫裡的 ','This removes the link only; ') + '<code>' + escHtml(draft.versions[k]) + '</code>' + T(' 仍在。',' stays in the library.') + '</li>' +
       '<li><b>' + T('該版本的 ' + n + ' 筆起始頁碼將一併刪除','The ' + n + ' start page number(s) of this version will be deleted too') + '</b>' + T('，音檔表格會少一欄。','; the audio table loses a column.') + '</li>' +
       '<li>' + T('重新加回版本不會救回頁碼。','Adding the version back does not restore the page numbers.') + '</li></ul>',
     onOk:function(){
@@ -810,7 +891,7 @@ function removeVersion(k){
 /* ---- 3 附屬音檔 ---- */
 function sortedVersionKeys(){
   var out = [];
-  SCRIPTS.forEach(function(s){ AUXS.forEach(function(x){ var k = verKey(s, x); if (draft.versions[k]) out.push(k); }); });
+  bookMains(draft).forEach(function(s){ bookAuxs(draft).forEach(function(x){ var k = verKey(s, x); if (draft.versions[k]) out.push(k); }); });
   return out;
 }
 function renderAudio(){
@@ -824,7 +905,7 @@ function renderAudio(){
     var d = durInfo(a.asset);
     return '<div class="arow"><div class="aline" style="grid-template-columns:' + cols + '">' +
       '<span class="small">' + (i + 1) + '</span>' +
-      '<input type="text" value="' + escAttr(curLoc === 'zh' ? a.titleZh : a.titleEn) + '" aria-label="' + T('音檔標題','Audio title') + '" oninput="onAudioTitle(' + i + ',this.value)">' +
+      '<input type="text" value="' + escAttr(a[locKey()] || '') + '" aria-label="' + T('音檔標題','Audio title') + '" oninput="onAudioTitle(' + i + ',this.value)">' +
       '<input type="number" min="1" value="' + escAttr(a.lesson == null ? '' : a.lesson) + '" aria-label="' + T('書本課次','Lesson') + '" oninput="onAudioLesson(' + i + ',this.value)">' +
       vks.map(function(k){ return '<input type="number" min="1" value="' + escAttr(a.pages && a.pages[k] != null ? a.pages[k] : '') + '" aria-label="' + escAttr(T('起始頁碼 ','Start page ') + verLabelFull(k)) + '" oninput="onAudioPage(' + i + ',\'' + k + '\',this.value)">'; }).join('') +
       '<span class="dur' + (d.warn ? ' warn' : '') + '" title="' + escAttr(d.tip) + '">' + d.text + '</span>' +
@@ -832,17 +913,16 @@ function renderAudio(){
       '<button class="iconbtn" title="' + T('下移','Move down') + '"' + (i === draft.audios.length - 1 ? ' disabled' : '') + ' onclick="moveAudio(' + i + ',1)">↓</button>' +
       '<button class="iconbtn" title="' + T('更換素材','Replace asset') + '" onclick="replaceAudio(' + i + ')">⇄</button>' +
       '<button class="iconbtn warn" title="' + T('移除','Remove') + '" onclick="removeAudio(' + i + ')">🗑</button></span></div>' +
-      '<div class="src">' + T('素材：','Asset: ') + escHtml(a.asset) + '　<span style="color:var(--g500);font-family:inherit">' + T('（名稱由資源庫維護，時長由此帶出）','(name is maintained in the library; duration comes from it)') + '</span></div></div>';
+      '<div class="src">' + T('素材：','Asset: ') + escHtml(a.asset) + '</div></div>';
   }).join('');
   document.getElementById('secAudio').innerHTML =
     '<div class="sechead"><h2>' + T('3　附屬音檔','3  Audio') + '</h2><span class="small" style="color:var(--g500)">' + T((draft.audios || []).length + ' 筆', (draft.audios || []).length + ' item(s)') + '</span></div>' +
-    '<p class="secwhy">' + T('全版本共用同一組音檔，但頁碼各版本分開記。排序依「書本課次」，不依頁碼；順序即前台播放清單順序。','All versions share one set of audio, but page numbers are kept per version. Sorting follows the book lesson, not page numbers; the order is the front-end playlist order.') + '</p>' +
     (n ? '<div class="ahead" style="grid-template-columns:' + cols + '">' + head + '</div>' : '<div class="ahead" style="grid-template-columns:' + cols + '">' + head + '</div>') +
     (rows || '<div class="note">' + T('尚未加入音檔。','No audio yet.') + '</div>') +
     '<div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:10px"><button class="btn ghost" onclick="addAudios()">' + T('＋ 加入音檔','+ Add audio') + '</button><button class="btn ghost" onclick="openCopyPages()">' + T('複製頁碼…','Copy page numbers…') + '</button><button class="btn ghost" onclick="sortByLesson()">' + T('依書本課次排序','Sort by lesson') + '</button></div>' +
     '<div id="flashAudio" style="margin-top:12px"></div>';
 }
-function onAudioTitle(i, v){ if (curLoc === 'zh') draft.audios[i].titleZh = v; else draft.audios[i].titleEn = v; }
+function onAudioTitle(i, v){ draft.audios[i][locKey()] = v; }
 function onAudioLesson(i, v){ var n = parseInt(v, 10); draft.audios[i].lesson = isNaN(n) ? '' : n; }
 function onAudioPage(i, k, v){
   var a = draft.audios[i]; a.pages = a.pages || {};
@@ -858,7 +938,7 @@ function replaceAudio(i){
   openPicker('audio', T('更換「' + (a.titleZh || a.titleEn || '此音檔') + '」引用的音頻素材','Replace the audio asset of "' + (a.titleZh || a.titleEn || 'this audio') + '"'), function(x){
     a.asset = x.n; renderAudio();
     var d = durInfo(x.n);
-    flash('flashAudio', T('已更換引用','Reference replaced'), '<p style="margin:0">' + T('現在引用 ','Now references ') + '<code>' + escHtml(x.n) + '</code>，<b>' + T('時長已自動更新為 ','duration updated automatically to ') + d.text + '</b>——' + T('時長是素材的屬性，不是手填欄位。','duration is a property of the asset, not a field you type in.') + '</p>');
+    flash('flashAudio', T('已更換引用','Reference replaced'), '<p style="margin:0">' + T('現在引用 ','Now references ') + '<code>' + escHtml(x.n) + '</code>，<b>' + T('時長已自動更新為 ','duration updated automatically to ') + d.text + '</b>。</p>');
   }, false);
 }
 function removeAudio(i){ draft.audios.splice(i, 1); renderAudio(); }
@@ -868,7 +948,7 @@ function addAudios(){
       draft.audios.push({id:'au' + Date.now() + Math.floor(Math.random() * 1000), titleZh:x.n, titleEn:'', lesson:'', asset:x.n, pages:{}});
     });
     renderAudio();
-    flash('flashAudio', T('已加入 ' + list.length + ' 筆音檔','Added ' + list.length + ' audio item(s)'), '<ul><li>' + T('標題預設帶入素材檔名，請改寫為學員看得懂的標題。','Titles default to the asset file name; rewrite them into something students understand.') + '</li><li>' + T('書本課次與各版本頁碼留白，需逐筆補填——這些系統無從得知。','Lesson and per-version page numbers are left blank for you to fill in; the system cannot know them.') + '</li></ul>');
+    flash('flashAudio', T('已加入 ' + list.length + ' 筆音檔','Added ' + list.length + ' audio item(s)'), '<ul><li>' + T('標題預設帶入素材檔名，請改寫為學員看得懂的標題。','Titles default to the asset file name; rewrite them into something students understand.') + '</li><li>' + T('書本課次與各版本頁碼留白，請逐筆補填。','Lesson and per-version page numbers are left blank; please fill them in.') + '</li></ul>');
   }, true);
 }
 function sortByLesson(){
@@ -924,18 +1004,16 @@ function renderUsed(){
   var btn = isNew ? '' : '<button class="btn danger" onclick="toggleStatusInEditor()">' + T(off ? '啟用此教材' : '停用此教材', off ? 'Enable this material' : 'Disable this material') + '</button>';
   document.getElementById('secUsed').innerHTML =
     '<div class="sechead" style="justify-content:space-between"><h2>' + T('4　被引用情形與停用','4  References & Disabling') + '</h2>' + btn + '</div>' +
-    '<p class="secwhy">' + T('教材可被多個產品引用，停用或大幅修改前請先看這裡的影響範圍。此區塊唯讀，要解除引用請到該產品的「使用教材」。','A material can be referenced by several products; check the impact here before disabling or heavily editing it. This block is read-only; to unlink, go to the product\'s Materials Used.') + '</p>' +
     (off && used.length ? '<div class="flashbox" style="margin-bottom:12px"><h4>' + T('這本教材已停用，下列產品需要處理','This material is disabled; the products below need attention') + '</h4><p style="margin:0">' + T('停用後這些產品的教材資源將無法取用，請逐一到產品把這本教材換掉或取消勾選。','After disabling, the material resources of these products can no longer be accessed. Go to each product and replace or uncheck this material.') + '</p></div>' : '') +
     (used.length ? used.map(function(p){
       return '<div class="usedrow"><span class="badge blue">' + escHtml(catName(p.categoryId)) + '</span><span class="nm">' + escHtml(p.name) + '</span><span class="small" style="color:var(--g500)">' + T('產品層','Product level') + '</span>' +
         '<a class="btn ghost sm" href="a02_products.html?edit=' + encodeURIComponent(p.id) + '">' + T('前往處理','Go to product') + '</a></div>';
-    }).join('') : '<div class="note">' + T('目前沒有產品引用這筆教材。','No product references this material yet.') + '</div>') +
-    '<div class="hint" style="margin-top:8px">' + T('停用規則：警示後允許。被引用時停用不會被阻擋，停用前會列出受影響的產品，由你判斷；停用後教材與資料完整保留，仍可查詢與編輯。','Disable rule: warn, then allow. Disabling a referenced material is not blocked; the affected products are listed before you confirm and the call is yours. After disabling, the material and its data are kept in full and stay viewable and editable.') + '</div>';
+    }).join('') : '<div class="note">' + T('目前沒有產品引用這筆教材。','No product references this material yet.') + '</div>');
 }
 
 /* ---- 儲存 ---- */
 function saveBook(){
-  draft.titleZh = (draft.titleZh || '').trim(); draft.titleEn = (draft.titleEn || '').trim();
+  TITLE_LOCS.forEach(function(l){ draft[l.key] = (draft[l.key] || '').trim(); });
   if (!draft.titleZh){ curLoc = 'zh'; renderBasic(); toast(T('請填寫繁體中文標題','Please fill in the Traditional Chinese title')); return; }
   var emptyTitle = (draft.audios || []).some(function(a){ return !(a.titleZh || '').trim(); });
   if (emptyTitle){ curLoc = 'zh'; renderBasic(); renderAudio(); toast(T('有音檔沒有繁體中文標題','Some audio items have no Traditional Chinese title')); return; }
@@ -958,6 +1036,7 @@ function saveBook(){
 
 /* ================= 素材挑選對話框（素材類型鎖定；教材素材單選、音頻素材多選） ================= */
 var pick = {kind:'pdf', multi:false, sel:[], cb:null};
+var pkNewTags = [];
 function openPicker(kind, title, cb, multi){
   pick = {kind:kind, multi:!!multi, sel:[], cb:cb};
   document.getElementById('pkTitle').textContent = title;
@@ -967,8 +1046,9 @@ function openPicker(kind, title, cb, multi){
   document.getElementById('pkLibPane').style.display = '';
   document.getElementById('pkNewPane').style.display = 'none';
   document.getElementById('pkTabLib').className = 'on'; document.getElementById('pkTabNew').className = '';
-  document.getElementById('pkUrl').value = ''; document.getElementById('pkName').value = '';
-  document.getElementById('pkTags').innerHTML = ASSET_TAGS.map(function(t){ return '<label class="chkline2"><input type="checkbox" value="' + escAttr(t) + '" onchange="pkNewValid()"> ' + escHtml(t) + '</label>'; }).join('');
+  document.getElementById('pkName').value = '';
+  pkNewTags = [];   // 20261110 內容標籤改為下拉選單（可複選、關鍵字篩選），元件在 assets/_tag_dd.js
+  document.getElementById('pkTags').innerHTML = TLI_TagDD.html('pk_new', pkNewTags, ASSET_TAGS, pkNewValid);
   /* 內容標籤複選篩選（4.9 §二：符合任一個；未選不套用）與格式說明（集中於 TLI_MASTERS.resourceLibraries[].formats，口頭決定、待確認） */
   document.getElementById('pkTagF').innerHTML = ASSET_TAGS.map(function(t){ return '<label class="chkline2"><input type="checkbox" value="' + escAttr(t) + '" onchange="pkRender()"> ' + escHtml(t) + '</label>'; }).join('');
   var fl = (TLI_MASTERS.resourceLibraries || []).filter(function(x){ return x.key === (kind === 'pdf' ? 'materials' : 'audio'); })[0];
@@ -1009,17 +1089,13 @@ function pkAddSelected(){
   closePicker(); if (pick.cb) pick.cb(list);
 }
 function pkNewValid(){
-  var ok = document.querySelectorAll('#pkTags input:checked').length > 0;
+  var ok = pkNewTags.length > 0;
   document.getElementById('pkInsert').disabled = !ok;
   document.getElementById('pkWhy').textContent = ok ? '' : T('尚未選擇內容標籤','No content tag selected yet');
 }
-function pkUrlInput(){
-  var v = document.getElementById('pkUrl').value.trim();
-  if (v && !document.getElementById('pkName').value.trim()) document.getElementById('pkName').value = /^<iframe/i.test(v) ? T('嵌入內容（iframe）','Embedded content (iframe)') : (v.split('/').pop() || v);
-}
 function pkInsert(){
   var name = document.getElementById('pkName').value.trim() || T('新素材','New asset') + '_' + Date.now();
-  var tags = Array.prototype.map.call(document.querySelectorAll('#pkTags input:checked'), function(i){ return i.value; });
+  var tags = pkNewTags.slice();
   var a = pick.kind === 'pdf' ? {n:name, tags:tags} : {n:name, d:'parsing', tags:tags};
   pkSrc().push(a);
   closePicker();
@@ -1039,11 +1115,11 @@ if (window.TLI_I18N){ TLI_I18N.onRefresh(renderPage); TLI_I18N.onRefresh(renderN
 /* 對話框的靜態文字（繁中預設，英文走 TLI_I18N.t）；語系切換時一併更新 */
 function applyPickerLabels(){
   var set = function(id, zh, en){ var el = document.getElementById(id); if (el) el.textContent = T(zh, en); };
-  set('pkTypeLbl','素材類型','Asset type'); set('pkLockHint','類型已鎖定，此處不提供切換','Type is locked; no switching here');
+  set('pkTypeLbl','素材類型','Asset type');
   set('pkTabLib','資源庫','Library'); set('pkTabNew','新增','New'); set('pkAddBtn','加入所選','Add selected');
-  set('pkDrop','選擇新的素材檔案','Choose a new asset file'); set('pkUrlLbl','或　輸入網址／嵌入碼','or enter a URL / embed code');
+  set('pkDrop','選擇新的素材檔案','Choose a new asset file');
   set('pkNameLbl','素材名稱','Asset name'); set('pkNameHint','預設帶入檔名，可改為更好辨識的名稱；不強制，日後可在資源庫修改。','Defaults to the file name; rename it for clarity if you like. Not required, and editable later in the Resource Library.');
-  set('pkTagLbl','內容標籤','Content tags'); set('pkTagHint','至少選一個。素材數量一多，標籤是唯一有效的篩選方式。','Pick at least one. Once assets pile up, tags are the only effective way to filter.');
+  set('pkTagLbl','內容標籤','Content tags'); set('pkTagHint','至少選一個。','Pick at least one.');
   set('pkInsert','新增並插入','Add and insert'); set('uiCancel','取消','Cancel');
   document.getElementById('pkSearch').placeholder = T('搜尋名稱','Search name');
   set('pkTagFLbl','內容標籤','Content tags'); set('pkTagFHint','複選時符合任一標籤即可','Matches any selected tag');

@@ -141,10 +141,13 @@ display:flex;flex-direction:column;}
 .typecard{border:1px solid var(--g200);border-radius:8px;padding:12px;text-align:center;cursor:pointer;font-size:13px;}
 .typecard:hover{border-color:var(--navy);}
 .typecard.active{border-color:var(--navy);background:#EEF3FA;color:var(--navy);font-weight:600;}
-/* ---- 新增素材：上傳／嵌入區塊 ---- */
-.srcblock{border:1px solid var(--g200);border-radius:8px;padding:12px 14px;}
-.srcblock .sectiontitle{margin-top:0;}
-.srcblock.isoff{opacity:.5;}
+/* ---- 內容標籤下拉：樣式與行為在 assets/_tag_dd.js（20261110 與 a02、a25 共用） ---- */
+/* ---- 列表篩選改為下拉（20261110 使用者要求：內容標籤與狀態都用下拉篩選） ---- */
+.fsel{padding:6px 28px 6px 10px;border:1px solid var(--g200);border-radius:6px;font-size:12.5px;font-family:inherit;background:#fff;min-width:110px;}
+.chipgroup .tagdd{width:260px;}
+.chipgroup .tagdd-trigger{min-height:32px;}
+.tagaddrow{display:flex;gap:8px;align-items:center;margin-top:8px;}
+.tagaddrow input{flex:1;}
 /* ---- 課程搜尋勾選清單 ---- */
 .pickSearch{margin-bottom:10px;}
 .pickSearch input{width:100%;padding:8px 12px;border:1px solid var(--g200);border-radius:6px;font-size:13px;font-family:inherit;}
@@ -308,10 +311,10 @@ cursor:pointer;font-family:inherit;}
 </head>
 <body>
 <div class="app">
-<div class="sidebar" id="sidebar"><a class="brand" href="a02_products.html"><img class="brand-logo" src="../assets/tli-logo.svg" alt="TLI"><small class="navtext" data-i18n="brand.adminPortal">管理後台</small></a><nav><div class="navgroup" data-group="sales"><div class="sec-label" onclick="toggleNavGroup(event,'sales')"><span class="navtext" data-i18n="nav.group.sales">銷售</span><button type="button" class="sec-toggle navtext" onclick="toggleNavGroup(event,'sales')" aria-label="收合銷售" data-i18n-aria-label="aria.collapseSales"><svg width="12" height="12" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 8 10 12 14 8"/></svg></button></div><div class="navgroup-items"><a data-nav="a21" href="a21_projects.html"><svg class="navicon" width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="14" height="13" rx="2"/><line x1="3" y1="8" x2="17" y2="8"/><line x1="7" y1="12" x2="13" y2="12"/><line x1="7" y1="14.6" x2="11" y2="14.6"/></svg><span class="navtext" data-i18n="nav.a21">專案設定</span></a><a data-nav="a04" href="a04_packages.html"><svg class="navicon" width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="7" width="14" height="10" rx="1"/><path d="M3 7l7-4 7 4"/><line x1="10" y1="7" x2="10" y2="17"/></svg><span class="navtext" data-i18n="nav.a04">銷售方案</span></a><a data-nav="a05" href="a05_orders.html"><svg class="navicon" width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 2h10v16l-2-1.3L11 18l-2-1.3L7 18l-2-1.3V2z"/><line x1="7.5" y1="6" x2="12.5" y2="6"/><line x1="7.5" y1="9" x2="12.5" y2="9"/></svg><span class="navtext" data-i18n="nav.a05">訂單</span></a><a data-nav="a20" href="a20_agents.html"><svg class="navicon" width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="6.5" cy="6" r="2.3"/><path d="M2.5 16c0-2.6 1.8-4.3 4-4.3s4 1.7 4 4.3"/><circle cx="14.5" cy="8.5" r="1.8"/><path d="M17.3 16c0-1.9-1.3-3.4-2.8-3.4"/><path d="M9 6l3-1.5"/></svg><span class="navtext" data-i18n="nav.a20">合作夥伴</span></a></div></div><div class="navgroup" data-group="customer"><div class="sec-label" onclick="toggleNavGroup(event,'customer')"><span class="navtext" data-i18n="nav.group.customer">客戶</span><button type="button" class="sec-toggle navtext" onclick="toggleNavGroup(event,'customer')" aria-label="收合客戶" data-i18n-aria-label="aria.collapseCustomer"><svg width="12" height="12" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 8 10 12 14 8"/></svg></button></div><div class="navgroup-items"><a data-nav="a01" href="a01_member_rules.html"><svg class="navicon" width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="10" cy="6.5" r="3"/><path d="M4 17c0-3 2.7-5 6-5s6 2 6 5"/></svg><span class="navtext" data-i18n="nav.a01">學員管理</span></a><a data-nav="a19" href="a19_b2b_enterprise.html"><svg class="navicon" width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="3.5" y="3" width="7" height="14" rx="1"/><rect x="10.5" y="7.5" width="6" height="9.5" rx="1"/><line x1="5.5" y1="6" x2="7.5" y2="6"/><line x1="5.5" y1="9" x2="7.5" y2="9"/><line x1="5.5" y1="12" x2="7.5" y2="12"/><line x1="12.5" y1="10.5" x2="14.5" y2="10.5"/><line x1="12.5" y1="13.5" x2="14.5" y2="13.5"/></svg><span class="navtext" data-i18n="nav.a19">組織客戶</span></a><a data-nav="a14" href="a14_feedback.html"><svg class="navicon" width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M3 4h14a1 1 0 0 1 1 1v8a1 1 0 0 1-1 1H8l-4 3v-3H3a1 1 0 0 1-1-1V5a1 1 0 0 1 1-1z"/></svg><span class="navtext" data-i18n="nav.a14">學員回饋</span></a></div></div><div class="navgroup" data-group="teaching"><div class="sec-label" onclick="toggleNavGroup(event,'teaching')"><span class="navtext" data-i18n="nav.group.teaching">教學</span><button type="button" class="sec-toggle navtext" onclick="toggleNavGroup(event,'teaching')" aria-label="收合教學" data-i18n-aria-label="aria.collapseTeaching"><svg width="12" height="12" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 8 10 12 14 8"/></svg></button></div><div class="navgroup-items"><a data-nav="a02" href="a02_products.html"><svg class="navicon" width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6l7-3.5L17 6v8l-7 3.5L3 14V6z"/><path d="M3 6l7 3.5L17 6"/><line x1="10" y1="9.5" x2="10" y2="17.5"/></svg><span class="navtext" data-i18n="nav.a02">課程管理</span></a><a data-nav="a25" href="a25_materials.html"><svg class="navicon" width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 3.5h8.5A2.5 2.5 0 0 1 15 6v10.5H6.5A2.5 2.5 0 0 1 4 14V3.5z"/><path d="M4 14a2.5 2.5 0 0 1 2.5-2.5H15"/><line x1="7.5" y1="6.5" x2="12" y2="6.5"/></svg><span class="navtext" data-i18n="nav.a25">教材管理</span></a><a data-nav="a10" href="a10_teachers.html"><svg class="navicon" width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="2.5" y="6.5" width="15" height="9.5" rx="1.5"/><path d="M7 6.5V5a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2v1.5"/><line x1="2.5" y1="10.5" x2="17.5" y2="10.5"/></svg><span class="navtext" data-i18n="nav.a10">老師管理</span></a><a data-nav="a18" class="active" href="a18_resource_library.html"><svg class="navicon" width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><ellipse cx="10" cy="4.5" rx="7" ry="2.5"/><path d="M3 4.5v5c0 1.4 3.1 2.5 7 2.5s7-1.1 7-2.5v-5"/><path d="M3 9.5v5c0 1.4 3.1 2.5 7 2.5s7-1.1 7-2.5v-5"/></svg><span class="navtext" data-i18n="nav.a18">資源庫</span></a><a data-nav="a16" href="a16_events.html"><svg class="navicon" width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="14" height="13" rx="1.5"/><line x1="3" y1="8" x2="17" y2="8"/><line x1="6.5" y1="2" x2="6.5" y2="5.5"/><line x1="13.5" y1="2" x2="13.5" y2="5.5"/><circle cx="10" cy="12.3" r="2"/></svg><span class="navtext" data-i18n="nav.a16">活動管理</span></a><a data-nav="a22" href="a22_quizzes.html"><svg class="navicon" width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="2.5" width="12" height="15" rx="1.5"/><path d="M7 7l1.5 1.5L11 6"/><line x1="12.5" y1="7.5" x2="14" y2="7.5"/><path d="M7 12l1.5 1.5L11 11"/><line x1="12.5" y1="12.5" x2="14" y2="12.5"/></svg><span class="navtext" data-i18n="nav.a22">測驗管理</span></a><a data-nav="a26" href="a26_scheduling.html"><svg class="navicon" width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="14" height="13" rx="1.5"/><line x1="3" y1="8" x2="17" y2="8"/><line x1="6.5" y1="2" x2="6.5" y2="5.5"/><line x1="13.5" y1="2" x2="13.5" y2="5.5"/><path d="M7 12.5l2 2 4-4"/></svg><span class="navtext" data-i18n="nav.a26">排課管理</span></a></div></div><div class="navgroup" data-group="finance"><div class="sec-label" onclick="toggleNavGroup(event,'finance')"><span class="navtext" data-i18n="nav.group.finance">財務</span><button type="button" class="sec-toggle navtext" onclick="toggleNavGroup(event,'finance')" aria-label="收合財務" data-i18n-aria-label="aria.collapseFinance"><svg width="12" height="12" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 8 10 12 14 8"/></svg></button></div><div class="navgroup-items"><a data-nav="a23" href="a23_payment_gateways.html"><svg class="navicon" width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="2.5" y="5" width="15" height="10" rx="1.5"/><line x1="2.5" y1="8.5" x2="17.5" y2="8.5"/><circle cx="13.5" cy="12" r="1.2"/></svg><span class="navtext" data-i18n="nav.a23">收款與發票</span></a><a data-nav="a24" href="a24_partner_settlement.html"><svg class="navicon" width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="2.5" y="4" width="15" height="12" rx="1.5"/><line x1="6" y1="8" x2="14" y2="8"/><line x1="6" y1="11" x2="11" y2="11"/><path d="M12.5 13.5l1.2 1.2 2.3-2.4"/></svg><span class="navtext" data-i18n="nav.a24">結算與對帳</span></a><a data-nav="a07" href="a07_reports.html"><svg class="navicon" width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><line x1="4" y1="17" x2="4" y2="10"/><line x1="10" y1="17" x2="10" y2="5"/><line x1="16" y1="17" x2="16" y2="12"/></svg><span class="navtext" data-i18n="nav.a07">營運報表</span></a></div></div><div class="navgroup" data-group="system"><div class="sec-label" onclick="toggleNavGroup(event,'system')"><span class="navtext" data-i18n="nav.group.system">系統</span><button type="button" class="sec-toggle navtext" onclick="toggleNavGroup(event,'system')" aria-label="收合系統" data-i18n-aria-label="aria.collapseSystem"><svg width="12" height="12" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 8 10 12 14 8"/></svg></button></div><div class="navgroup-items"><a data-nav="a17" href="a17_master_data.html"><svg class="navicon" width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><line x1="4" y1="5" x2="16" y2="5"/><circle cx="8" cy="5" r="1.6"/><line x1="4" y1="10" x2="16" y2="10"/><circle cx="13" cy="10" r="1.6"/><line x1="4" y1="15" x2="16" y2="15"/><circle cx="10" cy="15" r="1.6"/></svg><span class="navtext" data-i18n="nav.a17">基礎資料設定</span></a><a data-nav="a09" href="a09_permissions_notify.html"><svg class="navicon" width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M10 2l6.5 2.5v5C16.5 14 13.8 17 10 18c-3.8-1-6.5-4-6.5-8.5v-5L10 2z"/></svg><span class="navtext" data-i18n="nav.a09">權限管理</span></a><a data-nav="a15" href="a15_notifications.html"><svg class="navicon" width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M10 2.5c-2.2 0-4 1.8-4 4v2.3c0 .6-.2 1.2-.6 1.7L4 12.5h12l-1.4-2c-.4-.5-.6-1.1-.6-1.7V6.5c0-2.2-1.8-4-4-4z"/><path d="M8.2 15.5a1.8 1.8 0 0 0 3.6 0"/></svg><span class="navtext" data-i18n="nav.a15">通知管理</span></a><a data-nav="a08" href="a08_content_cms.html"><svg class="navicon" width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="2.5" y="3" width="15" height="14" rx="1.5"/><line x1="8" y1="3" x2="8" y2="17"/></svg><span class="navtext" data-i18n="nav.a08">內容管理</span></a></div></div></nav><div class="sidebar-user" id="sidebarUser"><div class="su-row" onclick="toggleSuMenu(event)"><span class="su-avatar" id="suAvatar">王</span><span class="navtext su-info"><span class="su-name" id="suName">王大明</span><span class="su-roletag" id="suRoleTag" data-i18n="role.hqAdmin">總公司管理者</span></span><svg class="navtext su-chevron" width="14" height="14" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 8 10 12 14 8"/></svg></div><div class="tb-panel su-menu" id="suMenu"><a href="a00_profile.html" data-i18n="common.settings">個人設定</a><a href="../公開網站/p01_home.html" data-i18n="common.gotoWebsite">前往官網</a><a href="../顧問工作台/c01_today.html" data-i18n="nav_ext.consultantWorkbench">前往顧問工作台</a><a href="javascript:void(0)" onclick="doLogout()" data-i18n="common.logout">登出</a></div></div></div><div class="main"><div class="topbar"><button class="hamburger" onclick="toggleSidebar()" aria-label="開啟選單" data-i18n-aria-label="common.openMenu"><svg class="navicon" width="18" height="18" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="5.5" x2="17" y2="5.5"/><line x1="3" y1="10" x2="17" y2="10"/><line x1="3" y1="14.5" x2="17" y2="14.5"/></svg></button><div class="tb-title" data-i18n="nav.a18">資源庫</div><div class="tb-actions"><div class="tb-search"><svg class="navicon" width="15" height="15" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="8.5" cy="8.5" r="5.5"/><line x1="16.5" y1="16.5" x2="12.6" y2="12.6"/></svg><input type="text" placeholder="搜尋" data-i18n-placeholder="search.genericPlaceholder"></div><button class="tb-bellbtn" onclick="toggleNotif(event)" aria-label="通知" data-i18n-aria-label="common.notifications"><svg class="navicon" width="17" height="17" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M10 2.5c-2.2 0-4 1.8-4 4v2.3c0 .6-.2 1.2-.6 1.7L4 12.5h12l-1.4-2c-.4-.5-.6-1.1-.6-1.7V6.5c0-2.2-1.8-4-4-4z"/><path d="M8.2 15.5a1.8 1.8 0 0 0 3.6 0"/></svg><span class="tb-dot" id="tbDot"></span></button><div class="tb-panel tb-notifpanel" id="notifPanel"></div><button class="tb-avatarbtn" onclick="toggleAvatarMenu(event)" aria-label="使用者選單" data-i18n-aria-label="common.userMenu">王</button><div class="tb-panel tb-avatarmenu" id="avatarMenu"><a href="a00_profile.html" data-i18n="common.settings">個人設定</a><a href="../公開網站/p01_home.html" data-i18n="common.gotoWebsite">前往官網</a><a href="javascript:void(0)" onclick="doLogout()" data-i18n="common.logout">登出</a></div></div></div><div class="sidebar-backdrop" id="sidebarBackdrop" onclick="closeSidebar()"></div>
+<div class="sidebar" id="sidebar"><a class="brand" href="a02_products.html"><img class="brand-logo" src="../assets/tli-logo.svg" alt="TLI"><small class="navtext" data-i18n="brand.adminPortal">管理後台</small></a><nav><div class="navgroup" data-group="sales"><div class="sec-label" onclick="toggleNavGroup(event,'sales')"><span class="navtext" data-i18n="nav.group.sales">銷售</span><button type="button" class="sec-toggle navtext" onclick="toggleNavGroup(event,'sales')" aria-label="收合銷售" data-i18n-aria-label="aria.collapseSales"><svg width="12" height="12" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 8 10 12 14 8"/></svg></button></div><div class="navgroup-items"><a data-nav="a21" href="a21_projects.html"><svg class="navicon" width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="14" height="13" rx="2"/><line x1="3" y1="8" x2="17" y2="8"/><line x1="7" y1="12" x2="13" y2="12"/><line x1="7" y1="14.6" x2="11" y2="14.6"/></svg><span class="navtext" data-i18n="nav.a21">專案設定</span></a><a data-nav="a04" href="a04_packages.html"><svg class="navicon" width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="7" width="14" height="10" rx="1"/><path d="M3 7l7-4 7 4"/><line x1="10" y1="7" x2="10" y2="17"/></svg><span class="navtext" data-i18n="nav.a04">銷售方案</span></a><a data-nav="a05" href="a05_orders.html"><svg class="navicon" width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 2h10v16l-2-1.3L11 18l-2-1.3L7 18l-2-1.3V2z"/><line x1="7.5" y1="6" x2="12.5" y2="6"/><line x1="7.5" y1="9" x2="12.5" y2="9"/></svg><span class="navtext" data-i18n="nav.a05">訂單</span></a><a data-nav="a20" href="a20_agents.html"><svg class="navicon" width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="6.5" cy="6" r="2.3"/><path d="M2.5 16c0-2.6 1.8-4.3 4-4.3s4 1.7 4 4.3"/><circle cx="14.5" cy="8.5" r="1.8"/><path d="M17.3 16c0-1.9-1.3-3.4-2.8-3.4"/><path d="M9 6l3-1.5"/></svg><span class="navtext" data-i18n="nav.a20">合作夥伴</span></a></div></div><div class="navgroup" data-group="customer"><div class="sec-label" onclick="toggleNavGroup(event,'customer')"><span class="navtext" data-i18n="nav.group.customer">客戶</span><button type="button" class="sec-toggle navtext" onclick="toggleNavGroup(event,'customer')" aria-label="收合客戶" data-i18n-aria-label="aria.collapseCustomer"><svg width="12" height="12" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 8 10 12 14 8"/></svg></button></div><div class="navgroup-items"><a data-nav="a01" href="a01_member_rules.html"><svg class="navicon" width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="10" cy="6.5" r="3"/><path d="M4 17c0-3 2.7-5 6-5s6 2 6 5"/></svg><span class="navtext" data-i18n="nav.a01">學員管理</span></a><a data-nav="a19" href="a19_b2b_enterprise.html"><svg class="navicon" width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="3.5" y="3" width="7" height="14" rx="1"/><rect x="10.5" y="7.5" width="6" height="9.5" rx="1"/><line x1="5.5" y1="6" x2="7.5" y2="6"/><line x1="5.5" y1="9" x2="7.5" y2="9"/><line x1="5.5" y1="12" x2="7.5" y2="12"/><line x1="12.5" y1="10.5" x2="14.5" y2="10.5"/><line x1="12.5" y1="13.5" x2="14.5" y2="13.5"/></svg><span class="navtext" data-i18n="nav.a19">組織客戶</span></a><a data-nav="a14" href="a14_feedback.html"><svg class="navicon" width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M3 4h14a1 1 0 0 1 1 1v8a1 1 0 0 1-1 1H8l-4 3v-3H3a1 1 0 0 1-1-1V5a1 1 0 0 1 1-1z"/></svg><span class="navtext" data-i18n="nav.a14">學員回饋</span></a></div></div><div class="navgroup" data-group="teaching"><div class="sec-label" onclick="toggleNavGroup(event,'teaching')"><span class="navtext" data-i18n="nav.group.teaching">教學</span><button type="button" class="sec-toggle navtext" onclick="toggleNavGroup(event,'teaching')" aria-label="收合教學" data-i18n-aria-label="aria.collapseTeaching"><svg width="12" height="12" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 8 10 12 14 8"/></svg></button></div><div class="navgroup-items"><a data-nav="a02" href="a02_products.html"><svg class="navicon" width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6l7-3.5L17 6v8l-7 3.5L3 14V6z"/><path d="M3 6l7 3.5L17 6"/><line x1="10" y1="9.5" x2="10" y2="17.5"/></svg><span class="navtext" data-i18n="nav.a02">課程管理</span></a><a data-nav="a25" href="a25_materials.html"><svg class="navicon" width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 3.5h8.5A2.5 2.5 0 0 1 15 6v10.5H6.5A2.5 2.5 0 0 1 4 14V3.5z"/><path d="M4 14a2.5 2.5 0 0 1 2.5-2.5H15"/><line x1="7.5" y1="6.5" x2="12" y2="6.5"/></svg><span class="navtext" data-i18n="nav.a25">教材管理</span></a><a data-nav="a10" href="a10_teachers.html"><svg class="navicon" width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="2.5" y="6.5" width="15" height="9.5" rx="1.5"/><path d="M7 6.5V5a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2v1.5"/><line x1="2.5" y1="10.5" x2="17.5" y2="10.5"/></svg><span class="navtext" data-i18n="nav.a10">老師管理</span></a><a data-nav="a18" class="active" href="a18_resource_library.html"><svg class="navicon" width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><ellipse cx="10" cy="4.5" rx="7" ry="2.5"/><path d="M3 4.5v5c0 1.4 3.1 2.5 7 2.5s7-1.1 7-2.5v-5"/><path d="M3 9.5v5c0 1.4 3.1 2.5 7 2.5s7-1.1 7-2.5v-5"/></svg><span class="navtext" data-i18n="nav.a18">資源庫</span></a><a data-nav="a16" href="a16_events.html"><svg class="navicon" width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="14" height="13" rx="1.5"/><line x1="3" y1="8" x2="17" y2="8"/><line x1="6.5" y1="2" x2="6.5" y2="5.5"/><line x1="13.5" y1="2" x2="13.5" y2="5.5"/><circle cx="10" cy="12.3" r="2"/></svg><span class="navtext" data-i18n="nav.a16">活動管理</span></a><a data-nav="a22" href="a22_quizzes.html"><svg class="navicon" width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="2.5" width="12" height="15" rx="1.5"/><path d="M7 7l1.5 1.5L11 6"/><line x1="12.5" y1="7.5" x2="14" y2="7.5"/><path d="M7 12l1.5 1.5L11 11"/><line x1="12.5" y1="12.5" x2="14" y2="12.5"/></svg><span class="navtext" data-i18n="nav.a22">測驗管理</span></a><a data-nav="a26" href="a26_scheduling.html"><svg class="navicon" width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="14" height="13" rx="1.5"/><line x1="3" y1="8" x2="17" y2="8"/><line x1="6.5" y1="2" x2="6.5" y2="5.5"/><line x1="13.5" y1="2" x2="13.5" y2="5.5"/><path d="M7 12.5l2 2 4-4"/></svg><span class="navtext" data-i18n="nav.a26">排課管理</span></a></div></div><div class="navgroup" data-group="finance"><div class="sec-label" onclick="toggleNavGroup(event,'finance')"><span class="navtext" data-i18n="nav.group.finance">財務</span><button type="button" class="sec-toggle navtext" onclick="toggleNavGroup(event,'finance')" aria-label="收合財務" data-i18n-aria-label="aria.collapseFinance"><svg width="12" height="12" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 8 10 12 14 8"/></svg></button></div><div class="navgroup-items"><a data-nav="a23" href="a23_payment_gateways.html"><svg class="navicon" width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="2.5" y="5" width="15" height="10" rx="1.5"/><line x1="2.5" y1="8.5" x2="17.5" y2="8.5"/><circle cx="13.5" cy="12" r="1.2"/></svg><span class="navtext" data-i18n="nav.a23">收款與發票</span></a><a data-nav="a24" href="a24_partner_settlement.html"><svg class="navicon" width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="2.5" y="4" width="15" height="12" rx="1.5"/><line x1="6" y1="8" x2="14" y2="8"/><line x1="6" y1="11" x2="11" y2="11"/><path d="M12.5 13.5l1.2 1.2 2.3-2.4"/></svg><span class="navtext" data-i18n="nav.a24">結算與對帳</span></a><a data-nav="a07" href="a07_reports.html"><svg class="navicon" width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><line x1="4" y1="17" x2="4" y2="10"/><line x1="10" y1="17" x2="10" y2="5"/><line x1="16" y1="17" x2="16" y2="12"/></svg><span class="navtext" data-i18n="nav.a07">營運報表</span></a></div></div><div class="navgroup" data-group="system"><div class="sec-label" onclick="toggleNavGroup(event,'system')"><span class="navtext" data-i18n="nav.group.system">系統</span><button type="button" class="sec-toggle navtext" onclick="toggleNavGroup(event,'system')" aria-label="收合系統" data-i18n-aria-label="aria.collapseSystem"><svg width="12" height="12" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 8 10 12 14 8"/></svg></button></div><div class="navgroup-items"><a data-nav="a17" href="a17_master_data.html"><svg class="navicon" width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><line x1="4" y1="5" x2="16" y2="5"/><circle cx="8" cy="5" r="1.6"/><line x1="4" y1="10" x2="16" y2="10"/><circle cx="13" cy="10" r="1.6"/><line x1="4" y1="15" x2="16" y2="15"/><circle cx="10" cy="15" r="1.6"/></svg><span class="navtext" data-i18n="nav.a17">基礎資料設定</span></a><a data-nav="a09" href="a09_permissions_notify.html"><svg class="navicon" width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M10 2l6.5 2.5v5C16.5 14 13.8 17 10 18c-3.8-1-6.5-4-6.5-8.5v-5L10 2z"/></svg><span class="navtext" data-i18n="nav.a09">帳號管理</span></a><a data-nav="a27" href="a27_roles.html"><svg class="navicon" width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="7" cy="12.5" r="3.5"/><path d="M9.6 10L16 3.5"/><path d="M13.5 6l2 2"/><path d="M11.6 7.9l1.5 1.5"/></svg><span class="navtext" data-i18n="nav.a27">角色管理</span></a><a data-nav="a28" href="a28_activity_logs.html"><svg class="navicon" width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M3.5 10a6.5 6.5 0 1 0 1.9-4.6"/><polyline points="3 3 3.4 6 6.4 5.6"/><polyline points="10 6.5 10 10 12.5 11.5"/></svg><span class="navtext" data-i18n="nav.a28">操作紀錄</span></a><a data-nav="a15" href="a15_notifications.html"><svg class="navicon" width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M10 2.5c-2.2 0-4 1.8-4 4v2.3c0 .6-.2 1.2-.6 1.7L4 12.5h12l-1.4-2c-.4-.5-.6-1.1-.6-1.7V6.5c0-2.2-1.8-4-4-4z"/><path d="M8.2 15.5a1.8 1.8 0 0 0 3.6 0"/></svg><span class="navtext" data-i18n="nav.a15">通知管理</span></a><a data-nav="a08" href="a08_content_cms.html"><svg class="navicon" width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="2.5" y="3" width="15" height="14" rx="1.5"/><line x1="8" y1="3" x2="8" y2="17"/></svg><span class="navtext" data-i18n="nav.a08">內容管理</span></a></div></div></nav><div class="sidebar-user" id="sidebarUser"><div class="su-row" onclick="toggleSuMenu(event)"><span class="su-avatar" id="suAvatar">王</span><span class="navtext su-info"><span class="su-name" id="suName">王大明</span><span class="su-roletag" id="suRoleTag" data-i18n="role.hqAdmin">總公司管理者</span></span><svg class="navtext su-chevron" width="14" height="14" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 8 10 12 14 8"/></svg></div><div class="tb-panel su-menu" id="suMenu"><a href="a00_profile.html" data-i18n="common.settings">個人設定</a><a href="../公開網站/p01_home.html" data-i18n="common.gotoWebsite">前往官網</a><a href="../顧問工作台/c01_today.html" data-i18n="nav_ext.consultantWorkbench">前往顧問工作台</a><a href="javascript:void(0)" onclick="doLogout()" data-i18n="common.logout">登出</a></div></div></div><div class="main"><div class="topbar"><button class="hamburger" onclick="toggleSidebar()" aria-label="開啟選單" data-i18n-aria-label="common.openMenu"><svg class="navicon" width="18" height="18" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="5.5" x2="17" y2="5.5"/><line x1="3" y1="10" x2="17" y2="10"/><line x1="3" y1="14.5" x2="17" y2="14.5"/></svg></button><div class="tb-title" data-i18n="nav.a18">資源庫</div><div class="tb-actions"><div class="tb-search"><svg class="navicon" width="15" height="15" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="8.5" cy="8.5" r="5.5"/><line x1="16.5" y1="16.5" x2="12.6" y2="12.6"/></svg><input type="text" placeholder="搜尋" data-i18n-placeholder="search.genericPlaceholder"></div><button class="tb-bellbtn" onclick="toggleNotif(event)" aria-label="通知" data-i18n-aria-label="common.notifications"><svg class="navicon" width="17" height="17" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M10 2.5c-2.2 0-4 1.8-4 4v2.3c0 .6-.2 1.2-.6 1.7L4 12.5h12l-1.4-2c-.4-.5-.6-1.1-.6-1.7V6.5c0-2.2-1.8-4-4-4z"/><path d="M8.2 15.5a1.8 1.8 0 0 0 3.6 0"/></svg><span class="tb-dot" id="tbDot"></span></button><div class="tb-panel tb-notifpanel" id="notifPanel"></div><button class="tb-avatarbtn" onclick="toggleAvatarMenu(event)" aria-label="使用者選單" data-i18n-aria-label="common.userMenu">王</button><div class="tb-panel tb-avatarmenu" id="avatarMenu"><a href="a00_profile.html" data-i18n="common.settings">個人設定</a><a href="../公開網站/p01_home.html" data-i18n="common.gotoWebsite">前往官網</a><a href="javascript:void(0)" onclick="doLogout()" data-i18n="common.logout">登出</a></div></div></div><div class="sidebar-backdrop" id="sidebarBackdrop" onclick="closeSidebar()"></div>
 
 <div class="pagehead">
-<div><h1 data-i18n="nav.a18">資源庫</h1><div class="desc" data-i18n="page.desc.resourceLibrary">圖片、影片、音頻、教材、作業、測驗共六個資源庫，供課程引用。</div></div>
+<div><h1 data-i18n="nav.a18">資源庫</h1><div class="desc" data-i18n="page.desc.resourceLibrary">圖片、影片、音頻、文件共四個資源庫，供課程引用。</div></div>
 <div style="display:flex;align-items:center;gap:10px">
 <div class="toolbtns" id="pageheadActions"></div>
 </div>
@@ -322,9 +325,8 @@ cursor:pointer;font-family:inherit;}
 <div class="tabpanel active" id="panel-images"><div class="listpanel" id="images_card"></div></div>
 <div class="tabpanel" id="panel-videos"><div class="listpanel" id="videos_card"></div></div>
 <div class="tabpanel" id="panel-audio"><div class="listpanel" id="audio_card"></div></div>
+<!-- 文件庫：20261110 使用者要求教材庫、作業庫、測驗庫合併為文件庫（key 沿用 materials，與共用主檔 resourceLibraries 一致） -->
 <div class="tabpanel" id="panel-materials"><div class="listpanel" id="materials_card"></div></div>
-<div class="tabpanel" id="panel-homework"><div class="hint" style="margin-bottom:8px" data-i18n="hint.intentLibs">作業、測驗依使用意圖分類：同一份檔案，用途不同就放在不同的庫。</div><div class="listpanel" id="homework_card"></div></div>
-<div class="tabpanel" id="panel-quizzes"><div class="hint" style="margin-bottom:8px" data-i18n="hint.intentLibs">作業、測驗依使用意圖分類：同一份檔案，用途不同就放在不同的庫。</div><div class="listpanel" id="quizzes_card"></div></div>
 
 </div>
 </div>
@@ -339,7 +341,7 @@ cursor:pointer;font-family:inherit;}
 <div class="drawer-body" id="drw_body"></div>
 </div>
 
-<!-- 新增素材（類型由所在的庫決定；上傳／嵌入兩區塊擇一） -->
+<!-- 新增素材（類型由所在的庫決定；只能上傳檔案，20261110 使用者要求拿掉嵌入） -->
 <div class="modal-mask" id="uploadModal" onclick="if(event.target===this) closeUploadWizard()"><div class="modal wide">
 <div style="display:flex;justify-content:space-between;align-items:flex-start"><h3 id="uwTitle">新增</h3><button class="drawer-close" onclick="closeUploadWizard()" aria-label="關閉" data-i18n-aria-label="common.close"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button></div>
 <div id="uwBody"></div>
@@ -355,6 +357,7 @@ cursor:pointer;font-family:inherit;}
 <script src="../assets/_i18n_dict.js"></script>
 <script src="../assets/_i18n_dict_admin.js"></script>
 <script src="../assets/_i18n.js"></script>
+<script src="../assets/_tag_dd.js"></script>
 <script>
 
 /* ================= 基礎工具與示範資料生成 ================= */
@@ -401,53 +404,43 @@ var STAFF_NAMES = ['林詩涵','陳建宏','王思穎','黃教研主任'];
 /* ================= 20261106 依客戶 Connect 2.0 規格「4.1 素材庫」調整（使用者 2026-11-06 指示） =================
    來源：客戶提供的資料/Connect 2.0 規格書+原型資料/規格書/4.1-素材庫.md、4.9-素材選擇器-全站共用.md
    - 六類：圖片、影片、音頻、教材（依媒體形式）＋作業、測驗（依使用意圖）；類型由所在的庫決定，不設類型欄位
-   - 來源：上傳／嵌入（網址或 <iframe> 嵌入碼），由使用哪個區塊決定，不設來源欄位
+     → 20261110 使用者要求改為四類：圖片、影片、音頻、文件；教材庫、作業庫、測驗庫合併為文件庫（只收文件類檔案）
+   - 來源：原為上傳／嵌入（網址或 <iframe> 嵌入碼）兩種；20261110 使用者要求拿掉嵌入，一律上傳檔案，列表不再有來源欄位與篩選
    - 狀態只有啟用／停用；素材名稱不分語系、自動帶入檔名、不對學員顯示；內容標籤必填（多選）
    - 影音時長存在素材層：存秒數＋解析狀態；換檔即失效重算；失敗或無法取得不記為 0
    使用者 2026-11-06 決定：題目庫移除（docs/08 Q-4 仍待 vicki 確認）；影片改為可上傳＋嵌入（拿掉串流平台、縮圖網址）；
-   教材庫既有欄位（版本、能力類型、程度…）維持不動，只套用狀態、內容標籤、來源等共通規則 */
-var TYPE_LABEL = {images:'圖片', videos:'影片', audio:'音頻', materials:'教材', homework:'作業', quizzes:'測驗'};
-var LIB_KEYS = ['images','videos','audio','materials','homework','quizzes'];
+   教材庫既有欄位（版本、能力類型、程度…）維持不動，只套用狀態、內容標籤等共通規則
+   使用者 2026-11-10 決定：拿掉匯出、拿掉嵌入（含網址與 <iframe>）、內容標籤改為可複選並可關鍵字篩選的下拉選單 */
+/* 20261110 四類；文件庫的 key 沿用 materials（原教材庫），避免其他頁的引用（libKey、素材 id mat＋序號）失效 */
+var TYPE_LABEL = {images:'圖片', videos:'影片', audio:'音頻', materials:'文件'};
+var LIB_KEYS = ['images','videos','audio','materials'];
 function isAV(type){ return type==='videos' || type==='audio'; }
 /* 內容標籤詞彙（客戶 4.2：多選、詞彙由系統管理員維護）：正式詞彙待客戶提供；
    使用者 2026-11-06 決定先沿用 a18 原示範資料的標籤，與 a25 ASSET_TAGS 一致 */
 var CONTENT_TAGS = (window.TLI_MASTERS && TLI_MASTERS.activeContentTagNames) ? TLI_MASTERS.activeContentTagNames() : ['情境圖','初級','詞彙卡','文化','中級','會話講解','聽力','朗讀'];   // 詞彙來自共用主檔（a17「標籤管理」維護）
 
-/* ---- 來源 ---- */
-function srcLabel(r){ return r.source==='embed' ? '嵌入' : '上傳'; }
-function srcBadge(r){ return r.source==='embed' ? '<span class="badge orange">'+TT('嵌入')+'</span>' : '<span class="badge blue">'+TT('上傳')+'</span>'; }
-function embedKind(code){ return /^\s*<iframe/i.test(code||'') ? 'iframe' : 'URL'; }
-function isValidEmbed(code){
-  var s = String(code||'').trim();
-  return /^https?:\/\/\S+$/i.test(s) || /^<iframe[\s\S]*\ssrc\s*=\s*["'][^"']+["'][\s\S]*>/i.test(s);
-}
-function embedHost(code){
-  var s = String(code||'').trim(), m = s.match(/src\s*=\s*["']([^"']+)["']/i);
-  if (m) s = m[1];
-  try { return new URL(s).hostname || 'iframe'; } catch(e){ return embedKind(code)==='iframe' ? 'iframe' : s.slice(0,30); }
-}
+/* ---- 檔案（20261110 拿掉嵌入後，素材一律為上傳檔案） ---- */
 function fileExt(name){ var m = String(name||'').match(/\.([A-Za-z0-9]+)$/); return m ? m[1].toUpperCase() : '—'; }
 function fmtSize(kb){ if (kb==null) return '—'; return kb>=1024 ? (kb/1024).toFixed(1)+' MB' : kb+' KB'; }
-function fmtCell(r){ return r.source==='embed' ? embedKind(r.embed) : (r.format||'—'); }
+function fmtCell(r){ return r.format||'—'; }
 
-/* ---- 影音時長（4.1 §五之一）：durSec 為秒數；durStatus：ok 成功／processing 處理中／failed 失敗／unavailable 無法取得（外部來源）／na 不適用 ---- */
+/* ---- 影音時長（4.1 §五之一）：durSec 為秒數；durStatus：ok 成功／processing 處理中／failed 失敗／na 不適用
+   （原有 unavailable「無法取得」只用於外部嵌入來源，20261110 拿掉嵌入後一併移除） ---- */
 function durText(r){
   if (r.durStatus==='ok') return fmtMinSec(r.durSec);
   if (r.durStatus==='processing') return TT('解析中');
   if (r.durStatus==='failed') return TT('解析失敗');
-  if (r.durStatus==='unavailable') return TT('無法取得');
   return '—';
 }
 function durCell(r){
   if (r.durStatus==='ok') return fmtMinSec(r.durSec);
   if (r.durStatus==='na') return '—';
-  var cls = r.durStatus==='failed' ? 'red' : (r.durStatus==='unavailable' ? 'orange' : 'blue');
+  var cls = r.durStatus==='failed' ? 'red' : 'blue';
   return '<span class="badge '+cls+'">'+durText(r)+'</span>';
 }
 function durNote(r){
   if (r.durStatus==='processing') return TT('檔案上傳後由系統解析實際播放時長，解析完成前不顯示也不計算時長。');
   if (r.durStatus==='failed') return TT('時長解析失敗，維持未知，不會記為 0 秒；引用此素材的課程總時長會標示為不完整。');
-  if (r.durStatus==='unavailable') return TT('外部來源無法可靠取得時長，不需手動填寫；引用此素材的課程總時長會標示為不完整。');
   return '';
 }
 
@@ -459,12 +452,11 @@ function makeImage(i){
   var r = seededRand(i*3+1);
   var dims = ['1920×1080px','1600×1000px','1200×800px','800×600px'];
   var name = IMAGE_NAMES[i % IMAGE_NAMES.length]+(i>=IMAGE_NAMES.length ? '（'+(Math.floor(i/IMAGE_NAMES.length)+1)+'）' : '');
-  var embed = i%6===5, fmt = IMAGE_FORMATS[i % IMAGE_FORMATS.length];
+  var fmt = IMAGE_FORMATS[i % IMAGE_FORMATS.length];
   return {
-    id:'img'+i, name:name, source: embed ? 'embed' : 'upload',
-    fileName: embed ? '' : name+'.'+fmt.toLowerCase(), format: embed ? '' : fmt, dim: embed ? '' : dims[i % dims.length],
-    sizeKB: embed ? null : 180 + Math.floor(seededRand(i*17+9)*900),
-    embed: embed ? 'https://img.example.com/shared/img'+i+'.png' : '',
+    id:'img'+i, name:name, source:'upload',
+    fileName: name+'.'+fmt.toLowerCase(), format: fmt, dim: dims[i % dims.length],
+    sizeKB: 180 + Math.floor(seededRand(i*17+9)*900),
     durStatus:'na', durSec:null,
     tags: i%3===0 ? ['情境圖','初級'] : (i%3===1 ? ['詞彙卡'] : ['文化']),
     status: r < 0.85 ? '啟用' : '停用', updated: addDays('2026-06-01', Math.floor(r*280)), modifiedBy: STAFF_NAMES[i % STAFF_NAMES.length]
@@ -472,30 +464,20 @@ function makeImage(i){
 }
 var IMAGES = []; for (var ii=0; ii<14; ii++) IMAGES.push(makeImage(ii));
 
-/* ---- 影片庫：上傳或嵌入；上傳者由系統解析時長，嵌入者若無法可靠取得時長則標示「無法取得」 ---- */
+/* ---- 影片庫：上傳檔案，由系統解析時長（20261110 拿掉嵌入） ---- */
 var VIDEO_NAMES = ['L03 點餐會話 講解','L05 問路情境 講解影片','聲調練習：一聲到四聲','TLI-CPT 模擬口說講解',
   '老師講解：自我介紹','文化專題：端午節由來','初級語法動畫：是／不是','日常會話 Lv.2 總複習','商用會話：會議開場','旅遊華語：機場對話'];
 function makeVideo(i){
   var r = seededRand(i*5+3), r3 = seededRand(i*19+8);
   var name = VIDEO_NAMES[i % VIDEO_NAMES.length]+(i>=VIDEO_NAMES.length ? '（'+(Math.floor(i/VIDEO_NAMES.length)+1)+'）' : '');
-  var mode = i%4===1 ? 'url' : (i%4===3 ? 'iframe' : 'upload');
   var v = {
-    id:'vid'+i, name:name, source: mode==='upload' ? 'upload' : 'embed',
-    fileName:'', format:'', sizeKB:null, embed:'', durSec:null, durStatus:'ok',
+    id:'vid'+i, name:name, source:'upload',
+    fileName:name+'.mp4', format:'MP4', sizeKB: 40000 + Math.floor(seededRand(i*29+3)*400000),
+    durSec: 90 + Math.floor(seededRand(i*23+2)*600), durStatus:'ok',
     sourceNote: r3 < 0.6 ? 'kolable 移轉' : '新上傳', /* 3.0 上線前既有影片多數自 kolable 移轉，其餘為新上傳 */
     tags: i%2===0 ? ['會話講解'] : ['文化','中級'],
     status: r < 0.88 ? '啟用' : '停用', updated: addDays('2026-05-20', Math.floor(r*290)), modifiedBy: STAFF_NAMES[i % STAFF_NAMES.length]
   };
-  if (mode==='upload'){
-    v.fileName = name+'.mp4'; v.format = 'MP4';
-    v.sizeKB = 40000 + Math.floor(seededRand(i*29+3)*400000);
-    v.durSec = 90 + Math.floor(seededRand(i*23+2)*600);
-  } else {
-    v.embed = mode==='url' ? 'https://stream.example.com/v/vid'+i
-      : '<iframe src="https://stream.example.com/embed/vid'+i+'" width="640" height="360" allowfullscreen></iframe>';
-    if (i===1){ v.durSec = 90 + Math.floor(seededRand(i*23+2)*600); } /* 外部來源能取得時長時照常保存 */
-    else { v.durStatus = 'unavailable'; }
-  }
   if (i===6){ v.durStatus = 'processing'; v.durSec = null; }
   if (i===10){ v.durStatus = 'failed'; v.durSec = null; }
   return v;
@@ -510,36 +492,33 @@ function makeAudio(i){
   var name = AUDIO_NAMES[i % AUDIO_NAMES.length]+(i>=AUDIO_NAMES.length ? '（'+(Math.floor(i/AUDIO_NAMES.length)+1)+'）' : '');
   var a = {
     id:'aud'+i, name:name, source:'upload', fileName:name+'.mp3', format:'MP3',
-    sizeKB: 600 + Math.floor(seededRand(i*37+7)*3000), embed:'',
+    sizeKB: 600 + Math.floor(seededRand(i*37+7)*3000),
     durSec: 40 + Math.floor(seededRand(i*31+6)*260), durStatus:'ok',
     tags: i%2===0 ? ['聽力'] : ['朗讀'],
     status: r < 0.85 ? '啟用' : '停用', updated: addDays('2026-06-10', Math.floor(r*270)), modifiedBy: STAFF_NAMES[i % STAFF_NAMES.length]
   };
-  if (i===8){ a.source='embed'; a.fileName=''; a.format=''; a.sizeKB=null; a.embed='https://audio.example.com/share/aud8'; a.durSec=null; a.durStatus='unavailable'; }
   if (i===3){ a.durStatus = 'processing'; a.durSec = null; }
   if (i===6){ a.durStatus = 'failed'; a.durSec = null; }
   return a;
 }
 var AUDIOS = []; for (var ai=0; ai<10; ai++) AUDIOS.push(makeAudio(ai));
 
-/* ---- 作業庫、測驗庫（依使用意圖分類；同一份檔案用途不同就歸不同類，不得合併）
-   示範名稱取自客戶原型 Prototype/4.4-自學課程編輯原型.html 的作業／測驗項目；格式示範用 PDF 與外部網址 ---- */
+/* ---- 原作業庫、測驗庫的示範資料（20261110 併入文件庫，接在教材之後，見 MATERIALS）
+   示範名稱取自客戶原型 Prototype/4.4-自學課程編輯原型.html 的作業／測驗項目；格式示範用 PDF ---- */
 var HOMEWORK_NAMES = ['四聲練習','口語任務','寫作任務','口說錄音作業'];
 var QUIZ_NAMES = ['L4 隨堂測驗','L5-1 隨堂測驗','用語測驗','發音辨識','結構練習','聽寫練習','總複習'];
 function makeDocAsset(prefix, names, i, seedOff){
   var r = seededRand(i*7+seedOff);
-  var embed = i%3===2, name = names[i % names.length];
+  var name = names[i % names.length];
   return {
-    id:prefix+i, name:name, source: embed ? 'embed' : 'upload',
-    fileName: embed ? '' : name+'.pdf', format: embed ? '' : 'PDF',
-    sizeKB: embed ? null : 120 + Math.floor(seededRand(i*13+seedOff)*800),
-    embed: embed ? 'https://forms.example.com/'+prefix+i : '', durStatus:'na', durSec:null,
+    id:prefix+i, name:name, source:'upload',
+    fileName: name+'.pdf', format:'PDF',
+    sizeKB: 120 + Math.floor(seededRand(i*13+seedOff)*800),
+    durStatus:'na', durSec:null,
     tags: [CONTENT_TAGS[(i+seedOff) % CONTENT_TAGS.length]],
     status: r < 0.85 ? '啟用' : '停用', updated: addDays('2026-07-01', Math.floor(r*200)), modifiedBy: STAFF_NAMES[i % STAFF_NAMES.length]
   };
 }
-var HOMEWORK = []; for (var hi=0; hi<HOMEWORK_NAMES.length; hi++) HOMEWORK.push(makeDocAsset('hw', HOMEWORK_NAMES, hi, 3));
-var QUIZ_ASSETS = []; for (var zi=0; zi<QUIZ_NAMES.length; zi++) QUIZ_ASSETS.push(makeDocAsset('qz', QUIZ_NAMES, zi, 5));
 
 /* ================= 自學課程 Lesson 對照（唯讀，供資源庫「使用情形」顯示用）
    來源需與 a03_product_detail.html 的 PRODUCT_UNITS 保持一致（課程與 Lesson 名稱）；
@@ -565,19 +544,19 @@ function escHtml(s){ return String(s==null?'':s).replace(/&/g,'&amp;').replace(/
 var A18_EN = {
   '名稱':'Name','素材名稱':'Asset Name','格式與尺寸':'Format & Dimensions','格式':'Format','時長':'Duration',
   '大小':'Size','內容標籤':'Content Tags','狀態':'Status','更新日':'Updated','來源':'Source',
-  '上傳':'Upload','嵌入':'Embed','尺寸':'Dimensions','檔名':'File Name','形式':'Form','網址或嵌入碼':'URL or Embed Code',
+  '尺寸':'Dimensions','檔名':'File Name',
   '教材名稱':'Material Name','版本':'Version','能力類型':'Ability Type','程度':'Level',
   '啟用':'Enabled','停用':'Disabled',
   '刪除':'Delete','確定刪除':'Confirm Delete','關閉':'Close','改設為停用':'Disable Instead',
   '無法刪除':'Cannot Delete','確認刪除':'Confirm Deletion',
-  '圖片庫':'Image Library','影片庫':'Video Library','音頻庫':'Audio Library','教材庫':'Material Library','作業庫':'Homework Library','測驗庫':'Quiz Library',
+  '圖片庫':'Image Library','影片庫':'Video Library','音頻庫':'Audio Library','文件庫':'Document Library','文件':'Document','全部':'All',
+  '新增標籤':'New Tag','加入':'Add',
   '清除全部篩選':'Clear All Filters','設為停用':'Disable',
   '使用情形':'Usage','尚未被任何課程單元使用。':'Not yet used by any course unit.',
   '影片要放進課程，請到該課程的「課程內容」編排單元。':'To add this video to a course, arrange it under that course\'s "Course Content" tab.',
-  '解析中':'Processing','解析失敗':'Failed','無法取得':'Unavailable',
+  '解析中':'Processing','解析失敗':'Failed',
   '檔案上傳後由系統解析實際播放時長，解析完成前不顯示也不計算時長。':'Duration is parsed by the system after upload; it is neither shown nor counted until parsing completes.',
   '時長解析失敗，維持未知，不會記為 0 秒；引用此素材的課程總時長會標示為不完整。':'Duration parsing failed; it stays unknown and is never recorded as 0 s. Course totals using this asset will be marked incomplete.',
-  '外部來源無法可靠取得時長，不需手動填寫；引用此素材的課程總時長會標示為不完整。':'Duration cannot be reliably obtained from the external source and need not be entered manually. Course totals using this asset will be marked incomplete.',
   '資料來源：':'Data origin: ',
   '最後修改人':'Last Modified By','最後修改時間':'Last Modified At','預覽佔位':'Preview Placeholder',
   '使用中的課程（系統）':'Courses in Use (System)','被哪些產品使用（系統）':'Used by Which Products (System)',
@@ -591,7 +570,7 @@ var A18_EN = {
   '圖片':'Image','影片':'Video','音頻':'Audio','教材':'Material','作業':'Homework','測驗':'Quiz',
   '供管理者辨識與搜尋，不分語系，不對學員顯示；學員看到的是課程內的標題。':'For admin identification and search only; single-language and never shown to learners (learners see the titles inside the course).',
   '至少選一個，可複選；詞彙由系統管理員維護。':'Select at least one; multiple allowed. The vocabulary is maintained by system administrators.',
-  '更換來源':'Replace Source','上傳新檔案':'Upload New File','或改為嵌入（網址或 &lt;iframe&gt; 嵌入碼）':'Or switch to embed (URL or &lt;iframe&gt; code)',
+  '上傳新檔案':'Upload New File',
   '換檔後舊時長立即失效並重新解析，解析完成前不顯示舊值。':'After replacing, the old duration is invalidated immediately and re-parsed; the old value is not shown meanwhile.'
 };
 function TT(zh){ return (window.TLI_I18N ? TLI_I18N.t(zh, (A18_EN[zh]!==undefined?A18_EN[zh]:zh)) : zh); }
@@ -610,7 +589,7 @@ function renderMediaUsage(type, r){
   return html;
 }
 
-/* ---- 教材庫（既有欄位維持不動；20261106 起套用素材共通規則：狀態啟用／停用、內容標籤必填、來源上傳／嵌入） ---- */
+/* ---- 教材庫（既有欄位維持不動；20261106 起套用素材共通規則：狀態啟用／停用、內容標籤必填；20261110 起一律上傳檔案） ---- */
 var MATERIAL_NAMES = ['實用視聽華語 第一冊','新版實用視聽華語 第二冊','當代中文課程 第一冊','遠東生活華語 初級',
   'TOCFL 模擬試題本 入門級','HSK 標準教程 三級','商務華語會話教材','兒童華語繪本 第一輯','文化專題選讀（中高級）','量詞與語法手冊'];
 var ABILITY_TYPES = ['聽','說','讀','寫','綜合'];
@@ -641,7 +620,7 @@ function makeMaterial(i){
     id:'mat'+i, name:MATERIAL_NAMES[i], versions:versions, abilityType: ABILITY_TYPES[i % ABILITY_TYPES.length],
     level:level, examMapping:exam, vocabCount: 300 + Math.floor(r*1200),
     status: r3 < 0.85 ? '啟用' : '停用',
-    source:'upload', fileName:MATERIAL_NAMES[i]+'.pdf', format:'PDF', sizeKB: 2000 + Math.floor(r2*30000), embed:'',
+    source:'upload', fileName:MATERIAL_NAMES[i]+'.pdf', format:'PDF', sizeKB: 2000 + Math.floor(r2*30000),
     durStatus:'na', durSec:null, tags:[CONTENT_TAGS[i % CONTENT_TAGS.length]],
     usedByProducts: usedByProducts, usedInPlans: usedInPlans,
     maintainer: 'TLI 教研', updated: addDays('2026-06-01', Math.floor(r*280)), modifiedBy: STAFF_NAMES[i % STAFF_NAMES.length],
@@ -649,6 +628,14 @@ function makeMaterial(i){
   };
 }
 var MATERIALS = []; for (var mi=0; mi<10; mi++) MATERIALS.push(makeMaterial(mi));
+/* 文件庫＝原教材 10 筆＋原作業 4 筆＋原測驗 7 筆；後兩者 id 依序為 mat10～mat20（與共用主檔 resourceLibraries 文件庫的順序一致），
+   原教材的專屬欄位（版本、能力類型、程度…）保留為文件庫欄位，原作業／測驗沒有這些資料，留空顯示「—」 */
+HOMEWORK_NAMES.concat(QUIZ_NAMES).forEach(function(n, k){
+  var d = makeDocAsset('mat', HOMEWORK_NAMES.concat(QUIZ_NAMES), k, 3);
+  d.id = 'mat'+(10+k);
+  Object.assign(d, {versions:[], abilityType:'', level:'', examMapping:'', vocabCount:null, usedByProducts:[], usedInPlans:[], maintainer:'', boundCourseIds:[]});
+  MATERIALS.push(d);
+});
 
 /* ================= 徽章 ================= */
 function statusBadge(s){
@@ -665,25 +652,26 @@ function initListState(prefix, pageSize){
   LIST_STATE[prefix] = {search:'', filters:{}, sortKey:null, sortDir:'asc', page:1, pageSize:pageSize||10, selected:{}, visibleCols:{}};
 }
 
+/* 篩選列（20261110 使用者要求由整排按鈕改為下拉）：內容標籤為可複選、可關鍵字篩選的下拉（未選＝全部，符合任一個即可）；
+   狀態、程度為單選下拉（「全部」＝不篩選） */
 function renderChipGroups(prefix){
   var cfg = LIST_CFG[prefix], st = LIST_STATE[prefix];
   cfg.filterGroups.forEach(function(g){
     var wrap = document.getElementById(prefix+'_chip_'+g.key);
     if (!wrap) return;
-    var arr = st.filters[g.key] || [];
-    wrap.innerHTML = '<span class="glabel">'+TT(g.label)+'：</span>' + g.options.map(function(o){
-      return '<button type="button" class="fchip'+(arr.indexOf(o)>-1?' active':'')+'" onclick="toggleListFilter(\''+prefix+'\',\''+g.key+'\',\''+o+'\')">'+TT(o)+'</button>';
-    }).join('');
+    if (!st.filters[g.key]) st.filters[g.key] = [];
+    var arr = st.filters[g.key];
+    var ctl = g.key==='tags'
+      ? TLI_TagDD.html('flt_'+prefix, arr, g.options, function(){ onListFilterChanged(prefix); }, ['全部','All'])
+      : '<select class="fsel" onchange="setListFilterSel(\''+prefix+'\',\''+g.key+'\',this.value)"><option value="">'+TT('全部')+'</option>' +
+          g.options.map(function(o){ return '<option value="'+escHtml(o)+'"'+(arr[0]===o?' selected':'')+'>'+TT(o)+'</option>'; }).join('') + '</select>';
+    wrap.innerHTML = '<span class="glabel">'+TT(g.label)+'：</span>' + ctl;
   });
 }
-function toggleListFilter(prefix, key, val){
-  var st = LIST_STATE[prefix];
-  if (!st.filters[key]) st.filters[key] = [];
-  var idx = st.filters[key].indexOf(val);
-  if (idx>-1) st.filters[key].splice(idx,1); else st.filters[key].push(val);
-  st.page = 1;
-  renderChipGroups(prefix);
-  renderList(prefix);
+function onListFilterChanged(prefix){ LIST_STATE[prefix].page = 1; renderList(prefix); }
+function setListFilterSel(prefix, key, val){
+  LIST_STATE[prefix].filters[key] = val ? [val] : [];
+  onListFilterChanged(prefix);
 }
 function clearListFilters(prefix){
   var st = LIST_STATE[prefix];
@@ -766,7 +754,6 @@ function onListSelectAll(prefix, el){
   });
   renderListBatchBar(prefix);
 }
-function listExport(prefix){ var n=listSelectedCount(prefix); toast(TLI_I18N.t('已產生匯出檔案，共 '+n+' 筆，請至下載中心取得', 'Export file generated ('+n+' records); retrieve it from the Download Center')); }
 function listBatchDisable(prefix){
   var st = LIST_STATE[prefix], cfg = LIST_CFG[prefix];
   var n = listSelectedCount(prefix);
@@ -831,12 +818,10 @@ function cardShellHtml(prefix, filterGroupDefs){
   }).join('');
   return '<div class="toolrow">' +
     '<div class="searchbox"><span class="sicon"><svg width="14" height="14" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="8.5" cy="8.5" r="5.5"/><line x1="16.5" y1="16.5" x2="12.6" y2="12.6"/></svg></span><input type="text" id="'+prefix+'_search" placeholder="'+TLI_I18N.t('搜尋名稱／標籤','Search name / tags')+'" oninput="onListSearch(\''+prefix+'\',this.value)"></div>' +
-    '<button class="btn ghost" onclick="listExport(\''+prefix+'\')">'+TLI_I18N.t('匯出','Export')+'</button>' +
     '</div>' +
     '<div class="chipbar">' + chipsHtml + '<button class="clearlink" onclick="clearListFilters(\''+prefix+'\')">'+TT('清除全部篩選')+'</button></div>' +
     '<div class="batchbar" id="'+prefix+'_batchBar">' +
     '<span class="bcount" id="'+prefix+'_batchCount">'+TLI_I18N.t('已選 0 筆','0 selected')+'</span>' +
-    '<button class="btn ghost" onclick="listExport(\''+prefix+'\')">'+TLI_I18N.t('匯出','Export')+'</button>' +
     '<button class="btn ghost" onclick="listBatchDisable(\''+prefix+'\')">'+TT('設為停用')+'</button>' +
     '<button class="btn ghost" style="color:#C0392B" onclick="listBatchDelete(\''+prefix+'\')">'+TT('刪除')+'</button>' +
     '</div>' +
@@ -854,8 +839,7 @@ function cardShellHtml(prefix, filterGroupDefs){
 /* ================= 各庫欄位設定 ================= */
 var COL = {
   name:    {key:'name', label:'名稱', sortable:true, render:function(r){return escHtml(r.name);}},
-  source:  {key:'source', label:'來源', sortable:true, render:srcBadge},
-  fmtDim:  {key:'format', label:'格式與尺寸', sortable:false, render:function(r){ return r.source==='embed' ? embedKind(r.embed) : r.format+'／'+(r.dim||'—'); }},
+  fmtDim:  {key:'format', label:'格式與尺寸', sortable:false, render:function(r){ return (r.format||'—')+'／'+(r.dim||'—'); }},
   fmt:     {key:'format', label:'格式', sortable:false, render:fmtCell},
   duration:{key:'durSec', label:'時長', sortable:true, render:durCell},
   size:    {key:'sizeKB', label:'大小', sortable:true, render:function(r){ return fmtSize(r.sizeKB); }},
@@ -865,22 +849,20 @@ var COL = {
 };
 function assetFilterGroups(){
   return [
-    {key:'source', label:'來源', options:['上傳','嵌入']},
     {key:'tags', label:'內容標籤', options:CONTENT_TAGS},
     {key:'status', label:'狀態', options:['啟用','停用']}
   ];
 }
-function assetFilterVal(r, k){ return k==='source' ? srcLabel(r) : r[k]; }
+function assetFilterVal(r, k){ return r[k]; }
 function assetSearchText(r){ return r.name+' '+(r.tags||[]).join(' '); }
 function mkAssetCfg(type, data, cols){
   return { data:data, filterGroups:assetFilterGroups(), searchText:assetSearchText, filterVal:assetFilterVal,
     cols:cols, onRowClick:function(r){ openMediaDrawer(type, r.id); } };
 }
-LIST_CFG.images   = mkAssetCfg('images', IMAGES, [COL.name, COL.source, COL.fmtDim, COL.size, COL.tags, COL.status, COL.updated]);
-LIST_CFG.videos   = mkAssetCfg('videos', VIDEOS, [COL.name, COL.source, COL.fmt, COL.duration, COL.size, COL.tags, COL.status, COL.updated]);
-LIST_CFG.audio    = mkAssetCfg('audio', AUDIOS, [COL.name, COL.source, COL.fmt, COL.duration, COL.size, COL.tags, COL.status, COL.updated]);
-LIST_CFG.homework = mkAssetCfg('homework', HOMEWORK, [COL.name, COL.source, COL.fmt, COL.size, COL.tags, COL.status, COL.updated]);
-LIST_CFG.quizzes  = mkAssetCfg('quizzes', QUIZ_ASSETS, [COL.name, COL.source, COL.fmt, COL.size, COL.tags, COL.status, COL.updated]);
+LIST_CFG.images   = mkAssetCfg('images', IMAGES, [COL.name, COL.fmtDim, COL.size, COL.tags, COL.status, COL.updated]);
+LIST_CFG.videos   = mkAssetCfg('videos', VIDEOS, [COL.name, COL.fmt, COL.duration, COL.size, COL.tags, COL.status, COL.updated]);
+LIST_CFG.audio    = mkAssetCfg('audio', AUDIOS, [COL.name, COL.fmt, COL.duration, COL.size, COL.tags, COL.status, COL.updated]);
+/* 文件庫（20261110 教材庫、作業庫、測驗庫合併）：保留原教材庫的版本、能力類型、程度欄位，並補上共通的格式、大小、內容標籤 */
 LIST_CFG.materials = {
   data:MATERIALS, filterGroups:[
     {key:'level',label:'程度',options:MAT_LEVELS},
@@ -889,10 +871,11 @@ LIST_CFG.materials = {
   ],
   searchText:assetSearchText, filterVal:function(r,k){return r[k];},
   cols:[
-    {key:'name', label:'教材名稱', sortable:true, render:function(r){return escHtml(r.name);}},
-    {key:'versions', label:'版本', sortable:false, render:function(r){return r.versions.join('、');}},
-    {key:'abilityType', label:'能力類型', sortable:true, render:function(r){return r.abilityType;}},
-    {key:'level', label:'程度', sortable:true, render:function(r){return r.level;}},
+    {key:'name', label:'名稱', sortable:true, render:function(r){return escHtml(r.name);}},
+    {key:'versions', label:'版本', sortable:false, render:function(r){return (r.versions||[]).length ? r.versions.join('、') : '—';}},
+    {key:'abilityType', label:'能力類型', sortable:true, render:function(r){return r.abilityType || '—';}},
+    {key:'level', label:'程度', sortable:true, render:function(r){return r.level || '—';}},
+    COL.fmt, COL.size, COL.tags,
     {key:'status', label:'狀態', sortable:true, render:function(r){return statusBadge(r.status);}},
     {key:'updated', label:'更新日', sortable:true, render:function(r){return r.updated;}}
   ],
@@ -930,26 +913,15 @@ function renderPageheadActions(){
   document.getElementById('pageheadActions').innerHTML = '<button class="btn" onclick="openUploadWizard(\''+currentLibTab+'\')">'+TLI_I18N.t('＋ 新增'+lbl, '＋ Add '+TT(lbl))+'</button>';
 }
 
-/* ================= 內容標籤挑選（多選；新增表單與詳情抽屜共用） ================= */
+/* ================= 內容標籤挑選（新增表單與詳情抽屜共用）=================
+   20261110 使用者要求由整排按鈕改為下拉選單：可複選、選單內可用關鍵字篩選；元件在 assets/_tag_dd.js（與 a02、a25 素材挑選器共用） */
 var TAGSEL = {drw:[], uw:[]};
-function tagPickerHtml(key){
-  var sel = TAGSEL[key];
-  return '<div class="chipgroup" id="tagpick_'+key+'">' + CONTENT_TAGS.map(function(t){
-    return '<button type="button" class="fchip'+(sel.indexOf(t)>-1?' active':'')+'" onclick="toggleTagPick(\''+key+'\',\''+t+'\')">'+escHtml(t)+'</button>';
-  }).join('') + '</div>';
-}
-function toggleTagPick(key, t){
-  var a = TAGSEL[key], i = a.indexOf(t);
-  if (i>-1) a.splice(i,1); else a.push(t);
-  var el = document.getElementById('tagpick_'+key);
-  if (el) el.outerHTML = tagPickerHtml(key);
-  if (key==='uw') uwValidate();
-}
+function tagPickerHtml(key){ return TLI_TagDD.html('a18_'+key, TAGSEL[key], CONTENT_TAGS, key==='uw' ? uwValidate : null); }
 function reqMark(){ return ' <span style="color:#C0392B">*</span>'; }
 
 /* ================= 素材（圖片／影片／音頻／作業／測驗）詳情抽屜 ================= */
 var currentMediaType = null, currentMediaId = null, mediaEditing = false;
-var drwReplace = null; /* 編輯時更換來源：{source:'upload', fileName, sizeKB} 或 {source:'embed', embed} */
+var drwReplace = null; /* 編輯時更換檔案：{source:'upload', fileName, sizeKB} */
 function mediaLibLabel(t){ return TT(TYPE_LABEL[t]+'庫'); }
 function findAsset(type, id){ return LIST_CFG[type].data.find(function(x){return x.id===id;}); }
 function drawerIsOpen(){ return document.getElementById('drawer').classList.contains('open'); }
@@ -965,7 +937,7 @@ function docIconSvg(){
 function assetIcon(type){ return type==='images' ? imageIconSvg() : (isAV(type) ? playIconSvg() : docIconSvg()); }
 function setMediaDrawerHead(type, r){
   document.getElementById('drw_title').textContent = r.name;
-  document.getElementById('drw_sub').textContent = mediaLibLabel(type)+'｜'+TT(srcLabel(r))+'｜'+TT(r.status);
+  document.getElementById('drw_sub').textContent = mediaLibLabel(type)+'｜'+TT(r.status);
 }
 function openMediaDrawer(type, id){
   currentMediaType = type; currentMediaId = id; mediaEditing = false; drwReplace = null;
@@ -998,40 +970,24 @@ function mediaBasicRows(r){
     '<div class="formrow"><label>'+TT('內容標籤')+reqMark()+'</label>'+tagPickerHtml('drw')+'<div class="hint">'+TT('至少選一個，可複選；詞彙由系統管理員維護。')+'</div></div>' +
     '<div class="formrow"><label>'+TT('狀態')+'</label><select id="drw_status"><option value="啟用"'+(r.status==='啟用'?' selected':'')+'>'+TT('啟用')+'</option><option value="停用"'+(r.status==='停用'?' selected':'')+'>'+TT('停用')+'</option></select></div>';
 }
-function sourceKvRows(type, r){
-  var html = '<div class="kv"><span>'+TT('來源')+'</span><span>'+srcBadge(r)+'</span></div>';
-  if (r.source==='embed'){
-    html += '<div class="kv"><span>'+TT('形式')+'</span><span>'+embedKind(r.embed)+'</span></div>' +
-      '<div class="small" style="margin:6px 0 4px">'+TT('網址或嵌入碼')+'</div>' +
-      '<div style="font-family:Consolas,monospace;font-size:12px;background:var(--g50);border:1px solid var(--g200);border-radius:6px;padding:8px 10px;word-break:break-all;white-space:normal">'+escHtml(r.embed)+'</div>';
-  } else {
-    html += '<div class="kv"><span>'+TT('檔名')+'</span><span style="max-width:260px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">'+escHtml(r.fileName)+'</span></div>' +
-      '<div class="kv"><span>'+TT('格式')+'</span><span>'+(r.format||'—')+'</span></div>' +
-      (type==='images' ? '<div class="kv"><span>'+TT('尺寸')+'</span><span>'+(r.dim||'—')+'</span></div>' : '') +
-      '<div class="kv"><span>'+TT('大小')+'</span><span>'+fmtSize(r.sizeKB)+'</span></div>';
-  }
-  return html;
+function fileKvRows(type, r){
+  return '<div class="kv"><span>'+TT('檔名')+'</span><span style="max-width:260px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">'+escHtml(r.fileName)+'</span></div>' +
+    '<div class="kv"><span>'+TT('格式')+'</span><span>'+(r.format||'—')+'</span></div>' +
+    (type==='images' ? '<div class="kv"><span>'+TT('尺寸')+'</span><span>'+(r.dim||'—')+'</span></div>' : '') +
+    '<div class="kv"><span>'+TT('大小')+'</span><span>'+fmtSize(r.sizeKB)+'</span></div>';
 }
-/* 編輯時可更換來源：上傳新檔或改為嵌入（兩區塊擇一）；影音換檔後舊時長立即失效並重新解析 */
-function sourceReplaceHtml(type){
+/* 編輯時可上傳新檔案取代；影音換檔後舊時長立即失效並重新解析（20261110 拿掉「改為嵌入」） */
+function fileReplaceHtml(type){
   var picked = drwReplace
-    ? '<div class="hint" style="color:var(--teal);margin-bottom:8px">'+TLI_I18N.t('儲存後將更換為：', 'Will be replaced on save with: ')+escHtml(drwReplace.source==='upload' ? drwReplace.fileName : drwReplace.embed)+'</div>' : '';
-  return '<div class="sectiontitle">'+TT('更換來源')+'</div>' + picked +
-    '<div class="formrow"><label>'+TT('上傳新檔案')+'</label><input type="file" id="drw_file" onchange="onDrwFile(this)"></div>' +
-    '<div class="formrow"><label>'+TT('或改為嵌入（網址或 &lt;iframe&gt; 嵌入碼）')+'</label><textarea id="drw_embed" oninput="onDrwEmbed(this)" placeholder="https://…">'+(drwReplace && drwReplace.source==='embed' ? escHtml(drwReplace.embed) : '')+'</textarea></div>' +
+    ? '<div class="hint" style="color:var(--teal);margin-bottom:8px">'+TLI_I18N.t('儲存後將更換為：', 'Will be replaced on save with: ')+escHtml(drwReplace.fileName)+'</div>' : '';
+  return '<div class="formrow" style="margin-top:12px"><label>'+TT('上傳新檔案')+'</label>' + picked + '<input type="file" id="drw_file" accept="'+uwAccept(type)+'" onchange="onDrwFile(this)"></div>' +
     (isAV(type) ? '<div class="hint">'+TT('換檔後舊時長立即失效並重新解析，解析完成前不顯示舊值。')+'</div>' : '');
 }
 function onDrwFile(el){
   var f = el.files && el.files[0];
   if (!f){ return; }
   drwReplace = {source:'upload', fileName:f.name, sizeKB:Math.max(1, Math.round(f.size/1024))};
-  var ta = document.getElementById('drw_embed'); if (ta) ta.value = '';
   toast(TLI_I18N.t('已選擇新檔案：'+f.name+'，按「儲存」後生效', 'New file selected: '+f.name+'; takes effect after Save'));
-}
-function onDrwEmbed(el){
-  var v = el.value.trim();
-  var fi = document.getElementById('drw_file'); if (fi && v) fi.value = '';
-  drwReplace = v ? {source:'embed', embed:v} : null;
 }
 function durationRows(r){
   var note = durNote(r);
@@ -1045,15 +1001,13 @@ function toggleMediaEdit(editing){
   renderMediaDrawerBody(currentMediaType, r);
 }
 function renderMediaDrawerBody(type, r){
-  var pv = r.source==='embed'
-    ? TLI_I18N.t('嵌入內容（'+embedKind(r.embed)+'）', 'Embedded content ('+embedKind(r.embed)+')')
-    : (type==='images' ? (r.format+' '+(r.dim||'')) : (isAV(type) ? r.format+'／'+durText(r) : r.format));
+  var pv = type==='images' ? (r.format+' '+(r.dim||'')) : (isAV(type) ? r.format+'／'+durText(r) : r.format);
   var body =
     mediaActionBar(type, r) +
     '<div class="previewbox"><span class="pv-icon">'+assetIcon(type)+'</span><span class="small">'+pv+' '+TT('預覽佔位')+'</span></div>' +
     mediaBasicRows(r) +
-    '<div class="sectiontitle">'+TT('來源')+'</div>' + sourceKvRows(type, r) +
-    (mediaEditing ? sourceReplaceHtml(type) : '') +
+    fileKvRows(type, r) +
+    (mediaEditing ? fileReplaceHtml(type) : '') +
     (isAV(type) ? '<div class="sectiontitle">'+TT('時長')+'</div>' + durationRows(r) : '') +
     (type==='videos' && r.sourceNote ? '<div class="hint" style="margin:8px 0 10px">'+TT('資料來源：')+r.sourceNote+'</div>' : '') +
     '<div class="kv"><span>'+TT('最後修改人')+'</span><span>'+r.modifiedBy+'</span></div>' +
@@ -1062,19 +1016,14 @@ function renderMediaDrawerBody(type, r){
     mediaSaveBar();
   document.getElementById('drw_body').innerHTML = body;
 }
-/* 套用新來源到素材（新增與換檔共用）；回傳是否需要解析時長 */
+/* 套用上傳檔案到素材（新增與換檔共用）；回傳是否需要解析時長 */
 function applySource(type, r, src){
-  r.fileName = ''; r.format = ''; r.sizeKB = null; r.embed = '';
+  r.source = 'upload'; r.fileName = src.fileName; r.format = fileExt(src.fileName); r.sizeKB = src.sizeKB;
   if (type==='images') r.dim = '';
-  if (src.source==='upload'){
-    r.source = 'upload'; r.fileName = src.fileName; r.format = fileExt(src.fileName); r.sizeKB = src.sizeKB;
-  } else {
-    r.source = 'embed'; r.embed = src.embed;
-  }
   if (!isAV(type)){ r.durStatus = 'na'; r.durSec = null; return false; }
   r.durSec = null;
-  r.durStatus = src.source==='upload' ? 'processing' : 'unavailable';
-  return src.source==='upload';
+  r.durStatus = 'processing';
+  return true;
 }
 /* 示範：模擬後端解析時長（每筆各自解析、各自回報） */
 function simulateParse(type, id){
@@ -1093,7 +1042,6 @@ function saveMedia(){
   var name = document.getElementById('drw_name').value.trim();
   if (!name){ toast(TLI_I18N.t('素材名稱不可空白','Asset name cannot be empty')); return; }
   if (!TAGSEL.drw.length){ toast(TLI_I18N.t('請至少選擇一個內容標籤','Please select at least one content tag')); return; }
-  if (drwReplace && drwReplace.source==='embed' && !isValidEmbed(drwReplace.embed)){ toast(TLI_I18N.t('嵌入內容須為 http(s) 網址或含 src 的 <iframe> 嵌入碼','Embed must be an http(s) URL or an <iframe> with src')); return; }
   r.name = name;
   r.tags = TAGSEL.drw.slice();
   r.status = document.getElementById('drw_status').value;
@@ -1107,9 +1055,7 @@ function saveMedia(){
   renderList(type);
   if (needParse) simulateParse(type, r.id);
   if (replaced && isAV(type)){
-    toast(replaced.source==='upload'
-      ? TLI_I18N.t('已儲存；新檔案時長解析中','Saved; parsing the new file\'s duration')
-      : TLI_I18N.t('已儲存；外部來源無法取得時長，已標示「無法取得」','Saved; duration unavailable from the external source and marked as such'));
+    toast(TLI_I18N.t('已儲存；新檔案時長解析中','Saved; parsing the new file\'s duration'));
   } else {
     toast(TLI_I18N.t('已儲存素材資料','Asset saved'));
   }
@@ -1217,37 +1163,43 @@ function toggleMaterialEdit(id, editing){
   if (editing){ var r = MATERIALS.find(function(x){return x.id===id;}); TAGSEL.drw = (r.tags||[]).slice(); }
   renderMaterialDrawer(id);
 }
+/* 下拉選項含「—」（不指定）：原作業／測驗併入文件庫後沒有能力類型、程度，允許留空 */
+function optsWithBlank(list, cur){
+  return '<option value=""'+(cur?'':' selected')+'>—</option>' + list.map(function(x){ return '<option'+(cur===x?' selected':'')+'>'+x+'</option>'; }).join('');
+}
 function renderMaterialDrawer(id){
   var r = MATERIALS.find(function(x){return x.id===id;});
   var editing = matDrawerEditing;
   document.getElementById('drw_title').textContent = r.name;
-  document.getElementById('drw_sub').textContent = TT('教材庫')+'｜'+TT(r.level)+'｜'+TT(r.status);
+  document.getElementById('drw_sub').textContent = TT('文件庫')+'｜'+(r.level ? TT(r.level)+'｜' : '')+TT(r.status);
   var body =
     '<div style="text-align:right;margin-bottom:6px">' +
     (editing ? '' : '<button class="btn ghost sm" onclick="toggleMaterialEdit(\''+r.id+'\',true)">'+TT('編輯')+'</button> <button class="btn ghost sm" style="color:#C0392B" onclick="requestDelete(\'materials\',\''+r.id+'\')">'+TT('刪除')+'</button>') +
     '</div>' +
-    (editing ? '<div class="formrow"><label>'+TT('教材名稱')+reqMark()+'</label><input type="text" id="mat_name" value="'+escHtml(r.name)+'"></div>' +
+    (editing ? '<div class="formrow"><label>'+TT('名稱')+reqMark()+'</label><input type="text" id="mat_name" value="'+escHtml(r.name)+'"></div>' +
       '<div class="formrow"><label>'+TT('內容標籤')+reqMark()+'</label>'+tagPickerHtml('drw')+'<div class="hint">'+TT('至少選一個，可複選；詞彙由系統管理員維護。')+'</div></div>'
       : '<div class="kv"><span>'+TT('內容標籤')+'</span><span>'+tagsCell(r)+'</span></div>') +
-    '<div class="kv"><span>'+TT('來源')+'</span><span>'+srcBadge(r)+' <span class="small">'+escHtml(r.source==='embed' ? embedKind(r.embed) : r.fileName)+'</span></span></div>' +
-    '<div class="kv"><span>'+TT('維護者（系統）')+'</span><span>'+r.maintainer+'</span></div>' +
+    '<div class="kv"><span>'+TT('檔名')+'</span><span>'+escHtml(r.fileName)+'</span></div>' +
+    '<div class="kv"><span>'+TT('格式')+'</span><span>'+(r.format||'—')+'</span></div>' +
+    '<div class="kv"><span>'+TT('大小')+'</span><span>'+fmtSize(r.sizeKB)+'</span></div>' +
+    '<div class="kv"><span>'+TT('維護者（系統）')+'</span><span>'+(r.maintainer||'—')+'</span></div>' +
     '<div class="kv"><span>'+TT('最後修改人')+'</span><span>'+r.modifiedBy+'</span></div>' +
     '<div class="kv"><span>'+TT('最後修改時間')+'</span><span>'+r.updated+'</span></div>' +
     '<div class="kv"><span>'+TT('繁／簡版本')+'</span><span>'+(editing
       ? '<label class="small" style="margin-right:10px"><input type="checkbox" id="mat_ver_zh" '+(r.versions.indexOf('繁')>-1?'checked':'')+'> '+TT('繁')+'</label><label class="small"><input type="checkbox" id="mat_ver_ss" '+(r.versions.indexOf('簡')>-1?'checked':'')+'> '+TT('簡')+'</label>'
-      : r.versions.map(function(v){return TT(v);}).join(TLI_I18N.t('、', ', ')))+'</span></div>' +
+      : ((r.versions||[]).length ? r.versions.map(function(v){return TT(v);}).join(TLI_I18N.t('、', ', ')) : '—'))+'</span></div>' +
     '<div class="kv"><span>'+TT('能力類型')+'</span><span>'+(editing
-      ? '<select id="mat_ability">'+ABILITY_TYPES.map(function(a){ return '<option'+(r.abilityType===a?' selected':'')+'>'+a+'</option>'; }).join('')+'</select>'
-      : r.abilityType)+'</span></div>' +
+      ? '<select id="mat_ability">'+optsWithBlank(ABILITY_TYPES, r.abilityType)+'</select>'
+      : (r.abilityType||'—'))+'</span></div>' +
     '<div class="kv"><span>'+TT('程度')+'</span><span>'+(editing
-      ? '<select id="mat_level">'+MAT_LEVELS.map(function(l){ return '<option'+(r.level===l?' selected':'')+'>'+l+'</option>'; }).join('')+'</select>'
-      : r.level)+'</span></div>' +
+      ? '<select id="mat_level">'+optsWithBlank(MAT_LEVELS, r.level)+'</select>'
+      : (r.level||'—'))+'</span></div>' +
     '<div class="kv"><span>'+TT('TOCFL／HSK／TLI-CPT 對照')+'</span><span>'+(editing
       ? '<input type="text" id="mat_exammap" value="'+escHtml(r.examMapping)+'">'
-      : r.examMapping)+'</span></div>' +
+      : (r.examMapping||'—'))+'</span></div>' +
     '<div class="kv"><span>'+TT('詞彙量')+'</span><span>'+(editing
-      ? '<input type="number" id="mat_vocab" value="'+r.vocabCount+'">'
-      : r.vocabCount.toLocaleString())+'</span></div>' +
+      ? '<input type="number" id="mat_vocab" value="'+(r.vocabCount==null?'':r.vocabCount)+'">'
+      : (r.vocabCount==null ? '—' : r.vocabCount.toLocaleString()))+'</span></div>' +
     '<div class="kv"><span>'+TT('狀態')+'</span><span>'+(editing
       ? '<select id="mat_status"><option value="啟用"'+(r.status==='啟用'?' selected':'')+'>'+TT('啟用')+'</option><option value="停用"'+(r.status==='停用'?' selected':'')+'>'+TT('停用')+'</option></select>'
       : statusBadge(r.status))+'</span></div>' +
@@ -1262,7 +1214,7 @@ function renderMaterialDrawer(id){
 function saveMaterial(id){
   var r = MATERIALS.find(function(x){return x.id===id;});
   var newName = document.getElementById('mat_name').value.trim();
-  if (!newName){ toast(TLI_I18N.t('請輸入教材名稱','Please enter the material name')); return; }
+  if (!newName){ toast(TLI_I18N.t('請輸入名稱','Please enter the name')); return; }
   if (!TAGSEL.drw.length){ toast(TLI_I18N.t('請至少選擇一個內容標籤','Please select at least one content tag')); return; }
   r.name = newName;
   r.tags = TAGSEL.drw.slice();
@@ -1270,39 +1222,43 @@ function saveMaterial(id){
   var versions = [];
   if (document.getElementById('mat_ver_zh').checked) versions.push('繁');
   if (document.getElementById('mat_ver_ss').checked) versions.push('簡');
-  r.versions = versions.length ? versions : r.versions;
+  r.versions = versions;
   r.abilityType = document.getElementById('mat_ability').value;
   r.level = document.getElementById('mat_level').value;
   r.examMapping = document.getElementById('mat_exammap').value.trim();
-  r.vocabCount = Number(document.getElementById('mat_vocab').value) || r.vocabCount;
+  var vc = document.getElementById('mat_vocab').value.trim();
+  r.vocabCount = vc==='' ? null : (Number(vc) || r.vocabCount);
   r.status = document.getElementById('mat_status').value;
   r.updated = todayStr();
   matDrawerEditing = false;
   renderMaterialDrawer(id);
   renderList('materials');
-  toast(TLI_I18N.t('已儲存教材資料','Material data saved'));
+  toast(TLI_I18N.t('已儲存文件資料','Document saved'));
 }
 
 /* ================= 新增素材表單（4.1 §一、§二；4.9 §三）=================
    - 類型由所在的庫決定，表單不提供類型選擇
-   - 同一表單並列「上傳」與「嵌入」兩個區塊，用哪一塊就是哪種來源（擇一，不設來源欄位）
+   - 原本並列「上傳」與「嵌入」兩個區塊擇一；20261110 使用者要求拿掉嵌入，只剩上傳
    - 上傳可一次選多個檔案（批次），每筆名稱自動帶入檔名，可改但不可清空；影音每筆各自解析時長
-   - 嵌入名稱自動帶入「類型－來源網域」
    - 內容標籤必填（至少一個）；必填未完成前「新增」按鈕保持停用
+   - 20261110 使用者要求：內容標籤旁加「新增標籤」，新標籤直接加入共用詞彙（TLI_MASTERS.contentTags，a17 標籤管理同一份）並勾選；
+     新增時可設定列表上顯示的欄位：各庫都有「狀態」，文件庫另有版本、能力類型、程度；這些設定套用到這次新增的所有檔案
    - 各庫可接受的檔案格式：4.1 只說「各庫不同」未列明；採 2026-11-08 使用者口頭決定（TLI_MASTERS.resourceLibraries[].formats，尚無書面，待確認），選檔時限制副檔名並顯示格式說明 */
-var uwType = 'images', uwFiles = [], uwEmbed = '', uwEmbedName = '', uwEmbedNameTouched = false;
+var uwType = 'images', uwFiles = [], uwMeta = null, uwNewTagOpen = false;
 function openUploadWizard(type){
-  uwType = type; uwFiles = []; uwEmbed = ''; uwEmbedName = ''; uwEmbedNameTouched = false; TAGSEL.uw = [];
+  uwType = type; uwFiles = []; TAGSEL.uw = []; uwNewTagOpen = false;
+  /* 文件欄位預設值沿用原教材庫新增時的預設（繁、綜合、初級） */
+  uwMeta = {status:'啟用', versions:['繁'], abilityType:'綜合', level:'初級'};
   renderAddModal();
   document.getElementById('uploadModal').classList.add('open');
 }
 function closeUploadWizard(){ document.getElementById('uploadModal').classList.remove('open'); }
 function renderAddModal(){
-  var lbl = TYPE_LABEL[uwType], hasFiles = uwFiles.length>0, hasEmbed = !!uwEmbed.trim();
+  var lbl = TYPE_LABEL[uwType], hasFiles = uwFiles.length>0;
   document.getElementById('uwTitle').textContent = TLI_I18N.t('新增'+lbl, 'Add '+TT(lbl));
   var html = '<div class="small" style="margin-bottom:12px">'+TLI_I18N.t('類型：'+lbl+'（由所在的庫決定）', 'Type: '+TT(lbl)+' (set by the library you are in)')+'</div>';
-  /* 上傳區塊 */
-  html += '<div class="srcblock'+(hasEmbed?' isoff':'')+'" id="uw_uploadBlock"><div class="sectiontitle">'+TT('上傳')+'</div>' +
+  /* 上傳 */
+  html += '<div>' +
     '<div class="dropzone'+(hasFiles?' filled':'')+'" onclick="onUwDropzoneClick()">' +
       (hasFiles ? TLI_I18N.t('已選 '+uwFiles.length+' 個檔案，點擊可再加入', uwFiles.length+' file(s) selected; click to add more')
                 : TLI_I18N.t('點擊選擇檔案（可一次選多個）', 'Click to choose files (multiple allowed)')) + '</div>' +
@@ -1314,28 +1270,60 @@ function renderAddModal(){
           '<button type="button" onclick="removeUwFile('+i+')" aria-label="'+TLI_I18N.t('移除','Remove')+'">×</button></div>';
       }).join('') + '<div class="hint">'+TLI_I18N.t('右側為素材名稱，已自動帶入檔名，可修改但不可清空。','The asset name on the right is pre-filled with the file name; editable but cannot be empty.')+'</div></div>' : '') +
     (isAV(uwType) ? '<div class="hint">'+TLI_I18N.t('上傳後由系統解析每個檔案的時長；批次上傳時每筆各自解析與回報，單筆失敗不影響其他檔案。','Duration is parsed per file after upload; in a batch each file is parsed and reported separately, and one failure does not stop the rest.')+'</div>' : '') +
-    '<div class="hint" id="uw_uploadOff" style="'+(hasEmbed?'':'display:none')+'">'+TLI_I18N.t('已填寫嵌入內容；要改用上傳，請先清空嵌入。','Embed content is filled in; clear it first to upload instead.')+'</div>' +
   '</div>';
-  html += '<div class="small" style="text-align:center;margin:10px 0">'+TLI_I18N.t('— 或 —','— or —')+'</div>';
-  /* 嵌入區塊 */
-  html += '<div class="srcblock'+(hasFiles?' isoff':'')+'" id="uw_embedBlock"><div class="sectiontitle">'+TT('嵌入')+'</div>' +
-    '<div class="formrow"><label>'+TLI_I18N.t('網址或 &lt;iframe&gt; 嵌入碼','URL or &lt;iframe&gt; embed code')+'</label><textarea id="uw_embed" '+(hasFiles?'disabled':'')+' oninput="onUwEmbed(this)" placeholder="https://…&#10;'+TLI_I18N.t('或','or')+'&#10;&lt;iframe src=&quot;…&quot;&gt;&lt;/iframe&gt;">'+escHtml(uwEmbed)+'</textarea>' +
-      '<div class="hint" id="uw_embedErr" style="color:#C0392B;display:none">'+TLI_I18N.t('請輸入 http(s) 開頭的網址，或含 src 的 &lt;iframe&gt; 嵌入碼。','Enter an http(s) URL or an &lt;iframe&gt; embed code with src.')+'</div></div>' +
-    '<div class="formrow"><label>'+TT('素材名稱')+'</label><input type="text" id="uw_embedName" '+(hasFiles?'disabled':'')+' value="'+escHtml(uwEmbedName)+'" oninput="onUwEmbedName(this)">' +
-      '<div class="hint">'+TLI_I18N.t('自動帶入「類型－來源網域」，可修改但不可清空。','Pre-filled as “type – source domain”; editable but cannot be empty.')+'</div></div>' +
-    (isAV(uwType) ? '<div class="hint">'+TLI_I18N.t('外部來源若無法取得時長，會標示「無法取得」並提醒；不需手動填寫時長。','If the external source’s duration cannot be obtained, it is marked “Unavailable” with a reminder; no manual entry needed.')+'</div>' : '') +
-    '<div class="hint" id="uw_embedOff" style="'+(hasFiles?'':'display:none')+'">'+TLI_I18N.t('已選擇上傳檔案；要改用嵌入，請先移除檔案。','Files are selected; remove them first to embed instead.')+'</div>' +
-  '</div>';
-  /* 內容標籤 */
-  html += '<div class="formrow" style="margin-top:14px"><label>'+TT('內容標籤')+reqMark()+'</label>'+tagPickerHtml('uw') +
-    '<div class="hint">'+TLI_I18N.t('至少選一個，可複選；套用到這次新增的所有素材。詞彙由系統管理員維護。','Select at least one; multiple allowed; applied to every asset added this time. The vocabulary is maintained by system administrators.')+'</div></div>';
+  /* 內容標籤＋新增標籤 */
+  html += '<div class="formrow" style="margin-top:14px"><label>'+TT('內容標籤')+reqMark()+'</label>' +
+    '<div style="display:flex;gap:8px;align-items:flex-start"><div style="flex:1;min-width:0">'+tagPickerHtml('uw')+'</div>' +
+    '<button type="button" class="btn ghost" style="flex:none;white-space:nowrap" onclick="uwToggleNewTag(true)">'+TLI_I18N.t('＋ 新增標籤','＋ New Tag')+'</button></div>' +
+    (uwNewTagOpen ? '<div class="tagaddrow"><input type="text" id="uw_newtag" placeholder="'+TLI_I18N.t('輸入新標籤名稱','Enter a new tag name')+'" onkeydown="if(event.key===\'Enter\'){event.preventDefault();addUwNewTag();}">' +
+      '<button type="button" class="btn" onclick="addUwNewTag()">'+TT('加入')+'</button><button type="button" class="btn ghost" onclick="uwToggleNewTag(false)">'+TT('取消')+'</button></div>' : '') +
+    '<div class="hint">'+TLI_I18N.t('至少選一個，可複選；套用到這次新增的所有素材。找不到合適的標籤可按「新增標籤」，新標籤會加入共用詞彙（基礎資料設定的標籤管理）。','Select at least one; multiple allowed; applied to every asset added this time. If no tag fits, click “New Tag” — it is added to the shared vocabulary (Tag Management in Master Data).')+'</div></div>';
+  /* 文件庫：版本、能力類型、程度（列表上顯示的欄位） */
+  if (uwType==='materials'){
+    html += '<div class="formrow"><label>'+TT('版本')+'</label>' +
+      '<label class="small" style="display:inline-flex;align-items:center;gap:4px;margin-right:14px"><input type="checkbox" style="width:auto" '+(uwMeta.versions.indexOf('繁')>-1?'checked':'')+' onchange="uwSetVersion(\'繁\',this.checked)"> '+TT('繁')+'</label>' +
+      '<label class="small" style="display:inline-flex;align-items:center;gap:4px"><input type="checkbox" style="width:auto" '+(uwMeta.versions.indexOf('簡')>-1?'checked':'')+' onchange="uwSetVersion(\'簡\',this.checked)"> '+TT('簡')+'</label></div>' +
+      '<div style="display:flex;gap:12px;flex-wrap:wrap"><div class="formrow" style="flex:1;min-width:160px"><label>'+TT('能力類型')+'</label><select onchange="uwMeta.abilityType=this.value">'+optsWithBlank(ABILITY_TYPES, uwMeta.abilityType)+'</select></div>' +
+      '<div class="formrow" style="flex:1;min-width:160px"><label>'+TT('程度')+'</label><select onchange="uwMeta.level=this.value">'+optsWithBlank(MAT_LEVELS, uwMeta.level)+'</select></div></div>';
+  }
+  /* 狀態 */
+  html += '<div class="formrow"><label>'+TT('狀態')+'</label><select onchange="uwMeta.status=this.value">' +
+    ['啟用','停用'].map(function(v){ return '<option value="'+v+'"'+(uwMeta.status===v?' selected':'')+'>'+TT(v)+'</option>'; }).join('')+'</select></div>';
   html += '<div class="small">'+TT('供管理者辨識與搜尋，不分語系，不對學員顯示；學員看到的是課程內的標題。')+'</div>';
   html += '<div class="wizfoot"><button class="btn ghost" onclick="closeUploadWizard()">'+TT('取消')+'</button><button class="btn" id="uw_submit" onclick="submitAddModal()" disabled>'+TT('新增')+'</button></div>';
   document.getElementById('uwBody').innerHTML = html;
   uwValidate();
 }
+function uwSetVersion(v, on){
+  var a = uwMeta.versions, i = a.indexOf(v);
+  if (on && i<0) a.push(v); if (!on && i>-1) a.splice(i,1);
+}
+function uwToggleNewTag(open){
+  uwNewTagOpen = open;
+  renderAddModal();
+  if (open){ var el = document.getElementById('uw_newtag'); if (el) el.focus(); }
+}
+/* 新增標籤：寫進共用詞彙（TLI_MASTERS.contentTags，與 a17 標籤管理同一份，存 localStorage），並勾選在這次新增的素材上 */
+function addUwNewTag(){
+  var el = document.getElementById('uw_newtag'), name = el ? el.value.trim() : '';
+  if (!name){ toast(TLI_I18N.t('請輸入標籤名稱','Please enter a tag name')); return; }
+  var all = TLI_MASTERS.contentTags || [];
+  var hit = all.filter(function(t){ return t.name.toLowerCase()===name.toLowerCase(); })[0];
+  if (hit && !hit.enabled){ toast(TLI_I18N.t('「'+hit.name+'」已存在但停用中，請到基礎資料設定的標籤管理啟用','“'+hit.name+'” exists but is disabled; enable it in Tag Management')); return; }
+  if (hit){
+    if (TAGSEL.uw.indexOf(hit.name)<0) TAGSEL.uw.push(hit.name);
+    toast(TLI_I18N.t('標籤「'+hit.name+'」已存在，已直接勾選','Tag “'+hit.name+'” already exists and has been selected'));
+  } else {
+    all.push({id:'ct'+Date.now().toString(36), name:name, enabled:true, created:new Date().toISOString().slice(0,19), resUse:0});
+    if (TLI_MASTERS.saveTags) TLI_MASTERS.saveTags();
+    if (CONTENT_TAGS.indexOf(name)<0) CONTENT_TAGS.push(name);
+    TAGSEL.uw.push(name);
+    toast(TLI_I18N.t('已新增標籤「'+name+'」並加入共用詞彙','Tag “'+name+'” created and added to the shared vocabulary'));
+  }
+  uwNewTagOpen = false;
+  renderAddModal();
+}
 function onUwDropzoneClick(){
-  if (uwEmbed.trim()){ toast(TLI_I18N.t('已填寫嵌入內容；要改用上傳，請先清空嵌入','Embed content is filled in; clear it first to upload')); return; }
   document.getElementById('uwFileInput').click();
 }
 /* 各庫可接受格式：集中於 TLI_MASTERS.resourceLibraries[].formats（2026-11-08 使用者口頭決定，尚無書面；見 docs/04 F 節） */
@@ -1361,52 +1349,31 @@ function onUwFilesChosen(el){
 }
 function removeUwFile(i){ uwFiles.splice(i,1); renderAddModal(); }
 function onUwFileName(i, el){ uwFiles[i].name = el.value; uwValidate(); }
-function onUwEmbed(el){
-  uwEmbed = el.value;
-  if (!uwEmbedNameTouched){
-    uwEmbedName = uwEmbed.trim() ? TYPE_LABEL[uwType]+'－'+embedHost(uwEmbed) : '';
-    document.getElementById('uw_embedName').value = uwEmbedName;
-  }
-  var has = !!uwEmbed.trim();
-  document.getElementById('uw_uploadBlock').classList.toggle('isoff', has);
-  document.getElementById('uw_uploadOff').style.display = has ? '' : 'none';
-  uwValidate();
-}
-function onUwEmbedName(el){ uwEmbedName = el.value; uwEmbedNameTouched = true; uwValidate(); }
 function uwValidate(){
   var btn = document.getElementById('uw_submit');
   if (!btn) return;
-  var embedOk = !!uwEmbed.trim() && isValidEmbed(uwEmbed) && !!uwEmbedName.trim();
   var filesOk = uwFiles.length>0 && uwFiles.every(function(f){ return f.name.trim(); });
-  var err = document.getElementById('uw_embedErr');
-  if (err) err.style.display = (uwEmbed.trim() && !isValidEmbed(uwEmbed)) ? '' : 'none';
-  btn.disabled = !(TAGSEL.uw.length>0 && (filesOk || embedOk));
+  btn.disabled = !(TAGSEL.uw.length>0 && filesOk);
 }
 function submitAddModal(){
   var type = uwType, lbl = TYPE_LABEL[type], stamp = Date.now(), created = [];
   function base(name){
-    var rec = {id:type+'new'+stamp+'_'+created.length, name:name.trim(), tags:TAGSEL.uw.slice(), status:'啟用',
-      updated:todayStr(), modifiedBy:'王大明', source:'upload', fileName:'', format:'', sizeKB:null, embed:'', durSec:null, durStatus:'na'};
+    var rec = {id:type+'new'+stamp+'_'+created.length, name:name.trim(), tags:TAGSEL.uw.slice(), status:uwMeta.status,
+      updated:todayStr(), modifiedBy:'王大明', source:'upload', fileName:'', format:'', sizeKB:null, durSec:null, durStatus:'na'};
     if (type==='videos') rec.sourceNote = '新上傳';
     if (type==='materials'){
-      /* 教材庫既有欄位沿用原新增時的預設值 */
-      Object.assign(rec, {versions:['繁'], abilityType:'綜合', level:'初級', examMapping:'TOCFL 入門級 A1', vocabCount:500,
+      /* 文件庫：版本、能力類型、程度取自新增表單；檢定對照、詞彙量不在新增表單，之後於詳情抽屜補填 */
+      Object.assign(rec, {versions:uwMeta.versions.slice(), abilityType:uwMeta.abilityType, level:uwMeta.level, examMapping:'', vocabCount:null,
         usedByProducts:[], usedInPlans:[], maintainer:'TLI 教研', boundCourseIds:[]});
     }
     return rec;
   }
   var needParse = [];
-  if (uwFiles.length){
-    uwFiles.forEach(function(f){
-      var rec = base(f.name);
-      if (applySource(type, rec, {source:'upload', fileName:f.fileName, sizeKB:f.sizeKB})) needParse.push(rec.id);
-      created.push(rec);
-    });
-  } else {
-    var rec = base(uwEmbedName);
-    applySource(type, rec, {source:'embed', embed:uwEmbed.trim()});
+  uwFiles.forEach(function(f){
+    var rec = base(f.name);
+    if (applySource(type, rec, {source:'upload', fileName:f.fileName, sizeKB:f.sizeKB})) needParse.push(rec.id);
     created.push(rec);
-  }
+  });
   var data = LIST_CFG[type].data;
   for (var i=created.length-1; i>=0; i--) data.unshift(created[i]);
   closeUploadWizard();
@@ -1414,9 +1381,7 @@ function submitAddModal(){
   renderList(type);
   needParse.forEach(function(id){ simulateParse(type, id); });
   var msg = TLI_I18N.t('已新增 '+created.length+' 筆'+lbl, 'Added '+created.length+' '+TT(lbl)+' asset(s)');
-  if (isAV(type)){
-    msg += uwFiles.length ? TLI_I18N.t('；時長解析中','; parsing durations') : TLI_I18N.t('；外部來源無法取得時長，已標示「無法取得」','; duration unavailable from the external source and marked as such');
-  }
+  if (isAV(type)) msg += TLI_I18N.t('；時長解析中','; parsing durations');
   toast(msg);
 }
 

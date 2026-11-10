@@ -599,6 +599,24 @@ window.TLI_PHASE_MAP = {
 ]
 ]
 },
+"管理後台/a27_roles.html": {
+"p": "1A",
+"f": [
+[
+"權限管理",
+"1A"
+]
+]
+},
+"管理後台/a28_activity_logs.html": {
+"p": "1B",
+"f": [
+[
+"權限管理（登入紀錄，S1 R106：M7 補齊）",
+"1B"
+]
+]
+},
 "管理後台/a10_teachers.html": {
 "p": "1B",
 "f": [

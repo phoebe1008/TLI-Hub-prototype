@@ -173,7 +173,7 @@ button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible{ou
   </header>
 
   <main class="content">
-    <p class="page-sub" data-en="Unit-by-unit self-study progress for each student in a class.">各班學生在每個單元的自學進度明細。</p>
+    <p class="page-sub" data-en="Lesson-by-lesson self-study progress for each student in a class.">各班學生在每一章的自學進度明細。</p>
     <div class="tool-bar">
       <select class="select-sm" id="clsSel" aria-label="班級"></select>
       <input type="search" id="q" data-en-ph="Search student" placeholder="搜尋學生" aria-label="搜尋">
@@ -182,7 +182,7 @@ button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible{ou
     </div>
     <div class="card"><div class="mx-wrap" id="mxWrap"></div>
       <div class="cls-empty hidden" id="emptyState" data-en="No classes are assigned to you yet.">目前沒有指派給你的班級。</div></div>
-    <div class="small muted" style="margin-top:10px;" data-en="Each cell shows the share of lessons completed in that unit.">格內數字為該單元已完成課數的比例。</div>
+    <div class="small muted" style="margin-top:10px;" data-en="Each cell shows the share of items completed in that lesson.">格內數字為該章已完成項目的比例。</div>
 
     <div class="dw-ov hidden" id="drawerOv" onclick="if(event.target===this)TC.closeDrawer()"><div class="dw"><div id="drawerBody"></div></div></div>
   </main>
@@ -216,7 +216,7 @@ function render(){
   var q = st.q.toLowerCase();
   var rows = TC.rows([st.cid]).filter(function(x){ return !q || (x.r.name+' '+x.r.email).toLowerCase().indexOf(q)>=0; });
   TC.sortRows(rows, st.sort);
-  var h = '<table class="mx"><thead><tr><th>'+T('學生','Student')+'</th>'+PL.UNITS.map(function(u,i){ return '<th title="'+PL.esc(T(u.zh,u.en))+'">'+T('單元','U')+(i+1)+'</th>'; }).join('')+'<th>'+T('合計','Total')+'</th></tr></thead><tbody>';
+  var h = '<table class="mx"><thead><tr><th>'+T('學生','Student')+'</th>'+PL.UNITS.map(function(u,i){ return '<th title="'+PL.esc(T(u.zh,u.en))+'">'+PL.chapterLabel(i)+'</th>'; }).join('')+'<th>'+T('合計','Total')+'</th></tr></thead><tbody>';
   h += rows.map(function(x){
     return '<tr style="cursor:pointer;" onclick="TC.openStudent(\''+x.r.id+'\')"><td><b>'+PL.esc(x.r.name)+'</b>'+(x.r.status!=='已啟用'?' <span class="badge badge-muted">'+TC.stLbl(x.r.status)+'</span>':'')+'</td>'+
       x.p.units.map(function(u){ return '<td><span class="cell '+cellCls(u.pct)+'">'+(x.r.status==='已啟用'?u.pct+'%':'－')+'</span></td>'; }).join('')+'<td><b>'+x.p.pct+'%</b></td></tr>';
@@ -228,7 +228,7 @@ $('q').addEventListener('input', function(){ st.q=this.value.trim(); render(); }
 $('sSel').addEventListener('change', function(){ st.sort=this.value; render(); });
 $('btnCsv').onclick = function(){
   if(!st.cid) return;
-  var c = PL.classById(st.cid), rr = [[T('學生','Student'),'Email'].concat(PL.UNITS.map(function(u,i){ return T('單元','Unit')+(i+1)+' '+T(u.zh,u.en); })).concat([T('合計','Total')])];
+  var c = PL.classById(st.cid), rr = [[T('學生','Student'),'Email'].concat(PL.UNITS.map(function(u,i){ return PL.chapterLabel(i)+' '+T(u.zh,u.en); })).concat([T('合計','Total')])];
   TC.rows([st.cid]).forEach(function(x){ rr.push([x.r.name,x.r.email].concat(x.p.units.map(function(u){ return u.pct+'%'; })).concat([x.p.pct+'%'])); });
   PL.download('units_'+c.name.replace(/\s+/g,'_')+'_'+PL.today+'.csv', PL.csv(rr)); TC.toast(T('明細已下載','Detail downloaded'));
 };

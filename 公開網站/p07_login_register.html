@@ -367,7 +367,7 @@ main{max-width:1120px;margin:0 auto;padding:44px 20px 60px;display:flex;justify-
             <label><span data-i18n="p07_label_password">密碼</span><span class="req-mark">*</span></label>
             <input type="password" id="regPassword" placeholder="請設定密碼" data-i18n-placeholder="p07_ph_password_set" onblur="validatePassword()">
             <div class="field-error" id="err_regPassword"></div>
-            <div class="refcode-note" data-i18n="p07_password_hint">至少 8 碼，需包含英文字母與數字</div>
+            <div class="refcode-note" data-i18n="p07_password_hint">至少 8 碼，需含大寫英文、小寫英文、數字、符號各至少 1 個</div>
           </div>
           <div class="field">
             <label><span data-i18n="p07_label_timezone">所在時區</span><span class="req-mark">*</span></label>
@@ -802,7 +802,8 @@ function rebuildRegisterDynamicSelects(){
 }
 
 var EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-var PASSWORD_RE = /^(?=.*[A-Za-z])(?=.*\d).{8,}$/;
+/* 密碼規則（2026-11-10 使用者指定）：至少 8 碼，大寫英文、小寫英文、數字、符號各至少 1 個 */
+var PASSWORD_RE = /^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[!-\/:-@\[-`{-~]).{8,}$/;
 var DEMO_TAKEN_EMAIL = 'demo@example.com';
 
 function fieldSetError(errId, msgKey){
@@ -1365,7 +1366,7 @@ function tliDict(){
     p07_err_required: T('此欄位為必填',{en:'This field is required',ja:'この項目は必須です',de:'Dieses Feld ist erforderlich'}),
     p07_err_email_format: T('請輸入正確的 Email 格式',{en:'Please enter a valid email address',ja:'正しいメールアドレスの形式で入力してください',de:'Bitte geben Sie eine gültige E-Mail-Adresse ein'}),
     p07_err_phone: T('請輸入有效的手機號碼',{en:'Please enter a valid phone number',ja:'有効な電話番号を入力してください',de:'Bitte geben Sie eine gültige Telefonnummer ein'}),
-    p07_err_password_weak: T('密碼至少 8 碼，需包含英文字母與數字',{en:'Password must be at least 8 characters, including letters and numbers',ja:'パスワードは英数字を含む8文字以上で設定してください',de:'Das Passwort muss mindestens 8 Zeichen lang sein und Buchstaben sowie Zahlen enthalten'}),
+    p07_err_password_weak: T('密碼需至少 8 碼，且大寫英文、小寫英文、數字、符號各至少 1 個',{en:'Use at least 8 characters with at least one uppercase letter, one lowercase letter, one number and one symbol.',ja:'パスワードは8文字以上で、英大文字・英小文字・数字・記号をそれぞれ1文字以上含めてください',de:'Das Passwort muss mindestens 8 Zeichen lang sein und je mindestens einen Großbuchstaben, Kleinbuchstaben, eine Zahl und ein Sonderzeichen enthalten'}),
     p07_err_terms: T('請詳閱並勾選同意服務條款與個資告知',{en:'Please read and agree to the Terms of Service and Privacy Notice',ja:'利用規約とプライバシー告知に同意してください',de:'Bitte lesen Sie die Nutzungsbedingungen und den Datenschutzhinweis und stimmen Sie zu'})
   };
 }

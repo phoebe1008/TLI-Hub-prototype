@@ -267,11 +267,47 @@ html,body{overflow-x:hidden;}
 .unit-actions{flex-shrink:0;}
 .unit-body{padding:16px;border-top:1px dashed var(--g200);background:var(--g50);}
 .unit-body select{padding:7px 10px;border:1px solid var(--g200);border-radius:6px;font-size:13px;font-family:inherit;width:100%;max-width:460px;box-sizing:border-box;}
+/* 20261110：章 › 節 › 項目 */
+.content-head{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:10px;}
+.content-actions{display:flex;gap:6px;flex-wrap:wrap;}
+.unit-order{display:inline-flex;flex-direction:column;gap:2px;flex-shrink:0;}
+.caret{display:inline-block;color:var(--g500);transition:transform .15s;cursor:pointer;flex-shrink:0;}
+.caret.open{transform:rotate(90deg);}
+.sec-bar{display:flex;justify-content:space-between;align-items:center;gap:8px;}
+.sec-card{border:1px solid var(--g200);border-radius:8px;background:#fff;margin-bottom:8px;}
+.sec-head{display:flex;align-items:center;gap:10px;padding:8px 10px;}
+.sec-no{flex-shrink:0;font-size:13px;}
+.sec-head .sec-title{flex:1 1 200px;min-width:0;padding:6px 9px;border:1px solid var(--g200);border-radius:6px;font-size:13px;font-family:inherit;}
+.sec-meta{white-space:nowrap;color:var(--g500);cursor:pointer;}
+.sec-body{padding:6px 10px 10px;border-top:1px dashed var(--g200);}
+.item-row{display:flex;align-items:center;gap:8px;flex-wrap:wrap;padding:7px 0;border-bottom:1px solid var(--g100,#F2F4F7);}
+.item-row:last-of-type{border-bottom:none;}
+.type-badge{background:#E6EEF8;color:var(--navy);flex-shrink:0;}
+.item-row .item-title{flex:1 1 140px;min-width:0;padding:6px 9px;border:1px solid var(--g200);border-radius:6px;font-size:13px;font-family:inherit;}
+.unit-body .item-row select.item-asset{flex:1 1 220px;width:auto;max-width:none;}
+.item-meta{white-space:nowrap;color:var(--g500);min-width:44px;}
+.item-pv{display:inline-flex;align-items:center;gap:4px;white-space:nowrap;}
+.item-add{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-top:8px;}
+.unit-body .item-add select{width:auto;max-width:160px;}
+/* 課程層教材資源（4.4 §2-5） */
+.res-card{margin-top:14px;}
+.res-row{display:flex;align-items:center;gap:10px;flex-wrap:wrap;padding:10px 0;border-top:1px solid var(--g200);}
+.res-row:first-child{border-top:none;}
+.res-main{flex:1 1 260px;min-width:0;display:flex;flex-direction:column;gap:3px;}
+.res-titles{display:flex;gap:6px;flex-wrap:wrap;}
+.res-titles input,.res-fields input{flex:1 1 160px;min-width:0;padding:6px 9px;border:1px solid var(--g200);border-radius:6px;font-size:13px;font-family:inherit;}
+.res-swap,.res-fields select{padding:6px 9px;border:1px solid var(--g200);border-radius:6px;font-size:13px;font-family:inherit;max-width:280px;}
+.res-warn{font-size:12px;color:#B54708;}
+.res-add{border:1px dashed var(--g200);border-radius:8px;padding:12px;margin-bottom:12px;background:var(--g50);}
+.res-src{display:flex;gap:18px;flex-wrap:wrap;font-size:13px;margin-bottom:10px;}
+.res-src label{display:inline-flex;align-items:center;gap:5px;cursor:pointer;}
+.res-fields{display:flex;gap:8px;flex-wrap:wrap;}
+.res-actions{display:flex;justify-content:flex-end;gap:6px;margin-top:10px;}
 </style>
 </head>
 <body>
 <div class="app">
-<div class="sidebar" id="sidebar"><a class="brand" href="a02_products.html"><img class="brand-logo" src="../assets/tli-logo.svg" alt="TLI"><small class="navtext" data-i18n="brand.adminPortal">管理後台</small></a><nav><div class="navgroup" data-group="sales"><div class="sec-label" onclick="toggleNavGroup(event,'sales')"><span class="navtext" data-i18n="nav.group.sales">銷售</span><button type="button" class="sec-toggle navtext" onclick="toggleNavGroup(event,'sales')" aria-label="收合銷售" data-i18n-aria-label="aria.collapseSales"><svg width="12" height="12" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 8 10 12 14 8"/></svg></button></div><div class="navgroup-items"><a data-nav="a21" href="a21_projects.html"><svg class="navicon" width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="14" height="13" rx="2"/><line x1="3" y1="8" x2="17" y2="8"/><line x1="7" y1="12" x2="13" y2="12"/><line x1="7" y1="14.6" x2="11" y2="14.6"/></svg><span class="navtext" data-i18n="nav.a21">專案設定</span></a><a data-nav="a04" href="a04_packages.html"><svg class="navicon" width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="7" width="14" height="10" rx="1"/><path d="M3 7l7-4 7 4"/><line x1="10" y1="7" x2="10" y2="17"/></svg><span class="navtext" data-i18n="nav.a04">銷售方案</span></a><a data-nav="a05" href="a05_orders.html"><svg class="navicon" width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 2h10v16l-2-1.3L11 18l-2-1.3L7 18l-2-1.3V2z"/><line x1="7.5" y1="6" x2="12.5" y2="6"/><line x1="7.5" y1="9" x2="12.5" y2="9"/></svg><span class="navtext" data-i18n="nav.a05">訂單</span></a><a data-nav="a20" href="a20_agents.html"><svg class="navicon" width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="6.5" cy="6" r="2.3"/><path d="M2.5 16c0-2.6 1.8-4.3 4-4.3s4 1.7 4 4.3"/><circle cx="14.5" cy="8.5" r="1.8"/><path d="M17.3 16c0-1.9-1.3-3.4-2.8-3.4"/><path d="M9 6l3-1.5"/></svg><span class="navtext" data-i18n="nav.a20">合作夥伴</span></a></div></div><div class="navgroup" data-group="customer"><div class="sec-label" onclick="toggleNavGroup(event,'customer')"><span class="navtext" data-i18n="nav.group.customer">客戶</span><button type="button" class="sec-toggle navtext" onclick="toggleNavGroup(event,'customer')" aria-label="收合客戶" data-i18n-aria-label="aria.collapseCustomer"><svg width="12" height="12" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 8 10 12 14 8"/></svg></button></div><div class="navgroup-items"><a data-nav="a01" href="a01_member_rules.html"><svg class="navicon" width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="10" cy="6.5" r="3"/><path d="M4 17c0-3 2.7-5 6-5s6 2 6 5"/></svg><span class="navtext" data-i18n="nav.a01">學員管理</span></a><a data-nav="a19" href="a19_b2b_enterprise.html"><svg class="navicon" width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="3.5" y="3" width="7" height="14" rx="1"/><rect x="10.5" y="7.5" width="6" height="9.5" rx="1"/><line x1="5.5" y1="6" x2="7.5" y2="6"/><line x1="5.5" y1="9" x2="7.5" y2="9"/><line x1="5.5" y1="12" x2="7.5" y2="12"/><line x1="12.5" y1="10.5" x2="14.5" y2="10.5"/><line x1="12.5" y1="13.5" x2="14.5" y2="13.5"/></svg><span class="navtext" data-i18n="nav.a19">組織客戶</span></a><a data-nav="a14" href="a14_feedback.html"><svg class="navicon" width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M3 4h14a1 1 0 0 1 1 1v8a1 1 0 0 1-1 1H8l-4 3v-3H3a1 1 0 0 1-1-1V5a1 1 0 0 1 1-1z"/></svg><span class="navtext" data-i18n="nav.a14">學員回饋</span></a></div></div><div class="navgroup" data-group="teaching"><div class="sec-label" onclick="toggleNavGroup(event,'teaching')"><span class="navtext" data-i18n="nav.group.teaching">教學</span><button type="button" class="sec-toggle navtext" onclick="toggleNavGroup(event,'teaching')" aria-label="收合教學" data-i18n-aria-label="aria.collapseTeaching"><svg width="12" height="12" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 8 10 12 14 8"/></svg></button></div><div class="navgroup-items"><a data-nav="a02" class="active" href="a02_products.html"><svg class="navicon" width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6l7-3.5L17 6v8l-7 3.5L3 14V6z"/><path d="M3 6l7 3.5L17 6"/><line x1="10" y1="9.5" x2="10" y2="17.5"/></svg><span class="navtext" data-i18n="nav.a02">課程管理</span></a><a data-nav="a25" href="a25_materials.html"><svg class="navicon" width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 3.5h8.5A2.5 2.5 0 0 1 15 6v10.5H6.5A2.5 2.5 0 0 1 4 14V3.5z"/><path d="M4 14a2.5 2.5 0 0 1 2.5-2.5H15"/><line x1="7.5" y1="6.5" x2="12" y2="6.5"/></svg><span class="navtext" data-i18n="nav.a25">教材管理</span></a><a data-nav="a10" href="a10_teachers.html"><svg class="navicon" width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="2.5" y="6.5" width="15" height="9.5" rx="1.5"/><path d="M7 6.5V5a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2v1.5"/><line x1="2.5" y1="10.5" x2="17.5" y2="10.5"/></svg><span class="navtext" data-i18n="nav.a10">老師管理</span></a><a data-nav="a18" href="a18_resource_library.html"><svg class="navicon" width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><ellipse cx="10" cy="4.5" rx="7" ry="2.5"/><path d="M3 4.5v5c0 1.4 3.1 2.5 7 2.5s7-1.1 7-2.5v-5"/><path d="M3 9.5v5c0 1.4 3.1 2.5 7 2.5s7-1.1 7-2.5v-5"/></svg><span class="navtext" data-i18n="nav.a18">資源庫</span></a><a data-nav="a16" href="a16_events.html"><svg class="navicon" width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="14" height="13" rx="1.5"/><line x1="3" y1="8" x2="17" y2="8"/><line x1="6.5" y1="2" x2="6.5" y2="5.5"/><line x1="13.5" y1="2" x2="13.5" y2="5.5"/><circle cx="10" cy="12.3" r="2"/></svg><span class="navtext" data-i18n="nav.a16">活動管理</span></a><a data-nav="a22" href="a22_quizzes.html"><svg class="navicon" width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="2.5" width="12" height="15" rx="1.5"/><path d="M7 7l1.5 1.5L11 6"/><line x1="12.5" y1="7.5" x2="14" y2="7.5"/><path d="M7 12l1.5 1.5L11 11"/><line x1="12.5" y1="12.5" x2="14" y2="12.5"/></svg><span class="navtext" data-i18n="nav.a22">測驗管理</span></a><a data-nav="a26" href="a26_scheduling.html"><svg class="navicon" width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="14" height="13" rx="1.5"/><line x1="3" y1="8" x2="17" y2="8"/><line x1="6.5" y1="2" x2="6.5" y2="5.5"/><line x1="13.5" y1="2" x2="13.5" y2="5.5"/><path d="M7 12.5l2 2 4-4"/></svg><span class="navtext" data-i18n="nav.a26">排課管理</span></a></div></div><div class="navgroup" data-group="finance"><div class="sec-label" onclick="toggleNavGroup(event,'finance')"><span class="navtext" data-i18n="nav.group.finance">財務</span><button type="button" class="sec-toggle navtext" onclick="toggleNavGroup(event,'finance')" aria-label="收合財務" data-i18n-aria-label="aria.collapseFinance"><svg width="12" height="12" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 8 10 12 14 8"/></svg></button></div><div class="navgroup-items"><a data-nav="a23" href="a23_payment_gateways.html"><svg class="navicon" width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="2.5" y="5" width="15" height="10" rx="1.5"/><line x1="2.5" y1="8.5" x2="17.5" y2="8.5"/><circle cx="13.5" cy="12" r="1.2"/></svg><span class="navtext" data-i18n="nav.a23">收款與發票</span></a><a data-nav="a24" href="a24_partner_settlement.html"><svg class="navicon" width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="2.5" y="4" width="15" height="12" rx="1.5"/><line x1="6" y1="8" x2="14" y2="8"/><line x1="6" y1="11" x2="11" y2="11"/><path d="M12.5 13.5l1.2 1.2 2.3-2.4"/></svg><span class="navtext" data-i18n="nav.a24">結算與對帳</span></a><a data-nav="a07" href="a07_reports.html"><svg class="navicon" width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><line x1="4" y1="17" x2="4" y2="10"/><line x1="10" y1="17" x2="10" y2="5"/><line x1="16" y1="17" x2="16" y2="12"/></svg><span class="navtext" data-i18n="nav.a07">營運報表</span></a></div></div><div class="navgroup" data-group="system"><div class="sec-label" onclick="toggleNavGroup(event,'system')"><span class="navtext" data-i18n="nav.group.system">系統</span><button type="button" class="sec-toggle navtext" onclick="toggleNavGroup(event,'system')" aria-label="收合系統" data-i18n-aria-label="aria.collapseSystem"><svg width="12" height="12" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 8 10 12 14 8"/></svg></button></div><div class="navgroup-items"><a data-nav="a17" href="a17_master_data.html"><svg class="navicon" width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><line x1="4" y1="5" x2="16" y2="5"/><circle cx="8" cy="5" r="1.6"/><line x1="4" y1="10" x2="16" y2="10"/><circle cx="13" cy="10" r="1.6"/><line x1="4" y1="15" x2="16" y2="15"/><circle cx="10" cy="15" r="1.6"/></svg><span class="navtext" data-i18n="nav.a17">基礎資料設定</span></a><a data-nav="a09" href="a09_permissions_notify.html"><svg class="navicon" width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M10 2l6.5 2.5v5C16.5 14 13.8 17 10 18c-3.8-1-6.5-4-6.5-8.5v-5L10 2z"/></svg><span class="navtext" data-i18n="nav.a09">權限管理</span></a><a data-nav="a15" href="a15_notifications.html"><svg class="navicon" width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M10 2.5c-2.2 0-4 1.8-4 4v2.3c0 .6-.2 1.2-.6 1.7L4 12.5h12l-1.4-2c-.4-.5-.6-1.1-.6-1.7V6.5c0-2.2-1.8-4-4-4z"/><path d="M8.2 15.5a1.8 1.8 0 0 0 3.6 0"/></svg><span class="navtext" data-i18n="nav.a15">通知管理</span></a><a data-nav="a08" href="a08_content_cms.html"><svg class="navicon" width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="2.5" y="3" width="15" height="14" rx="1.5"/><line x1="8" y1="3" x2="8" y2="17"/></svg><span class="navtext" data-i18n="nav.a08">內容管理</span></a></div></div></nav><div class="sidebar-user" id="sidebarUser"><div class="su-row" onclick="toggleSuMenu(event)"><span class="su-avatar" id="suAvatar">王</span><span class="navtext su-info"><span class="su-name" id="suName">王大明</span><span class="su-roletag" id="suRoleTag" data-i18n="role.hqAdmin">總公司管理者</span></span><svg class="navtext su-chevron" width="14" height="14" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 8 10 12 14 8"/></svg></div><div class="tb-panel su-menu" id="suMenu"><a href="a00_profile.html" data-i18n="common.settings">個人設定</a><a href="../公開網站/p01_home.html" data-i18n="common.gotoWebsite">前往官網</a><a href="../顧問工作台/c01_today.html" data-i18n="nav_ext.consultantWorkbench">前往顧問工作台</a><a href="javascript:void(0)" onclick="doLogout()" data-i18n="common.logout">登出</a></div></div></div><div class="main"><div class="topbar"><button class="hamburger" onclick="toggleSidebar()" aria-label="開啟選單" data-i18n-aria-label="common.openMenu"><svg class="navicon" width="18" height="18" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="5.5" x2="17" y2="5.5"/><line x1="3" y1="10" x2="17" y2="10"/><line x1="3" y1="14.5" x2="17" y2="14.5"/></svg></button><div class="tb-title" data-i18n="page.title.a03">課程詳情</div><div class="tb-actions"><div class="tb-search"><svg class="navicon" width="15" height="15" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="8.5" cy="8.5" r="5.5"/><line x1="16.5" y1="16.5" x2="12.6" y2="12.6"/></svg><input type="text" placeholder="搜尋" data-i18n-placeholder="search.genericPlaceholder"></div><button class="tb-bellbtn" onclick="toggleNotif(event)" aria-label="通知" data-i18n-aria-label="common.notifications"><svg class="navicon" width="17" height="17" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M10 2.5c-2.2 0-4 1.8-4 4v2.3c0 .6-.2 1.2-.6 1.7L4 12.5h12l-1.4-2c-.4-.5-.6-1.1-.6-1.7V6.5c0-2.2-1.8-4-4-4z"/><path d="M8.2 15.5a1.8 1.8 0 0 0 3.6 0"/></svg><span class="tb-dot" id="tbDot"></span></button><div class="tb-panel tb-notifpanel" id="notifPanel"></div><button class="tb-avatarbtn" onclick="toggleAvatarMenu(event)" aria-label="使用者選單" data-i18n-aria-label="common.userMenu">王</button><div class="tb-panel tb-avatarmenu" id="avatarMenu"><a href="a00_profile.html" data-i18n="common.settings">個人設定</a><a href="../公開網站/p01_home.html" data-i18n="common.gotoWebsite">前往官網</a><a href="javascript:void(0)" onclick="doLogout()" data-i18n="common.logout">登出</a></div></div></div><div class="sidebar-backdrop" id="sidebarBackdrop" onclick="closeSidebar()"></div>
+<div class="sidebar" id="sidebar"><a class="brand" href="a02_products.html"><img class="brand-logo" src="../assets/tli-logo.svg" alt="TLI"><small class="navtext" data-i18n="brand.adminPortal">管理後台</small></a><nav><div class="navgroup" data-group="sales"><div class="sec-label" onclick="toggleNavGroup(event,'sales')"><span class="navtext" data-i18n="nav.group.sales">銷售</span><button type="button" class="sec-toggle navtext" onclick="toggleNavGroup(event,'sales')" aria-label="收合銷售" data-i18n-aria-label="aria.collapseSales"><svg width="12" height="12" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 8 10 12 14 8"/></svg></button></div><div class="navgroup-items"><a data-nav="a21" href="a21_projects.html"><svg class="navicon" width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="14" height="13" rx="2"/><line x1="3" y1="8" x2="17" y2="8"/><line x1="7" y1="12" x2="13" y2="12"/><line x1="7" y1="14.6" x2="11" y2="14.6"/></svg><span class="navtext" data-i18n="nav.a21">專案設定</span></a><a data-nav="a04" href="a04_packages.html"><svg class="navicon" width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="7" width="14" height="10" rx="1"/><path d="M3 7l7-4 7 4"/><line x1="10" y1="7" x2="10" y2="17"/></svg><span class="navtext" data-i18n="nav.a04">銷售方案</span></a><a data-nav="a05" href="a05_orders.html"><svg class="navicon" width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 2h10v16l-2-1.3L11 18l-2-1.3L7 18l-2-1.3V2z"/><line x1="7.5" y1="6" x2="12.5" y2="6"/><line x1="7.5" y1="9" x2="12.5" y2="9"/></svg><span class="navtext" data-i18n="nav.a05">訂單</span></a><a data-nav="a20" href="a20_agents.html"><svg class="navicon" width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="6.5" cy="6" r="2.3"/><path d="M2.5 16c0-2.6 1.8-4.3 4-4.3s4 1.7 4 4.3"/><circle cx="14.5" cy="8.5" r="1.8"/><path d="M17.3 16c0-1.9-1.3-3.4-2.8-3.4"/><path d="M9 6l3-1.5"/></svg><span class="navtext" data-i18n="nav.a20">合作夥伴</span></a></div></div><div class="navgroup" data-group="customer"><div class="sec-label" onclick="toggleNavGroup(event,'customer')"><span class="navtext" data-i18n="nav.group.customer">客戶</span><button type="button" class="sec-toggle navtext" onclick="toggleNavGroup(event,'customer')" aria-label="收合客戶" data-i18n-aria-label="aria.collapseCustomer"><svg width="12" height="12" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 8 10 12 14 8"/></svg></button></div><div class="navgroup-items"><a data-nav="a01" href="a01_member_rules.html"><svg class="navicon" width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="10" cy="6.5" r="3"/><path d="M4 17c0-3 2.7-5 6-5s6 2 6 5"/></svg><span class="navtext" data-i18n="nav.a01">學員管理</span></a><a data-nav="a19" href="a19_b2b_enterprise.html"><svg class="navicon" width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="3.5" y="3" width="7" height="14" rx="1"/><rect x="10.5" y="7.5" width="6" height="9.5" rx="1"/><line x1="5.5" y1="6" x2="7.5" y2="6"/><line x1="5.5" y1="9" x2="7.5" y2="9"/><line x1="5.5" y1="12" x2="7.5" y2="12"/><line x1="12.5" y1="10.5" x2="14.5" y2="10.5"/><line x1="12.5" y1="13.5" x2="14.5" y2="13.5"/></svg><span class="navtext" data-i18n="nav.a19">組織客戶</span></a><a data-nav="a14" href="a14_feedback.html"><svg class="navicon" width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M3 4h14a1 1 0 0 1 1 1v8a1 1 0 0 1-1 1H8l-4 3v-3H3a1 1 0 0 1-1-1V5a1 1 0 0 1 1-1z"/></svg><span class="navtext" data-i18n="nav.a14">學員回饋</span></a></div></div><div class="navgroup" data-group="teaching"><div class="sec-label" onclick="toggleNavGroup(event,'teaching')"><span class="navtext" data-i18n="nav.group.teaching">教學</span><button type="button" class="sec-toggle navtext" onclick="toggleNavGroup(event,'teaching')" aria-label="收合教學" data-i18n-aria-label="aria.collapseTeaching"><svg width="12" height="12" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 8 10 12 14 8"/></svg></button></div><div class="navgroup-items"><a data-nav="a02" class="active" href="a02_products.html"><svg class="navicon" width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6l7-3.5L17 6v8l-7 3.5L3 14V6z"/><path d="M3 6l7 3.5L17 6"/><line x1="10" y1="9.5" x2="10" y2="17.5"/></svg><span class="navtext" data-i18n="nav.a02">課程管理</span></a><a data-nav="a25" href="a25_materials.html"><svg class="navicon" width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 3.5h8.5A2.5 2.5 0 0 1 15 6v10.5H6.5A2.5 2.5 0 0 1 4 14V3.5z"/><path d="M4 14a2.5 2.5 0 0 1 2.5-2.5H15"/><line x1="7.5" y1="6.5" x2="12" y2="6.5"/></svg><span class="navtext" data-i18n="nav.a25">教材管理</span></a><a data-nav="a10" href="a10_teachers.html"><svg class="navicon" width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="2.5" y="6.5" width="15" height="9.5" rx="1.5"/><path d="M7 6.5V5a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2v1.5"/><line x1="2.5" y1="10.5" x2="17.5" y2="10.5"/></svg><span class="navtext" data-i18n="nav.a10">老師管理</span></a><a data-nav="a18" href="a18_resource_library.html"><svg class="navicon" width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><ellipse cx="10" cy="4.5" rx="7" ry="2.5"/><path d="M3 4.5v5c0 1.4 3.1 2.5 7 2.5s7-1.1 7-2.5v-5"/><path d="M3 9.5v5c0 1.4 3.1 2.5 7 2.5s7-1.1 7-2.5v-5"/></svg><span class="navtext" data-i18n="nav.a18">資源庫</span></a><a data-nav="a16" href="a16_events.html"><svg class="navicon" width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="14" height="13" rx="1.5"/><line x1="3" y1="8" x2="17" y2="8"/><line x1="6.5" y1="2" x2="6.5" y2="5.5"/><line x1="13.5" y1="2" x2="13.5" y2="5.5"/><circle cx="10" cy="12.3" r="2"/></svg><span class="navtext" data-i18n="nav.a16">活動管理</span></a><a data-nav="a22" href="a22_quizzes.html"><svg class="navicon" width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="2.5" width="12" height="15" rx="1.5"/><path d="M7 7l1.5 1.5L11 6"/><line x1="12.5" y1="7.5" x2="14" y2="7.5"/><path d="M7 12l1.5 1.5L11 11"/><line x1="12.5" y1="12.5" x2="14" y2="12.5"/></svg><span class="navtext" data-i18n="nav.a22">測驗管理</span></a><a data-nav="a26" href="a26_scheduling.html"><svg class="navicon" width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="14" height="13" rx="1.5"/><line x1="3" y1="8" x2="17" y2="8"/><line x1="6.5" y1="2" x2="6.5" y2="5.5"/><line x1="13.5" y1="2" x2="13.5" y2="5.5"/><path d="M7 12.5l2 2 4-4"/></svg><span class="navtext" data-i18n="nav.a26">排課管理</span></a></div></div><div class="navgroup" data-group="finance"><div class="sec-label" onclick="toggleNavGroup(event,'finance')"><span class="navtext" data-i18n="nav.group.finance">財務</span><button type="button" class="sec-toggle navtext" onclick="toggleNavGroup(event,'finance')" aria-label="收合財務" data-i18n-aria-label="aria.collapseFinance"><svg width="12" height="12" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 8 10 12 14 8"/></svg></button></div><div class="navgroup-items"><a data-nav="a23" href="a23_payment_gateways.html"><svg class="navicon" width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="2.5" y="5" width="15" height="10" rx="1.5"/><line x1="2.5" y1="8.5" x2="17.5" y2="8.5"/><circle cx="13.5" cy="12" r="1.2"/></svg><span class="navtext" data-i18n="nav.a23">收款與發票</span></a><a data-nav="a24" href="a24_partner_settlement.html"><svg class="navicon" width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="2.5" y="4" width="15" height="12" rx="1.5"/><line x1="6" y1="8" x2="14" y2="8"/><line x1="6" y1="11" x2="11" y2="11"/><path d="M12.5 13.5l1.2 1.2 2.3-2.4"/></svg><span class="navtext" data-i18n="nav.a24">結算與對帳</span></a><a data-nav="a07" href="a07_reports.html"><svg class="navicon" width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><line x1="4" y1="17" x2="4" y2="10"/><line x1="10" y1="17" x2="10" y2="5"/><line x1="16" y1="17" x2="16" y2="12"/></svg><span class="navtext" data-i18n="nav.a07">營運報表</span></a></div></div><div class="navgroup" data-group="system"><div class="sec-label" onclick="toggleNavGroup(event,'system')"><span class="navtext" data-i18n="nav.group.system">系統</span><button type="button" class="sec-toggle navtext" onclick="toggleNavGroup(event,'system')" aria-label="收合系統" data-i18n-aria-label="aria.collapseSystem"><svg width="12" height="12" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 8 10 12 14 8"/></svg></button></div><div class="navgroup-items"><a data-nav="a17" href="a17_master_data.html"><svg class="navicon" width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><line x1="4" y1="5" x2="16" y2="5"/><circle cx="8" cy="5" r="1.6"/><line x1="4" y1="10" x2="16" y2="10"/><circle cx="13" cy="10" r="1.6"/><line x1="4" y1="15" x2="16" y2="15"/><circle cx="10" cy="15" r="1.6"/></svg><span class="navtext" data-i18n="nav.a17">基礎資料設定</span></a><a data-nav="a09" href="a09_permissions_notify.html"><svg class="navicon" width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M10 2l6.5 2.5v5C16.5 14 13.8 17 10 18c-3.8-1-6.5-4-6.5-8.5v-5L10 2z"/></svg><span class="navtext" data-i18n="nav.a09">帳號管理</span></a><a data-nav="a27" href="a27_roles.html"><svg class="navicon" width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="7" cy="12.5" r="3.5"/><path d="M9.6 10L16 3.5"/><path d="M13.5 6l2 2"/><path d="M11.6 7.9l1.5 1.5"/></svg><span class="navtext" data-i18n="nav.a27">角色管理</span></a><a data-nav="a28" href="a28_activity_logs.html"><svg class="navicon" width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M3.5 10a6.5 6.5 0 1 0 1.9-4.6"/><polyline points="3 3 3.4 6 6.4 5.6"/><polyline points="10 6.5 10 10 12.5 11.5"/></svg><span class="navtext" data-i18n="nav.a28">操作紀錄</span></a><a data-nav="a15" href="a15_notifications.html"><svg class="navicon" width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M10 2.5c-2.2 0-4 1.8-4 4v2.3c0 .6-.2 1.2-.6 1.7L4 12.5h12l-1.4-2c-.4-.5-.6-1.1-.6-1.7V6.5c0-2.2-1.8-4-4-4z"/><path d="M8.2 15.5a1.8 1.8 0 0 0 3.6 0"/></svg><span class="navtext" data-i18n="nav.a15">通知管理</span></a><a data-nav="a08" href="a08_content_cms.html"><svg class="navicon" width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="2.5" y="3" width="15" height="14" rx="1.5"/><line x1="8" y1="3" x2="8" y2="17"/></svg><span class="navtext" data-i18n="nav.a08">內容管理</span></a></div></div></nav><div class="sidebar-user" id="sidebarUser"><div class="su-row" onclick="toggleSuMenu(event)"><span class="su-avatar" id="suAvatar">王</span><span class="navtext su-info"><span class="su-name" id="suName">王大明</span><span class="su-roletag" id="suRoleTag" data-i18n="role.hqAdmin">總公司管理者</span></span><svg class="navtext su-chevron" width="14" height="14" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 8 10 12 14 8"/></svg></div><div class="tb-panel su-menu" id="suMenu"><a href="a00_profile.html" data-i18n="common.settings">個人設定</a><a href="../公開網站/p01_home.html" data-i18n="common.gotoWebsite">前往官網</a><a href="../顧問工作台/c01_today.html" data-i18n="nav_ext.consultantWorkbench">前往顧問工作台</a><a href="javascript:void(0)" onclick="doLogout()" data-i18n="common.logout">登出</a></div></div></div><div class="main"><div class="topbar"><button class="hamburger" onclick="toggleSidebar()" aria-label="開啟選單" data-i18n-aria-label="common.openMenu"><svg class="navicon" width="18" height="18" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="5.5" x2="17" y2="5.5"/><line x1="3" y1="10" x2="17" y2="10"/><line x1="3" y1="14.5" x2="17" y2="14.5"/></svg></button><div class="tb-title" data-i18n="page.title.a03">課程詳情</div><div class="tb-actions"><div class="tb-search"><svg class="navicon" width="15" height="15" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="8.5" cy="8.5" r="5.5"/><line x1="16.5" y1="16.5" x2="12.6" y2="12.6"/></svg><input type="text" placeholder="搜尋" data-i18n-placeholder="search.genericPlaceholder"></div><button class="tb-bellbtn" onclick="toggleNotif(event)" aria-label="通知" data-i18n-aria-label="common.notifications"><svg class="navicon" width="17" height="17" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M10 2.5c-2.2 0-4 1.8-4 4v2.3c0 .6-.2 1.2-.6 1.7L4 12.5h12l-1.4-2c-.4-.5-.6-1.1-.6-1.7V6.5c0-2.2-1.8-4-4-4z"/><path d="M8.2 15.5a1.8 1.8 0 0 0 3.6 0"/></svg><span class="tb-dot" id="tbDot"></span></button><div class="tb-panel tb-notifpanel" id="notifPanel"></div><button class="tb-avatarbtn" onclick="toggleAvatarMenu(event)" aria-label="使用者選單" data-i18n-aria-label="common.userMenu">王</button><div class="tb-panel tb-avatarmenu" id="avatarMenu"><a href="a00_profile.html" data-i18n="common.settings">個人設定</a><a href="../公開網站/p01_home.html" data-i18n="common.gotoWebsite">前往官網</a><a href="javascript:void(0)" onclick="doLogout()" data-i18n="common.logout">登出</a></div></div></div><div class="sidebar-backdrop" id="sidebarBackdrop" onclick="closeSidebar()"></div>
 <div class="pagehead">
 <div><h1 data-i18n="page.title.a03">課程詳情</h1><div class="desc" data-i18n="page.desc.productDetail">產品是供給三層結構中的「產品」層，只記錄可交易的規格與屬性；份量、效期、價格與上下架屬於「銷售方案設定」，改這裡的屬性不會影響已售出方案的價格。</div></div>
 <a href="a02_products.html" class="btn ghost" data-i18n="btn.backToProducts">← 返回課程管理</a>
@@ -433,65 +469,66 @@ var CLASS_TYPE_REQ_CATS = ['c_1to1','c_group'];
 var TAX_OPTIONS = ['免稅','應稅'];
 
 /* ================= 課程內容編排（僅「自學課程」分類使用）================= */
-/* 20260930：影片／測驗挑選清單改讀共用主檔 TLI_MASTERS.videoLibrary／TLI_MASTERS.quizzes，
-   不再各頁各自寫死一份；主檔內容即整理自本頁原本的示範資料，欄位與 id 皆未變動 */
+/* 20261110 改為「課程 › 章 › 節 › 項目」四層（客戶 Connect 2.0 規格書 4.4 §2-1～2-3）：
+   一個項目引用一筆素材，類型由素材帶出（4.1 素材六類）；章、節、項目皆可調整順序；「第 N 章」「N-N」為系統標示。
+   示範資料讀共用主檔 TLI_MASTERS.selfPacedOutlines，與會員區自學課程同一份，前後台章節一致。
+   每章的「單元測驗」與「通過條件」為本頁既有設定，使用者 2026-11-10 決定先不動，原樣保留在章層。
+   影片／測驗挑選清單讀共用主檔 TLI_MASTERS.videoLibrary／TLI_MASTERS.quizzes。 */
 var CONTENT_VIDEOS = TLI_MASTERS.videoLibrary;
 var CONTENT_MATERIALS = [
- {id:'cm1', name:'第 1 單元教材：機場入境與問候', pages:'共 8 頁'},
- {id:'cm2', name:'第 2 單元教材：校園生活會話', pages:'共 10 頁'},
- {id:'cm3', name:'第 3 單元教材：商務會議開場', pages:'共 9 頁'},
- {id:'cm4', name:'第 4 單元教材：電話聯繫用語', pages:'共 7 頁'},
- {id:'cm5', name:'第 5 單元教材：Email 商務書信', pages:'共 8 頁'},
- {id:'cm6', name:'第 6 單元教材：產品簡報練習', pages:'共 11 頁'},
- {id:'cm7', name:'第 7 單元教材：價格協商情境', pages:'共 9 頁'},
- {id:'cm8', name:'第 8 單元教材：期中口說總複習', pages:'共 12 頁'}
+ {id:'cm1', name:'第 1 章講義：發音與聲調', pages:'共 8 頁'},
+ {id:'cm2', name:'第 2 章講義：問候與自我介紹', pages:'共 10 頁'},
+ {id:'cm3', name:'第 3 章講義：數字、日期與時間', pages:'共 9 頁'},
+ {id:'cm4', name:'第 4 章講義：家人與朋友', pages:'共 7 頁'},
+ {id:'cm5', name:'第 5 章講義：飲食與點餐', pages:'共 8 頁'},
+ {id:'cm6', name:'第 6 章講義：問路與交通', pages:'共 11 頁'},
+ {id:'cm7', name:'第 7 章講義：購物與價格', pages:'共 9 頁'},
+ {id:'cm8', name:'第 8 章講義：週末與計畫', pages:'共 12 頁'}
 ];
 /* 測驗清單：改讀 TLI_MASTERS.quizzes（source：'self' 平台自建／'wordwall' 外部 Wordwall 資源） */
 var CONTENT_QUIZZES = TLI_MASTERS.quizzes;
+var ITEM_TYPES = TLI_MASTERS.selfPacedItemTypes;
 var PASS_CONDITIONS = [
  {v:'video', label:'看完影片即可'},
  {v:'quiz', label:'通過單元測驗即可'},
  {v:'both', label:'影片看完＋測驗及格皆須通過'}
 ];
-function makeUnit(n, title, videoId, materialIds, quizId){
-  return {id:'u'+n, title:title, status:'已發布',
-    videoId:videoId, materialIds:materialIds, quizId:quizId, passCondition:'both'};
-}
 function videoById(id){ return CONTENT_VIDEOS.find(function(v){return v.id===id;}); }
 function durSecOf(str){
   var p = String(str||'').split(':');
   return (parseInt(p[0],10)||0)*60 + (parseInt(p[1],10)||0);
 }
-function approxMinutesLabel(durStr){
-  if (!durStr) return TLI_I18N.t('未設定時長','Duration not set');
-  var mins = Math.max(1, Math.round(durSecOf(durStr)/60));
-  return TLI_I18N.t('約 '+mins+' 分鐘','About '+mins+' min');
+function fmtMmSs(sec){ return Math.floor(sec/60)+':'+String(sec%60).padStart(2,'0'); }
+function minutesLabel(sec){
+  if (!sec) return TLI_I18N.t('無影音時長','No media duration');
+  var m = Math.max(1, Math.round(sec/60));
+  return TLI_I18N.t('約 '+m+' 分鐘','About '+m+' min');
 }
-/* 通過條件（PASS_CONDITIONS）文字對照，值 v 不可變動（存在 u.passCondition 裡跨語言比對） */
+/* 通過條件（PASS_CONDITIONS）文字對照，值 v 不可變動（存在 ch.passCondition 裡跨語言比對） */
 function passCondLabel(v){
   if (v==='video') return TLI_I18N.t('看完影片即可','Watching the video is enough');
   if (v==='quiz') return TLI_I18N.t('通過單元測驗即可','Passing the unit quiz is enough');
   if (v==='both') return TLI_I18N.t('影片看完＋測驗及格皆須通過','Both video completion and a passing quiz score are required');
   return v;
 }
-/* 示範：自學影音課程包（中文基礎）8 個 Lesson，單元數與名稱對齊會員區
-   m08_self_paced.html 的 UNITS（學員實際看到的清單與時長） */
-var PRODUCT_UNITS = {
- skuC05: [
-  makeUnit(1,'機場入境與問候','cv1',['cm1'],'qz_u1'),
-  makeUnit(2,'校園生活會話','cv2',['cm2'],'qz_u2'),
-  makeUnit(3,'商務會議開場','cv3',['cm3'],'qz_u3'),
-  makeUnit(4,'電話聯繫用語','cv4',['cm4'],'qz_u4'),
-  makeUnit(5,'Email 商務書信','cv5',['cm5'],'qz_u5'),
-  makeUnit(6,'產品簡報練習','cv6',['cm6'],'qz_u6'),
-  makeUnit(7,'價格協商情境','cv7',['cm7'],'qz_u7'),
-  makeUnit(8,'期中口說總複習','cv8',['cm8'],'qz_u8')
- ],
- p_self02: [] /* 尚未安排 Lesson，示範空狀態 */
+function typeLabel(t){ var x = ITEM_TYPES.find(function(y){return y.id===t;}); return x ? TLI_I18N.t(x.zh, x.en) : t; }
+/* 示範：自學影音課程包（中文基礎）8 章 21 節 42 個項目，與會員區同一份；深拷貝後在本頁編輯 */
+var PRODUCT_OUTLINE = {
+ skuC05: JSON.parse(JSON.stringify(TLI_MASTERS.selfPacedOutlines.skuC05 || [])),
+ p_self02: [] /* 尚未安排任何章，示範空狀態 */
 };
-var expandedUnitId = null;
+var openCh = {}, openSec = {}, idSeq = 0;
+function newId(p){ idSeq++; return p+'-new'+idSeq; }
+function outline(){ if (!PRODUCT_OUTLINE[S.id]) PRODUCT_OUTLINE[S.id] = []; return PRODUCT_OUTLINE[S.id]; }
+function chDurSec(ch){ return ch.sections.reduce(function(a,s){ return a + s.items.reduce(function(b,it){ return b + (it.durSec||0); },0); },0); }
+function chItemCount(ch){ return ch.sections.reduce(function(a,s){ return a + s.items.length; },0); }
 function statusBadgeSimple(s){
   return s==='已發布' ? '<span class="badge green">'+TLI_I18N.t('已發布','Published')+'</span>' : '<span class="badge grey">'+TLI_I18N.t('草稿','Draft')+'</span>';
+}
+function ordBtns(fn, args, idx, total){
+  return '<span class="unit-order">' +
+    '<button type="button" class="btn ghost sm" title="'+TLI_I18N.t('上移','Move up')+'" onclick="event.stopPropagation();'+fn+'('+args+',-1)" '+(idx===0?'disabled':'')+'>▲</button>' +
+    '<button type="button" class="btn ghost sm" title="'+TLI_I18N.t('下移','Move down')+'" onclick="event.stopPropagation();'+fn+'('+args+',1)" '+(idx===total-1?'disabled':'')+'>▼</button></span>';
 }
 function renderContentTab(){
   var host = document.getElementById('tab-content');
@@ -501,152 +538,331 @@ function renderContentTab(){
     if (window.TLI_I18N) TLI_I18N.refresh();
     return;
   }
-  if (!PRODUCT_UNITS[S.id]) PRODUCT_UNITS[S.id] = [];
-  var units = PRODUCT_UNITS[S.id];
+  var chs = outline();
+  var nSec = chs.reduce(function(a,c){ return a + c.sections.length; },0);
+  var nItem = chs.reduce(function(a,c){ return a + chItemCount(c); },0);
+  var totSec = chs.reduce(function(a,c){ return a + chDurSec(c); },0);
   var html = '<div class="card">' +
-    '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px">' +
-    '<h2 style="margin:0">'+TLI_I18N.t('課程內容','Course Content')+'　<span class="small" style="font-weight:400">'+TLI_I18N.t('（共 '+units.length+' 個 Lesson）','('+units.length+' Lesson'+(units.length===1?'':'s')+' total)')+'</span></h2>' +
-    '<button class="btn" onclick="addUnit()">'+TLI_I18N.t('＋ 新增 Lesson','＋ Add Lesson')+'</button>' +
+    '<div class="content-head">' +
+    '<h2 style="margin:0">'+TLI_I18N.t('課程內容','Course Content')+'　<span class="small" style="font-weight:400">'+TLI_I18N.t('（共 '+chs.length+' 章・'+nSec+' 節・'+nItem+' 個項目・總時長 '+minutesLabel(totSec)+'）','('+chs.length+' lessons · '+nSec+' sections · '+nItem+' items · '+minutesLabel(totSec)+')')+'</span></h2>' +
+    '<div class="content-actions"><button class="btn ghost sm" onclick="setAllOpen(true)">'+TLI_I18N.t('全部展開','Expand all')+'</button><button class="btn ghost sm" onclick="setAllOpen(false)">'+TLI_I18N.t('全部收合','Collapse all')+'</button><button class="btn" onclick="addChapter()">'+TLI_I18N.t('＋ 新增章','＋ Add Lesson')+'</button></div>' +
     '</div>' +
-    '<div class="desc" style="margin-bottom:12px">'+TLI_I18N.t('自學課程由 Lesson 組成，每個 Lesson 綁定一支教學影片，學員端依序觀看；可另外搭配教材與單元測驗。點列可展開設定，上下移動可調整順序。','A self-paced course is made of Lessons. Each Lesson links one teaching video that students watch in order, optionally paired with materials and a unit quiz. Click a row to expand its settings; use the arrows to reorder.')+'</div>';
-  if (!units.length){
-    html += '<div class="note">'+TLI_I18N.t('目前尚未安排任何 Lesson，點右上角「＋新增 Lesson」建立第一個 Lesson。','No Lessons have been arranged yet. Click “＋ Add Lesson” at the top right to create the first one.')+'</div>';
+    '<div class="desc" style="margin-bottom:12px">'+TLI_I18N.t('自學課程依「章 › 節 › 項目」編排：每個項目引用一筆素材，類型由素材帶出；章、節、項目皆可調整順序，「第 N 章」「N-N」由系統自動編號。學員端「課程」頁顯示同一套章節，進度以項目為最小單位計算。總時長由影音素材自動加總，不可手動填寫。','Self-paced courses are arranged as Lesson › Section › Item. Each item links one asset and its type comes from the asset. Lessons, sections and items can all be reordered; “Lesson N” and “N-N” are numbered automatically. Students see the same outline on their Courses page, and progress is counted per item. Total duration is summed from media assets and cannot be typed in.')+'</div>';
+  if (!chs.length){
+    html += '<div class="note">'+TLI_I18N.t('目前尚未安排任何章，點右上角「＋新增章」建立第一章。','No lessons have been arranged yet. Click “＋ Add Lesson” at the top right to create the first one.')+'</div>';
   } else {
-    html += '<div id="unitList">' + units.map(function(u, idx){ return unitRowHtml(u, idx, units.length); }).join('') + '</div>';
+    html += '<div id="unitList">' + chs.map(function(ch, ci){ return chapterHtml(ch, ci, chs.length); }).join('') + '</div>';
   }
   html += '</div>';
+  html += resourcesHtml();
   host.innerHTML = html;
   if (window.TLI_I18N) TLI_I18N.refresh();
 }
-function unitRowHtml(u, idx, total){
-  var expanded = expandedUnitId === u.id;
-  var quiz = CONTENT_QUIZZES.find(function(q){return q.id===u.quizId;});
-  var video = videoById(u.videoId);
+function chapterHtml(ch, ci, total){
+  var open = !!openCh[ch.id];
+  var quiz = CONTENT_QUIZZES.find(function(q){return q.id===ch.quizId;});
   return '<div class="unit-card">' +
-    '<div class="unit-head" onclick="toggleUnitExpand(\''+u.id+'\')">' +
-      '<div class="unit-order">' +
-        '<button type="button" class="btn ghost sm" title="'+TLI_I18N.t('上移','Move up')+'" onclick="event.stopPropagation();moveUnit(\''+u.id+'\',-1)" '+(idx===0?'disabled':'')+'>▲</button>' +
-        '<button type="button" class="btn ghost sm" title="'+TLI_I18N.t('下移','Move down')+'" onclick="event.stopPropagation();moveUnit(\''+u.id+'\',1)" '+(idx===total-1?'disabled':'')+'>▼</button>' +
-      '</div>' +
-      '<div class="unit-title"><b>Lesson '+(idx+1)+'</b>　'+escHtml(u.title)+'</div>' +
-      '<div class="unit-meta small">'+approxMinutesLabel(video?video.duration:'')+'・'+TLI_I18N.t('影片：','Video: ')+(video?escHtml(video.name):TLI_I18N.t('尚未綁定','Not linked'))+'・'+TLI_I18N.t(u.materialIds.length+' 份教材',u.materialIds.length+' material'+(u.materialIds.length===1?'':'s'))+'・'+(quiz?TLI_I18N.t('已綁測驗','Quiz linked'):TLI_I18N.t('未綁測驗','No quiz linked'))+'　'+statusBadgeSimple(u.status)+'</div>' +
+    '<div class="unit-head" onclick="toggleCh(\''+ch.id+'\')">' +
+      ordBtns('moveChapter', ci, ci, total) +
+      '<span class="caret'+(open?' open':'')+'">▸</span>' +
+      '<div class="unit-title"><b>'+TLI_I18N.t('第 '+(ci+1)+' 章','Lesson '+(ci+1))+'</b>　'+escHtml(ch.title||ch.zh)+'</div>' +
+      '<div class="unit-meta small">'+TLI_I18N.t(ch.sections.length+' 節・'+chItemCount(ch)+' 個項目',ch.sections.length+' sections · '+chItemCount(ch)+' items')+'・'+minutesLabel(chDurSec(ch))+'・'+(quiz?TLI_I18N.t('已綁單元測驗','Unit quiz linked'):TLI_I18N.t('未綁單元測驗','No unit quiz'))+'　'+statusBadgeSimple(ch.status)+'</div>' +
       '<div class="unit-actions" onclick="event.stopPropagation()">' +
-        '<button type="button" class="btn ghost sm" onclick="copyUnit(\''+u.id+'\')">'+TLI_I18N.t('複製','Copy')+'</button> ' +
-        '<button type="button" class="btn ghost sm" onclick="removeUnit(\''+u.id+'\')">'+TLI_I18N.t('刪除','Delete')+'</button>' +
+        '<button type="button" class="btn ghost sm" onclick="copyChapter(\''+ch.id+'\')">'+TLI_I18N.t('複製','Copy')+'</button> ' +
+        '<button type="button" class="btn ghost sm" onclick="removeChapter(\''+ch.id+'\')">'+TLI_I18N.t('刪除','Delete')+'</button>' +
       '</div>' +
     '</div>' +
-    (expanded ? unitExpandHtml(u) : '') +
+    (open ? chapterBodyHtml(ch, ci) : '') +
   '</div>';
 }
-function unitExpandHtml(u){
+function chapterBodyHtml(ch, ci){
   var notLinkedLabel = TLI_I18N.t('未綁定','Not linked');
-  var videoOptions = '<option value=""'+(!u.videoId?' selected':'')+'>'+notLinkedLabel+'</option>' + CONTENT_VIDEOS.map(function(v){
-    return '<option value="'+v.id+'"'+(u.videoId===v.id?' selected':'')+'>'+escHtml(v.name)+'（'+v.duration+'）</option>';
-  }).join('');
-  var materialChips = CONTENT_MATERIALS.map(function(m){
-    var on = u.materialIds.indexOf(m.id)>-1;
-    return '<button type="button" class="fchip'+(on?' active':'')+'" onclick="toggleUnitResource(\''+u.id+'\',\'materialIds\',\''+m.id+'\')">'+escHtml(m.name)+'（'+m.pages+'）</button>';
-  }).join('');
   var quizOptions = '<option value="">'+notLinkedLabel+'</option>' + CONTENT_QUIZZES.map(function(q){
     var srcLabel = q.source==='wordwall' ? TLI_I18N.t('（Wordwall）','(Wordwall)') : TLI_I18N.t('（自建）','(Self-Built)');
-    return '<option value="'+q.id+'"'+(u.quizId===q.id?' selected':'')+'>'+escHtml(q.name)+srcLabel+'</option>';
+    return '<option value="'+q.id+'"'+(ch.quizId===q.id?' selected':'')+'>'+escHtml(q.name)+srcLabel+'</option>';
   }).join('');
   var condRadios = PASS_CONDITIONS.map(function(c){
-    return '<label class="small" style="margin-right:16px;display:inline-flex;align-items:center;gap:5px;margin-bottom:6px"><input type="radio" name="cond_'+u.id+'" value="'+c.v+'" '+(u.passCondition===c.v?'checked':'')+' onchange="onUnitCondChange(\''+u.id+'\',this.value)"> '+passCondLabel(c.v)+'</label>';
+    return '<label class="small" style="margin-right:16px;display:inline-flex;align-items:center;gap:5px;margin-bottom:6px"><input type="radio" name="cond_'+ch.id+'" value="'+c.v+'" '+(ch.passCondition===c.v?'checked':'')+' onchange="onChField(\''+ch.id+'\',\'passCondition\',this.value)"> '+passCondLabel(c.v)+'</label>';
   }).join('');
+  var secs = ch.sections.map(function(s, si){ return sectionHtml(ch, ci, s, si); }).join('');
   return '<div class="unit-body">' +
     '<div class="grid2">' +
-    '<div class="formrow"><label>'+TLI_I18N.t('Lesson 名稱','Lesson Name')+'</label><span class="req">*</span><input type="text" value="'+escAttr(u.title)+'" onchange="onUnitFieldChange(\''+u.id+'\',\'title\',this.value)"></div>' +
-    '<div class="formrow"><label>'+TLI_I18N.t('狀態','Status')+'</label><select onchange="onUnitFieldChange(\''+u.id+'\',\'status\',this.value)"><option value="已發布"'+(u.status==='已發布'?' selected':'')+'>'+TLI_I18N.t('已發布','Published')+'</option><option value="草稿"'+(u.status==='草稿'?' selected':'')+'>'+TLI_I18N.t('草稿','Draft')+'</option></select></div>' +
+    '<div class="formrow"><label>'+TLI_I18N.t('章標題','Lesson Title')+'</label><span class="req">*</span><input type="text" value="'+escAttr(ch.title||ch.zh)+'" onchange="onChField(\''+ch.id+'\',\'title\',this.value)"></div>' +
+    '<div class="formrow"><label>'+TLI_I18N.t('狀態','Status')+'</label><select onchange="onChField(\''+ch.id+'\',\'status\',this.value)"><option value="已發布"'+(ch.status==='已發布'?' selected':'')+'>'+TLI_I18N.t('已發布','Published')+'</option><option value="草稿"'+(ch.status==='草稿'?' selected':'')+'>'+TLI_I18N.t('草稿','Draft')+'</option></select></div>' +
     '</div>' +
-    '<div class="sectiontitle">'+TLI_I18N.t('教學影片（單選，來源：資源庫影片庫；每個 Lesson 綁定一支影片，時長依影片自動顯示）','Teaching Video (single select, source: Resource Library video collection; each Lesson links one video, duration shown automatically)')+'</div>' +
-    '<select onchange="onUnitFieldChange(\''+u.id+'\',\'videoId\',this.value)">'+videoOptions+'</select>' +
-    '<div class="sectiontitle">'+TLI_I18N.t('電子書／教材（可複選，來源：資源庫教材庫）','E-book / Materials (multi-select, source: Resource Library materials collection)')+'</div>' +
-    '<div class="chipgroup">'+materialChips+'</div>' +
+    '<div class="sectiontitle sec-bar"><span>'+TLI_I18N.t('節（共 '+ch.sections.length+' 節）','Sections ('+ch.sections.length+')')+'</span><button type="button" class="btn ghost sm" onclick="addSection(\''+ch.id+'\')">'+TLI_I18N.t('＋ 新增節','＋ Add Section')+'</button></div>' +
+    (secs || '<div class="note">'+TLI_I18N.t('本章還沒有節。','This lesson has no sections yet.')+'</div>') +
     '<div class="sectiontitle">'+TLI_I18N.t('單元測驗（單選，來源：測驗管理）','Unit Quiz (single select, source: Quiz Management)')+'</div>' +
-    '<select onchange="onUnitFieldChange(\''+u.id+'\',\'quizId\',this.value)">'+quizOptions+'</select>' +
+    '<select onchange="onChField(\''+ch.id+'\',\'quizId\',this.value)">'+quizOptions+'</select>' +
     '<div class="sectiontitle">'+TLI_I18N.t('通過條件','Pass Condition')+'</div>' +
     '<div>'+condRadios+'</div>' +
   '</div>';
 }
-function findUnit(id){
-  var list = PRODUCT_UNITS[S.id] || [];
-  return list.find(function(u){return u.id===id;});
+function sectionHtml(ch, ci, s, si){
+  var open = !!openSec[s.id];
+  var args = '\''+ch.id+'\','+si;
+  var items = s.items.map(function(it, ii){ return itemRowHtml(ch, s, it, ii); }).join('');
+  var typeOpts = ITEM_TYPES.map(function(t){ return '<option value="'+t.id+'">'+TLI_I18N.t(t.zh,t.en)+'</option>'; }).join('');
+  return '<div class="sec-card">' +
+    '<div class="sec-head">' +
+      ordBtns('moveSection', args, si, ch.sections.length) +
+      '<span class="caret'+(open?' open':'')+'" onclick="toggleSec(\''+s.id+'\')">▸</span>' +
+      '<b class="sec-no">'+(ci+1)+'-'+(si+1)+'</b>' +
+      '<input type="text" class="sec-title" value="'+escAttr(s.title||s.zh)+'" onchange="onSecTitle('+args+',this.value)" aria-label="'+TLI_I18N.t('節標題','Section title')+'">' +
+      '<span class="small sec-meta" onclick="toggleSec(\''+s.id+'\')">'+TLI_I18N.t(s.items.length+' 個項目',s.items.length+' items')+'</span>' +
+      '<button type="button" class="btn ghost sm" onclick="removeSection('+args+')">'+TLI_I18N.t('刪除','Delete')+'</button>' +
+    '</div>' +
+    (open ? '<div class="sec-body">' + (items || '<div class="note">'+TLI_I18N.t('本節還沒有項目；發佈前每節至少要有一個項目。','No items yet. Each section needs at least one item before publishing.')+'</div>') +
+      '<div class="item-add"><select id="addType_'+s.id+'">'+typeOpts+'</select><button type="button" class="btn ghost sm" onclick="addItem('+args+')">'+TLI_I18N.t('＋ 新增項目','＋ Add Item')+'</button><span class="small" style="color:var(--g500)">'+TLI_I18N.t('先選素材類型，再從資源庫挑素材','Pick an asset type, then choose an asset from the library')+'</span></div>' +
+    '</div>' : '') +
+  '</div>';
 }
-function toggleUnitExpand(id){
-  expandedUnitId = (expandedUnitId===id) ? null : id;
+function assetOptions(it){
+  var list;
+  if (it.type==='video') list = CONTENT_VIDEOS.map(function(v){ return v.name+'（'+v.duration+'）'; });
+  else if (it.type==='material') list = CONTENT_MATERIALS.map(function(m){ return m.name+'（'+m.pages+'）'; });
+  else if (it.type==='quiz') list = CONTENT_QUIZZES.map(function(q){ return q.name; });
+  else list = libItems(it.type);   /* 圖片／音頻／作業讀資源庫（TLI_MASTERS.resourceLibraries） */
+  if (it.asset && list.indexOf(it.asset)<0) list = [it.asset].concat(list);
+  return (it.asset ? '' : '<option value="">'+TLI_I18N.t('請選擇素材','Select an asset')+'</option>') + list.map(function(n){ return '<option value="'+escAttr(n)+'"'+(n===it.asset?' selected':'')+'>'+escHtml(n)+'</option>'; }).join('');
+}
+function itemRowHtml(ch, s, it, ii){
+  var args = '\''+ch.id+'\',\''+s.id+'\','+ii;
+  var meta = it.durSec ? fmtMmSs(it.durSec) : (it.pages ? TLI_I18N.t(it.pages+' 頁',it.pages+' pages') : '—');
+  return '<div class="item-row">' +
+    ordBtns('moveItem', '\''+ch.id+'\',\''+s.id+'\','+ii, ii, s.items.length) +
+    '<span class="badge type-badge">'+typeLabel(it.type)+'</span>' +
+    '<input type="text" class="item-title" value="'+escAttr(it.title||it.zh)+'" onchange="onItemField('+args+',\'title\',this.value)" aria-label="'+TLI_I18N.t('項目標題','Item title')+'">' +
+    '<select class="item-asset" onchange="onItemAsset('+args+',this.value)" aria-label="'+TLI_I18N.t('引用素材','Linked asset')+'">'+assetOptions(it)+'</select>' +
+    '<span class="small item-meta">'+meta+'</span>' +
+    '<label class="small item-pv"><input type="checkbox" '+(it.preview?'checked':'')+' onchange="onItemField('+args+',\'preview\',this.checked)"> '+TLI_I18N.t('開放試聽','Free preview')+'</label>' +
+    '<button type="button" class="btn ghost sm" onclick="removeItem('+args+')">'+TLI_I18N.t('移除','Remove')+'</button>' +
+  '</div>';
+}
+function findCh(id){ return outline().find(function(c){ return c.id===id; }); }
+function findSecIn(ch, sid){ return ch.sections.find(function(s){ return s.id===sid; }); }
+function chName(ch){ return ch.title||ch.zh; }
+function swap(arr, i, d){ var t=i+d; if (t<0||t>=arr.length) return false; var x=arr[i]; arr[i]=arr[t]; arr[t]=x; return true; }
+function toggleCh(id){ openCh[id] = !openCh[id]; renderContentTab(); }
+function toggleSec(id){ openSec[id] = !openSec[id]; renderContentTab(); }
+function setAllOpen(on){
+  openCh = {}; openSec = {};
+  outline().forEach(function(c){ openCh[c.id]=on; c.sections.forEach(function(s){ openSec[s.id]=on; }); });
   renderContentTab();
 }
-function onUnitFieldChange(id, field, value){
-  var u = findUnit(id);
-  if (!u) return;
+function onChField(id, field, value){
+  var ch = findCh(id); if (!ch) return;
   if (field==='title'){
     value = value.trim();
-    if (!value){ toast(TLI_I18N.t('Lesson 名稱不可留空','Lesson name cannot be blank')); renderContentTab(); return; }
+    if (!value){ toast(TLI_I18N.t('章標題不可留空','Lesson title cannot be blank')); renderContentTab(); return; }
   }
-  u[field] = value;
+  ch[field] = value;
   renderContentTab();
-  toast(TLI_I18N.t('已更新 Lesson 設定','Lesson settings updated'));
+  toast(TLI_I18N.t('已更新章設定','Lesson settings updated'));
 }
-function toggleUnitResource(id, field, resId){
-  var u = findUnit(id);
-  if (!u) return;
-  var arr = u[field];
-  var idx = arr.indexOf(resId);
-  if (idx>-1) arr.splice(idx,1); else arr.push(resId);
+function moveChapter(ci, d){ if (swap(outline(), ci, d)) renderContentTab(); }
+function addChapter(){
+  var ch = {id:newId('ch'), title:TLI_I18N.t('未命名章','Untitled Lesson'), status:'草稿', quizId:'', passCondition:'both', sections:[]};
+  outline().push(ch);
+  openCh[ch.id] = true;
   renderContentTab();
+  addHistoryRow('王大明', TLI_I18N.t('新增課程章「'+ch.title+'」','Added course lesson “'+ch.title+'”'));
+  toast(TLI_I18N.t('已新增章，請新增節與項目','Lesson added — please add sections and items'));
 }
-function onUnitCondChange(id, val){
-  var u = findUnit(id);
-  if (!u) return;
-  u.passCondition = val;
-  renderContentTab();
-}
-function moveUnit(id, delta){
-  var list = PRODUCT_UNITS[S.id];
-  var idx = list.findIndex(function(u){return u.id===id;});
-  var target = idx + delta;
-  if (idx===-1 || target<0 || target>=list.length) return;
-  var tmp = list[idx];
-  list[idx] = list[target];
-  list[target] = tmp;
-  renderContentTab();
-}
-function addUnit(){
-  var list = PRODUCT_UNITS[S.id] || (PRODUCT_UNITS[S.id]=[]);
-  var maxN = list.reduce(function(m,u){ var n=parseInt(u.id.replace('u',''),10)||0; return Math.max(m,n); }, 0);
-  var n = maxN+1;
-  var u = {id:'u'+n, title:TLI_I18N.t('未命名 Lesson','Untitled Lesson'), status:'草稿', videoId:'', materialIds:[], quizId:'', passCondition:'both'};
-  list.push(u);
-  expandedUnitId = u.id;
-  renderContentTab();
-  addHistoryRow('王大明', TLI_I18N.t('新增課程 Lesson「'+u.title+'」','Added course Lesson “'+u.title+'”'));
-  toast(TLI_I18N.t('已新增 Lesson，請設定內容','Lesson added — please configure its content'));
-}
-function copyUnit(id){
-  var list = PRODUCT_UNITS[S.id];
-  var idx = list.findIndex(function(u){return u.id===id;});
+function copyChapter(id){
+  var list = outline(), idx = list.findIndex(function(c){ return c.id===id; });
   if (idx===-1) return;
-  var src = list[idx];
-  var maxN = list.reduce(function(m,u){ var n=parseInt(u.id.replace('u',''),10)||0; return Math.max(m,n); }, 0);
-  var copy = {id:'u'+(maxN+1), title:src.title+TLI_I18N.t('（複製）',' (Copy)'), status:'草稿',
-    videoId:src.videoId, materialIds:src.materialIds.slice(), quizId:'', passCondition:src.passCondition};
-  list.splice(idx+1,0,copy);
+  var src = list[idx], copy = JSON.parse(JSON.stringify(src));
+  /* 複製產生的節與項目一律取得新 ID（4.4 SS-S3：項目 ID 不重用） */
+  copy.id = newId('ch'); copy.title = chName(src)+TLI_I18N.t('（複製）',' (Copy)'); copy.status = '草稿'; copy.quizId = '';
+  copy.sections.forEach(function(s){ s.id = newId('sec'); s.items.forEach(function(it){ it.id = newId('it'); }); });
+  list.splice(idx+1, 0, copy);
   renderContentTab();
-  addHistoryRow('王大明', TLI_I18N.t('複製課程 Lesson「'+src.title+'」','Copied course Lesson “'+src.title+'”'));
-  toast(TLI_I18N.t('已複製 Lesson「'+src.title+'」，請重新綁定單元測驗','Lesson “'+src.title+'” copied — please re-link its unit quiz'));
+  addHistoryRow('王大明', TLI_I18N.t('複製課程章「'+chName(src)+'」','Copied course lesson “'+chName(src)+'”'));
+  toast(TLI_I18N.t('已複製章「'+chName(src)+'」，請重新綁定單元測驗','Lesson “'+chName(src)+'” copied — please re-link its unit quiz'));
 }
-function removeUnit(id){
-  var list = PRODUCT_UNITS[S.id];
-  var idx = list.findIndex(function(u){return u.id===id;});
+function removeChapter(id){
+  var list = outline(), idx = list.findIndex(function(c){ return c.id===id; });
   if (idx===-1) return;
-  var u = list[idx];
-  if (!confirm(TLI_I18N.t('確定要刪除「'+u.title+'」？刪除後無法復原。','Delete “'+u.title+'”? This cannot be undone.'))) return;
+  var ch = list[idx];
+  /* 4.4 §2-2：移除前標明會一併移除的下層數量；只解除素材引用，不刪除資源庫素材 */
+  if (!confirm(TLI_I18N.t('確定要刪除「'+chName(ch)+'」？將一併移除 '+ch.sections.length+' 節、'+chItemCount(ch)+' 個項目（不會刪除資源庫中的素材）。刪除後無法復原。','Delete “'+chName(ch)+'”? This also removes '+ch.sections.length+' sections and '+chItemCount(ch)+' items (assets stay in the library). This cannot be undone.'))) return;
   list.splice(idx,1);
-  if (expandedUnitId===id) expandedUnitId = null;
   renderContentTab();
-  addHistoryRow('王大明', TLI_I18N.t('刪除課程 Lesson「'+u.title+'」','Deleted course Lesson “'+u.title+'”'));
-  toast(TLI_I18N.t('已刪除 Lesson「'+u.title+'」','Lesson “'+u.title+'” deleted'));
+  addHistoryRow('王大明', TLI_I18N.t('刪除課程章「'+chName(ch)+'」','Deleted course lesson “'+chName(ch)+'”'));
+  toast(TLI_I18N.t('已刪除章「'+chName(ch)+'」','Lesson “'+chName(ch)+'” deleted'));
+}
+function addSection(chId){
+  var ch = findCh(chId); if (!ch) return;
+  var s = {id:newId('sec'), title:TLI_I18N.t('未命名節','Untitled Section'), items:[]};
+  ch.sections.push(s);
+  openSec[s.id] = true;
+  renderContentTab();
+  toast(TLI_I18N.t('已新增節，請輸入節標題並新增項目','Section added — enter a title and add items'));
+}
+function moveSection(chId, si, d){ var ch = findCh(chId); if (ch && swap(ch.sections, si, d)) renderContentTab(); }
+function onSecTitle(chId, si, value){
+  var ch = findCh(chId); if (!ch) return;
+  value = value.trim();
+  if (!value){ toast(TLI_I18N.t('節標題不可留空','Section title cannot be blank')); renderContentTab(); return; }
+  ch.sections[si].title = value;
+  renderContentTab();
+  toast(TLI_I18N.t('已更新節標題','Section title updated'));
+}
+function removeSection(chId, si){
+  var ch = findCh(chId); if (!ch) return;
+  var s = ch.sections[si];
+  if (!confirm(TLI_I18N.t('確定要刪除節「'+(s.title||s.zh)+'」？將一併移除 '+s.items.length+' 個項目（不會刪除資源庫中的素材）。','Delete section “'+(s.title||s.zh)+'”? This also removes '+s.items.length+' items (assets stay in the library).'))) return;
+  ch.sections.splice(si,1);
+  renderContentTab();
+  toast(TLI_I18N.t('已刪除節','Section deleted'));
+}
+function addItem(chId, si){
+  var ch = findCh(chId); if (!ch) return;
+  var s = ch.sections[si], sel = document.getElementById('addType_'+s.id), type = sel ? sel.value : 'video';
+  var x = ITEM_TYPES.find(function(t){ return t.id===type; });
+  s.items.push({id:newId('it'), type:type, title:x ? TLI_I18N.t(x.zh,x.en) : type, asset:'', preview:false});
+  openSec[s.id] = true;
+  renderContentTab();
+  toast(TLI_I18N.t('已新增項目，請挑選素材','Item added — please choose an asset'));
+}
+function itemAt(chId, sid, ii){ var ch = findCh(chId); var s = ch && findSecIn(ch, sid); return s ? {s:s, it:s.items[ii]} : null; }
+function moveItem(chId, sid, ii, d){ var r = itemAt(chId, sid, ii); if (r && swap(r.s.items, ii, d)) renderContentTab(); }
+function onItemField(chId, sid, ii, field, value){
+  var r = itemAt(chId, sid, ii); if (!r) return;
+  if (field==='title'){ value = String(value).trim(); if (!value){ toast(TLI_I18N.t('項目標題不可留空','Item title cannot be blank')); renderContentTab(); return; } }
+  r.it[field] = value;
+  renderContentTab();
+}
+/* 更換素材：同一項目換素材不改項目 ID、不重置學員進度（4.4 §2-3）；影音時長由素材帶出 */
+function onItemAsset(chId, sid, ii, value){
+  var r = itemAt(chId, sid, ii); if (!r) return;
+  r.it.asset = value;
+  if (r.it.type==='video'){ var v = CONTENT_VIDEOS.find(function(x){ return value.indexOf(x.name)===0; }); if (v) r.it.durSec = durSecOf(v.duration); }
+  if (r.it.type==='material'){ var m = /共 (\d+) 頁/.exec(value); if (m) r.it.pages = parseInt(m[1],10); }
+  renderContentTab();
+  toast(TLI_I18N.t('已更換素材','Asset updated'));
+}
+function removeItem(chId, sid, ii){
+  var r = itemAt(chId, sid, ii); if (!r) return;
+  if (!confirm(TLI_I18N.t('確定要移除項目「'+(r.it.title||r.it.zh)+'」？只解除素材引用，不會刪除資源庫中的素材。','Remove item “'+(r.it.title||r.it.zh)+'”? Only the asset link is removed; the asset stays in the library.'))) return;
+  r.s.items.splice(ii,1);
+  renderContentTab();
+  toast(TLI_I18N.t('已移除項目','Item removed'));
+}
+
+/* ================= 課程層「教材資源」（20261110 新增，客戶 4.4 §2-5）=================
+   不在章節學習路徑上、不計入學習進度與完課；第一層只有一個「新增教材資源」入口，開啟後再選「掛載教材」或「從素材庫取用」。
+   兩種來源同一份清單、共同排序；移除只解除課程關聯，不刪除 4.8 教材或資源庫素材。
+   引用的教材被停用時保留關聯並警示，不阻擋發佈（4.4 §2-7）。示範資料讀 TLI_MASTERS.selfPacedResources。 */
+var PRODUCT_RESOURCES = {
+ skuC05: JSON.parse(JSON.stringify((TLI_MASTERS.selfPacedResources||{}).skuC05 || [])),
+ p_self02: []
+};
+/* 20261110 資源庫改四類：教材庫、作業庫、測驗庫合併為文件庫（key materials）；章節項目類型 homework／quiz 仍存在，素材改從文件庫挑 */
+var RES_LIB_KEY = {image:'images', video:'videos', audio:'audio', material:'materials', homework:'materials', quiz:'materials'};
+/* 教材資源「從素材庫取用」的類型＝資源庫四類（material 顯示為文件） */
+var RES_ASSET_TYPES = [{id:'image', zh:'圖片', en:'Image'}, {id:'video', zh:'影片', en:'Video'}, {id:'audio', zh:'音頻', en:'Audio'}, {id:'material', zh:'文件', en:'Document'}];
+function resTypeLabel(t){ var x = RES_ASSET_TYPES.find(function(y){return y.id===t;}); return x ? TLI_I18N.t(x.zh, x.en) : typeLabel(t); }
+var resAdd = null; /* 新增面板狀態：null＝收合；{src:'book'|'asset', type} */
+function resources(){ if (!PRODUCT_RESOURCES[S.id]) PRODUCT_RESOURCES[S.id] = []; return PRODUCT_RESOURCES[S.id]; }
+function bookById(id){ return TLI_MASTERS.materialBooks.find(function(b){ return b.id===id; }); }
+function bookTitle(b){ return b ? (b.titleZh + (b.titleEn ? '／'+b.titleEn : '')) : TLI_I18N.t('（找不到教材）','(Book not found)'); }
+function libItems(type){ var lib = TLI_MASTERS.resourceLibraries.find(function(l){ return l.key===RES_LIB_KEY[type]; }); return lib ? lib.items : []; }
+function resourcesHtml(){
+  var list = resources();
+  var rows = list.map(function(r, i){ return resRowHtml(r, i, list.length); }).join('');
+  return '<div class="card res-card">' +
+    '<div class="content-head"><h2 style="margin:0">'+TLI_I18N.t('教材資源','Course Resources')+'　<span class="small" style="font-weight:400">'+TLI_I18N.t('（共 '+list.length+' 筆）','('+list.length+')')+'</span></h2>' +
+    '<button class="btn ghost" onclick="toggleResAdd()">'+TLI_I18N.t('＋ 新增教材資源','＋ Add Resource')+'</button></div>' +
+    '<div class="desc" style="margin-bottom:10px">'+TLI_I18N.t('教材資源不列入學習進度計算。','Course resources do not count toward learning progress.')+' '+TLI_I18N.t('整門課共用：可混合掛載 4.8 教材與資源庫素材（四類皆可），兩種來源同一份清單排序；移除只解除課程關聯，不會刪除教材或素材。','Shared by the whole course: mix 4.8 books and library assets (all four types) in one ordered list. Removing only unlinks it from this course.')+'</div>' +
+    (resAdd ? resAddHtml() : '') +
+    (rows ? '<div class="res-list">'+rows+'</div>' : '<div class="note">'+TLI_I18N.t('尚未加入教材資源。','No course resources yet.')+'</div>') +
+  '</div>';
+}
+function resRowHtml(r, i, total){
+  var body, badge, warn = '';
+  if (r.kind==='book'){
+    var b = bookById(r.bookId);
+    badge = '<span class="badge type-badge">'+TLI_I18N.t('4.8 教材','4.8 Book')+'</span>';
+    var vers = b ? Object.keys(b.versions||{}).length : 0, auds = b ? (b.audios||[]).length : 0;
+    if (b && b.status==='停用') warn = '<span class="res-warn">'+TLI_I18N.t('教材已停用，前台取不到內容（不阻擋發佈）','Book is disabled; students cannot open it (publishing is not blocked)')+'</span>';
+    var opts = TLI_MASTERS.materialBooks.map(function(x){ return '<option value="'+x.id+'"'+(x.id===r.bookId?' selected':'')+'>'+escHtml(bookTitle(x))+(x.status==='停用'?TLI_I18N.t('（停用）',' (disabled)'):'')+'</option>'; }).join('');
+    body = '<div class="res-main"><b>'+escHtml(bookTitle(b))+'</b><span class="small" style="color:var(--g500)">'+TLI_I18N.t('前台標題沿用教材本身・'+vers+' 個檔案版本・'+auds+' 個音檔（版本由學生在前台選擇）','Uses the book’s own titles · '+vers+' file versions · '+auds+' audio tracks (students pick the version)')+'</span>'+warn+'</div>' +
+      '<select class="res-swap" onchange="onResSwap(\''+r.id+'\',this.value)" aria-label="'+TLI_I18N.t('更換教材','Change book')+'">'+opts+'</select>';
+  } else {
+    badge = '<span class="badge type-badge">'+resTypeLabel(r.type)+'</span>';
+    var items = libItems(r.type);
+    if (items.indexOf(r.asset)<0) items = [r.asset].concat(items);
+    var aopts = items.map(function(n){ return '<option value="'+escAttr(n)+'"'+(n===r.asset?' selected':'')+'>'+escHtml(n)+'</option>'; }).join('');
+    body = '<div class="res-main"><div class="res-titles">' +
+        '<input type="text" value="'+escAttr(r.zh||'')+'" placeholder="'+TLI_I18N.t('前台標題（繁中）','Front title (ZH)')+'" onchange="onResTitle(\''+r.id+'\',\'zh\',this.value)">' +
+        '<input type="text" value="'+escAttr(r.en||'')+'" placeholder="'+TLI_I18N.t('前台標題（英文）','Front title (EN)')+'" onchange="onResTitle(\''+r.id+'\',\'en\',this.value)">' +
+      '</div><span class="small" style="color:var(--g500)">'+TLI_I18N.t('素材名稱只供後台辨識','Asset name is for admins only')+'</span></div>' +
+      '<select class="res-swap" onchange="onResSwap(\''+r.id+'\',this.value)" aria-label="'+TLI_I18N.t('更換素材','Change asset')+'">'+aopts+'</select>';
+  }
+  return '<div class="res-row">' + ordBtns('moveRes', i, i, total) + badge + body +
+    '<button type="button" class="btn ghost sm" onclick="removeRes(\''+r.id+'\')">'+TLI_I18N.t('移除','Remove')+'</button></div>';
+}
+function resAddHtml(){
+  var src = resAdd.src, h = '<div class="res-add">';
+  h += '<div class="res-src"><label><input type="radio" name="resSrc" value="book" '+(src==='book'?'checked':'')+' onchange="setResSrc(\'book\')"> '+TLI_I18N.t('掛載教材（4.8 教材管理）','Mount a book (4.8 Materials)')+'</label>' +
+       '<label><input type="radio" name="resSrc" value="asset" '+(src==='asset'?'checked':'')+' onchange="setResSrc(\'asset\')"> '+TLI_I18N.t('從素材庫取用（四類皆可）','From the asset library (any of four types)')+'</label></div>';
+  if (src==='book'){
+    var used = resources().filter(function(r){ return r.kind==='book'; }).map(function(r){ return r.bookId; });
+    h += '<div class="res-fields"><select id="resBook">'+TLI_MASTERS.materialBooks.filter(function(b){ return used.indexOf(b.id)<0; }).map(function(b){ return '<option value="'+b.id+'">'+escHtml(bookTitle(b))+(b.status==='停用'?TLI_I18N.t('（停用）',' (disabled)'):'')+'</option>'; }).join('')+'</select></div>';
+  } else {
+    var tOpts = RES_ASSET_TYPES.map(function(t){ return '<option value="'+t.id+'"'+(t.id===resAdd.type?' selected':'')+'>'+TLI_I18N.t(t.zh,t.en)+'</option>'; }).join('');
+    h += '<div class="res-fields"><select id="resType" onchange="setResType(this.value)">'+tOpts+'</select>' +
+      '<select id="resAsset">'+libItems(resAdd.type).map(function(n){ return '<option value="'+escAttr(n)+'">'+escHtml(n)+'</option>'; }).join('')+'</select>' +
+      '<input type="text" id="resZh" placeholder="'+TLI_I18N.t('前台標題（繁中，必填）','Front title (ZH, required)')+'">' +
+      '<input type="text" id="resEn" placeholder="'+TLI_I18N.t('前台標題（英文）','Front title (EN)')+'"></div>';
+  }
+  h += '<div class="res-actions"><button type="button" class="btn ghost sm" onclick="toggleResAdd()">'+TLI_I18N.t('取消','Cancel')+'</button><button type="button" class="btn sm" onclick="confirmResAdd()">'+TLI_I18N.t('加入','Add')+'</button></div></div>';
+  return h;
+}
+function toggleResAdd(){ resAdd = resAdd ? null : {src:'book', type:'material'}; renderContentTab(); }
+function setResSrc(v){ resAdd.src = v; renderContentTab(); }
+function setResType(v){ resAdd.type = v; renderContentTab(); }
+function confirmResAdd(){
+  var list = resources(), r;
+  if (resAdd.src==='book'){
+    var sel = document.getElementById('resBook');
+    if (!sel || !sel.value){ toast(TLI_I18N.t('沒有可掛載的教材','No book available to mount')); return; }
+    r = {id:newId('res'), kind:'book', bookId:sel.value};
+  } else {
+    var zh = document.getElementById('resZh').value.trim();
+    if (!zh){ toast(TLI_I18N.t('請輸入前台標題','Enter a front title')); return; }
+    r = {id:newId('res'), kind:'asset', type:resAdd.type, asset:document.getElementById('resAsset').value, zh:zh, en:document.getElementById('resEn').value.trim()};
+  }
+  list.push(r);
+  resAdd = null;
+  renderContentTab();
+  addHistoryRow('王大明', TLI_I18N.t('新增教材資源','Added a course resource'));
+  toast(TLI_I18N.t('已加入教材資源','Resource added'));
+}
+function findRes(id){ return resources().find(function(r){ return r.id===id; }); }
+function moveRes(i, d){ if (swap(resources(), i, d)) renderContentTab(); }
+function onResSwap(id, v){
+  var r = findRes(id); if (!r) return;
+  if (r.kind==='book') r.bookId = v; else r.asset = v;   /* 更換素材不自動修改前台標題（4.4 §2-6） */
+  renderContentTab();
+  toast(TLI_I18N.t('已更換','Updated'));
+}
+function onResTitle(id, f, v){
+  var r = findRes(id); if (!r) return;
+  v = v.trim();
+  if (f==='zh' && !v){ toast(TLI_I18N.t('繁中前台標題不可留空','Chinese front title cannot be blank')); renderContentTab(); return; }
+  r[f] = v;
+}
+function removeRes(id){
+  var list = resources(), idx = list.findIndex(function(r){ return r.id===id; });
+  if (idx===-1) return;
+  var r = list[idx], name = r.kind==='book' ? bookTitle(bookById(r.bookId)) : (r.zh || r.asset);
+  if (!confirm(TLI_I18N.t('確定要移除「'+name+'」？只解除與本課程的關聯，不會刪除教材或資源庫素材。','Remove “'+name+'”? This only unlinks it from this course; the book or asset is not deleted.'))) return;
+  list.splice(idx,1);
+  renderContentTab();
+  toast(TLI_I18N.t('已移除教材資源','Resource removed'));
 }
 
 function findCategory(id){ return CATEGORIES.find(function(c){return c.id===id;}); }

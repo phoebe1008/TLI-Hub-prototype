@@ -75,6 +75,9 @@ button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible{ou
 .badge-type-chat{background:#F3E8FD;color:#6B21A8;}
 .badge-type-event{background:#FCEBDC;color:var(--c-accent-dark);}
 .hidden{display:none!important;}
+.demo-state{display:flex;align-items:center;justify-content:center;gap:6px;flex-wrap:wrap;margin:8px 0 0;font-size:12px;color:var(--c-muted);}
+.demo-state button{border:1px dashed var(--c-border);background:#fff;border-radius:14px;padding:3px 10px;font-size:12px;font-family:inherit;color:var(--c-muted);cursor:pointer;}
+.demo-state button.on{border-style:solid;border-color:var(--c-primary);color:var(--c-primary);font-weight:700;}
 .stack{display:flex;flex-direction:column;gap:8px;}
 .badge-row{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:8px;}
 .toast{position:fixed;left:50%;bottom:calc(var(--bottomnav-h) + 18px);transform:translateX(-50%);background:#101828;color:#fff;padding:10px 20px;border-radius:20px;font-size:13px;font-weight:700;z-index:120;box-shadow:var(--shadow-lg);white-space:nowrap;max-width:88vw;overflow:hidden;text-overflow:ellipsis;}
@@ -120,7 +123,7 @@ button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible{ou
     <div class="side-identity">Emma Johnson｜<span data-i18n="member.role.student">學員</span></div>
     <a class="side-link" href="m01_home.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11l9-8 9 8"/><path d="M5 10v10a1 1 0 001 1h3v-6h6v6h3a1 1 0 001-1V10"/></svg><span data-i18n="member.nav.home">首頁</span></a>
     <a class="side-link" href="m02_booking.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18M12 14v6M9 17h6"/></svg><span data-i18n="member.nav.booking">預約與報名</span></a>
-    <a class="side-link" href="m08_self_paced.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 3h6a4 4 0 014 4v14a3 3 0 00-3-3H2z"/><path d="M22 3h-6a4 4 0 00-4 4v14a3 3 0 013-3h7z"/></svg><span data-i18n="member.nav.learning">學習</span></a>
+    <a class="side-link" href="m08_self_paced.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 3h6a4 4 0 014 4v14a3 3 0 00-3-3H2z"/><path d="M22 3h-6a4 4 0 00-4 4v14a3 3 0 013-3h7z"/></svg><span data-i18n="member.nav.learning">我的課程</span></a>
     <a class="side-link active" href="m03_schedule.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg><span data-i18n="member.nav.schedule">課表</span></a>
     <a class="side-link" href="m18_learning_dashboard.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="4" y1="20" x2="20" y2="20"/><rect x="5" y="11" width="3" height="7" rx="1"/><rect x="10.5" y="6" width="3" height="12" rx="1"/><rect x="16" y="9" width="3" height="9" rx="1"/></svg><span data-en="Learning Dashboard">學習儀表板</span></a>
     <a class="side-link" href="m20_transcripts.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 3H7a2 2 0 00-2 2v14a2 2 0 002 2h10a2 2 0 002-2V8z"/><path d="M14 3v5h5"/><path d="M9 13h6M9 17h6"/></svg><span data-en="Transcripts">成績單</span></a>
@@ -135,6 +138,7 @@ button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible{ou
   </header>
 
   <main class="content">
+    <div style="margin-bottom:12px;"><button type="button" class="btn btn-outline btn-sm" id="backToScheduleBtn" onclick="" style="display:inline-flex;align-items:center;gap:6px;"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:14px;height:14px;"><path d="M15 18l-6-6 6-6"/></svg><span data-i18n="m16.btn.backToSchedule">回課表</span></button></div>
     <div class="card section-title first" style="margin-top:0;">
       <div class="badge-row"><span class="badge" id="typeBadge">－</span><span class="badge" id="planBadge">－</span></div>
       <div class="page-h" id="lessonTitle">－</div>
@@ -145,6 +149,8 @@ button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible{ou
 
     <div class="section-title" data-i18n="m16.section.classStatus">上課狀態</div>
     <div class="card" id="statusCard" style="text-align:center;"></div>
+    <!-- 原型示範用：切換上課狀態（正式版依開課時間自動判斷） -->
+    <div class="demo-state" id="demoState"></div>
 
     <div class="section-title" data-i18n="m16.section.prep">課前準備</div>
     <div class="card">
@@ -157,7 +163,8 @@ button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible{ou
       </div>
     </div>
 
-    <div class="card" style="margin-top:12px;">
+    <!-- 裝置檢查：使用者 2026-11-10 要求先拿掉，先隱藏保留（JS 仍引用這些 id） -->
+    <div class="card hidden" style="margin-top:12px;">
       <div style="display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:4px;">
         <h4 style="margin:0;font-size:13.5px;" data-i18n="m16.label.deviceCheck">裝置檢查</h4>
         <button type="button" class="btn btn-outline btn-sm" style="min-height:36px;padding:7px 12px;font-size:12.5px;" id="deviceCheckBtn" onclick="runDeviceCheck()">開始檢查</button>
@@ -184,17 +191,14 @@ button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible{ou
       <ul class="reminder-list" id="reminderList"></ul>
     </div>
 
-    <div class="stack" style="margin-top:18px;">
-      <button type="button" class="btn btn-outline btn-block" id="backToScheduleBtn" data-i18n="m16.btn.backToSchedule" onclick="">回課表</button>
-      <button type="button" class="btn btn-outline btn-block" data-i18n="m16.btn.contactAdvisor" onclick="location.href='m01_home.html'">有問題？聯繫顧問</button>
-    </div>
+    <!-- 「有問題？聯繫顧問」：使用者 2026-11-10 要求先拿掉；「回課表」移到頁面最上方 -->
   </main>
 
   <nav class="bottom-nav">
     <a href="m01_home.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11l9-8 9 8"/><path d="M5 10v10a1 1 0 001 1h3v-6h6v6h3a1 1 0 001-1V10"/></svg><span data-i18n="member.nav.home">首頁</span></a>
     <a href="m02_booking.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18M12 14v6M9 17h6"/></svg><span data-i18n="member.nav.booking">預約與報名</span></a>
     <a href="m03_schedule.html" class="active"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg><span data-i18n="member.nav.schedule">課表</span></a>
-    <a href="m08_self_paced.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 3h6a4 4 0 014 4v14a3 3 0 00-3-3H2z"/><path d="M22 3h-6a4 4 0 00-4 4v14a3 3 0 013-3h7z"/></svg><span data-i18n="member.nav.learning">學習</span></a>
+    <a href="m08_self_paced.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 3h6a4 4 0 014 4v14a3 3 0 00-3-3H2z"/><path d="M22 3h-6a4 4 0 00-4 4v14a3 3 0 013-3h7z"/></svg><span data-i18n="member.nav.learning">我的課程</span></a>
     <a href="m07_profile.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 4-7 8-7s8 3 8 7"/></svg><span data-i18n="member.nav.me">我的</span></a>
   </nav>
 </div>
@@ -302,6 +306,8 @@ if (TLI_PHASE.is('1A') && !qs('lesson') && !qs('sid') && window.TLI_PL) {
   if (TLI_PL.me().mode !== 'project') { _dq = 'sid=pr12&acct=ma03&' + _dq; }
   location.replace(location.pathname + '?' + _dq);
 }
+/* 依距開課分鐘數判斷狀態：開課前 15 分鐘開放進入（與狀態卡說明一致），場次 30 分鐘結束後為已結束 */
+function stateByMin(m){ return m > 15 ? 'before' : (m > -30 ? 'open' : 'ended'); }
 var LESSON_ID = qs('lesson');
 var LESSON = LESSONS.filter(function(l){ return l.id===LESSON_ID; })[0];
 /* Mandarin Lounge 預約（LB- 開頭）：由 localStorage 的預約組出課堂資料 */
@@ -310,11 +316,11 @@ if(!LESSON && window.TLI_PL){
   if(_bk){
     var _u = TLI_PL.me();
     var _p = _bk.tpTime ? _bk.tpTime : _bk.time;
-    var _mins = Math.max(0, Math.round((_bk.utc - TLI_PL.nowUtc)/60000));
+    var _raw = Math.round((_bk.utc - TLI_PL.nowUtc)/60000), _mins = Math.max(0, _raw);
     LESSON = { id:_bk.id, type:'chat', title:'Mandarin Lounge'+'（團體場次）'+(_bk.topic ? '：'+_bk.topic : ''), teacherName:_bk.teacher+(_bk.mode==='project'?'老師（TLI）':'老師（TLI）'), teacherIntro:'TLI 中心教師，帶領 30 分鐘口說練習。',
       planId:'plan-lounge', planName:_u.mode==='project' ? _u.projectName : 'Mandarin Lounge', payer:_u.mode==='project' ? 'project' : 'self', payerOrg:_u.mode==='project' ? _u.partnerName : '',
       dateLabel:_bk.date.slice(5).replace('-','/'), timeLabel:_bk.time+'–'+(function(t){var p=t.split(':');var m=(+p[0])*60+(+p[1])+30;return ('0'+Math.floor(m/60)%24).slice(-2)+':'+('0'+m%60).slice(-2);})(_bk.time),
-      tzLabel:null, material:'Mandarin Lounge 討論題綱（PDF）', countdownMin:_mins, defaultState:'before', replayEligible:false, tool:_bk.tool };
+      tzLabel:null, material:'Mandarin Lounge 討論題綱（PDF）', countdownMin:_mins, defaultState:stateByMin(_raw), replayEligible:false, tool:_bk.tool };
   }
 }
 if(!LESSON && LESSON_ID==='lounge' && window.TLI_PL){
@@ -323,11 +329,11 @@ if(!LESSON && LESSON_ID==='lounge' && window.TLI_PL){
   var _ls = _tsid ? TLI_PL.teacherSessions().filter(function(x){ return x.id===_tsid; })[0] : TLI_PL.sessionsFor(_lu).filter(function(x){ return x.type==='group'; })[0];
   var _lp = _ls && _ls.audience==='project';
   if(_ls){
-    var _lm = Math.max(0, Math.round((_ls.utc - TLI_PL.nowUtc)/60000));
+    var _lraw = Math.round((_ls.utc - TLI_PL.nowUtc)/60000), _lm = Math.max(0, _lraw);
     var _le = (function(t){var p=t.split(':');var m=(+p[0])*60+(+p[1])+30;return ('0'+Math.floor(m/60)%24).slice(-2)+':'+('0'+m%60).slice(-2);})(_ls.tpTime);
     LESSON = { id:'lounge', type:'chat', title:'Mandarin Lounge（團體）：'+_ls.topic, teacherName:_ls.teacher+(_lp?'老師（TLI）':'老師（TLI）'), teacherIntro:'TLI 中心教師，帶領 30 分鐘口說練習。',
       planId:'plan-lounge', planName:_lu.mode==='project' ? _lu.projectName : 'Mandarin Lounge', payer:'project', payerOrg:_lu.mode==='project' ? _lu.partnerName : '',
-      dateLabel:_ls.tpDate.slice(5).replace('-','/'), timeLabel:_ls.tpTime+'–'+_le, tzLabel:null, material:'Mandarin Lounge 討論題綱（PDF）', countdownMin:_lm, defaultState:'before', replayEligible:false, tool:_lu.tool };
+      dateLabel:_ls.tpDate.slice(5).replace('-','/'), timeLabel:_ls.tpTime+'–'+_le, tzLabel:null, material:'Mandarin Lounge 討論題綱（PDF）', countdownMin:_lm, defaultState:stateByMin(_lraw), replayEligible:false, tool:_lu.tool };
   }
 }
 LESSON = LESSON || LESSONS[0];
@@ -373,6 +379,20 @@ function renderStatus(){
     html += '</div>';
   }
   el.innerHTML = html;
+  renderDemoState();
+}
+/* 原型示範用：三態切換（開課前／可進入／已結束），同步更新網址 state 參數 */
+function renderDemoState(){
+  var box = document.getElementById('demoState'); if (!box) return;
+  var opts = [['before',T('開課前',{en:'Before class',ja:'開始前',de:'Vor Beginn'})],['open',T('可進入',{en:'Ready to join',ja:'入室可能',de:'Beitritt möglich'})],['ended',T('已結束',{en:'Ended',ja:'終了',de:'Beendet'})]];
+  box.innerHTML = '<span>'+T('示範狀態切換（原型用）',{en:'Demo state (prototype only)',ja:'デモ用状態切替',de:'Demo-Status (nur Prototyp)'})+'</span>' + opts.map(function(o){
+    return '<button type="button" class="'+(STATE===o[0]?'on':'')+'" onclick="setDemoState(\''+o[0]+'\')">'+o[1]+'</button>';
+  }).join('');
+}
+function setDemoState(v){
+  STATE = v;
+  try { var u = new URL(location.href); u.searchParams.set('state', v); history.replaceState(null, '', u.toString()); } catch(e){}
+  renderStatus();
 }
 
 /* ---------- 上課提醒：準時、開麥，第三條依方案付費方／型態不同 ---------- */

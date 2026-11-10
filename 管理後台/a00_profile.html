@@ -8,8 +8,9 @@
   後台個人設定（2026-11-05）。入口：各後台頁頂欄／側欄使用者選單的「個人設定」。兩個頁籤：個人資料、變更密碼，各自獨立儲存。
   變更密碼需輸入原密碼（原型不驗證原密碼是否正確）。用一次性密碼登入的人不在這裡改密碼，改走 a00_reset_password.html。
   欄位依使用者提供的舊系統個人設定截圖（登入ID、用戶名稱、學生端顯示名稱、角色、電話、信箱、WeChat、Line、WhatsApp、所屬分校、頭像）。
-  - 角色在此只讀：角色由「權限管理」（a09）指派，個人設定不能自行調整，避免自行提權；截圖中的可選角色雙欄選單未帶入。
-  - 密碼規則（長度、複雜度、是否不可與舊密碼相同）、頭像格式與大小限制、「學生端顯示名稱」對後台人員的用途：文件未定義，待確認。
+  - 角色在此只讀：角色由「帳號管理」（a09）指派，個人設定不能自行調整，避免自行提權；截圖中的可選角色雙欄選單未帶入。
+  - 密碼規則（2026-11-10 使用者指定）：至少 8 碼，大寫英文、小寫英文、數字、符號（只算半形符號）各至少 1 個；新密碼不可與舊密碼相同。
+  - 頭像格式與大小限制、「學生端顯示名稱」對後台人員的用途：文件未定義，待確認。
   - 示範資料：王大明（總公司管理者，a09 使用者 u1、a01 顧問 adv1 羅斯福校區）；儲存只寫 localStorage tliAdminProfile_v1，沒有後端。
   - 回後台：頂端「返回管理後台」，回到進來前的後台頁（同資料夾 a*.html 的 referrer），沒有則回 a02_products.html。
 -->
@@ -88,7 +89,7 @@ overflow:hidden;cursor:pointer;background:#fff;color:#C5CBD4;font-size:40px;}
         <div><input type="text" id="studentName"></div></div>
       <div class="fr"><label data-i18n="a00p.role">角色</label>
         <div><span class="chip" id="roleChip"></span>
-        <div class="hint" data-i18n="a00p.roleHint">角色由「權限管理」指派，無法在此修改。</div></div></div>
+        <div class="hint" data-i18n="a00p.roleHint">角色由「帳號管理」指派，無法在此修改。</div></div></div>
       <div class="fr"><label data-i18n="a00p.phone">電話</label>
         <div class="phone">
           <select id="phoneCode" aria-label="區碼">
@@ -121,7 +122,7 @@ overflow:hidden;cursor:pointer;background:#fff;color:#C5CBD4;font-size:40px;}
         <div><input type="password" id="pwOld" autocomplete="current-password"></div></div>
       <div class="fr"><label for="pw1"><span data-i18n="a00p.newPw">新密碼</span><span class="req">*</span></label>
         <div><input type="password" id="pw1" autocomplete="new-password">
-</div></div>
+          <div class="hint" data-i18n="a00p.pwRule">至少 8 碼，需含大寫英文、小寫英文、數字、符號各至少 1 個</div></div></div>
       <div class="fr"><label for="pw2" data-i18n="a00p.newPw2">確認新密碼</label>
         <div><input type="password" id="pw2" autocomplete="new-password"></div></div>
     </section>
@@ -145,7 +146,7 @@ Object.assign(TLI_I18N_DICT.en, {
 "a00p.name":"User name",
 "a00p.studentName":"Name shown to students",
 "a00p.role":"Role",
-"a00p.roleHint":"Roles are assigned in Permissions and cannot be changed here.",
+"a00p.roleHint":"Roles are assigned in Account Management and cannot be changed here.",
 "a00p.phone":"Phone",
 "a00p.email":"Email",
 "a00p.campus":"Campus",
@@ -153,6 +154,7 @@ Object.assign(TLI_I18N_DICT.en, {
 "a00p.avatarTitle":"Upload avatar",
 "a00p.secPw":"Change Password",
 "a00p.newPw":"New password",
+"a00p.pwRule":"At least 8 characters, with at least one uppercase letter, one lowercase letter, one number and one symbol",
 "a00p.newPw2":"Confirm new password",
 "a00p.tabProfile":"Profile",
 "a00p.tabPw":"Change Password",
@@ -225,12 +227,15 @@ Object.assign(TLI_I18N_DICT.en, {
     toast(t('已儲存','Saved'));
   };
 
+  var PW_RE = /^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[!-\/:-@\[-`{-~]).{8,}$/; /* 密碼規則（2026-11-10 使用者指定）：至少 8 碼，大寫英文、小寫英文、數字、符號各至少 1 個 */
   $('fpw').onsubmit = function(e){
     e.preventDefault();
     showErr('');
     var p1 = $('pw1').value, p2 = $('pw2').value;
     if(!$('pwOld').value){ showErr(t('請輸入原密碼','Please enter your current password')); return; }
     if(!p1){ showErr(t('請輸入新密碼','Please enter a new password')); return; }
+    if(!PW_RE.test(p1)){ showErr(t('密碼需至少 8 碼，且大寫英文、小寫英文、數字、符號各至少 1 個。','Use at least 8 characters with at least one uppercase letter, one lowercase letter, one number and one symbol.')); return; }
+    if(p1 === $('pwOld').value){ showErr(t('新密碼不可與原密碼相同','The new password must be different from your current password')); return; }
     if(p1 !== p2){ showErr(t('兩次輸入的新密碼不一致','The two new passwords do not match')); return; }
     $('pwOld').value = ''; $('pw1').value = ''; $('pw2').value = '';
     toast(t('密碼已更新','Password updated'));

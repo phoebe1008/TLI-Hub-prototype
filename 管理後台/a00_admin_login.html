@@ -8,7 +8,9 @@
   後台專屬登入頁（2026-11-05）。
   管理後台所有頁面的「登出」都導到這裡，與前台學員／老師登入（公開網站/p07_login_register.html）分開：
   - 本頁只給 TLI／新達的後台人員（例：總公司管理者）使用，沒有註冊、第三方登入、企業代碼登入、帳號開通。
-  - 帳號密碼驗證、是否強制雙重驗證：文件未定義，為待確認；本頁只示範畫面，任意非空輸入即視為登入成功。
+  - 帳號密碼驗證：文件未定義，為待確認；本頁只示範畫面，任意非空輸入即視為登入成功。
+  - 雙因子驗證碼（2026-11-10 依使用者要求加在密碼下方，與帳號密碼同一頁輸入、三欄皆必填）：驗證方式（驗證 App／Email／簡訊）、
+    碼長度、有效時間、錯誤幾次鎖定、首次登入如何綁定、「保持登入」是否可免輸入、忘記密碼流程是否也要驗證：文件均未定義，待確認（docs/04 權限管理）。
   - 忘記密碼（2026-11-05 依使用者說明，預設做法）：輸入 Email → 系統寄一次性密碼 → 輸入一次性密碼登入 → 導到
     a00_reset_password.html（單獨的重設密碼頁，不需原密碼），設好新密碼才進後台；個人設定的變更密碼才需要原密碼。一次性密碼的有效時間、長度、可重送次數、錯誤幾次鎖定：文件未定義，待確認。
   - 登入後預設進 a02_products.html，可用 ?next=頁面檔名 指定（只收同資料夾的 a*.html）。
@@ -62,7 +64,7 @@ padding:8px 10px;font-size:12.5px;margin-bottom:14px;}
   <h1 data-i18n="a00.foTitle" id="h1Fo" hidden>忘記密碼</h1>
   
   <form id="f" novalidate>
-    <div class="err" id="err" role="alert" data-i18n="a00.err">請輸入帳號與密碼</div>
+    <div class="err" id="err" role="alert" data-i18n="a00.err">請輸入帳號、密碼與雙因子驗證碼</div>
     <div class="field">
       <label for="acct" data-i18n="a00.acct">帳號（Email）</label>
       <input type="text" id="acct" autocomplete="username" placeholder="name@company.com">
@@ -73,6 +75,10 @@ padding:8px 10px;font-size:12.5px;margin-bottom:14px;}
         <input type="password" id="pw" autocomplete="current-password">
         <button type="button" id="pwToggle">顯示</button>
       </div>
+    </div>
+    <div class="field">
+      <label for="mfa" data-i18n="a00.mfa">雙因子驗證碼</label>
+      <input type="text" id="mfa" inputmode="numeric" autocomplete="one-time-code">
     </div>
     <div class="row">
       <label><input type="checkbox" id="remember"><span data-i18n="a00.remember">保持登入</span></label>
@@ -117,7 +123,8 @@ padding:8px 10px;font-size:12.5px;margin-bottom:14px;}
 Object.assign(TLI_I18N_DICT.en, {
 "a00.brand":"TLI Hub Admin",
 "a00.title":"Admin Sign In",
-"a00.err":"Please enter your account and password",
+"a00.err":"Please enter your account, password and two-factor code",
+"a00.mfa":"Two-factor code",
 "a00.foDesc1":"Enter your account email and we will send you a one-time password.",
 "a00.foTitle":"Forgot password",
 "a00.foSend":"Send one-time password",
@@ -188,7 +195,7 @@ Object.assign(TLI_I18N_DICT.en, {
 
   $('f').onsubmit = function(e){
     e.preventDefault();
-    if(!$('acct').value.trim() || !$('pw').value){
+    if(!$('acct').value.trim() || !$('pw').value || !$('mfa').value.trim()){
       $('err').classList.add('show');
       return;
     }

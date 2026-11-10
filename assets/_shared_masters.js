@@ -141,15 +141,15 @@ var videoTools = [
 
 /* ---- 8. 產品分類：固定五類（來源 a02「課程管理」；程度測驗已於 2026-10-05 客戶會議恢復為一階段 B，測驗走 a22 測驗管理，不掛產品分類） ---- */
 /* 產品分類的三個大類（固定；2026-11-08 使用者指示）：子分類（productCategories）各歸屬其一，order 為大類內的排序，三大類下都可自行新增子分類 */
-/* 資源庫六類的可選項目（供產品「使用資源」挑選用）。id 前綴與名稱沿用 a18 資源庫的示範資料（img／vid／aud／mat／hw／qz + 序號）；
+/* 資源庫四類的可選項目（供產品「使用資源」挑選用）。id 前綴與名稱沿用 a18 資源庫的示範資料（img／vid／aud／mat + 序號）；
+   20261110 使用者要求六類改四類：教材庫、作業庫、測驗庫合併為「文件庫」（key 沿用 materials、只收文件類檔案 PDF、DOC、DOCX、PPT、PPTX、ZIP），
+   原作業 4 筆、測驗 7 筆接在原教材 10 筆之後（mat10～mat20）；
    a18 目前仍自行產生這批資料，兩邊改名稱時要同步。這裡只放名稱，不含狀態、標籤等欄位。 */
 var resourceLibraries = [
  {key:'images', formats:'PNG,JPG,WebP,GIF',   label:'圖片庫', items:['L01 打招呼情境圖','數字 1–10 教學卡','台灣夜市場景圖','家庭成員關係圖','餐廳菜單示意圖','捷運站標示圖','天氣圖示組','節慶：中秋節主題圖','校園場景導覽圖','職業角色卡','量詞對照圖卡','問路方向指示圖'], prefix:'img'},
  {key:'videos', formats:'MP4,WebM,MOV',   label:'影片庫', items:['L03 點餐會話 講解','L05 問路情境 講解影片','聲調練習：一聲到四聲','TLI-CPT 模擬口說講解','老師講解：自我介紹','文化專題：端午節由來','初級語法動畫：是／不是','日常會話 Lv.2 總複習','商用會話：會議開場','旅遊華語：機場對話'], prefix:'vid'},
  {key:'audio', formats:'MP3,M4A,WAV,OGG',    label:'音頻庫', items:['L02 生詞朗讀音檔','聽力測驗 Lv.3 題組 A','四聲練習音檔','課文朗讀：第一冊 L01–L05','HSK 聽力模擬 第一套','TOCFL 聽力模擬 初級','繞口令練習音檔','新聞聽力：時事選讀','商用會話聽力：電話應對','兒童華語歌謠'], prefix:'aud'},
- {key:'materials', formats:'PDF,DOC,DOCX,PPT,PPTX,ZIP',label:'教材庫', items:['實用視聽華語 第一冊','新版實用視聽華語 第二冊','當代中文課程 第一冊','遠東生活華語 初級','TOCFL 模擬試題本 入門級','HSK 標準教程 三級','商務華語會話教材','兒童華語繪本 第一輯','文化專題選讀（中高級）','量詞與語法手冊'], prefix:'mat'},
- {key:'homework', formats:'PDF,PNG,JPG,WebP,GIF', label:'作業庫', items:['四聲練習','口語任務','寫作任務','口說錄音作業'], prefix:'hw'},
- {key:'quizzes', formats:'PDF,PNG,JPG,WebP,GIF',  label:'測驗庫', items:['L4 隨堂測驗','L5-1 隨堂測驗','用語測驗','發音辨識','結構練習','聽寫練習','總複習'], prefix:'qz'}
+ {key:'materials', formats:'PDF,DOC,DOCX,PPT,PPTX,ZIP',label:'文件庫', items:['實用視聽華語 第一冊','新版實用視聽華語 第二冊','當代中文課程 第一冊','遠東生活華語 初級','TOCFL 模擬試題本 入門級','HSK 標準教程 三級','商務華語會話教材','兒童華語繪本 第一輯','文化專題選讀（中高級）','量詞與語法手冊','四聲練習','口語任務','寫作任務','口說錄音作業','L4 隨堂測驗','L5-1 隨堂測驗','用語測驗','發音辨識','結構練習','聽寫練習','總複習'], prefix:'mat'}
 ];
 var productCategoryGroups = [
  {id:'g_course', name:'課程', order:1},
@@ -454,6 +454,79 @@ var quizzes = [
  {id:'qz_ww02', name:'商務會話綜合練習（Wordwall・隨機轉盤）', en:'Business Conversation Practice (Wordwall · Random Wheel)', source:'wordwall'}
 ];
 
+/* ---- 16b. 自學課程章節結構（20261110 新增）
+   依客戶 Connect 2.0 規格書 4.4 §2-1～2-3：課程 › 章（Lesson）› 節（Section）› 項目（Item），一個項目引用一筆素材；
+   「第 N 章」「N-N」是系統標示，不是資料欄位；進度以項目為最小單位往上彙總。
+   後台 a03「課程內容」與會員區自學課程（專案合作 _project_learning.js）讀同一份，前後台章節一致。
+   項目類型沿用 4.1 素材六類：圖片／影片／音頻／教材／作業／測驗。
+   章層的 quizId／passCondition 是 a03 既有的「單元測驗＋通過條件」設定（使用者 2026-11-10 決定先不動），前台目前不顯示測驗。
+   章節名稱、時長、頁數皆為示範資料。 ---- */
+var selfPacedItemTypes = [
+ {id:'image',    zh:'圖片', en:'Image'},
+ {id:'video',    zh:'影片', en:'Video'},
+ {id:'audio',    zh:'音頻', en:'Audio'},
+ {id:'material', zh:'教材', en:'Material'},
+ {id:'homework', zh:'作業', en:'Homework'},
+ {id:'quiz',     zh:'測驗', en:'Quiz'}
+];
+var SELF_PACED_OUTLINE_SRC = {
+ skuC05: [
+  ['發音與聲調','Pronunciation and Tones',[['四個聲調','The Four Tones'],['聲母與韻母','Initials and Finals'],['變調規則','Tone Changes']]],
+  ['問候與自我介紹','Greetings and Introductions',[['打招呼','Saying Hello'],['介紹自己','Introducing Yourself'],['介紹朋友','Introducing a Friend']]],
+  ['數字、日期與時間','Numbers, Dates and Time',[['數字 1～100','Numbers 1–100'],['日期與星期','Dates and Days of the Week'],['時間的說法','Telling the Time']]],
+  ['家人與朋友','Family and Friends',[['家庭成員','Family Members'],['描述外表與個性','Looks and Personality']]],
+  ['飲食與點餐','Food and Ordering',[['常見食物','Common Foods'],['在餐廳點餐','Ordering at a Restaurant'],['選擇口味','Choosing Flavors']]],
+  ['問路與交通','Directions and Transport',[['問路','Asking for Directions'],['搭乘大眾運輸','Taking Public Transport']]],
+  ['購物與價格','Shopping and Prices',[['詢問價格','Asking the Price'],['尺寸與顏色','Sizes and Colors'],['討價還價','Bargaining']]],
+  ['週末與計畫','Weekend and Plans',[['談論週末','Talking about the Weekend'],['邀約與安排','Making Plans']]]
+ ]
+};
+/* 展開成完整四層物件：每節示範兩個項目（教學影片＋學習講義），影片時長沿用原會員區公式（5:00～7:29） */
+function buildSelfPacedOutline(pid){
+  var src = SELF_PACED_OUTLINE_SRC[pid];
+  if (!src) return [];
+  return src.map(function(c, ci){
+    return {id:pid+'-c'+(ci+1), zh:c[0], en:c[1], status:'已發布', quizId:'qz_u'+(ci+1), passCondition:'both',
+      sections: c[2].map(function(s, si){
+        var base = pid+'-'+(ci+1)+'-'+(si+1), sec = 300 + ((ci*41 + (si+1)*37) % 150);
+        return {id:base, zh:s[0], en:s[1], items:[
+          {id:base+'-v', type:'video', zh:'教學影片', en:'Teaching video', asset:(ci+1)+'-'+(si+1)+' '+s[0]+'.mp4', durSec:sec, preview:(ci===0 && si===0)},
+          {id:base+'-m', type:'material', zh:'學習講義', en:'Study handout', asset:(ci+1)+'-'+(si+1)+' '+s[0]+' 講義.pdf', pages:2 + ((ci+si)%3), preview:false}
+        ]};
+      })
+    };
+  });
+}
+var selfPacedOutlines = { skuC05: buildSelfPacedOutline('skuC05') };
+/* 產品封面（20261110 新增，客戶 4.4 SS-C6）：桌機版 16:9、手機版 4:5 各一張；個別產品未設定（products[].coverDesktop／coverMobile）時，
+   帶入「產品類型預設圖」，不得空白或破圖。正式預設圖未到位前，系統先產生暫代圖——這裡以 SVG 產生，標示類型名稱。 */
+function productTypeCover(categoryId, variant){
+  var cat = (productCategories.filter(function(c){ return c.id === categoryId; })[0] || {}).name || '課程';
+  var m = variant === 'mobile', w = m ? 108 : 160, h = m ? 135 : 90, cx = w / 2, cy = h / 2 - (m ? 10 : 6);
+  var svg = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 '+w+' '+h+'"><defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#1B4E8C"/><stop offset="1" stop-color="#0F2F57"/></linearGradient></defs>' +
+    '<rect width="'+w+'" height="'+h+'" fill="url(#g)"/><circle cx="'+(w-14)+'" cy="14" r="26" fill="#ffffff" fill-opacity=".06"/>' +
+    '<g transform="translate('+(cx-14)+' '+(cy-11)+')" fill="none" stroke="#F2C94C" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 3h8a5 5 0 015 5v14a4 4 0 00-4-4H1z"/><path d="M27 3h-8a5 5 0 00-5 5v14a4 4 0 014-4h9z"/></g>' +
+    '<text x="'+cx+'" y="'+(cy+(m?28:24))+'" text-anchor="middle" font-family="sans-serif" font-size="'+(m?10:9)+'" font-weight="700" fill="#ffffff">'+cat+'</text>' +
+    '<text x="'+cx+'" y="'+(cy+(m?40:34))+'" text-anchor="middle" font-family="sans-serif" font-size="6" fill="#C7D7EE">類型預設封面</text></svg>';
+  return 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(svg);
+}
+function productCover(productId, variant){
+  var p = products.filter(function(x){ return x.id === productId; })[0];
+  var own = p && (variant === 'mobile' ? p.coverMobile : p.coverDesktop);
+  return own || productTypeCover(p ? p.categoryId : 'c_selfpace', variant);
+}
+/* 課程層「教材資源」（20261110 新增，客戶 4.4 §2-5）：不在章節學習路徑上、不計入學習進度與完課。
+   兩種來源同一份清單、共同排序：kind:'book' 掛載 4.8 教材（引用 materialBooks 的 id，前台標題沿用教材本身；版本由學生在前台選）；
+   kind:'asset' 從資源庫取用素材（type：image／video／audio／material；20261110 起資源庫為四類，material＝文件庫，舊的 homework／quiz 也對應文件庫），
+   另設這筆引用的前台標題 zh／en，素材名稱 asset 只供後台辨識。示範資料。 */
+var selfPacedResources = {
+ skuC05: [
+  {id:'skuC05-r1', kind:'book', bookId:'bk1'},
+  {id:'skuC05-r2', kind:'asset', type:'audio', asset:'四聲練習音檔', zh:'四聲跟讀練習（全課共用）', en:'Four-tone practice (whole course)'},
+  {id:'skuC05-r3', kind:'asset', type:'material', asset:'量詞與語法手冊', zh:'量詞與語法速查', en:'Measure words & grammar quick reference'}
+ ]
+};
+
 /* ---- 17. 組合包（20260930 新增，來源 a04「銷售方案設定」BUNDLES；供 a04／a08 對應組合包促銷下拉共用） ---- */
 var bundles = [
  {id:'bd1', name:'新生開學組合', en:'New Student Back-to-School Bundle', type:'bundle', salesMode:'direct', packages:['pk1','pk2'], discountPct:10, channel:['公開網站'], periodStart:'2026-09-01', periodEnd:'2027-02-28', status:'上架'},
@@ -571,8 +644,36 @@ projectRoster.forEach(function(r){
   if (r.status === '已啟用' && !r.activatedAt){ r.activatedAt = '2027-02-' + ('0' + (3 + (parseInt(String(r.id).replace(/\D/g, ''), 10) || 0) % 20)).slice(-2) + ' 10:' + ('0' + ((parseInt(String(r.id).replace(/\D/g, ''), 10) || 0) * 7 % 60)).slice(-2); }
 });
 
+/* ---- 22a. 教材語系（2026-11-10 新增；使用者要求教材「檔案版本」可再新增輔助語系（欄）與主語系（列））
+   使用者指示「先列幾種常見的語言」：以下 8 種是 AI 依常見語言列出，無文件依據；
+   可在 a17 基礎資料設定「教材語系」維護，教材編輯頁新增語系時也可手動輸入（會一併寫進這份清單）。
+   code 是檔案版本鍵的一部分（例：tc-en＝主語系 tc × 輔助語系 en）；tc／sc／en／ja 沿用原本的鍵，已使用的 code 不可改。
+   存 localStorage tliMaterialLangs_v1，寫入後呼叫 TLI_MASTERS.saveMaterialLangs()。 */
+var materialLangs = [
+ {code:'tc', name:'繁體中文', nameEn:'Traditional Chinese', abbr:'繁', enabled:true},
+ {code:'sc', name:'簡體中文', nameEn:'Simplified Chinese', abbr:'簡', enabled:true},
+ {code:'en', name:'英文', nameEn:'English', abbr:'EN', enabled:true},
+ {code:'ja', name:'日文', nameEn:'Japanese', abbr:'JP', enabled:true},
+ {code:'ko', name:'韓文', nameEn:'Korean', abbr:'KO', enabled:true},
+ {code:'de', name:'德文', nameEn:'German', abbr:'DE', enabled:true},
+ {code:'fr', name:'法文', nameEn:'French', abbr:'FR', enabled:true},
+ {code:'es', name:'西班牙文', nameEn:'Spanish', abbr:'ES', enabled:true}
+];
+var ML_KEY = 'tliMaterialLangs_v1';
+(function loadMaterialLangs(){
+  try {
+    var a = JSON.parse(global.localStorage.getItem(ML_KEY) || 'null');
+    if (Array.isArray(a) && a.length){ materialLangs.length = 0; a.forEach(function(x){ materialLangs.push(x); }); }
+  } catch(e){}
+})();
+function saveMaterialLangs(){
+  try { global.localStorage.setItem(ML_KEY, JSON.stringify(materialLangs)); } catch(e){}
+}
+
 /* ---- 22. 教材（2026-11-06 新增；來源：客戶 Connect 2.0 規格書 4.8-教材管理 與「教材管理編輯原型」；一階段 A）
    一筆教材＝一本書：多語標題（繁中、英文）＋檔案版本（字體 tc／sc × 輔助語言 en／ja，每格引用一個教材素材 PDF）＋全版本共用的附屬音檔。
+   20261110 使用者要求：標題語系增加到前台五種（titleZh 繁中、titleCn 簡中、titleEn 英文、titleJa 日文、titleDe 德文；音檔標題同）；
+   檔案版本的主語系（列）、輔助語系（欄）每本教材可自行增加：mainLangs（預設 ['tc','sc']）、auxLangs（預設 ['en','ja']），code 見 22a 教材語系。
    欄位：id、titleZh、titleEn、status（啟用／停用）、
          versions：{ 'tc-en':'檔名', ... } 鍵＝字體-輔助語言，值＝引用的教材素材（資源庫教材庫的檔名）；沒有的組合不寫鍵；
          audios：[{ id, titleZh, titleEn, lesson（書本課次，數字或空）, asset（引用的音頻素材檔名）, pages:{ 'tc-en':起始頁碼, ... } }]，
@@ -986,6 +1087,12 @@ global.TLI_MASTERS = {
   projects: projects,
   videoLibrary: videoLibrary,
   quizzes: quizzes,
+  selfPacedItemTypes: selfPacedItemTypes,
+  selfPacedOutlines: selfPacedOutlines,
+  selfPacedResources: selfPacedResources,
+  productTypeCover: productTypeCover,
+  productCover: productCover,
+  buildSelfPacedOutline: buildSelfPacedOutline,
   bundles: bundles,
   advisors: advisors,
   paymentMethods: paymentMethods,
@@ -995,6 +1102,8 @@ global.TLI_MASTERS = {
   byId: byId,
   materialBooks: materialBooks,
   saveMaterialBooks: saveMaterialBooks,
+  materialLangs: materialLangs,
+  saveMaterialLangs: saveMaterialLangs,
   reloadMaterialBooks: loadMaterialBooks,
   saveProjectData: saveProjectData,
   reloadProjectData: loadProjectData,

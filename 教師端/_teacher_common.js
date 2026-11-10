@@ -29,24 +29,24 @@
     var hist = PL.seedHistory(rid).concat(PL.myBookings(rid).filter(function(b){ return b.status==='booked'; }));
     var h = '<div class="flex-between" style="align-items:flex-start;"><div><h3 style="margin:0;font-size:17px;">'+PL.esc(r.name)+'</h3><div class="small muted">'+PL.esc(r.email)+'</div><div class="small muted">'+PL.esc(c.name)+'</div></div><span class="badge '+stBadge(r.status)+'">'+stLbl(r.status)+'</span></div>'+
       '<div class="kgrid"><div><span>'+T('完成率','Completion')+'</span><b>'+p.pct+'%</b></div><div><span>'+T('自學時數','Study hrs')+'</span><b>'+p.hours+'</b></div><div><span>'+T('最後學習','Last study')+'</span><b>'+lastTxt(p)+'</b></div><div><span>'+T('Lounge 本週','Lounge this week')+'</span><b>'+lg.used+'／'+lg.quota+'</b></div></div>'+
-      '<h4 class="dh">'+T('各單元進度','Progress by unit')+'</h4>'+
-      p.units.map(function(u,i){ return '<div class="urow"><span>'+(i+1)+' '+PL.esc(T(u.zh,u.en))+'</span><span class="small muted">'+u.done+'／'+u.lessons+'</span></div>'+bar(u.pct); }).join('')+
+      '<h4 class="dh">'+T('各章進度','Progress by lesson')+'</h4>'+
+      p.units.map(function(u,i){ return '<div class="urow"><span>'+PL.chapterLabel(i)+' '+PL.esc(T(u.zh,u.en))+'</span><span class="small muted">'+u.done+'／'+u.total+T(' 項',' items')+'</span></div>'+bar(u.pct); }).join('')+
       '<h4 class="dh">'+T('最近學習','Recent activity')+'</h4>'+
-      (p.recent.length ? p.recent.map(function(x){ return '<div class="recent-row"><span class="rr-date">'+PL.mdLabel(x.date)+'</span><span class="rr-unit">'+PL.esc(T(x.zh,x.en))+T(' 第 ',' L')+x.lesson+T(' 課','')+'</span><span class="rr-attend">'+x.minutes+T(' 分鐘',' min')+'</span></div>'; }).join('') : '<div class="small muted">'+T('尚無學習紀錄。','No study activity yet.')+'</div>')+
+      (p.recent.length ? p.recent.map(function(x){ return '<div class="recent-row"><span class="rr-date">'+PL.mdLabel(x.date)+'</span><span class="rr-unit">'+x.sec+' '+PL.esc(T(x.secZh,x.secEn))+'・'+PL.typeName(x.type)+'</span><span class="rr-attend">'+x.minutes+T(' 分鐘',' min')+'</span></div>'; }).join('') : '<div class="small muted">'+T('尚無學習紀錄。','No study activity yet.')+'</div>')+
       '<h4 class="dh">Mandarin Lounge（'+T('累計 ','total ')+lg.term+T(' 場',' sessions')+'）</h4>'+
       (hist.length ? hist.map(function(b){ return '<div class="recent-row"><span class="rr-date">'+PL.mdLabel(b.date)+'</span><span class="rr-unit">'+(b.type==='group'?T('團體','Group'):T('一對一','1-on-1'))+'・'+PL.esc(b.teacher)+'</span><span class="rr-attend">'+(b.status==='done'?T('已完成','Done'):T('已預約','Booked'))+'</span></div>'; }).join('') : '<div class="small muted">'+T('本月尚未使用。','Not used this month.')+'</div>')+
       '<div style="display:flex;gap:8px;margin-top:16px;flex-wrap:wrap;"><button class="btn btn-primary btn-sm" id="dwCsv">'+T('匯出個人報告','Export student report')+'</button><button class="btn btn-outline btn-sm" id="dwClose">'+T('關閉','Close')+'</button></div>';
     $('drawerBody').innerHTML = h; $('drawerOv').classList.remove('hidden');
     $('dwClose').onclick = closeDrawer;
     $('dwCsv').onclick = function(){
-      var rr = [[T('學生自學報告','Student learning report')],[T('姓名','Name'),r.name],['Email',r.email],[T('班級','Class'),c.name],[T('完成率','Completion'),p.pct+'%'],[T('自學時數','Study hours'),p.hours],[T('最後學習','Last study'),lastTxt(p)],[T('Lounge 本週','Lounge this week'),lg.used+'/'+lg.quota],[],[T('單元','Unit'),T('已完成','Done'),T('課數','Lessons'),T('完成率','Rate')]];
-      p.units.forEach(function(u,i){ rr.push([(i+1)+' '+T(u.zh,u.en),u.done,u.lessons,u.pct+'%']); });
+      var rr = [[T('學生自學報告','Student learning report')],[T('姓名','Name'),r.name],['Email',r.email],[T('班級','Class'),c.name],[T('完成率','Completion'),p.pct+'%'],[T('自學時數','Study hours'),p.hours],[T('最後學習','Last study'),lastTxt(p)],[T('Lounge 本週','Lounge this week'),lg.used+'/'+lg.quota],[],[T('章','Lesson'),T('已完成項目','Done'),T('項目數','Items'),T('完成率','Rate')]];
+      p.units.forEach(function(u,i){ rr.push([PL.chapterLabel(i)+' '+T(u.zh,u.en),u.done,u.total,u.pct+'%']); });
       PL.download('student_'+r.name.replace(/\s+/g,'_')+'_'+PL.today+'.csv', PL.csv(rr)); toast(T('個人報告已下載','Report downloaded'));
     };
   }
   function closeDrawer(){ $('drawerOv').classList.add('hidden'); }
   function exportRows(list, name){
-    var rr = [[T('班級','Class'),T('姓名','Name'),'Email',T('帳號狀態','Account'),T('完成率','Completion'),T('已完成課數','Lessons done'),T('自學時數','Study hours'),T('最後學習','Last study'),T('Lounge 本週已用','Lounge used this week'),T('Lounge 額度','Quota'),T('Lounge 累計','Lounge total')]];
+    var rr = [[T('班級','Class'),T('姓名','Name'),'Email',T('帳號狀態','Account'),T('完成率','Completion'),T('已完成項目','Items done'),T('自學時數','Study hours'),T('最後學習','Last study'),T('Lounge 本週已用','Lounge used this week'),T('Lounge 額度','Quota'),T('Lounge 累計','Lounge total')]];
     list.forEach(function(x){ rr.push([x.cls.name,x.r.name,x.r.email,stLbl(x.r.status),x.p.pct+'%',x.p.done+'/'+x.p.total,x.p.hours,lastTxt(x.p),x.lg.used,x.lg.quota,x.lg.term]); });
     PL.download(name+'_'+PL.today+'.csv', PL.csv(rr)); toast(T('報告已下載','Report downloaded'));
   }
