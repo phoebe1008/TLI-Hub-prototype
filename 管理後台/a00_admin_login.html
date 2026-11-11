@@ -64,6 +64,7 @@ padding:8px 10px;font-size:12.5px;margin-bottom:14px;}
   <h1 data-i18n="a00.foTitle" id="h1Fo" hidden>忘記密碼</h1>
   
   <form id="f" novalidate>
+    <div class="note" id="timeoutNote" role="status"></div>
     <div class="err" id="err" role="alert" data-i18n="a00.err">請輸入帳號、密碼與雙因子驗證碼</div>
     <div class="field">
       <label for="acct" data-i18n="a00.acct">帳號（Email）</label>
@@ -204,7 +205,16 @@ Object.assign(TLI_I18N_DICT.en, {
     location.href = target();
   };
 
-  if(window.TLI_I18N){ TLI_I18N.onRefresh(pwLabel); TLI_I18N.init(); }
+  /* 20261111：閒置自動登出（assets/_idle_logout.js）導回本頁時帶 ?timeout=<閒置分鐘數>，顯示原因 */
+  function timeoutNote(){
+    var tm = location.search.match(/[?&]timeout=(\d+)(&|$)/);
+    if(!tm) return;
+    var mins = tm[1];
+    $('timeoutNote').textContent = t('你已閒置超過 '+mins+' 分鐘，系統已自動登出，請重新登入。', 'You were inactive for more than '+mins+' minutes and have been signed out. Please sign in again.');
+    $('timeoutNote').classList.add('show');
+  }
+  timeoutNote();
+  if(window.TLI_I18N){ TLI_I18N.onRefresh(pwLabel); TLI_I18N.onRefresh(timeoutNote); TLI_I18N.init(); }
 })();
 </script>
 </body>

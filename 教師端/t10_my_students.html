@@ -123,10 +123,13 @@ button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible{ou
   .srow .s-st{grid-column:1/-1;}
   .srow .lab{display:block;}
 }
-.dw-ov{position:fixed;inset:0;background:rgba(16,24,40,.45);z-index:110;display:flex;justify-content:flex-end;}
+/* 學生自學歷程：20261111 使用者要求由右側抽屜改為置中彈窗 */
+.dw-ov{position:fixed;inset:0;background:rgba(16,24,40,.45);z-index:110;display:flex;align-items:center;justify-content:center;padding:20px;}
 .dw-ov.hidden{display:none;}
-.dw{background:#fff;width:100%;max-width:440px;height:100%;overflow-y:auto;padding:20px;box-shadow:var(--shadow-lg);}
-@media(max-width:640px){.dw-ov{align-items:flex-end;}.dw{max-width:100%;height:auto;max-height:88vh;border-radius:18px 18px 0 0;}}
+.dw{position:relative;background:#fff;width:100%;max-width:640px;max-height:88vh;overflow-y:auto;padding:24px;border-radius:14px;box-shadow:var(--shadow-lg);}
+.dw-x{position:absolute;top:12px;right:12px;width:32px;height:32px;border:none;background:none;border-radius:8px;font-size:20px;line-height:1;color:var(--gray-500,#6B7280);cursor:pointer;}
+.dw-x:hover{background:var(--gray-100,#F3F4F6);}
+@media(max-width:640px){.dw-ov{align-items:flex-end;padding:0;}.dw{max-width:100%;max-height:88vh;border-radius:18px 18px 0 0;}}
 .kgrid{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin:14px 0;}
 .kgrid div{background:var(--c-bg);border-radius:var(--radius-sm);padding:8px 10px;font-size:11.5px;color:var(--c-muted);}
 .kgrid b{display:block;font-size:15px;color:var(--c-text);}
@@ -241,5 +244,6 @@ PL.xl(document);
 </script>
 <script src="../assets/_phase_map.js"></script>
 <script src="../assets/_phase_switch.js"></script>
+<script src="../assets/_idle_logout.js"></script>
 </body>
 </html>

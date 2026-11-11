@@ -121,9 +121,6 @@ main{max-width:1120px;margin:0 auto;padding:44px 20px 60px;display:flex;justify-
 .role-pill{flex:1;border:1px solid var(--c-border);background:#fff;border-radius:8px;padding:10px;font-size:13.5px;font-weight:700;cursor:pointer;font-family:inherit;color:var(--c-muted);min-height:42px;}
 .role-pill.active{background:var(--c-primary);color:#fff;border-color:var(--c-primary);}
 .tab[disabled-look]{opacity:.5;}
-.staff-login-link{text-align:center;font-size:12px;margin-top:16px;}
-.staff-login-link a{color:var(--c-muted);}
-.staff-login-link a:hover{color:var(--c-primary);text-decoration:underline;}
 
 .success-card{display:none;text-align:center;padding:10px 0;}
 .success-card.show{display:block;}
@@ -255,6 +252,7 @@ main{max-width:1120px;margin:0 auto;padding:44px 20px 60px;display:flex;justify-
 
 <main>
   <div class="auth-wrap">
+    <div class="next-banner hidden" id="timeoutBanner" role="status"></div>
     <div class="next-banner hidden" id="nextBanner"></div>
     <div class="role-switch" id="roleSwitch">
       <button type="button" class="role-pill active" data-role="student" onclick="setRole('student')" data-i18n="p07_role_student">我是學生</button>
@@ -504,7 +502,6 @@ main{max-width:1120px;margin:0 auto;padding:44px 20px 60px;display:flex;justify-
       </div>
 
     </div>
-    <div class="staff-login-link"><a href="../顧問工作台/c01_today.html" data-i18n="p07_staff_login_link">後台人員登入</a></div>
   </div>
 </main>
 
@@ -650,6 +647,18 @@ function getNextTargetLabel(url){
   return dict.p07_next_target_generic;
 }
 function updateNextBanner(){
+  /* 20261111：閒置自動登出（assets/_idle_logout.js）導回本頁時帶 ?timeout=<閒置分鐘數>，顯示原因 */
+  var tb = document.getElementById('timeoutBanner');
+  if(tb){
+    var tm = location.search.match(/[?&]timeout=(\d+)(&|$)/);
+    if(tm){
+      var mins = tm[1];
+      tb.textContent = T('你已閒置超過 '+mins+' 分鐘，系統已自動登出，請重新登入。',{en:'You were inactive for more than '+mins+' minutes and have been signed out. Please sign in again.',ja:mins+' 分以上操作がなかったため、自動的にログアウトしました。もう一度ログインしてください。',de:'Sie waren über '+mins+' Minuten inaktiv und wurden automatisch abgemeldet. Bitte melden Sie sich erneut an.'});
+      tb.classList.remove('hidden');
+    } else {
+      tb.classList.add('hidden');
+    }
+  }
   var el = document.getElementById('nextBanner');
   if(!el) return;
   if(nextParam && isSafeNextUrl(nextParam)){
@@ -694,7 +703,6 @@ function showAuthSuccess(e, isRegisterFlow){
   document.getElementById('panelRegister').style.display = 'none';
   document.getElementById('panelSocialComplete').style.display = 'none';
   document.getElementById('panelRegisterTeacherNote').style.display = 'none';
-  document.getElementById('successCard').classList.add('show');
   var isTeacher = authRole === 'teacher';
   var dict = tliDict();
   var successLink = document.getElementById('successCardLink');
@@ -731,6 +739,12 @@ function showAuthSuccess(e, isRegisterFlow){
   if(!isTeacher && !isRegisterFlow && window.TLI_ACCT){
     var h=successLink.getAttribute('href'); successLink.setAttribute('href', h+(h.indexOf('?')>-1?'&':'?')+'acct='+encodeURIComponent(window.TLI_ACCT));
   }
+  /* 20261111：登入成功不顯示中間的「登入成功」卡片，直接導向目標頁（會員區／教師端／next／結帳頁） */
+  if(!isRegisterFlow){
+    location.href = successLink.getAttribute('href');
+    return false;
+  }
+  document.getElementById('successCard').classList.add('show');
   document.getElementById('successCardText').textContent = isTeacher ? dict.p07_success_text_teacher : dict.p07_success_text_student;
   document.getElementById('successCardBtnText').textContent = isTeacher ? dict.p07_success_btn_teacher : dict.p07_success_btn_student;
   return false;

@@ -407,6 +407,14 @@
     '.pj-ic,.pj-dn,.pj-td{display:inline-flex;flex:none}.pj-ic svg,.pj-dn svg,.pj-td svg{width:16px;height:16px}.pj-ic{color:var(--c-primary)}.pj-dn{color:#067647}.pj-td{color:var(--c-muted)}' +
     '.pj-tt{display:inline-flex;align-items:center;gap:6px;min-width:0}.pj-car{display:inline-flex;flex:none}.pj-car svg{width:14px;height:14px;transition:transform .15s}.pj-ch.open>.pj-top .pj-car svg,.pj-sec.open>.pj-sec-h .pj-car svg{transform:rotate(90deg)}' +
     '.pj-oh{display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap;margin:22px 0 10px}.pj-oh-b{display:flex;gap:6px}' +
+    '.pj-bkhead{display:flex;gap:20px;align-items:flex-start;flex-wrap:wrap}.pj-bcover{flex:none;width:130px;aspect-ratio:3/4;border-radius:6px;background:linear-gradient(170deg,#fff 0 70%,#2E7D5B 70%);border:1px solid var(--c-border);display:flex;flex-direction:column;justify-content:flex-start;gap:6px;padding:14px 12px;box-sizing:border-box;box-shadow:0 2px 6px rgba(16,24,40,.12)}.pj-bcover span{font-size:10px;color:var(--c-muted)}.pj-bcover b{font-size:15px;line-height:1.3}.pj-bcover small{font-size:9.5px;color:var(--c-muted)}' +
+    '.pj-binfo{flex:1;min-width:220px}.pj-binfo h2{margin:0 0 10px;font-size:20px}.pj-brow2{display:flex;align-items:center;gap:12px;margin-top:8px;font-size:13.5px}.pj-brow2>span{color:var(--c-muted);min-width:64px}.pj-seg{display:inline-flex;background:var(--c-bg);border-radius:8px;padding:3px}.pj-seg button{border:0;background:none;padding:5px 12px;border-radius:6px;font:inherit;font-size:13px;cursor:pointer;color:var(--c-muted)}.pj-seg button.on{background:#fff;color:var(--c-primary);font-weight:700;box-shadow:0 1px 2px rgba(16,24,40,.12)}' +
+    '.pj-btabs{display:flex;justify-content:space-between;align-items:flex-end;gap:10px;flex-wrap:wrap;border-bottom:1px solid var(--c-primary);margin:20px 0 10px}.pj-btabs span{padding:8px 16px;font-weight:700;color:var(--c-primary);border-bottom:2px solid var(--c-primary);margin-bottom:-1px}.pj-btabs .btn{margin-bottom:6px}.pj-btabs .btn svg,.pj-ebrow .btn svg{width:16px;height:16px;flex:none}' +
+    '.pj-eblist{padding:0;overflow:hidden}.pj-ebrow{display:flex;align-items:center;gap:14px;padding:14px 16px;border-top:1px solid var(--c-border);flex-wrap:wrap}.pj-ebrow:first-child{border-top:none}.pj-ebrow:nth-child(odd){background:var(--c-bg)}.pj-eb-l{min-width:110px;font-weight:700}.pj-eb-f{flex:1;min-width:140px;color:var(--c-muted);font-size:13px}' +
+    '.pj-reader{display:flex;gap:10px;background:#3A3A3A;border-radius:10px;padding:10px;height:520px}.pj-thumbs{flex:none;width:96px;overflow-y:auto;display:flex;flex-direction:column;gap:8px;padding-right:4px}.pj-th{border:2px solid transparent;background:#fff;border-radius:3px;aspect-ratio:3/4;cursor:pointer;display:flex;align-items:flex-end;justify-content:center;padding:4px;font-size:11px;color:var(--c-muted);flex:none}.pj-th.on{border-color:#F2C94C}' +
+    '.pj-pagewrap{flex:1;min-width:0;display:flex;flex-direction:column;gap:8px}.pj-page{flex:1;background:#fff;border-radius:4px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;text-align:center;padding:16px}.pj-page small{color:var(--c-muted)}.pj-page b{font-size:56px;color:#D0D5DD}.pj-page em{font-style:normal;font-size:12px;color:var(--c-muted)}.pj-pg-au{display:inline-flex;align-items:center;gap:6px;font-size:13px;color:var(--c-primary);font-weight:700}.pj-pg-au svg{width:16px;height:16px}.pj-pnav{display:flex;justify-content:space-between}' +
+    '.pj-abar{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-top:12px;background:#fff;border:1px solid var(--c-border);border-radius:10px;padding:10px 12px}.pj-aud{border:1px solid var(--c-border);border-radius:8px;padding:7px 8px;font:inherit;font-size:13px;background:#fff;max-width:260px}.pj-abtn{background:none;border:0;cursor:pointer;display:inline-flex;padding:4px;color:var(--c-text)}.pj-abtn svg{width:20px;height:20px}.pj-abar input[type=range]{flex:1;min-width:120px;accent-color:var(--c-primary)}#pjAtime{font-size:12px;color:var(--c-muted);white-space:nowrap}' +
+    '@media(max-width:639px){.pj-reader{height:420px}.pj-thumbs{width:60px}}' +
     '.pj-ver{border:1px solid var(--c-border);border-radius:8px;padding:6px 8px;font-size:12.5px;font-family:inherit;background:#fff;max-width:150px}' +
     '.pj-mk{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-top:10px}.pj-lesson.cur{background:#EFF8FF;outline:1px solid #B2DDFF}' +
     '.pj-toast{position:fixed;left:50%;bottom:90px;transform:translateX(-50%);background:#101828;color:#fff;padding:10px 20px;border-radius:20px;font-size:13px;font-weight:700;z-index:300}';
@@ -476,14 +484,59 @@
   }
   function mmss(sec) { sec = Math.round(sec); return Math.floor(sec / 60) + ':' + pad(sec % 60); }
   function fmtSize(n) { return n < 1024 ? n + ' B' : (n / 1024).toFixed(1) + ' KB'; }
-  /* 「教材」項目的示範下載檔：本節學習重點（中文基礎課取題庫詞句；佔位課程只放標題） */
+  /* 「教材」項目的示範下載檔：本節學習重點，下載為 PDF（使用者 2026-11-11 要求，原為 TXT）。
+     中文基礎課取題庫詞句；佔位課程只放標題。頁數＝項目設定的頁數，第 1 頁放學習重點，其餘為示範頁。 */
   function materialFile(C, ci, si) {
     var ch = C.chapters[ci], s = ch.sections[si], nm = (C.id === 'skuC05' ? 'Lesson' : 'Sample_Lesson') + (ci + 1) + '_Section' + (ci + 1) + '-' + (si + 1);
-    var head = '﻿' + courseName(C.id) + '\r\n' + chapterLabel(ci) + '　' + T(ch.zh, ch.en) + '\r\n' + secNo(ci, si) + '　' + T(s.zh, s.en) + T('　學習重點', '  key points') + '\r\n\r\n';
-    var body = (C.id === 'skuC05' && QBANK[ci]) ? lessonQuiz(ci, si + 1).map(function (x, i) { return (i + 1) + '. ' + x.key + '　=　' + x.ans.en + ' / ' + x.ans.zh; }).join('\r\n') + '\r\n' : T('（示範課程，內容待定）', '(Sample course — content TBD)') + '\r\n';
-    var f = { name: nm + '_handout.txt', fmt: 'TXT', text: head + body, mime: 'text/plain;charset=utf-8' };
-    f.size = fmtSize(new Blob([f.text]).size);
-    return f;
+    var mi = s.items.filter(function (x) { return x.type === 'material'; })[0];
+    var lines = (C.id === 'skuC05' && QBANK[ci]) ? lessonQuiz(ci, si + 1).map(function (x, i) { return (i + 1) + '. ' + x.key + '　＝　' + x.ans.en + '／' + x.ans.zh; }) : [T('（示範課程，內容待定）', '(Sample course — content TBD)')];
+    return { name: nm + '_handout.pdf', fmt: 'PDF', pages: (mi && mi.pages) || 1, course: courseName(C.id), chapter: chapterLabel(ci) + '　' + T(ch.zh, ch.en),
+      section: secNo(ci, si) + '　' + T(s.zh, s.en), heading: T('學習重點', 'Key points'), lines: lines };
+  }
+  /* 產生講義 PDF：每頁先用 canvas 繪製（可顯示中文），轉 JPEG 後包成 PDF（A4，DCTDecode 影像），不需外部套件 */
+  function handoutPageJpeg(f, p, total) {
+    var w = 1240, h = 1754, cv = document.createElement('canvas'); cv.width = w; cv.height = h;
+    var c = cv.getContext('2d'), font = '"Noto Sans TC","Microsoft JhengHei","PingFang TC",sans-serif', y;
+    function wrap(t, x, y0, maxW, lh) { var line = '', yy = y0; String(t).split('').forEach(function (ch) { if (c.measureText(line + ch).width > maxW && line) { c.fillText(line, x, yy); line = ch; yy += lh; } else { line += ch; } }); if (line) { c.fillText(line, x, yy); } return yy + lh; }
+    c.fillStyle = '#fff'; c.fillRect(0, 0, w, h);
+    c.fillStyle = '#1B4E8C'; c.fillRect(0, 0, w, 16);
+    c.fillStyle = '#667085'; c.font = '28px ' + font; c.fillText(f.course, 100, 120);
+    c.fillStyle = '#101828'; c.font = 'bold 40px ' + font; c.fillText(f.chapter, 100, 190);
+    c.font = 'bold 54px ' + font; c.fillText(f.section, 100, 270);
+    c.fillStyle = '#1B4E8C'; c.font = 'bold 34px ' + font; c.fillText(f.heading, 100, 360);
+    c.strokeStyle = '#E4E7EC'; c.lineWidth = 2; c.beginPath(); c.moveTo(100, 390); c.lineTo(w - 100, 390); c.stroke();
+    c.font = '32px ' + font; y = 460;
+    if (p === 1) { c.fillStyle = '#101828'; f.lines.forEach(function (t) { y = wrap(t, 100, y, w - 200, 50) + 16; }); }
+    else { c.fillStyle = '#98A2B3'; c.fillText(T('（示範頁面）', '(Sample page)'), 100, y); }
+    c.fillStyle = '#98A2B3'; c.font = '24px ' + font; c.fillText('TLI Connect', 100, h - 80); c.textAlign = 'right'; c.fillText(p + ' / ' + total, w - 100, h - 80);
+    var bin = atob(cv.toDataURL('image/jpeg', 0.85).split(',')[1]), u = new Uint8Array(bin.length);
+    for (var i = 0; i < bin.length; i++) { u[i] = bin.charCodeAt(i); }
+    return { data: u, w: w, h: h };
+  }
+  function pdfFromJpegs(pages) {
+    var chunks = [], len = 0, offs = [], n = pages.length, W = '595.28', H = '841.89', total = 2 + 3 * n;
+    function bytes(s) { var u = new Uint8Array(s.length); for (var i = 0; i < s.length; i++) { u[i] = s.charCodeAt(i) & 255; } return u; }
+    function put(x) { var u = typeof x === 'string' ? bytes(x) : x; chunks.push(u); len += u.length; }
+    function obj(num, body) { offs[num] = len; put(num + ' 0 obj\n'); body(); put('\nendobj\n'); }
+    put('%PDF-1.4\n%\xE2\xE3\xCF\xD3\n');
+    obj(1, function () { put('<< /Type /Catalog /Pages 2 0 R >>'); });
+    obj(2, function () { put('<< /Type /Pages /Kids [' + pages.map(function (_, k) { return (3 + 3 * k) + ' 0 R'; }).join(' ') + '] /Count ' + n + ' >>'); });
+    pages.forEach(function (pg, k) {
+      var pn = 3 + 3 * k, cn = 4 + 3 * k, im = 5 + 3 * k, cs = 'q ' + W + ' 0 0 ' + H + ' 0 0 cm /Im' + k + ' Do Q';
+      obj(pn, function () { put('<< /Type /Page /Parent 2 0 R /MediaBox [0 0 ' + W + ' ' + H + '] /Resources << /XObject << /Im' + k + ' ' + im + ' 0 R >> >> /Contents ' + cn + ' 0 R >>'); });
+      obj(cn, function () { put('<< /Length ' + cs.length + ' >>\nstream\n' + cs + '\nendstream'); });
+      obj(im, function () { put('<< /Type /XObject /Subtype /Image /Width ' + pg.w + ' /Height ' + pg.h + ' /ColorSpace /DeviceRGB /BitsPerComponent 8 /Filter /DCTDecode /Length ' + pg.data.length + ' >>\nstream\n'); put(pg.data); put('\nendstream'); });
+    });
+    var xref = len, i;
+    put('xref\n0 ' + (total + 1) + '\n0000000000 65535 f \n');
+    for (i = 1; i <= total; i++) { put(('0000000000' + offs[i]).slice(-10) + ' 00000 n \n'); }
+    put('trailer\n<< /Size ' + (total + 1) + ' /Root 1 0 R >>\nstartxref\n' + xref + '\n%%EOF');
+    return new Blob(chunks, { type: 'application/pdf' });
+  }
+  function handoutPdf(f) { var pgs = []; for (var p = 1; p <= f.pages; p++) { pgs.push(handoutPageJpeg(f, p, f.pages)); } return pdfFromJpegs(pgs); }
+  function downloadBlob(name, blob) {
+    var a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = name; document.body.appendChild(a); a.click();
+    setTimeout(function () { URL.revokeObjectURL(a.href); a.remove(); }, 500);
   }
   function itemState(rid, id) { var a = jget(LS_KEY, {}); return (a[rid] && a[rid][id]) || {}; }
   function saveItemState(rid, id, st) { var a = jget(LS_KEY, {}); if (!a[rid]) { a[rid] = {}; } a[rid][id] = st; jset(LS_KEY, a); }
@@ -504,6 +557,8 @@
     back: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M11 6l-6 6 6 6"/></svg>',
     next: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>'
   };
+  IC.book = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M2 4h6a4 4 0 014 4v13a3 3 0 00-3-3H2z"/><path d="M22 4h-6a4 4 0 00-4 4v13a3 3 0 013-3h7z"/></svg>';
+  IC.audio = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg>';
   IC.car = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg>';
   /* 項目類型圖示（4.1 素材六類） */
   var ICT = {
@@ -514,25 +569,73 @@
     homework: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20h4L19 9l-4-4L4 16z"/></svg>',
     quiz: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="3" width="16" height="18" rx="2"/><path d="M8 9l2 2 4-4M8 16h8"/></svg>'
   };
-  /* 課程層「教材資源」（客戶 4.4 §2-5）：整門課共用、不計入學習進度；4.8 教材由學生選版本（字體 × 輔助語言，用詞同 a25） */
+  /* 課程層「教材資源」（客戶 4.4 §2-5）：整門課共用、不計入學習進度。
+     20261111 使用者說明：教材分兩種——「資源教材」（資源庫素材，可下載）與「教材（電子書，4.8 教材）」：
+     電子書不能下載，點「閱讀」開電子書頁（漢字版本＋各輔助語言版本），選輔助語言後開閱讀畫面（上方電子書、下方可選附屬音檔）。
+     音檔清單依書本課次排序（4.8 TM-7）；選音檔後跳到該音檔在「目前版本」的起始頁（TM-8：頁碼是音檔 × 版本）。
+     示範限制：教材主檔沒有封面圖與總頁數 → 封面用暫代圖、總頁數用「最後一個音檔起始頁＋8（至少 24 頁）」示意；音檔時長亦為示範值。 */
   function verLabel(k) { var p = k.split('-'); return (p[0] === 'tc' ? T('繁體', 'Traditional') : T('簡體', 'Simplified')) + ' · ' + (p[1] === 'en' ? T('EN 輔助', 'EN support') : T('JP 輔助', 'JP support')); }
   function courseResources(C) { return C.placeholder ? [] : ((M.selfPacedResources || {})[C.id] || []); }
+  function bookById(id) { return (M.materialBooks || []).filter(function (x) { return x.id === id; })[0]; }
+  function scriptName(s) { return s === 'tc' ? T('繁體中文', 'Traditional Chinese') : T('簡體中文', 'Simplified Chinese'); }
+  function auxName(a) { return a === 'en' ? T('英語 English', 'English') : (a === 'ja' ? T('日語 Japanese', 'Japanese') : a); }
+  function bookScripts(b) { var out = []; Object.keys(b.versions || {}).forEach(function (k) { var s = k.split('-')[0]; if (out.indexOf(s) < 0) { out.push(s); } }); return out.sort(function (x, y) { return x === y ? 0 : (x === 'tc' ? -1 : 1); }); }
+  function bookAudios(b) { return (b.audios || []).map(function (a, i) { return { a: a, i: i }; }).sort(function (x, y) { return ((x.a.lesson || 999) - (y.a.lesson || 999)) || (x.i - y.i); }).map(function (x) { return x.a; }); }
+  function bookPages(b, ver) { var m = 0; (b.audios || []).forEach(function (a) { var p = (a.pages || {})[ver]; if (p > m) { m = p; } }); return Math.max(24, m + 8); }
+  function audioLen(a) { return 60 + (hash(a.id) % 60); }
+  function bookCoverHtml(b) { return '<div class="pj-bcover"><span>TLI</span><b>' + esc(b.titleZh) + '</b>' + (b.titleEn ? '<small>' + esc(b.titleEn) + '</small>' : '') + '</div>'; }
   function resourcesHtml(C) {
     var list = courseResources(C), h = '<div class="section-title">' + T('教材資源', 'Course resources') + '</div><div class="card"><p class="small muted" style="margin:0 0 6px">' + T('整門課共用的教材與素材，不列入學習進度計算。', 'Materials shared by the whole course. They do not count toward progress.') + '</p>';
     if (!list.length) { return h + '<p class="small muted" style="margin:0">' + T('這門課目前沒有教材資源。', 'This course has no resources yet.') + '</p></div>'; }
     list.forEach(function (r) {
       if (r.kind === 'book') {
-        var b = (M.materialBooks || []).filter(function (x) { return x.id === r.bookId; })[0]; if (!b || b.status === '停用') { return; }
-        var keys = Object.keys(b.versions || {}), auds = (b.audios || []).length;
-        h += '<div class="pj-file">' + ICT.material + '<div><b>' + esc(T(b.titleZh, b.titleEn || b.titleZh)) + '</b><small>' + T('教材', 'Textbook') + (auds ? T('・附 ' + auds + ' 個音檔', ' · ' + auds + ' audio tracks') : '') + '</small></div>' +
-          (keys.length ? '<select class="pj-ver" data-r="' + r.id + '" aria-label="' + T('選擇版本', 'Choose version') + '">' + keys.map(function (k) { return '<option value="' + k + '">' + verLabel(k) + '</option>'; }).join('') + '</select>' : '') +
-          '<button type="button" class="btn btn-outline btn-sm" data-pj="resdl" data-r="' + r.id + '" style="display:inline-flex;align-items:center;gap:6px"' + (keys.length ? '' : ' disabled') + '>' + IC.dl + T('下載', 'Download') + '</button></div>';
+        var b = bookById(r.bookId); if (!b || b.status === '停用') { return; }
+        var auds = (b.audios || []).length;
+        h += '<div class="pj-file">' + IC.book + '<div><b>' + esc(T(b.titleZh, b.titleEn || b.titleZh)) + '</b><small>' + T('電子書・線上閱讀', 'E-book · read online') + (auds ? T('・附 ' + auds + ' 個音檔', ' · ' + auds + ' audio tracks') : '') + '</small></div>' +
+          '<button type="button" class="btn btn-primary btn-sm" data-pj="book" data-r="' + r.id + '" style="display:inline-flex;align-items:center;gap:6px">' + T('閱讀', 'Read') + '</button></div>';
       } else {
         h += '<div class="pj-file">' + (ICT[r.type] || IC.file) + '<div><b>' + esc(T(r.zh, r.en || r.zh)) + '</b><small>' + typeName(r.type) + '</small></div>' +
           '<button type="button" class="btn btn-outline btn-sm" data-pj="resdl" data-r="' + r.id + '" style="display:inline-flex;align-items:center;gap:6px">' + IC.dl + T('下載', 'Download') + '</button></div>';
       }
     });
     return h + '</div>';
+  }
+  function resOf(u, rid) { return courseResources(courseById(u._cid)).filter(function (x) { return x.id === rid; })[0] || null; }
+  /* 電子書頁：漢字版本切換＋各輔助語言版本列（閱讀）；不提供電子書下載 */
+  function bookHtml(u) {
+    var B = u._book, r = resOf(u, B.rid), b = r && bookById(r.bookId); if (!b) { return ''; }
+    var scs = bookScripts(b), sc = (B.script && scs.indexOf(B.script) >= 0) ? B.script : scs[0], auds = bookAudios(b);
+    var keys = Object.keys(b.versions || {}).filter(function (k) { return k.split('-')[0] === sc; });
+    var h = '<div class="pj-bk"><button type="button" class="btn btn-outline btn-sm" data-pj="bookback" style="display:inline-flex;align-items:center;gap:6px">' + IC.back + T('返回課程內容', 'Back to course') + '</button></div>';
+    h += '<div class="card pj-bkhead">' + bookCoverHtml(b) + '<div class="pj-binfo"><h2>' + esc(T(b.titleZh, b.titleEn || b.titleZh)) + '</h2>' +
+      '<div class="pj-brow2"><span>' + T('漢字版本', 'Script') + '</span><div class="pj-seg">' + scs.map(function (s) { return '<button type="button" class="' + (s === sc ? 'on' : '') + '" data-pj="bscript" data-s="' + s + '">' + scriptName(s) + '</button>'; }).join('') + '</div></div>' +
+      '<div class="pj-brow2"><span>' + T('附屬音檔', 'Audio tracks') + '</span><b>' + auds.length + T(' 個', '') + '</b></div>' +
+      '<div class="pj-brow2"><span>' + T('使用課程', 'Used in') + '</span><b>' + esc(courseName(u._cid)) + '</b></div></div></div>';
+    h += '<div class="pj-btabs"><span class="on">' + T('電子書版', 'E-book') + '</span>' + (auds.length ? '<button type="button" class="btn btn-outline btn-sm" data-pj="mp3all" style="display:inline-flex;align-items:center;gap:6px">' + IC.dl + T('下載所有 MP3 錄音檔', 'Download all MP3 audio') + '</button>' : '') + '</div>';
+    h += '<div class="card pj-eblist">' + (keys.length ? keys.map(function (k) {
+      return '<div class="pj-ebrow"><span class="pj-eb-l">' + auxName(k.split('-')[1]) + '</span><span class="pj-eb-f">' + esc(b.versions[k]) + '</span><span class="small muted">P.1–' + bookPages(b, k) + '</span><button type="button" class="btn btn-primary btn-sm" data-pj="read" data-v="' + k + '">' + T('閱讀', 'Read') + '</button></div>';
+    }).join('') : '<p class="small muted" style="margin:0;padding:14px">' + T('這個漢字版本尚無電子書檔案。', 'No e-book file for this script yet.') + '</p>') + '</div>';
+    h += '<p class="small muted" style="margin:8px 2px 0">' + T('電子書僅提供線上閱讀，無法下載。選擇輔助語言版本後開始閱讀。', 'E-books are read online only and cannot be downloaded. Choose a support-language version to start reading.') + '</p>';
+    return h;
+  }
+  /* 閱讀畫面：上方電子書（左縮圖、右頁面），下方附屬音檔選單＋播放器 */
+  function readerHtml(u) {
+    var R = u._reader, r = resOf(u, R.rid), b = r && bookById(r.bookId); if (!b) { return ''; }
+    var ver = R.ver, p = ver.split('-'), auds = bookAudios(b), N = bookPages(b, ver), cur = auds[R.ai] || null, thumbs = '', i;
+    for (i = 1; i <= N; i++) { thumbs += '<button type="button" class="pj-th' + (i === R.page ? ' on' : '') + '" data-pj="pg" data-p="' + i + '"><span>' + i + '</span></button>'; }
+    var onPage = auds.filter(function (a) { return (a.pages || {})[ver] === R.page; });
+    var h = '<div class="pj-bk"><button type="button" class="btn btn-outline btn-sm" data-pj="readerback" style="display:inline-flex;align-items:center;gap:6px">' + IC.back + T('返回教材', 'Back to book') + '</button></div>';
+    h += '<div class="pj-ls-h"><div><h2>' + esc(T(b.titleZh, b.titleEn || b.titleZh)) + '</h2><small>' + scriptName(p[0]) + '・' + auxName(p[1]) + '</small></div><span class="badge badge-muted">' + T('第 ' + R.page + '／' + N + ' 頁', 'Page ' + R.page + ' of ' + N) + '</span></div>';
+    h += '<div class="pj-reader"><div class="pj-thumbs">' + thumbs + '</div><div class="pj-pagewrap"><div class="pj-page"><small>' + esc(b.titleZh) + '・' + esc(b.versions[ver]) + '</small><b>' + R.page + '</b>' +
+      (onPage.length ? '<span class="pj-pg-au">' + IC.audio + onPage.map(function (a) { return esc(T(a.titleZh, a.titleEn || a.titleZh)); }).join('、') + '</span>' : '') + '<em>' + T('示範頁面', 'Sample page') + '</em></div>' +
+      '<div class="pj-pnav"><button type="button" class="btn btn-outline btn-sm" data-pj="pgprev"' + (R.page <= 1 ? ' disabled' : '') + '>' + T('‹ 上一頁', '‹ Prev') + '</button><button type="button" class="btn btn-outline btn-sm" data-pj="pgnext"' + (R.page >= N ? ' disabled' : '') + '>' + T('下一頁 ›', 'Next ›') + '</button></div></div></div>';
+    h += '<div class="pj-abar">' + (auds.length ? '<select class="pj-aud" aria-label="' + T('選擇音檔', 'Choose audio') + '">' + auds.map(function (a, k) {
+      var pg = (a.pages || {})[ver];
+      return '<option value="' + k + '"' + (k === R.ai ? ' selected' : '') + '>' + (a.lesson ? 'L' + a.lesson + ' ' : '') + esc(T(a.titleZh, a.titleEn || a.titleZh)) + (pg ? '（P.' + pg + '）' : '') + '</option>';
+    }).join('') + '</select><button type="button" class="pj-abtn" data-pj="aplay" aria-label="' + T('播放', 'Play') + '">' + IC.play + '</button><input type="range" id="pjAseek" min="0" max="100" value="' + R.apct + '" aria-label="' + T('播放進度', 'Seek') + '"><span id="pjAtime"></span>' : '<span class="small muted">' + T('這本教材沒有附屬音檔。', 'This book has no audio tracks.') + '</span>') + '</div>';
+    if (cur && !(cur.pages || {})[ver]) { h += '<p class="small muted" style="margin:6px 2px 0">' + T('這個音檔在此版本沒有設定起始頁。', 'This track has no start page in this version.') + '</p>'; }
+    else if (auds.length) { h += '<p class="small muted" style="margin:6px 2px 0">' + T('選擇音檔後，會跳到該音檔在此版本的起始頁。', 'Choosing a track jumps to its start page in this version.') + '</p>'; }
+    return h;
   }
   function itemMeta(it) { return it.durSec ? mmss(it.durSec) : (it.pages ? T(it.pages + ' 頁', it.pages + ' pages') : ''); }
   function pjBuild(kind, u) {
@@ -687,7 +790,7 @@
             '<p class="small muted" style="margin:10px 0 0">' + (dn ? T('已看完這支影片，此項目已完成。', 'You have finished this video. This item is completed.') : T('播放到結尾，或拖曳進度條到結尾，即完成此項目。', 'Play to the end, or drag the bar to the end, to complete this item.')) + '</p></div>';
         } else if (it.type === 'material') {
           var f = materialFile(C, V.ci, V.si);
-          h += '<div class="card"><div class="pj-file">' + IC.file + '<div><b>' + esc(f.name) + '</b><small>' + f.fmt + '・' + f.size + (it.pages ? T('・' + it.pages + ' 頁', ' · ' + it.pages + ' pages') : '') + '</small></div><button type="button" class="btn btn-outline btn-sm" data-pj="dl" style="display:inline-flex;align-items:center;gap:6px">' + IC.dl + T('下載', 'Download') + '</button></div>' +
+          h += '<div class="card"><div class="pj-file">' + IC.file + '<div><b>' + esc(f.name) + '</b><small>' + f.fmt + T('・' + f.pages + ' 頁', ' · ' + f.pages + ' pages') + '</small></div><button type="button" class="btn btn-outline btn-sm" data-pj="dl" style="display:inline-flex;align-items:center;gap:6px">' + IC.dl + T('下載', 'Download') + '</button></div>' +
             '<div class="pj-mk">' + (dn ? '<span class="pj-cond ok">' + IC.ok + T('已完成', 'Completed') + '</span>' : '<button type="button" class="btn btn-outline btn-sm" data-pj="mark" data-it="' + ii + '">' + T('標記為已完成', 'Mark as completed') + '</button>') +
             '<span class="small muted">' + T('教材讀完後請自行標記完成。', 'Mark the handout as completed after you read it.') + '</span></div></div>';
         } else {
@@ -702,8 +805,27 @@
         (nx ? '<button type="button" class="btn btn-primary" data-pj="go" data-ci="' + nx.ci + '" data-si="' + nx.si + '">' + T('下一節', 'Next section') + IC.next + '</button>' : '<button type="button" class="btn btn-primary" disabled>' + T('已是最後一節', 'Last section') + '</button>') + '</div>';
       return h;
     }
+    /* 電子書閱讀畫面的音檔播放（示範：計時器推進進度，時長為示範值） */
+    var at = null;
+    function readerAudio() { var R = u._reader, r = R && resOf(u, R.rid), b = r && bookById(r.bookId); return b ? (bookAudios(b)[R.ai] || null) : null; }
+    function stopAud() { if (at) { clearInterval(at); at = null; } if (u._reader) { u._reader.playing = false; } }
+    function aUpdate() {
+      var R = u._reader, a = readerAudio(); if (!R || !a) { return; }
+      var tot = audioLen(a), sk = box.querySelector('#pjAseek'), tm = box.querySelector('#pjAtime'), bt = box.querySelector('[data-pj="aplay"]');
+      if (sk) { sk.value = R.apct; } if (tm) { tm.textContent = mmss(tot * R.apct / 100) + ' / ' + mmss(tot); }
+      if (bt) { bt.innerHTML = R.playing ? IC.pause : IC.play; bt.setAttribute('aria-label', R.playing ? T('暫停', 'Pause') : T('播放', 'Play')); }
+    }
+    function aToggle() {
+      var R = u._reader; if (!R || !readerAudio()) { return; }
+      if (R.playing) { stopAud(); aUpdate(); return; }
+      if (R.apct >= 100) { R.apct = 0; }
+      R.playing = true; aUpdate();
+      at = setInterval(function () { R.apct = Math.min(100, R.apct + 2); if (R.apct >= 100) { stopAud(); } aUpdate(); }, 300);
+    }
     function draw() {
       if (V) { stopVid(); box.innerHTML = sectionHtml(); vidUpdate(); }
+      else if (u._reader) { box.innerHTML = readerHtml(u); aUpdate(); var th = box.querySelector('.pj-th.on'); if (th && th.scrollIntoView) { th.parentNode.scrollTop = th.offsetTop - th.parentNode.offsetTop - 60; } }
+      else if (u._book) { box.innerHTML = bookHtml(u); }
       else { box.innerHTML = pjBuild(kind, u); }
       var tt = document.querySelector('.topbar-title'); if (tt) { tt.removeAttribute('data-i18n'); tt.removeAttribute('data-en'); tt.textContent = T(titles[kind][0], titles[kind][1]); }
     }
@@ -716,24 +838,42 @@
     if (kind === 'm08') { var qc = qs('course'); if (qc && COURSES.some(function (c) { return c.id === qc; })) { u._cid = qc; } }
     draw();
     if (g.TLI_I18N && g.TLI_I18N.onRefresh) { g.TLI_I18N.onRefresh(draw); }
+    box.addEventListener('input', function (e) { if (u._reader && e.target && e.target.id === 'pjAseek') { u._reader.apct = +e.target.value; aUpdate(); } });
+    /* 選音檔：跳到該音檔在目前版本的起始頁（4.8 TM-8），播放從頭開始 */
+    box.addEventListener('change', function (e) {
+      if (!u._reader || !e.target || !e.target.classList.contains('pj-aud')) { return; }
+      stopAud(); var R = u._reader; R.ai = +e.target.value; R.apct = 0;
+      var a = readerAudio(), pg = a && (a.pages || {})[R.ver]; if (pg) { R.page = pg; }
+      draw();
+    });
     box.addEventListener('input', function (e) { if (V && e.target && e.target.id === 'pjSeek') { V.pct = +e.target.value; if (V.pct >= 95 && V.pct < 100) { V.pct = 100; } if (V.pct >= 100) { stopVid(); doneItem(vidItem()); } else { vidUpdate(); } } });
     box.addEventListener('click', function (e) {
       var el = e.target.closest ? e.target.closest('[data-pj]') : null; if (!el) { return; }
       var a = el.getAttribute('data-pj');
-      if (a === 'course') { u._cid = el.getAttribute('data-c'); u._open = {}; draw(); window.scrollTo(0, 0); }
+      if (a === 'course') { u._cid = el.getAttribute('data-c'); u._open = {}; u._book = null; u._reader = null; draw(); window.scrollTo(0, 0); }
       else if (a === 'resume') { var cid = el.getAttribute('data-c'), it = nextOpenItem(u.rid, cid); if (it) { openSection(cid, it.ci, it.si); } }
-      else if (a === 'courses') { u._cid = null; draw(); window.scrollTo(0, 0); }
+      else if (a === 'courses') { u._cid = null; u._book = null; u._reader = null; draw(); window.scrollTo(0, 0); }
+      /* 電子書：教材資源「閱讀」→ 電子書頁 →（選輔助語言）閱讀畫面 */
+      else if (a === 'book') { u._book = { rid: el.getAttribute('data-r'), script: null }; u._reader = null; draw(); window.scrollTo(0, 0); }
+      else if (a === 'bookback') { u._book = null; draw(); var rt = [].filter.call(box.querySelectorAll('.section-title'), function (x) { return x.textContent === T('教材資源', 'Course resources'); })[0]; if (rt) { rt.scrollIntoView(); } }
+      else if (a === 'bscript') { u._book.script = el.getAttribute('data-s'); draw(); }
+      else if (a === 'mp3all') { var bb = bookById((resOf(u, u._book.rid) || {}).bookId); pjToast(T('示範：下載全部 ' + (bb.audios || []).length + ' 個 MP3 錄音檔', 'Demo: downloading all ' + (bb.audios || []).length + ' MP3 files')); }
+      else if (a === 'read') { u._reader = { rid: u._book.rid, ver: el.getAttribute('data-v'), page: 1, ai: 0, apct: 0, playing: false }; draw(); window.scrollTo(0, 0); }
+      else if (a === 'readerback') { stopAud(); u._reader = null; draw(); window.scrollTo(0, 0); }
+      else if (a === 'pg') { u._reader.page = +el.getAttribute('data-p'); draw(); }
+      else if (a === 'pgprev') { u._reader.page = Math.max(1, u._reader.page - 1); draw(); }
+      else if (a === 'pgnext') { u._reader.page += 1; draw(); }
+      else if (a === 'aplay') { aToggle(); }
       else if (a === 'tog') { var p = el.parentNode; p.classList.toggle('open'); u._open = u._open || {}; u._open[el.getAttribute('data-id')] = p.classList.contains('open'); }
       else if (a === 'expandall') { setAllOpen(true); }
       else if (a === 'collapseall') { setAllOpen(false); }
       else if (a === 'sec' || a === 'go') { openSection(V ? V.cid : u._cid, +el.getAttribute('data-ci'), +el.getAttribute('data-si')); }
       else if (a === 'back') { closeSection(); }
       else if (a === 'play') { playToggle(); }
-      else if (a === 'dl') { var fl = materialFile(curC(), V.ci, V.si); download(fl.name, fl.text, fl.mime); pjToast(T('已下載 ', 'Downloaded ') + fl.name); }
+      else if (a === 'dl') { var fl = materialFile(curC(), V.ci, V.si); downloadBlob(fl.name, handoutPdf(fl)); pjToast(T('已下載 ', 'Downloaded ') + fl.name); }
       else if (a === 'resdl') {
         var rid = el.getAttribute('data-r'), rr = courseResources(courseById(u._cid)).filter(function (x) { return x.id === rid; })[0]; if (!rr) { return; }
-        if (rr.kind === 'book') { var bk = (M.materialBooks || []).filter(function (x) { return x.id === rr.bookId; })[0], vs = box.querySelector('select.pj-ver[data-r="' + rid + '"]'), vk = vs ? vs.value : Object.keys(bk.versions)[0]; pjToast(T('示範：下載 ', 'Demo: downloading ') + bk.versions[vk] + '（' + verLabel(vk) + '）'); }
-        else { pjToast(T('示範：下載 ', 'Demo: downloading ') + T(rr.zh, rr.en || rr.zh)); }
+        pjToast(T('示範：下載 ', 'Demo: downloading ') + T(rr.zh, rr.en || rr.zh));   /* 只有資源教材（素材）可下載；電子書走「閱讀」 */
       }
       else if (a === 'mark') { doneItem(curSec().items[+el.getAttribute('data-it')]); }
       else if (a === 'save') { pjToast(T('已儲存', 'Saved')); }

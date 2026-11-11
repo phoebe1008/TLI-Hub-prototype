@@ -997,7 +997,7 @@ function edBarHtml(o){
     '<span class="small">'+T('產品狀態','Status')+'：</span><span class="badge '+cls+'">'+T(o.status, en)+'</span>' +
     (o.hasDraft ? '<span class="badge orange">'+T('有修改草稿','Pending edit draft')+'</span>' : '') +
     '<span id="'+o.saveId+'">'+o.saveHtml+'</span>' +
-    '<span style="margin-left:auto;display:flex;gap:8px"><button class="btn ghost sm" onclick="'+o.onPreview+'">'+T('前台預覽','Front-end preview')+'</button>' +
+    '<span style="margin-left:auto;display:flex;gap:8px"><button class="btn ghost sm" data-phase="1B" onclick="'+o.onPreview+'">'+T('前台預覽','Front-end preview')+'</button>' +
     '<button class="btn ghost sm" onclick="'+o.onSave+'">'+T('儲存草稿','Save draft')+'</button>' +
     '<button class="btn sm" onclick="'+o.onPublish+'">'+T('檢核並發佈','Check & publish')+'</button></span></div>';
 }
@@ -1174,7 +1174,7 @@ function clearProdFilter(){
    依據：客戶 Connect 2.0 規格書 4.4-自學課程-資料結構與後台管理.md「產品列表管理」與 Prototype/4.4-自學課程編輯原型.html 的列表。
    列表欄位：產品名稱（含封面縮圖與產品類型標示）、產品代碼、分級、內容摘要、狀態、最後更新（時間與操作者）、操作。
    狀態頁籤：全部／草稿／已發佈／封存；其他篩選：分級；搜尋涵蓋中英文名稱（含修改草稿名稱）與產品代碼。
-   外層操作：異動紀錄、前台預覽、編輯；「更多」：複製為新產品、捨棄修改草稿、刪除草稿、封存／解除封存（依狀態只顯示可用項目）。
+   外層操作：異動紀錄、前台預覽（20261111 使用者指定一階段 B，data-phase="1B"）、編輯；「更多」：複製為新產品、捨棄修改草稿、刪除草稿、封存／解除封存（依狀態只顯示可用項目）。
    列表之外，新增／編輯頁已於 2026-11-08 做在 a02_ss_editor.js（依客戶 4.4 編輯原型：四層結構、發佈檢核等）；「轉為歷史快照」尚未做；四層還是單元制未定（docs/08 Q-5）。
    示意資料來自 2.0 原型自己的樣本（原型標明「樣本資料為示意」），代碼、人名都不是真實資料；只存在記憶體，重新整理即還原。 */
 var SS_LEVELS = [['beginner','初級','Beginner'],['intermediate','中級','Intermediate'],['upper','中高級','Upper-intermediate'],['advanced','高級','Advanced']];
@@ -1277,7 +1277,7 @@ function renderSsTable(){
       '<td>'+ssLevelLabel(p.level)+'</td><td style="white-space:normal;min-width:150px;max-width:200px">'+escHtml(ssSummary(p))+'</td>' +
       '<td><span class="badge '+stCls[p.status]+'">'+T(p.status, stEn[p.status])+'</span>'+(p.draft?'<div style="margin-top:4px"><span class="badge orange">'+T('有修改草稿','Pending edit draft')+'</span></div>':'')+'</td>' +
       '<td>'+ssFmtTime(p.at)+'<small class="ss-sub2">'+escHtml(p.actor||'')+'</small></td>' +
-      '<td><div style="display:flex;flex-wrap:wrap;gap:4px;width:150px"><button class="btn ghost sm" onclick="ssAct(\'audit\',\''+p.id+'\')">'+T('異動紀錄','History')+'</button> <button class="btn ghost sm" onclick="ssAct(\'preview\',\''+p.id+'\')">'+T('前台預覽','Preview')+'</button> <button class="btn ghost sm" onclick="ssAct(\'edit\',\''+p.id+'\')">'+T('編輯','Edit')+'</button> <button class="btn ghost sm" onclick="event.stopPropagation();openSsMenu(this,\''+p.id+'\')" aria-label="'+T('更多操作','More actions')+'">⋯</button></div></td></tr>';
+      '<td><div style="display:flex;flex-wrap:wrap;gap:4px;width:150px"><button class="btn ghost sm" onclick="ssAct(\'audit\',\''+p.id+'\')">'+T('異動紀錄','History')+'</button> <button class="btn ghost sm" data-phase="1B" onclick="ssAct(\'preview\',\''+p.id+'\')">'+T('前台預覽','Preview')+'</button> <button class="btn ghost sm" onclick="ssAct(\'edit\',\''+p.id+'\')">'+T('編輯','Edit')+'</button> <button class="btn ghost sm" onclick="event.stopPropagation();openSsMenu(this,\''+p.id+'\')" aria-label="'+T('更多操作','More actions')+'">⋯</button></div></td></tr>';
   }).join('');
   el.innerHTML = '<div class="tablewrap"><table>'+head+rows+'</table></div>';
 }
@@ -1671,5 +1671,6 @@ document.addEventListener('click', function(ev){
 </script>
 <script src="../assets/_phase_map.js"></script>
 <script src="../assets/_phase_switch.js"></script>
+<script src="../assets/_idle_logout.js"></script>
 </body>
 </html>

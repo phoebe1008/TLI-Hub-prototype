@@ -775,7 +775,7 @@ function resourcesHtml(){
   return '<div class="card res-card">' +
     '<div class="content-head"><h2 style="margin:0">'+TLI_I18N.t('教材資源','Course Resources')+'　<span class="small" style="font-weight:400">'+TLI_I18N.t('（共 '+list.length+' 筆）','('+list.length+')')+'</span></h2>' +
     '<button class="btn ghost" onclick="toggleResAdd()">'+TLI_I18N.t('＋ 新增教材資源','＋ Add Resource')+'</button></div>' +
-    '<div class="desc" style="margin-bottom:10px">'+TLI_I18N.t('教材資源不列入學習進度計算。','Course resources do not count toward learning progress.')+' '+TLI_I18N.t('整門課共用：可混合掛載 4.8 教材與資源庫素材（四類皆可），兩種來源同一份清單排序；移除只解除課程關聯，不會刪除教材或素材。','Shared by the whole course: mix 4.8 books and library assets (all four types) in one ordered list. Removing only unlinks it from this course.')+'</div>' +
+    '<div class="desc" style="margin-bottom:10px">'+TLI_I18N.t('教材資源不列入學習進度計算。','Course resources do not count toward learning progress.')+' '+TLI_I18N.t('整門課共用：可混合加入教材（電子書，學生線上閱讀、不能下載）與資源庫素材（學生可下載），同一份清單排序；移除只解除課程關聯，不會刪除教材或素材。','Shared by the whole course: mix textbooks (e-books, read online only) and library assets (downloadable) in one ordered list. Removing only unlinks it from this course.')+'</div>' +
     (resAdd ? resAddHtml() : '') +
     (rows ? '<div class="res-list">'+rows+'</div>' : '<div class="note">'+TLI_I18N.t('尚未加入教材資源。','No course resources yet.')+'</div>') +
   '</div>';
@@ -784,7 +784,7 @@ function resRowHtml(r, i, total){
   var body, badge, warn = '';
   if (r.kind==='book'){
     var b = bookById(r.bookId);
-    badge = '<span class="badge type-badge">'+TLI_I18N.t('4.8 教材','4.8 Book')+'</span>';
+    badge = '<span class="badge type-badge">'+TLI_I18N.t('教材（電子書）','Textbook (e-book)')+'</span>';
     var vers = b ? Object.keys(b.versions||{}).length : 0, auds = b ? (b.audios||[]).length : 0;
     if (b && b.status==='停用') warn = '<span class="res-warn">'+TLI_I18N.t('教材已停用，前台取不到內容（不阻擋發佈）','Book is disabled; students cannot open it (publishing is not blocked)')+'</span>';
     var opts = TLI_MASTERS.materialBooks.map(function(x){ return '<option value="'+x.id+'"'+(x.id===r.bookId?' selected':'')+'>'+escHtml(bookTitle(x))+(x.status==='停用'?TLI_I18N.t('（停用）',' (disabled)'):'')+'</option>'; }).join('');
@@ -806,7 +806,7 @@ function resRowHtml(r, i, total){
 }
 function resAddHtml(){
   var src = resAdd.src, h = '<div class="res-add">';
-  h += '<div class="res-src"><label><input type="radio" name="resSrc" value="book" '+(src==='book'?'checked':'')+' onchange="setResSrc(\'book\')"> '+TLI_I18N.t('掛載教材（4.8 教材管理）','Mount a book (4.8 Materials)')+'</label>' +
+  h += '<div class="res-src"><label><input type="radio" name="resSrc" value="book" '+(src==='book'?'checked':'')+' onchange="setResSrc(\'book\')"> '+TLI_I18N.t('掛載教材（電子書，來自教材管理）','Mount a textbook (e-book, from Materials)')+'</label>' +
        '<label><input type="radio" name="resSrc" value="asset" '+(src==='asset'?'checked':'')+' onchange="setResSrc(\'asset\')"> '+TLI_I18N.t('從素材庫取用（四類皆可）','From the asset library (any of four types)')+'</label></div>';
   if (src==='book'){
     var used = resources().filter(function(r){ return r.kind==='book'; }).map(function(r){ return r.bookId; });
@@ -1223,5 +1223,6 @@ document.addEventListener('click', function(ev){
 </script>
 <script src="../assets/_phase_map.js"></script>
 <script src="../assets/_phase_switch.js"></script>
+<script src="../assets/_idle_logout.js"></script>
 </body>
 </html>
