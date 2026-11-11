@@ -255,12 +255,12 @@ main{max-width:1120px;margin:0 auto;padding:44px 20px 60px;display:flex;justify-
     <div class="next-banner hidden" id="timeoutBanner" role="status"></div>
     <div class="next-banner hidden" id="nextBanner"></div>
     <div class="role-switch" id="roleSwitch">
-      <button type="button" class="role-pill active" data-role="student" onclick="setRole('student')" data-i18n="p07_role_student">我是學生</button>
+      <button type="button" class="role-pill active" data-role="student" onclick="setRole('student')" data-i18n="p07_role_student">我是學員</button>
       <button type="button" class="role-pill" data-role="teacher" onclick="setRole('teacher')" data-i18n="p07_role_teacher">我是老師</button>
     </div>
     <div class="tabs">
       <button class="tab active" id="tabLogin" onclick="switchTab('login')" data-i18n="p07_tab_login">登入</button>
-      <button class="tab" id="tabRegister" onclick="switchTab('register')" data-i18n="p07_tab_register">註冊</button>
+      <button class="tab" id="tabRegister" onclick="switchTab('register')" data-i18n="p07_tab_register" data-phase="1B">註冊</button>
     </div>
     <div class="auth-card">
 
@@ -270,7 +270,7 @@ main{max-width:1120px;margin:0 auto;padding:44px 20px 60px;display:flex;justify-
           <button class="social-btn" onclick="fakeLogin()"><span class="social-badge badge-line">L</span><span data-i18n="p07_social_line_login">使用 LINE 繼續</span></button>
         </div>
         <div class="divider" data-i18n="p07_divider_email_login">或使用 Email 登入</div>
-        <div class="login-seg" role="tablist">
+        <div class="login-seg" role="tablist" data-phase="1B">
           <button type="button" class="seg on" id="lmEmail" onclick="setLoginMode('email')" data-en="Sign in with Email">Email 登入</button>
           <button type="button" class="seg" id="lmOrg" onclick="setLoginMode('org')" data-en="Sign in with company code">企業代碼登入</button>
         </div>
@@ -282,13 +282,14 @@ main{max-width:1120px;margin:0 auto;padding:44px 20px 60px;display:flex;justify-
               <div class="field-error" id="err_loginEmail"></div>
             </div>
             <div id="acctNote" class="acct-note" style="display:none;"></div>
-            <div class="field" id="emailPwField" style="display:none;">
+            <div class="field" id="emailPwField">
               <label for="loginPw" data-i18n="p07_label_password">密碼</label>
               <input type="password" id="loginPw" autocomplete="current-password" placeholder="請輸入密碼" data-i18n-placeholder="p07_ph_password">
               <div class="field-error" id="err_loginPw"></div>
             </div>
-            <div class="helper-link" id="emailHelper" style="display:none;"><a href="#" onclick="resetEmailLogin();return false;" data-en="Use a different email">更換 Email</a> ・ <a href="#" onclick="showToast(tliDict().p07_toast_forgot_password); return false;" data-i18n="p07_forgot_password">忘記密碼？</a></div>
-            <button type="submit" class="btn btn-primary btn-block" id="emailBtn"><span class="social-badge badge-mail" style="margin-right:4px;">@</span><span id="emailBtnText" data-en="Continue">繼續</span></button>
+            <div class="helper-link" id="emailHelper"><a href="#" onclick="showToast(tliDict().p07_toast_forgot_password); return false;" data-i18n="p07_forgot_password">忘記密碼？</a></div>
+            <!-- 20261111 使用者要求：Email 與密碼同時顯示、按鈕只留「登入」（拿掉 @ 圖示與「繼續」兩段式） -->
+            <button type="submit" class="btn btn-primary btn-block" id="emailBtn"><span id="emailBtnText" data-en="Sign in">登入</span></button>
           </form>
         </div>
         <div id="loginOrgBox" style="display:none;">
@@ -314,17 +315,9 @@ main{max-width:1120px;margin:0 auto;padding:44px 20px 60px;display:flex;justify-
             <button type="submit" class="btn btn-primary btn-block" data-en="Sign in">登入</button>
           </form>
         </div>
-        <div class="switch-note" style="margin-top:10px;"><a href="#" id="resendLink" onclick="toggleResendP07();return false;" data-en="Not activated yet? Resend the activation email">還沒開通？重新寄送開通信</a></div>
-        <div id="resendBoxP07" style="display:none;margin-top:12px;padding:14px;border:1px solid var(--c-border);border-radius:10px;background:var(--c-bg);">
-          <div class="field" style="margin-bottom:10px;">
-            <label for="resendEmailP07" data-en="Email on your school or program roster">名單上的 Email</label>
-            <input type="email" id="resendEmailP07" autocomplete="email" placeholder="you@example-state.edu">
-            <div class="field-error" id="err_resendP07"></div>
-          </div>
-          <button type="button" class="btn btn-primary btn-block" onclick="submitResendP07()" data-en="Send activation email">寄送開通信</button>
-          <div id="resendMsgP07" style="display:none;margin-top:10px;font-size:13px;color:#067647;line-height:1.6;"></div>
-        </div>
-        <div class="switch-note"><span data-i18n="p07_switch_to_register_text">還沒有帳號？</span><a href="#" onclick="switchTab('register');return false;" data-i18n="p07_switch_to_register_link">立即註冊</a></div>
+        <!-- 重新寄送開通信：直接用上方輸入的 Email 寄出，結果以彈窗顯示（使用者 2026-11-11 指示） -->
+        <div class="switch-note" style="margin-top:10px;"><a href="#" id="resendLink" onclick="resendP07();return false;" data-en="Not activated yet? Resend the activation email">還沒開通？重新寄送開通信</a></div>
+        <div class="switch-note" data-phase="1B"><span data-i18n="p07_switch_to_register_text">還沒有帳號？</span><a href="#" onclick="switchTab('register');return false;" data-i18n="p07_switch_to_register_link">立即註冊</a></div>
         <!-- 機構／專案合作建立的會員不必自行註冊，導引至開通頁 -->
         <div class="switch-note" style="margin-top:6px;"><a href="p13_activate.html" data-en="First sign-in or have an activation code?">首次登入／有啟用碼？前往帳號開通</a></div>
       </div>
@@ -505,6 +498,14 @@ main{max-width:1120px;margin:0 auto;padding:44px 20px 60px;display:flex;justify-
   </div>
 </main>
 
+<div class="modal-overlay" id="resendModalOverlay" onclick="if(event.target===this) closeResendModal()">
+  <div class="modal-box" style="max-width:420px;">
+    <div class="modal-head"><h3 id="resendModalTitle"></h3>
+      <button class="modal-close-btn" onclick="closeResendModal()" aria-label="關閉" data-i18n-aria-label="p07_close_aria"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button></div>
+    <div class="modal-body" id="resendModalBody" style="color:var(--c-text);"></div>
+    <div class="modal-foot"><button type="button" class="btn btn-primary" onclick="closeResendModal()" data-en="OK">確定</button></div>
+  </div>
+</div>
 <div class="modal-overlay" id="termsModalOverlay" onclick="if(event.target===this) closeTermsModal()">
   <div class="modal-box">
     <div class="modal-head">
@@ -676,6 +677,8 @@ function setRole(role){
   switchTab(currentTab);
 }
 function switchTab(name){
+  /* 註冊屬一階段 B；1A 檢視只有登入（帳號由開通產生，開通後需要登入） */
+  if (name==='register' && window.TLI_PHASE && !TLI_PHASE.atLeast('1B')) name = 'login';
   currentTab = name;
   document.getElementById('tabLogin').classList.toggle('active', name==='login');
   document.getElementById('tabRegister').classList.toggle('active', name==='register');
@@ -1105,29 +1108,60 @@ document.querySelectorAll('#registerForm input, #registerForm select, #socialCom
 <script src="../會員區/_project_learning.js"></script>
 <script>
 function T(zh,obj){ return TLI_I18N.t(zh,obj); }
-/* 開通信重寄：一律顯示同一句，不揭露 Email 是否在名單內；在名單且尚未開通者，換發 14 天有效的新連結 */
-function toggleResendP07(){
-  var box=document.getElementById('resendBoxP07'), open=box.style.display==='none';
-  box.style.display=open?'block':'none';
-  if(open){ var le=document.getElementById('loginEmail'); var ri=document.getElementById('resendEmailP07'); if(le&&le.value&&!ri.value) ri.value=le.value; try{ ri.focus(); }catch(e){} }
-}
-function submitResendP07(){
-  var v=document.getElementById('resendEmailP07').value.trim();
-  var err=document.getElementById('err_resendP07'), msg=document.getElementById('resendMsgP07');
-  if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v)){
-    err.textContent=T('請輸入正確的 Email 格式',{en:'Please enter a valid email address'}); err.classList.add('show'); msg.style.display='none'; return;
-  }
-  err.classList.remove('show'); err.textContent='';
+/* 開通信重寄（20261111 使用者指示改版）：直接用上方登入欄輸入的 Email 寄出，由後端判斷是否為學員帳號，結果以彈窗顯示：
+   - 學員帳號且尚未開通 → 換發 14 天有效的新連結，彈窗「已寄出開通信件」
+   - 不是學員帳號 → 彈窗「非學員帳號」
+   - 帳號已開通 → 彈窗提示並「前往登入」：開通後每次都在登入畫面輸入 Email＋密碼（使用者 2026-11-11 說明）
+   「我是老師」時判斷的是班級老師名單（名稱比照「非學員帳號」改為「非教師帳號」，待確認）。
+   注意：改版後會讓人能從回應得知某 Email 是否為帳號（原版刻意不揭露），見回覆說明。 */
+function resendLookupP07(v){
+  var em=v.toLowerCase(), wantRole = authRole==='teacher' ? '老師' : '學生';
   try{
     var PL=window.TLI_PL, r=PL&&PL.rosterByEmail(v);
-    if(r && r.status!=='已啟用' && r.status!=='連結已作廢'){
+    if(r && r.role===wantRole){
+      if(r.status==='已啟用') return 'active';
       r.status='已寄開通信'; r.sentAt=PL.today; r.expiresAt=PL.addDays(PL.today,14); r.linkToken='k'+Date.now().toString(36)+Math.floor(Math.random()*100);
       TLI_MASTERS.saveProjectData();
+      return 'sent';
     }
   }catch(e){}
-  msg.textContent=T('若此 Email 在名單內，我們會重新寄送開通信',{en:'If this email is on the roster, we will send the activation email again.'});
-  msg.style.display='block';
-  showToast(T('已送出',{en:'Submitted'}));
+  if(authRole!=='teacher'){
+    var a=(TLI_MASTERS.memberAccounts||[]).filter(function(x){ return String(x.email||'').toLowerCase()===em; })[0];
+    if(a){
+      if(a.activationStatus==='已啟用') return 'active';
+      a.activationStatus='已寄通知'; a.sentAt=new Date().toISOString().slice(0,16).replace('T',' ');
+      if(TLI_MASTERS.saveMemberData) TLI_MASTERS.saveMemberData();
+      return 'sent';
+    }
+  }
+  return 'none';
+}
+function openResendModal(title, body, toLogin){
+  document.getElementById('resendModalTitle').textContent=title;
+  document.getElementById('resendModalBody').innerHTML=body;
+  /* 已開通：按鈕改為「前往登入」，關閉後直接進到輸入密碼 */
+  var btn=document.querySelector('#resendModalOverlay .modal-foot .btn');
+  btn.textContent = toLogin ? T('前往登入',{en:'Go to sign in'}) : T('確定',{en:'OK'});
+  btn.onclick = function(){ closeResendModal(); if(toLogin){ try{ lgId('loginPw').focus(); }catch(e){} } };
+  document.getElementById('resendModalOverlay').classList.add('show');
+}
+function closeResendModal(){ document.getElementById('resendModalOverlay').classList.remove('show'); }
+function resendP07(){
+  var inp=document.getElementById('loginEmail'), v=(inp&&inp.value||'').trim(), err=document.getElementById('err_loginEmail');
+  if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v)){
+    err.textContent=T('請先在上方輸入 Email，再點「重新寄送開通信」',{en:'Enter your email above first, then select “Resend the activation email”.'}); err.classList.add('show');
+    try{ inp.focus(); }catch(e){} return;
+  }
+  err.classList.remove('show'); err.textContent='';
+  var res=resendLookupP07(v), safe=v.replace(/[&<>"]/g,function(c){ return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]; });
+  if(res==='sent'){
+    openResendModal(T('已寄出開通信件',{en:'Activation email sent'}), T('開通信已寄到 <b>'+safe+'</b>，連結 14 天內有效。請到信箱點選連結完成開通。',{en:'We sent the activation email to <b>'+safe+'</b>. The link is valid for 14 days. Open it from your inbox to finish activation.'}));
+  } else if(res==='active'){
+    openResendModal(T('帳號已開通',{en:'Account already activated'}), T('<b>'+safe+'</b> 的帳號已經開通，不需要再寄開通信。之後每次進來，在登入畫面輸入 Email 與密碼即可登入。',{en:'The account for <b>'+safe+'</b> is already activated, so no email is needed. From now on, just sign in with your email and password.'}), true);
+  } else {
+    var who = authRole==='teacher' ? T('非教師帳號',{en:'Not a teacher account'}) : T('非學員帳號',{en:'Not a student account'});
+    openResendModal(who, T('<b>'+safe+'</b> 不是'+(authRole==='teacher'?'教師':'學員')+'帳號，無法寄送開通信。請確認 Email 是否正確，或洽學校／顧問。',{en:'<b>'+safe+'</b> is not a '+(authRole==='teacher'?'teacher':'student')+' account, so no activation email was sent. Check the email or contact your school or advisor.'}));
+  }
 }
 (function(){ try{ var em=new URLSearchParams(location.search).get('email'); if(em){ var i=document.getElementById('loginEmail'); if(i) i.value=em; } }catch(e){} })();
 
@@ -1170,10 +1204,8 @@ function pickChanged(){
 }
 function setBtn(zh,en){ var b=lgId('emailBtnText'); b.textContent=T(zh,{en:en}); b.setAttribute('data-en',en); b.dataset.zh=zh; }
 function resetEmailLogin(){
-  LG.accts=[]; LG.chosen=''; LG.step='email';
-  lgId('loginEmail').readOnly=false; lgId('loginPw').value='';
-  ['acctNote','emailPwField','emailHelper'].forEach(function(i){ lgId(i).style.display='none'; });
-  setBtn('繼續','Continue');
+  LG.accts=[]; LG.chosen=''; LG.roster=null;
+  lgId('acctNote').style.display='none';
   lgErr('err_loginEmail',''); lgErr('err_loginPw','');
 }
 function goDest(a){
@@ -1181,28 +1213,37 @@ function goDest(a){
   try{ sessionStorage.setItem('tliAcct',a.id); }catch(e){}
   return showAuthSuccess(null,false);
 }
+/* 20261111 改為單步登入：Email＋密碼同時填，按「登入」一次驗證（使用者要求）。
+   查帳號順序：會員帳號主檔 → 專案合作名單（名單上的學員不在主檔，開通後每次都在這裡登入）。 */
 function emailSubmit(e){
   if(e&&e.preventDefault) e.preventDefault();
-  var v=lgId('loginEmail').value.trim();
-  if(LG.step==='email'){
-    if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v)){ lgErr('err_loginEmail',T('請輸入正確的 Email 格式',{en:'Please enter a valid email address'})); return false; }
-    lgErr('err_loginEmail','');
-    if(authRole==='teacher'){ LG.step='pw'; lgId('loginEmail').readOnly=true; lgId('emailPwField').style.display='block'; lgId('emailHelper').style.display='block'; setBtn('登入','Sign in'); return false; }
-    var list=TLI_MASTERS.accountsByEmail(v);
-    if(!list.length){ lgErr('err_loginEmail',T('找不到這個 Email 的帳號。如果你是企業員工且名單上沒有 Email，請改用「企業代碼登入」；還沒有帳號請先註冊。',{en:'No account found for this email. Company employees without an email on the roster should use company code sign-in. Otherwise, register first.'})); return false; }
-    LG.accts=list; lgId('loginEmail').readOnly=true; lgId('emailHelper').style.display='block'; LG.step='pw'; setBtn('登入','Sign in');
-    LG.chosen=list[0].id; pickChanged();
-    return false;
+  var v=lgId('loginEmail').value.trim(), pw=lgId('loginPw').value, ok=true;
+  lgId('acctNote').style.display='none';
+  if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v)){ lgErr('err_loginEmail',T('請輸入正確的 Email 格式',{en:'Please enter a valid email address'})); ok=false; } else { lgErr('err_loginEmail',''); }
+  if(!pw){ lgErr('err_loginPw',T('請輸入密碼',{en:'Enter your password'})); ok=false; } else { lgErr('err_loginPw',''); }
+  if(!ok) return false;
+  if(authRole==='teacher') return showAuthSuccess(null,false);
+  var list=TLI_MASTERS.accountsByEmail(v);
+  if(list.length){
+    var a=list[0]; LG.accts=list; LG.chosen=a.id;
+    if(!isActive(a)){ showNotActivated(a,false,'acctNote'); return false; }
+    return goDest(a);
   }
-  if(authRole==='teacher'){
-    if(!lgId('loginPw').value){ lgErr('err_loginPw',T('請輸入密碼',{en:'Enter your password'})); return false; }
+  var rr=window.TLI_PL ? TLI_PL.rosterByEmail(v) : null;
+  if(rr && rr.role==='學生'){
+    if(rr.status!=='已啟用'){
+      var n=lgId('acctNote'); n.innerHTML=lgEsc(T('這個帳號尚未開通，請先用開通信完成開通。',{en:'This account is not activated yet. Use your activation email first.'}))+' <a href="#" onclick="resendP07();return false;">'+lgEsc(T('重新寄送開通信',{en:'Resend activation email'}))+'</a>'; n.style.display='block';
+      return false;
+    }
+    TLI_PL.signInStudent(rr.id);   /* 以專案合作學員身分進會員區（會員區依分頁登入身分顯示本人資料） */
+    window.TLI_ACCT=null;
     return showAuthSuccess(null,false);
   }
-  var a=LG.accts.filter(function(x){ return x.id===LG.chosen; })[0];
-  if(!isActive(a)){ showNotActivated(a,false,'acctNote'); return false; }
-  if(!lgId('loginPw').value){ lgErr('err_loginPw',T('請輸入密碼',{en:'Enter your password'})); return false; }
-  lgErr('err_loginPw','');
-  return goDest(a);
+  /* 企業代碼登入與註冊屬一階段 B，1A 檢視不提這兩個選項 */
+  var later = window.TLI_PHASE && !TLI_PHASE.atLeast('1B');
+  lgErr('err_loginEmail', later ? T('找不到這個 Email 的帳號，請確認 Email 是否正確。',{en:'No account found for this email. Please check the address.'})
+    : T('找不到這個 Email 的帳號。如果你是企業員工且名單上沒有 Email，請改用「企業代碼登入」；還沒有帳號請先註冊。',{en:'No account found for this email. Company employees without an email on the roster should use company code sign-in. Otherwise, register first.'}));
+  return false;
 }
 function orgSubmit(e){
   if(e&&e.preventDefault) e.preventDefault();

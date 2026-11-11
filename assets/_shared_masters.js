@@ -797,7 +797,9 @@ var memberAccounts = [
  acc('ma32','賴冠廷','guanting.lai@beichen.example',{sourceType:'agent', sourceUnitId:'p08', orgId:'ent1', employeeNo:'BC-0771', department:'採購部', createdAt:'2026-05-11'}),
  acc('ma33','徐佳蓉','jiarong.hsu@beichen.example',{sourceType:'agent', sourceUnitId:'p08', orgId:'ent1', employeeNo:'BC-0772', department:'採購部', createdAt:'2026-05-11', activationStatus:'未啟用'}),
  acc('ma34','洪志遠','',{sourceType:'agent', sourceUnitId:'p08', orgId:'ent1', employeeNo:'BC-0773', department:'生產部', createdAt:'2026-05-11', activationMethod:'啟用碼', activationStatus:'已寄通知'}),
- acc('ma35','葉宇軒','yuhsuan.yeh@xiangyu.example',{sourceType:'project', sourceUnitId:'p02', orgId:'ent11', employeeNo:'XY-0412', department:'船務部', createdAt:'2026-08-30'})
+ acc('ma35','葉宇軒','yuhsuan.yeh@xiangyu.example',{sourceType:'project', sourceUnitId:'p02', orgId:'ent11', employeeNo:'XY-0412', department:'船務部', createdAt:'2026-08-30'}),
+ /* 20261111：範例州立大學學生（與專案名單 pr14 同一人、同一 Email），供帳號開通頁示範「已寄開通信、尚未開通」的 1A 情境 */
+ acc('ma40','Lucas Hall','l.hall@students.sample-u.example',{sourceType:'project', sourceUnitId:'p02', createdAt:'2027-02-01', activationStatus:'已寄通知', plans:[{name:'華語會話學期方案（專案合作）', hoursLeft:'依班級課表'}]})
 ];
 /* 經銷訂單（TLI 後台建立；a20 經銷夥伴「經銷訂單」分頁）；planId 對應 packages 的 id */
 var distOrders = [

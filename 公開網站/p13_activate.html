@@ -195,7 +195,7 @@ opacity:0;pointer-events:none;transition:.2s;z-index:200;max-width:80vw;text-ali
   <div class="hint" style="margin-top:16px;text-align:center;"><span data-en="Already activated?">已經開通過？</span> <a href="p07_login_register.html" data-en="Go to sign in">前往登入</a></div>
   <div class="demobox">
     <div class="demotitle" data-en="Demo shortcuts">示範用快速帶入</div>
-    <a href="#" data-demo="a">吳淑芬（有 Email，啟用信）</a>
+    <a href="#" data-demo="a">Lucas Hall（範例州立大學學生，有 Email，啟用信）</a>
     <a href="#" data-demo="b" data-phase="1B">劉建國（無 Email，啟用碼）</a>
     <a href="#" data-demo="c">楊雅雯（啟用信已過期）</a>
   </div>
@@ -204,7 +204,7 @@ opacity:0;pointer-events:none;transition:.2s;z-index:200;max-width:80vw;text-ali
 <!-- G：設定密碼（依會員帳號） -->
 <div class="pane" id="paneSet">
   <h1 class="sth" data-en="Set your password">設定密碼完成開通</h1>
-  <div class="stdesc" data-en="Set a password to finish. You can change it later in the member area. Before you finish, you can open the same link again. After you finish, opening the link takes you straight to the sign-in page.">設定密碼即可完成開通，之後可在會員區自行修改密碼。完成前可重複開啟同一連結，完成後再點同一連結會直接進入登入頁。</div>
+  <div class="stdesc" data-en="Set a password to finish. You can change it later in the student area. Before you finish, you can open the same link again. After you finish, opening the link takes you straight to the sign-in page.">設定密碼即可完成開通，之後可在學員區自行修改密碼。完成前可重複開啟同一連結，完成後再點同一連結會直接進入登入頁。</div>
   <div class="ctx" id="aCtx"></div>
   <div class="formrow">
     <label for="aPw"><span data-en="Password">設定密碼</span><span class="req-mark">*</span></label>
@@ -473,7 +473,7 @@ $('btnVerify').addEventListener('click', function(){
 });
 document.querySelectorAll('[data-demo]').forEach(function(l){ l.addEventListener('click', function(e){
   e.preventDefault();
-  var map={a:'ma22',b:'ma23',c:'ma12'}, a=M.memberAccounts.filter(function(x){ return x.id===map[l.dataset.demo]; })[0]; if(!a) return;
+  var map={a:'ma40',b:'ma23',c:'ma12'}, a=M.memberAccounts.filter(function(x){ return x.id===map[l.dataset.demo]; })[0]; if(!a) return;
   if(a.email){ setEntryMode('email'); $('eEmail').value=a.email; } else { var o=orgOf(a); setEntryMode('org'); $('eOrg').value=o?o.code:''; $('eEmp').value=a.employeeNo; }
   $('eCode').value=codeOf(a);
 }); });
@@ -488,10 +488,10 @@ $('btnActAcct').addEventListener('click', function(){
   A.activationStatus='已啟用'; A.activatedAt=nowStr(); M.saveMemberData();
   try{ sessionStorage.setItem('tliAcct',A.id); sessionStorage.setItem('tliLoggedIn','1'); }catch(e){}
   $('finTitle').textContent=T('帳號已開通','Your account is active');
-  $('finDesc').textContent=T('之後可在會員區自行修改密碼。','You can change your password later in the member area.');
+  $('finDesc').textContent=T('之後可在學員區自行修改密碼。','You can change your password later in the student area.');
   $('finNote').textContent=unitName(A)+'・'+A.name;
   $('finMail').textContent = A.email ? T('我們已寄出開通完成通知信到你的信箱（','We have sent an activation confirmation to your inbox (')+A.email+T('），如果不是你本人操作，請立即聯絡 TLI。','). If this was not you, contact TLI right away.') : '';
-  var go=$('finGo'); go.href=destOf(A); go.textContent=T('進入會員區','Go to member area');
+  var go=$('finGo'); go.href=destOf(A); go.textContent=T('進入學員區','Go to student area');
   showPane('paneFin');
 });
 /* 重寄：寄到名單原 Email；換發 14 天有效的新啟用碼，舊連結失效 */
