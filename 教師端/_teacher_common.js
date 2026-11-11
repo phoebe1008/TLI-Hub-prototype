@@ -25,13 +25,19 @@
   function bar(p){ return '<div class="skill-bar-track"><div class="skill-bar-fill'+(p<25?' warn':'')+'" style="width:'+p+'%"></div></div>'; }
 
   /* 個人自學歷程（20261111 改為置中彈窗；元素 id 沿用 drawerOv／drawerBody） */
+  /* 20261111：多門課程時，彈窗上方可切換課程；完成率、最後學習、各章進度、最近學習、匯出都依所選課程（同 t09 規則，docs/04 §E）。Lounge 與課程無關，不受影響 */
   function openStudent(rid, cid){
+    cid = cid || PL.COURSES[0].id;
     var r = PL.rosterById(rid), c = PL.classById(r.classId), p = PL.progress(rid, cid), lg = PL.lounge(rid, quota());
+    var crsSel = PL.COURSES.length > 1 ?
+      '<div style="display:flex;align-items:center;gap:8px;margin:14px 0 -4px;"><label for="dwCrs" class="small muted" style="flex:none;">'+T('課程','Course')+'</label><select class="select-sm" id="dwCrs" style="flex:1;max-width:none;">'+
+      PL.COURSES.map(function(x){ return '<option value="'+x.id+'"'+(x.id===cid?' selected':'')+'>'+PL.esc(PL.courseName(x.id))+'</option>'; }).join('')+'</select></div>' : '';
     var hist = PL.seedHistory(rid).concat(PL.myBookings(rid).filter(function(b){ return b.status==='booked'; }));
     var h = '<button type="button" class="dw-x" onclick="TC.closeDrawer()" aria-label="'+T('關閉','Close')+'">×</button>' +
       '<div class="flex-between" style="align-items:flex-start;padding-right:36px;"><div><h3 style="margin:0;font-size:17px;">'+PL.esc(r.name)+'</h3><div class="small muted">'+PL.esc(r.email)+'</div><div class="small muted">'+PL.esc(c.name)+'</div></div><span class="badge '+stBadge(r.status)+'">'+stLbl(r.status)+'</span></div>'+
+      crsSel+
       '<div class="kgrid"><div><span>'+T('完成率','Completion')+'</span><b>'+p.pct+'%</b></div><div><span>'+T('最後學習','Last study')+'</span><b>'+lastTxt(p)+'</b></div><div><span>'+T('Lounge 本週','Lounge this week')+'</span><b>'+lg.used+'／'+lg.quota+'</b></div></div>'+
-      '<h4 class="dh">'+T('各章進度','Progress by lesson')+'<span class="small muted" style="font-weight:400">｜'+PL.esc(PL.courseName(p.cid))+'</span></h4>'+
+      '<h4 class="dh">'+T('各章進度','Progress by lesson')+(crsSel ? '' : '<span class="small muted" style="font-weight:400">｜'+PL.esc(PL.courseName(p.cid))+'</span>')+'</h4>'+
       p.units.map(function(u,i){ return '<div class="urow"><span>'+PL.chapterLabel(i)+' '+PL.esc(T(u.zh,u.en))+'</span><span class="small muted">'+u.done+'／'+u.total+T(' 項',' items')+'</span></div>'+bar(u.pct); }).join('')+
       '<h4 class="dh">'+T('最近學習','Recent activity')+'</h4>'+
       (p.recent.length ? p.recent.map(function(x){ return '<div class="recent-row"><span class="rr-date">'+PL.mdLabel(x.date)+'</span><span class="rr-unit">'+x.sec+' '+PL.esc(T(x.secZh,x.secEn))+'・'+PL.typeName(x.type)+'</span></div>'; }).join('') : '<div class="small muted">'+T('尚無學習紀錄。','No study activity yet.')+'</div>')+
@@ -40,6 +46,7 @@
       '<div style="display:flex;gap:8px;margin-top:16px;flex-wrap:wrap;"><button class="btn btn-primary btn-sm" id="dwCsv">'+T('匯出個人報告','Export student report')+'</button><button class="btn btn-outline btn-sm" id="dwClose">'+T('關閉','Close')+'</button></div>';
     $('drawerBody').innerHTML = h; $('drawerOv').classList.remove('hidden');
     $('dwClose').onclick = closeDrawer;
+    if($('dwCrs')) $('dwCrs').onchange = function(){ openStudent(rid, this.value); };
     $('dwCsv').onclick = function(){
       var rr = [[T('學生自學報告','Student learning report')],[T('姓名','Name'),r.name],['Email',r.email],[T('班級','Class'),c.name],[T('課程','Course'),PL.courseName(p.cid)],[T('完成率','Completion'),p.pct+'%'],[T('最後學習','Last study'),lastTxt(p)],[T('Lounge 本週','Lounge this week'),lg.used+'/'+lg.quota],[],[T('章','Lesson'),T('已完成項目','Done'),T('項目數','Items'),T('完成率','Rate')]];
       p.units.forEach(function(u,i){ rr.push([PL.chapterLabel(i)+' '+T(u.zh,u.en),u.done,u.total,u.pct+'%']); });
