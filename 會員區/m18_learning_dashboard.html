@@ -205,7 +205,7 @@ button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible{ou
 
     <div class="banner banner-info hidden" id="emptyBanner">
       <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
-      <div><span data-en="You have not started this course yet. Your progress and study time will show here after your first item.">你還沒開始這門課，完成第一個項目後，進度與學習時數會顯示在這裡。</span> <a href="m08_self_paced.html" style="text-decoration:underline;font-weight:700;" data-en="Start learning">開始學習</a></div>
+      <div><span data-en="You have not started this course yet. Your progress will show here after your first item.">你還沒開始這門課，完成第一個項目後，進度會顯示在這裡。</span> <a href="m08_self_paced.html" style="text-decoration:underline;font-weight:700;" data-en="Start learning">開始學習</a></div>
     </div>
 
     <div class="kpi-grid" id="kpiGrid"></div>
@@ -306,7 +306,7 @@ function render(){
   var lgPct = LG.quota ? Math.round(LG.used/LG.quota*100) : 0;
   $('kpiGrid').innerHTML =
     '<div class="kpi"><div class="k-label">'+T('自學完成率','Course completion')+'</div><div class="k-val">'+P.pct+'<small>%</small></div><div class="progress'+barCls(P.pct)+'"><div style="width:'+P.pct+'%"></div></div></div>'+
-    '<div class="kpi"><div class="k-label">'+T('累計學習時數','Total study time')+'</div><div class="k-val">'+P.hours+'<small>'+T('小時','hrs')+'</small></div><div class="k-sub">'+(P.last ? T('最後學習 ','Last study ')+PL.mdLabel(P.last.date)+' '+P.last.time : T('尚無學習紀錄','No study yet'))+'</div></div>'+
+    '<div class="kpi"><div class="k-label">'+T('最後學習','Last study')+'</div><div class="k-val">'+(P.last ? PL.mdLabel(P.last.date)+'<small> '+P.last.time+'</small>' : '—')+'</div><div class="k-sub">'+(P.last ? '' : T('尚無學習紀錄','No study yet'))+'</div></div>'+
     '<div class="kpi"><div class="k-label">'+T('已完成項目','Items completed')+'</div><div class="k-val">'+P.done+'<small>／'+P.total+'</small></div><div class="k-sub">'+T('共 '+P.chapters.length+' 章・'+nSec()+' 節',P.chapters.length+' lessons · '+nSec()+' sections')+'</div></div>'+
     '<div class="kpi"><div class="k-label">'+T('Mandarin Lounge 本週剩餘','Mandarin Lounge left this week')+'</div><div class="k-val">'+LG.remaining+'<small>／'+LG.quota+' '+T('次','sessions')+'</small></div><div class="progress'+(LG.remaining===0?' warn':' ok')+'"><div style="width:'+lgPct+'%"></div></div></div>';
 
@@ -323,7 +323,7 @@ function render(){
   /* 最近學習 */
   $('recentList').innerHTML = P.recent.length ? P.recent.map(function(r){
     return '<div class="list-row"><div class="icon-box"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><polygon points="10 8 16 12 10 16 10 8" fill="currentColor" stroke="none"/></svg></div>'+
-      '<div class="body"><h4>'+r.sec+'　'+PL.esc(T(r.secZh,r.secEn))+'・'+PL.typeName(r.type)+'</h4><p>'+PL.mdLabel(r.date)+' '+PL.wd(r.date)+'・'+r.minutes+T(' 分鐘',' min')+'</p></div></div>';
+      '<div class="body"><h4>'+r.sec+'　'+PL.esc(T(r.secZh,r.secEn))+'・'+PL.typeName(r.type)+'</h4><p>'+PL.mdLabel(r.date)+' '+PL.wd(r.date)+'</p></div></div>';
   }).join('') : '<div class="empty-box">'+T('還沒有學習紀錄。','No study activity yet.')+'</div>';
 
   /* Lounge */
@@ -348,7 +348,7 @@ $('btnCsv').addEventListener('click', function(){
   var rows = [[T('TLI Connect 學習報告','TLI Connect Learning Report')],[T('學員','Student'),U.name],[T('Email','Email'),U.email]];
   if(U.mode==='project'){ rows.push([T('單位','Institution'),U.partnerName],[T('班級','Class'),U.className],[T('老師','Teacher'),U.teacherName]); }
   rows.push([T('課程','Course'),PL.courseName(SEL)],[T('報告日期','Report date'),PL.today],[],
-    [T('自學完成率','Completion'),P.pct+'%'],[T('累計學習時數（小時）','Study hours'),P.hours],[T('已完成項目','Items done'),P.done+'/'+P.total],
+    [T('自學完成率','Completion'),P.pct+'%'],[T('已完成項目','Items done'),P.done+'/'+P.total],
     [T('Mandarin Lounge 本週已用','Lounge used this week'),LG.used+'/'+LG.quota],[T('Mandarin Lounge 累計場次','Lounge total'),LG.term],[],
     [T('章','Lesson'),T('已完成項目','Done'),T('項目數','Items'),T('完成率','Rate')]);
   P.units.forEach(function(u,i){ rows.push([PL.chapterLabel(i)+' '+T(u.zh,u.en),u.done,u.total,u.pct+'%']); });

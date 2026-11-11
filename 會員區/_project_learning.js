@@ -163,6 +163,7 @@
     var chapters = rollup(itemsDone);
     var done = chapters.reduce(function (a, x) { return a + x.done; }, 0);
     var exMin = exList.reduce(function (a, x) { return a + x.minutes; }, 0);
+    /* 20261111：自學時數的算法規格未定義（R44／R54／R56 只寫「自學時數」），畫面上已先拿掉；以下 minutes／hours 為示範值，暫不顯示 */
     var minutes = done === 0 ? 0 : baseDone * 7 + (baseDone ? Math.round(rnd(rid + ':m') * 45) : 0) + exMin;
     var lastGap = exList.length ? 0 : (general ? 1 : Math.floor(rnd(rid + ':d') * 12));
     var last = done === 0 ? null : (exList.length ? { date: TODAY, time: exList[0].hm } : { date: addDays(TODAY, -lastGap), time: pad(8 + Math.floor(rnd(rid + ':t') * 14)) + ':' + pad(Math.floor(rnd(rid + ':t2') * 6) * 10) });
@@ -663,7 +664,7 @@
         h += pjHead(courseName(C.id), T('依自己的步調學習各章節，完成每個項目後進度會自動更新。', 'Study each lesson and section at your own pace. Progress updates as you complete each item.'));
         h += '<div class="card"><div class="pj-top" style="cursor:default"><span>' + T('學習進度', 'Progress') + '</span><span class="badge badge-info">' + esc(u.projectName.replace(/^.*．/, '')) + '</span></div>' +
           '<div class="progress" style="margin-top:12px"><div style="width:' + Pc.pct + '%"></div></div>' +
-          '<div class="pj-kpis"><div><small>' + T('已完成項目', 'Items completed') + '</small><b>' + Pc.done + '／' + Pc.total + '</b></div><div><small>' + T('完成率', 'Completion') + '</small><b>' + Pc.pct + '%</b></div><div><small>' + T('累計學習時數', 'Study time') + '</small><b>' + Pc.hours + '</b> ' + T('小時', 'hrs') + '</div></div>' +
+          '<div class="pj-kpis"><div><small>' + T('已完成項目', 'Items completed') + '</small><b>' + Pc.done + '／' + Pc.total + '</b></div><div><small>' + T('完成率', 'Completion') + '</small><b>' + Pc.pct + '%</b></div></div>' +
           (Pc.started ? '' : '<p class="small muted" style="margin:0 0 10px">' + T('尚未開始，從 1-1 開始。', 'Not started yet. Begin with 1-1.') + '</p>') +
           '<button type="button" class="btn btn-primary btn-sm" data-pj="resume" data-c="' + C.id + '">' + (Pc.pct >= 100 ? T('複習', 'Review') : (Pc.started ? T('繼續學習', 'Continue') : T('開始學習', 'Start'))) + '</button> ' +
           (C.id === 'skuC05' ? '<a class="btn btn-outline btn-sm" href="m18_learning_dashboard.html">' + T('學習儀表板', 'Learning Dashboard') + '</a>' : '') + '</div>';
@@ -713,7 +714,7 @@
       h += '<div class="section-title">' + T('包含內容', 'What is included') + '</div><div class="card">' +
         '<div class="pj-row"><span>' + T('自學課程', 'Self-paced course') + '</span><b>' + esc(courseName()) + '</b></div>' +
         '<div class="pj-row"><span>Mandarin Lounge</span><b>' + T('每週 ', '') + u.perWeek + T(' 次，團體場次', ' group sessions per week') + '</b></div>' +
-        '<div class="pj-row"><span>' + T('學習儀表板', 'Learning dashboard') + '</span><b>' + T('進度與學習時數', 'Progress and study time') + '</b></div>' +
+        '<div class="pj-row"><span>' + T('學習儀表板', 'Learning dashboard') + '</span><b>' + T('學習進度', 'Learning progress') + '</b></div>' +
         /* 證書與階段考一階段 B 上線（功能展開表），1A 檢視時不列 */
         (g.TLI_PHASE && !g.TLI_PHASE.atLeast('1B') ? '' : '<div class="pj-row"><span>' + T('證書', 'Certificate') + '</span><b>' + T('完成課程後核發', 'Issued on completion') + '</b></div>') +
         '<div style="margin-top:12px;display:flex;gap:8px;flex-wrap:wrap"><a class="btn btn-primary btn-sm" href="m08_self_paced.html">' + T('前往自學課程', 'Self-paced course') + '</a><a class="btn btn-outline btn-sm" href="m14_chat_booking.html">' + T('預約 Lounge', 'Book Lounge') + '</a><a class="btn btn-outline btn-sm" href="m18_learning_dashboard.html">' + T('學習儀表板', 'Dashboard') + '</a></div></div>';

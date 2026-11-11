@@ -257,7 +257,7 @@ opacity:0;pointer-events:none;transition:.2s;z-index:200;max-width:80vw;text-ali
       <h4 data-en="Terms of Service">服務條款</h4>
       <p data-en="This service is provided by TLI. The account is for the named student or teacher only. Learning content and Mandarin Lounge sessions are offered under the project arrangement between your school and TLI.">本服務由 TLI 中華語文研習所提供，帳號僅供登記之學生或教師本人使用。學習內容與 Mandarin Lounge 會話場次，依學校與 TLI 的專案合作安排提供。</p>
       <h4 data-en="Privacy Policy">隱私權政策</h4>
-      <p data-en="We collect your name, email, class and learning records only to run your courses, verify your account and send necessary notices. Your teacher can see your study time and progress in the classes they teach.">我們蒐集姓名、Email、班級與學習紀錄，僅用於課程營運、帳號驗證與必要通知。你的老師可以看到所授班級的學習時數與進度。</p>
+      <p data-en="We collect your name, email, class and learning records only to run your courses, verify your account and send necessary notices. Your teacher can see your learning progress in the classes they teach.">我們蒐集姓名、Email、班級與學習紀錄，僅用於課程營運、帳號驗證與必要通知。你的老師可以看到所授班級的學習進度。</p>
     </div>
     <div class="modal-foot"><button type="button" class="btn teal" onclick="closeTerms()" data-en="I have read it">我已閱讀</button></div>
   </div>
@@ -321,7 +321,7 @@ function finish(kind){
   if(isTeacher){ PL.signInTeacher(R.id); } else { PL.signInStudent(R.id); }
   var dest = isTeacher ? '../教師端/t08_my_classes.html?rid='+R.id : '../會員區/m01_home.html?activated=project';
   $('finTitle').textContent = T('帳號已開通','Your account is active');
-  $('finDesc').textContent = (isTeacher ? T('你可以在教師端查看班級學生的自學時數與進度。','You can now see your students’ study time and progress in the teacher portal.')
+  $('finDesc').textContent = (isTeacher ? T('你可以在教師端查看班級學生的學習進度。','You can now see your students’ learning progress in the teacher portal.')
                                        : T('你已加入 ','You have joined ')+CLS.name+T('，可以開始自學課程並預約 Mandarin Lounge。',' and can start the self-paced course and book Mandarin Lounge.'));
   $('finNote').textContent = P.name+'・'+PL.projectName()+'・'+CLS.name;
   $('finMail').textContent = kind==='login' ? '' : T('我們已寄出開通完成通知信到你的信箱（','We have sent an activation confirmation to your inbox (')+R.email+T('），如果不是你本人操作，請立即聯絡 TLI。','). If this was not you, contact TLI right away.');

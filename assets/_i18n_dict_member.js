@@ -8,7 +8,7 @@
 /* <member-autogen> */
 Object.assign(TLI_I18N_DICT.en,{
 "m07.section.records":"Learning Records",
-"m07.records.dashDesc":"Self-paced progress, study hours and Mandarin Lounge usage",
+"m07.records.dashDesc":"Self-paced progress and Mandarin Lounge usage",
 "m07.records.certDesc":"View and download your issued completion certificates",
 
 /* ---- m19 證書 ---- */

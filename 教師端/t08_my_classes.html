@@ -98,7 +98,7 @@ button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible{ou
 .cls-card+.cls-card{margin-top:12px;}
 .cls-card h4{margin:0;font-size:15.5px;}
 .cls-meta{font-size:12.5px;color:var(--c-muted);margin-top:4px;}
-.cls-stats{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-top:12px;}
+.cls-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:12px;}
 @media(max-width:640px){.cls-stats{grid-template-columns:repeat(2,1fr);}}
 .cls-stats div{background:var(--c-bg);border-radius:var(--radius-sm);padding:9px 11px;font-size:12px;color:var(--c-muted);}
 .cls-stats b{display:block;font-size:17px;color:var(--c-text);margin-top:2px;}
@@ -110,11 +110,11 @@ button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible{ou
 @media(max-width:640px){.sum-row{grid-template-columns:repeat(2,1fr);}}
 .sum-row div{background:#fff;border:1px solid var(--c-border);border-radius:var(--radius);padding:11px 13px;font-size:12px;color:var(--c-muted);}
 .sum-row b{display:block;font-size:20px;color:var(--c-text);}
-.srow{display:grid;grid-template-columns:2.4fr .9fr 1.4fr .8fr 1fr .8fr;gap:12px;align-items:center;padding:12px 4px;border-top:1px solid var(--c-border);cursor:pointer;font-size:13px;}
+.srow{display:grid;grid-template-columns:2.4fr .9fr 1.4fr 1fr .8fr;gap:12px;align-items:center;padding:12px 4px;border-top:1px solid var(--c-border);cursor:pointer;font-size:13px;}
 .srow:hover{background:var(--c-bg);}
 .srow .lab{display:none;font-size:11px;color:var(--c-muted);}
 .srow b{font-weight:700;}
-.shead{display:grid;grid-template-columns:2.4fr .9fr 1.4fr .8fr 1fr .8fr;gap:12px;font-size:11.5px;color:var(--c-muted);font-weight:700;padding:0 4px 8px;}
+.shead{display:grid;grid-template-columns:2.4fr .9fr 1.4fr 1fr .8fr;gap:12px;font-size:11.5px;color:var(--c-muted);font-weight:700;padding:0 4px 8px;}
 .s-name{min-width:0;overflow-wrap:anywhere;}
 @media(max-width:760px){
   .shead{display:none;}
@@ -130,7 +130,7 @@ button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible{ou
 .dw-x{position:absolute;top:12px;right:12px;width:32px;height:32px;border:none;background:none;border-radius:8px;font-size:20px;line-height:1;color:var(--gray-500,#6B7280);cursor:pointer;}
 .dw-x:hover{background:var(--gray-100,#F3F4F6);}
 @media(max-width:640px){.dw-ov{align-items:flex-end;padding:0;}.dw{max-width:100%;max-height:88vh;border-radius:18px 18px 0 0;}}
-.kgrid{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin:14px 0;}
+.kgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:14px 0;}
 .kgrid div{background:var(--c-bg);border-radius:var(--radius-sm);padding:8px 10px;font-size:11.5px;color:var(--c-muted);}
 .kgrid b{display:block;font-size:15px;color:var(--c-text);}
 .dh{margin:16px 0 8px;font-size:13.5px;}
@@ -176,7 +176,7 @@ button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible{ou
   </header>
 
   <main class="content">
-    <p class="page-sub" data-i18n="myclasses.pageSub">專案合作班級：查看學生的自學時數、完成率與 Mandarin Lounge 使用情形，並可匯出班級報告。</p>
+    <p class="page-sub" data-i18n="myclasses.pageSub">專案合作班級：查看學生的完成率、學習進度與 Mandarin Lounge 使用情形，並可匯出班級報告。</p>
 
     <div id="viewList">
       <div class="fchip-bar" id="fchipBar"></div>
@@ -197,7 +197,7 @@ button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible{ou
         <select class="select-sm" id="sSel" aria-label="排序"></select>
       </div>
       <div class="card" style="padding:12px 12px 4px;">
-        <div class="shead"><span data-en="Student">學生</span><span data-en="Account">帳號</span><span data-en="Completion">完成率</span><span data-en="Study hrs">自學時數</span><span data-en="Last study">最後學習</span><span>Lounge</span></div>
+        <div class="shead"><span data-en="Student">學生</span><span data-en="Account">帳號</span><span data-en="Completion">完成率</span><span data-en="Last study">最後學習</span><span>Lounge</span></div>
         <div id="stuList"></div>
         <div class="cls-empty hidden" id="stuEmpty" data-en="No students match.">沒有符合條件的學生。</div>
       </div>
@@ -239,7 +239,7 @@ function renderList(){
     var r = clsRows(c), act = r.filter(function(x){ return x.r.status==='已啟用'; }), s = TC.classStatus(c);
     var lgSum = r.reduce(function(a,x){ return a+x.lg.used; },0), behind = r.filter(function(x){ return x.flag==='behind'; }).length;
     return '<div class="cls-card"><div class="flex-between" style="display:flex;justify-content:space-between;gap:10px;align-items:flex-start;"><div><h4>'+PL.esc(c.name)+' <span class="badge '+(s==='ongoing'?'badge-ok':(s==='pending'?'badge-info':'badge-muted'))+'">'+TC.statusLbl(s)+'</span></h4><div class="cls-meta">'+PL.esc(PL.partner().name)+'・'+c.from+' ～ '+c.to+'</div></div></div>'+
-      '<div class="cls-stats"><div>'+T('學生人數','Students')+'<b>'+r.length+'</b></div><div>'+T('已開通','Activated')+'<b>'+act.length+'／'+r.length+'</b></div><div>'+T('平均完成率','Avg completion')+'<b>'+Math.round(avg(act,function(x){return x.p.pct;}))+'%</b></div><div>'+T('平均自學時數','Avg study hrs')+'<b>'+avg(act,function(x){return x.p.minutes/60;}).toFixed(1)+'</b></div></div>'+
+      '<div class="cls-stats"><div>'+T('學生人數','Students')+'<b>'+r.length+'</b></div><div>'+T('已開通','Activated')+'<b>'+act.length+'／'+r.length+'</b></div><div>'+T('平均完成率','Avg completion')+'<b>'+Math.round(avg(act,function(x){return x.p.pct;}))+'%</b></div></div>'+
       '<div class="small muted" style="margin-top:10px;">'+T('本週 Mandarin Lounge 已預約 ','Mandarin Lounge booked this week: ')+lgSum+T(' 場',' sessions')+(behind?'・'+T('需關心 ','Needs follow-up: ')+behind+T(' 位',''):'')+'</div>'+
       '<div class="cls-foot"><button class="btn btn-primary btn-sm" onclick="openClass(\''+c.id+'\')">'+T('查看班級學生','View students')+'</button><button class="btn btn-outline btn-sm" onclick="quickCsv(\''+c.id+'\')">'+T('匯出班級報告','Export class report')+'</button></div></div>';
   }).join('');
@@ -260,7 +260,7 @@ function renderClass(){
   $('btnDetail').href = 't09_lesson_log.html?class='+c.id+(PL.qs('rid')?'&rid='+PL.qs('rid'):'');
   $('sumRow').innerHTML = '<div>'+T('學生人數','Students')+'<b>'+all.length+'</b></div><div>'+T('已開通','Activated')+'<b>'+act.length+'／'+all.length+'</b></div><div>'+T('平均完成率','Avg completion')+'<b>'+Math.round(avg(act,function(x){return x.p.pct;}))+'%</b></div><div>'+T('Lounge 本週已預約','Lounge booked this week')+'<b>'+all.reduce(function(a,x){return a+x.lg.used;},0)+'</b></div>';
   $('fSel').innerHTML = [['all',T('全部學生','All students')],['behind',T('需關心','Needs follow-up')],['inactive',T('尚未開通','Not activated')],['active',T('已開通','Activated')]].map(function(o){ return '<option value="'+o[0]+'"'+(st.filt===o[0]?' selected':'')+'>'+o[1]+'</option>'; }).join('');
-  $('sSel').innerHTML = [['name',T('依姓名','By name')],['pct',T('完成率高到低','Completion high to low')],['pctAsc',T('完成率低到高','Completion low to high')],['hours',T('自學時數','Study hours')],['last',T('最後學習時間','Last study')],['lounge',T('Lounge 使用','Lounge use')]].map(function(o){ return '<option value="'+o[0]+'"'+(st.sort===o[0]?' selected':'')+'>'+o[1]+'</option>'; }).join('');
+  $('sSel').innerHTML = [['name',T('依姓名','By name')],['pct',T('完成率高到低','Completion high to low')],['pctAsc',T('完成率低到高','Completion low to high')],['last',T('最後學習時間','Last study')],['lounge',T('Lounge 使用','Lounge use')]].map(function(o){ return '<option value="'+o[0]+'"'+(st.sort===o[0]?' selected':'')+'>'+o[1]+'</option>'; }).join('');
   var q = st.q.toLowerCase();
   var rows = all.filter(function(x){
     if(q && (x.r.name+' '+x.r.email).toLowerCase().indexOf(q)<0) return false;

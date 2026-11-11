@@ -250,7 +250,7 @@ Object.assign(TLI_I18N_DICT.en, {
 "tstud.reviewSummaryLabel":"Student Feedback Summary (Anonymous Aggregate)",
 "myclasses.nav.myClasses":"My Classes",
 "myclasses.nav.myStudents":"My Students",
-"myclasses.pageSub":"Project partnership classes don't need scheduling — after each class, log a quick lesson record to track progress and attendance; each entry takes about 30 seconds.",
+"myclasses.pageSub":"Project partnership classes: see each student's completion rate, learning progress and Mandarin Lounge usage, and export class reports.",
 "myclasses.cert.statusLabel":"Certification Status (Certified by HQ, view only)",
 "myclasses.cert.certDate":"Certification Date:",
 "myclasses.cert.retrainDue":"Retraining Due Date:",
