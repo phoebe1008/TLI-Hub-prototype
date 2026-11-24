@@ -342,6 +342,17 @@ button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible{ou
       <div class="lbl" data-i18n="avail.field.prep">事前準備（選填）</div>
       <input type="text" class="field-input" id="chatFormPrep" maxlength="60" placeholder="如：請先複習教材第 1–2 課常用句型" data-i18n-placeholder="avail.ph.prep">
     </div>
+    <!-- 隨堂作業（使用者 2026-11-19 指示）：自由輸入；學員上傳的檔案類型可複選音檔、圖檔，都不勾＝不需上傳（同日指示移除「不限定」） -->
+    <div class="sheet-sec">
+      <div class="lbl" data-en="In-class assignment (optional)">隨堂作業（選填）</div>
+      <textarea class="field-input" id="chatFormHomework" rows="3"></textarea>
+      <div class="lbl" style="margin-top:10px;" data-en="Student uploads">學員上傳檔案</div>
+      <div style="display:flex;gap:18px;flex-wrap:wrap;">
+        <label style="display:inline-flex;align-items:center;gap:6px;cursor:pointer;"><input type="checkbox" name="chatFormHwUp" value="音檔" style="width:auto;"> <span data-en="Audio">音檔</span></label>
+        <label style="display:inline-flex;align-items:center;gap:6px;cursor:pointer;"><input type="checkbox" name="chatFormHwUp" value="圖檔" style="width:auto;"> <span data-en="Image">圖檔</span></label>
+      </div>
+      <div class="small muted" style="margin-top:4px;" data-en="Multiple choices allowed; leave all unticked if no upload is needed.">可複選；都不勾表示不需上傳。</div>
+    </div>
     <div class="sheet-sec">
       <div class="lbl" data-i18n="avail.field.lang">語言</div>
       <select class="field-select" id="chatFormLang"></select>
@@ -555,6 +566,9 @@ function openChatForm(key){
   while (chatFormPoints.length<3) chatFormPoints.push('');
   renderChatPoints();
   document.getElementById('chatFormPrep').value = session ? (session.prep||'') : '';
+  document.getElementById('chatFormHomework').value = session ? (session.homework||'') : '';
+  var hwUp = (session && session.homeworkUploads) ? session.homeworkUploads : [];
+  Array.prototype.forEach.call(document.querySelectorAll('input[name="chatFormHwUp"]'), function(c){ c.checked = hwUp.indexOf(c.value) > -1; });
   document.getElementById('chatFormLang').value = session ? (session.lang||'中文') : '中文';
   document.getElementById('chatFormOverlay').classList.remove('hidden');
 }
@@ -601,12 +615,14 @@ function submitChatForm(){
   var teacherIntro = document.getElementById('chatFormTeacherIntro').value.trim();
   var points = chatFormPoints.map(function(p){ return p.trim(); }).filter(function(p){ return p; });
   var prep = document.getElementById('chatFormPrep').value.trim();
+  var homework = document.getElementById('chatFormHomework').value.trim();
+  var homeworkUploads = Array.prototype.map.call(document.querySelectorAll('input[name="chatFormHwUp"]:checked'), function(c){ return c.value; });
   var lang = document.getElementById('chatFormLang').value;
   /* 教師端只能存草稿：已發佈的介紹內容不因教師編輯其他欄位而被打回草稿；尚未發佈者填了簡介即存為草稿 */
   var introStatus = (existing && existing.introStatus === '已發佈') ? '已發佈' : (summary ? '草稿' : (existing ? existing.introStatus : undefined));
   var deptIds = (audienceGroup === 'institution') ? chatFormDeptIds.slice() : [];
   chatSessions[slotKey] = {topic:topic, audienceGroup:audienceGroup, audienceTarget:audienceTarget, capacity:capacity, tool:tool, registered: existing ? existing.registered : 0,
-    summary:summary, level:level, teacherIntro:teacherIntro, points:points, prep:prep, lang:lang, introStatus:introStatus, deptIds:deptIds};
+    summary:summary, level:level, teacherIntro:teacherIntro, points:points, prep:prep, homework:homework, homeworkUploads:homeworkUploads, lang:lang, introStatus:introStatus, deptIds:deptIds};
   showToast(existing ? tt('已儲存場次變更','Session changes saved') : tt('已建立 Mandarin Lounge 場次','Group Mandarin Lounge session created'));
   renderAll();
   syncInstChatSessionsToLocalStorage();

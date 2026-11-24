@@ -652,9 +652,14 @@ projectRoster.forEach(function(r){
    20261110 使用者提供 TLI 文案截圖「TLI教材分繁體、簡體及漢語拼音、注音符號版本，基礎教材則提供英、日、泰、德、法語對譯版本」並指示照此調整：
    主語系 tc＝繁體＋注音、sc＝簡體＋拼音（字體與標音綁在一起，使用者選定）；輔助語系預設英、日，泰、德、法用新增的方式加入（清單補上泰文 th）。
    「基礎教材才有對譯」：沒有對譯的教材怎麼放檔案，使用者決定先不處理。 */
+/* 20261118 使用者指示（回應客戶 BugSmash #2、#22：繁體版不一定配注音、另有只有注音、台語＋白話字等版本）：
+   主語系改為「繁體」「簡體」，並新增「注音」(zy)、「台語＋白話字」(tw)；main:true 標示只當主語系用（新增輔助語系時不列出）。
+   注音不標 main：同日使用者指示注音在輔助語系也要選得到。 */
 var materialLangs = [
- {code:'tc', name:'繁體＋注音', nameEn:'Traditional + Zhuyin', abbr:'繁', enabled:true},
- {code:'sc', name:'簡體＋拼音', nameEn:'Simplified + Pinyin', abbr:'簡', enabled:true},
+ {code:'tc', name:'繁體', nameEn:'Traditional Chinese', abbr:'繁', enabled:true, main:true},
+ {code:'sc', name:'簡體', nameEn:'Simplified Chinese', abbr:'簡', enabled:true, main:true},
+ {code:'zy', name:'注音', nameEn:'Zhuyin', abbr:'注', enabled:true},   /* 注音可當主語系，也可當輔助語系（使用者 2026-11-18） */
+ {code:'tw', name:'台語＋白話字', nameEn:'Taiwanese + Pe̍h-ōe-jī', abbr:'台', enabled:true, main:true},
  {code:'en', name:'英文', nameEn:'English', abbr:'EN', enabled:true},
  {code:'ja', name:'日文', nameEn:'Japanese', abbr:'JP', enabled:true},
  {code:'th', name:'泰文', nameEn:'Thai', abbr:'TH', enabled:true},
@@ -673,8 +678,14 @@ var ML_KEY = 'tliMaterialLangs_v1';
   var byCode = function(c){ return materialLangs.filter(function(l){ return l.code === c; })[0]; };
   if (!byCode('th')){ var ja = materialLangs.indexOf(byCode('ja')); materialLangs.splice(ja > -1 ? ja + 1 : materialLangs.length, 0, {code:'th', name:'泰文', nameEn:'Thai', abbr:'TH', enabled:true}); }
   var tc = byCode('tc'), sc = byCode('sc');
-  if (tc && tc.name === '繁體中文'){ tc.name = '繁體＋注音'; tc.nameEn = 'Traditional + Zhuyin'; }
-  if (sc && sc.name === '簡體中文'){ sc.name = '簡體＋拼音'; sc.nameEn = 'Simplified + Pinyin'; }
+  /* 20261118：主語系改名為「繁體」「簡體」（舊名一律換掉），補上注音、台語＋白話字 */
+  if (tc && /^繁體(中文|＋注音)$/.test(tc.name)){ tc.name = '繁體'; tc.nameEn = 'Traditional Chinese'; }
+  if (sc && /^簡體(中文|＋拼音)$/.test(sc.name)){ sc.name = '簡體'; sc.nameEn = 'Simplified Chinese'; }
+  if (tc) tc.main = true; if (sc) sc.main = true;
+  var at = materialLangs.indexOf(sc) + 1 || materialLangs.length;
+  if (!byCode('tw')) materialLangs.splice(at, 0, {code:'tw', name:'台語＋白話字', nameEn:'Taiwanese + Pe̍h-ōe-jī', abbr:'台', enabled:true, main:true});
+  if (!byCode('zy')) materialLangs.splice(at, 0, {code:'zy', name:'注音', nameEn:'Zhuyin', abbr:'注', enabled:true});
+  var zy = byCode('zy'); if (zy) delete zy.main;   /* 注音也可選為輔助語系（使用者 2026-11-18） */
 })();
 function saveMaterialLangs(){
   try { global.localStorage.setItem(ML_KEY, JSON.stringify(materialLangs)); } catch(e){}
@@ -690,7 +701,18 @@ function saveMaterialLangs(){
                  陣列順序＝前台播放清單順序；pages 的鍵與 versions 對齊，移除版本時一併刪除該鍵。
    教材素材與音頻素材本身屬資源庫（a18），這裡只存引用的檔名；時長由音頻素材帶出，不存在教材上。
    產品（a02「使用教材」）以 products[].materialBookIds 引用教材，同時把標題寫進 products[].materials 供其他頁沿用。
-   存 localStorage tliMaterialBooks_v1，載入時就地覆蓋初始值；寫入後呼叫 TLI_MASTERS.saveMaterialBooks()。 */
+   存 localStorage tliMaterialBooks_v1，載入時就地覆蓋初始值；寫入後呼叫 TLI_MASTERS.saveMaterialBooks()。
+   20261118 使用者指示（回應客戶 BugSmash #2、#3、#13、#20、#21、#22、#24、#25）新增欄位（舊資料沒有時由 a25 編輯頁補預設）：
+     targetLangs：學習目標語言，複選 ['繁中','簡中','台語','外語']；20261119 起不跟檔案版本的主語系連動（BugSmash #13：一般書籍上課的教材可能沒有檔案版本）；舊資料沒有此欄位時由主語系推回初始值
+     level：等級 1–10（使用者指示「先給一到十」，空＝未設定）
+     tags：類別，用內容標籤（同資源庫的內容標籤詞彙）
+     auxOff：true＝不使用輔助語系；此時檔案版本只有一欄，鍵為「主語系-none」（例：tc-none）
+     audioMode：'shared'（預設，各版本共用同一個音檔）／'perMain'（依主語系分開上傳音檔）；
+     audios[].assets：perMain 時第 2 個起的主語系音檔 {主語系:檔名}；第 1 個主語系沿用 audios[].asset
+   20261119 使用者指示（回應客戶 BugSmash #24）：
+     shortNameZh／shortNameCn／shortNameEn／shortNameJa／shortNameDe：簡稱，依語系分開填（舊欄位 shortName 視為繁中簡稱，a25 編輯時搬過去）
+     pinyin、zhuyin：拼音、注音，兩個文字欄位，各語系共用
+     基本資訊的「輔助語言」直接讀寫 auxLangs（與檔案版本的輔助語系欄同一份資料）；輔助語言都不勾時 auxLangs 為空陣列、auxOff=true（BugSmash #13，同日指示） */
 var materialBooks = [
  {id:'bk1', titleZh:'新實用華語（上冊）', titleEn:'NEW PRACTICAL CHINESE 1', status:'啟用',
   versions:{'tc-en':'NPC1_TC_EN.pdf', 'tc-ja':'NPC1_TC_JP.pdf', 'sc-en':'NPC1_SC_EN.pdf'},

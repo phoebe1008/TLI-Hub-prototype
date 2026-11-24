@@ -1,0 +1,741 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<script src="../assets/_phase_core.js"></script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>TLI Hub 教師端－學習報告</title>
+<!-- 20261124 新增：班級老師「學習報告」（全班＋個人期末學習成果報告，教師填寫評量後送 TLI 審核）。
+     依據：客戶提供的資料/學習成果報告/GateWay_個人學習成果報告_示範版_v3.docx、GateWay_20人班級學習成果報告_示範版_v3.docx；
+     需求訪談紀錄/會議記錄_20261123_需求訪談.docx 決議 1、2、4。
+     使用者 2026-11-24 決定：班級老師可看＋填寫評量；報告以期末完整報告示範（原型今天為 2027-03-15，班級尚未結束）。
+     報告資料為本頁自編示範值（姓名沿用專案名單），存 localStorage tli_t14_reports_v1，與 t08–t10 的自學進度示範值各自獨立。 -->
+<style>
+:root{
+  --c-primary:#1B4E8C;--c-primary-dark:#123A68;--c-accent:#E8792B;--c-accent-dark:#CF691F;--c-secondary:#0F9B79;
+  --c-bg:#F5F7FA;--c-border:#E4E7EC;--c-muted:#667085;--c-text:#101828;
+  --c-pre:#D9691C;--c-fin:#2F6DB5;
+  --radius:12px;--radius-sm:8px;--shadow:0 1px 3px rgba(16,24,40,.08),0 1px 2px rgba(16,24,40,.04);--shadow-lg:0 8px 24px rgba(16,24,40,.16);
+  --topbar-h:52px;--bottomnav-h:64px;
+}
+*{box-sizing:border-box;}
+html,body{margin:0;padding:0;}
+body{font-family:"Noto Sans TC","Microsoft JhengHei",system-ui,-apple-system,"Segoe UI",sans-serif;background:var(--c-bg);color:var(--c-text);line-height:1.55;font-size:15px;-webkit-tap-highlight-color:transparent;}
+a{color:inherit;text-decoration:none;}
+img,svg{display:block;}
+button{font-family:inherit;}
+button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible,summary:focus-visible{outline:2px solid var(--c-primary);outline-offset:2px;}
+.app{min-height:100vh;position:relative;}
+.topbar{position:sticky;top:0;z-index:60;height:var(--topbar-h);background:#fff;border-bottom:1px solid var(--c-border);display:flex;align-items:center;justify-content:space-between;padding:0 14px;gap:10px;}
+.topbar-left{display:flex;align-items:center;gap:8px;min-width:0;}
+.topbar-logo-wrap{width:26px;height:22px;overflow:hidden;position:relative;flex:none;}
+.topbar-logo-wrap img{position:absolute;left:0;top:0;height:22px;width:auto;max-width:none;}
+.topbar-title{font-size:16.5px;font-weight:700;color:var(--c-text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.topbar-actions{display:flex;align-items:center;gap:6px;position:relative;}
+.side-nav{display:none;}
+@media(min-width:1024px){
+  .side-nav{display:flex;flex-direction:column;position:fixed;left:0;top:0;bottom:0;width:310px;background:#fff;border-right:1px solid var(--c-border);padding:18px 12px;z-index:50;}
+  .side-role{padding:0 10px 14px;margin-bottom:10px;border-bottom:1px solid var(--c-border);}
+  .side-role strong{display:block;font-size:14px;color:var(--c-primary);font-weight:700;}
+  .side-role span{display:block;font-size:12px;color:var(--c-muted);margin-top:2px;}
+  .side-brand{display:flex;align-items:center;padding:0 8px 18px;}
+  .side-brand img{height:28px;width:auto;}
+  .side-link{display:flex;align-items:center;gap:10px;padding:10px 10px;border-radius:8px;font-size:14px;font-weight:600;color:var(--c-muted);margin-bottom:2px;}
+  .side-link svg{width:19px;height:19px;flex:none;}
+  .side-link.active{background:#E6EEF8;color:var(--c-primary);}
+  .side-link:hover:not(.active){background:var(--c-bg);}
+  .app.has-side .topbar{margin-left:310px;}
+  .app.has-side .content{margin-left:310px;}
+}
+.bottom-nav{position:fixed;left:0;right:0;bottom:0;z-index:70;background:#fff;border-top:1px solid var(--c-border);display:flex;height:var(--bottomnav-h);padding-bottom:env(safe-area-inset-bottom,0);box-shadow:0 -2px 10px rgba(16,24,40,.06);}
+.bottom-nav a{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;font-size:10.5px;color:var(--c-muted);font-weight:600;min-height:44px;}
+.bottom-nav a svg{width:20px;height:20px;}
+.bottom-nav a.active{color:var(--c-primary);}
+@media(min-width:1024px){.bottom-nav{display:none;}}
+.content{max-width:1040px;margin:0 auto;padding:18px 16px calc(var(--bottomnav-h) + 24px);}
+@media(min-width:1024px){.content{padding:26px 32px 40px;}}
+.page-sub{color:var(--c-muted);font-size:13px;margin:0 0 12px;}
+.card{background:#fff;border:1px solid var(--c-border);border-radius:var(--radius);box-shadow:var(--shadow);padding:16px 18px;}
+.card + .card{margin-top:12px;}
+.muted{color:var(--c-muted);}
+.small{font-size:12px;}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;border:none;border-radius:var(--radius-sm);padding:11px 18px;font-size:14px;font-weight:700;cursor:pointer;font-family:inherit;transition:background .15s;min-height:44px;}
+.btn-primary{background:var(--c-primary);color:#fff;}
+.btn-primary:hover{background:var(--c-primary-dark);}
+.btn-outline{background:#fff;border:1px solid var(--c-border);color:var(--c-text);}
+.btn-outline:hover{background:var(--c-bg);}
+.btn-sm{padding:7px 12px;font-size:12.5px;min-height:36px;}
+.btn-link{background:none;border:none;color:var(--c-primary);font-weight:700;cursor:pointer;font-size:12.5px;padding:4px 0;font-family:inherit;}
+.badge{display:inline-block;padding:2px 9px;border-radius:20px;font-size:11.5px;font-weight:700;white-space:nowrap;}
+.badge-info{background:#E6EEF8;color:var(--c-primary);}
+.badge-warn{background:#FCEBDC;color:#9A4A0F;}
+.badge-ok{background:#E4F5F0;color:#0B6B52;}
+.badge-muted{background:var(--c-border);color:var(--c-muted);}
+.badge-danger{background:#FDE8E8;color:#B42318;}
+.hidden{display:none!important;}
+.toast{position:fixed;left:50%;bottom:calc(var(--bottomnav-h) + 18px);transform:translateX(-50%);background:#101828;color:#fff;padding:10px 20px;border-radius:20px;font-size:13px;font-weight:700;z-index:120;box-shadow:var(--shadow-lg);}
+.toast.hidden{display:none;}
+@media(min-width:1024px){.toast{bottom:24px;}}
+.select-sm{border:1px solid var(--c-border);border-radius:var(--radius-sm);padding:8px 10px;font-size:13px;font-family:inherit;background:#fff;min-height:38px;max-width:100%;}
+.fchip-bar{display:flex;gap:8px;flex-wrap:wrap;}
+.fchip{padding:7px 14px;border-radius:20px;border:1px solid var(--c-border);background:#fff;font-size:12.5px;font-weight:700;cursor:pointer;font-family:inherit;color:var(--c-muted);}
+.fchip.active{background:var(--c-primary);color:#fff;border-color:var(--c-primary);}
+.crumb{font-size:13px;margin-bottom:10px;}
+.crumb a{color:var(--c-primary);font-weight:700;}
+
+/* 本頁 */
+.demo-note{background:#FFF8EC;border:1px solid #F6D9B0;color:#7A4A12;border-radius:var(--radius-sm);padding:9px 12px;font-size:12.5px;margin-bottom:12px;}
+.cls-head{display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;align-items:flex-end;margin-bottom:12px;}
+.cls-head h3{margin:0;font-size:17px;}
+.cls-pick{display:flex;flex-direction:column;gap:4px;font-size:12px;color:var(--c-muted);font-weight:600;}
+.cls-pick select{min-width:260px;font-weight:600;color:var(--c-text);}
+@media (max-width:640px){.cls-head{align-items:stretch;}.cls-pick,.cls-pick select{width:100%;min-width:0;}}
+.tabs{display:flex;gap:4px;border-bottom:1px solid var(--c-border);margin-bottom:14px;}
+.tab{background:none;border:none;border-bottom:2.5px solid transparent;padding:10px 14px;font-size:14px;font-weight:700;color:var(--c-muted);cursor:pointer;font-family:inherit;margin-bottom:-1px;}
+.tab.active{color:var(--c-primary);border-bottom-color:var(--c-primary);}
+.act-bar{display:flex;gap:8px;flex-wrap:wrap;align-items:center;justify-content:space-between;margin-bottom:12px;}
+.act-bar .btns{display:flex;gap:8px;flex-wrap:wrap;}
+.info-line{font-size:12.5px;color:var(--c-muted);}
+.info-line b{color:var(--c-text);}
+.sec{background:#fff;border:1px solid var(--c-border);border-radius:var(--radius);box-shadow:var(--shadow);padding:16px 18px;margin-bottom:12px;}
+.sec h4{margin:0 0 12px;font-size:15px;display:flex;gap:8px;align-items:baseline;flex-wrap:wrap;}
+.sec h4 .no{color:var(--c-primary);font-variant-numeric:tabular-nums;}
+.sec h4 .opt{font-size:11.5px;font-weight:600;color:var(--c-muted);}
+.note{font-size:12px;color:var(--c-muted);margin:10px 0 0;}
+.kv{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;}
+@media(max-width:760px){.kv{grid-template-columns:repeat(2,1fr);}}
+.kv div{background:var(--c-bg);border-radius:var(--radius-sm);padding:8px 11px;font-size:11.5px;color:var(--c-muted);min-width:0;}
+.kv b{display:block;font-size:13.5px;color:var(--c-text);font-weight:700;margin-top:1px;overflow-wrap:anywhere;}
+.kpi{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;}
+@media(max-width:760px){.kpi{grid-template-columns:repeat(2,1fr);}}
+.kpi div{border:1px solid var(--c-border);border-radius:var(--radius-sm);padding:10px 12px;font-size:11.5px;color:var(--c-muted);}
+.kpi b{display:block;font-size:21px;color:var(--c-text);font-variant-numeric:tabular-nums;line-height:1.25;margin-top:2px;}
+.kpi b small{font-size:12px;color:var(--c-muted);font-weight:600;}
+.crit{margin-top:12px;border:1px dashed var(--c-border);border-radius:var(--radius-sm);padding:10px 12px;font-size:12.5px;}
+.crit-row{display:flex;gap:8px;align-items:flex-start;padding:3px 0;}
+.crit-row .ck{flex:none;font-weight:700;width:16px;text-align:center;}
+.ck-ok{color:#0B6B52;}.ck-no{color:#B42318;}
+.tbl-wrap{overflow-x:auto;}
+.tbl{border-collapse:collapse;width:100%;font-size:12.5px;}
+.tbl th,.tbl td{padding:8px 8px;border-bottom:1px solid var(--c-border);text-align:left;vertical-align:top;}
+.tbl th{background:var(--c-bg);font-size:11.5px;color:var(--c-muted);font-weight:700;white-space:nowrap;}
+.tbl td.num,.tbl th.num{text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap;}
+.tbl tr.click{cursor:pointer;}
+.tbl tr.click:hover td{background:var(--c-bg);}
+.tbl tr.dim td{color:#98A2B3;}
+.chart-row{display:grid;grid-template-columns:1.2fr 1fr;gap:16px;align-items:start;}
+@media(max-width:820px){.chart-row{grid-template-columns:1fr;}}
+.chart-box{min-width:0;}
+.chart-box svg{width:100%;height:auto;}
+.legend{display:flex;gap:14px;justify-content:center;font-size:12px;color:var(--c-muted);margin-top:4px;flex-wrap:wrap;}
+.legend i{display:inline-block;width:14px;height:3px;border-radius:2px;vertical-align:middle;margin-right:5px;}
+.tag-list{display:flex;gap:6px;flex-wrap:wrap;margin:6px 0 2px;}
+.tag{display:inline-block;padding:3px 10px;border-radius:14px;font-size:12px;border:1px solid var(--c-border);color:var(--c-muted);background:#fff;}
+.tag.on{background:#E6EEF8;border-color:#BBD0EA;color:var(--c-primary);font-weight:700;}
+.sub-h{font-size:13px;font-weight:700;margin:12px 0 4px;}
+.sub-h:first-child{margin-top:0;}
+details.skill{border:1px solid var(--c-border);border-radius:var(--radius-sm);margin-top:8px;}
+details.skill summary{cursor:pointer;padding:9px 12px;font-size:13px;font-weight:700;display:flex;justify-content:space-between;gap:8px;list-style:none;}
+details.skill summary::-webkit-details-marker{display:none;}
+details.skill summary::after{content:'▾';color:var(--c-muted);}
+details.skill[open] summary::after{content:'▴';}
+details.skill .inner{padding:0 12px 10px;}
+.sc{display:inline-flex;gap:3px;}
+.sc span{width:20px;height:20px;border-radius:50%;border:1px solid var(--c-border);font-size:11px;display:inline-flex;align-items:center;justify-content:center;color:#98A2B3;}
+.sc span.on{background:var(--c-fin);border-color:var(--c-fin);color:#fff;font-weight:700;}
+.ov{display:grid;grid-template-columns:1fr 1fr;gap:0;border:1px solid var(--c-border);border-radius:var(--radius);overflow:hidden;margin-bottom:12px;background:#fff;}
+@media(max-width:640px){.ov{grid-template-columns:1fr;}}
+.ov-h{grid-column:1/-1;background:var(--c-primary);color:#fff;padding:12px 16px;}
+.ov-h small{display:block;font-size:11.5px;opacity:.85;}
+.ov-h b{font-size:15px;}
+.ov-c{padding:12px 16px;font-size:12px;color:var(--c-muted);}
+.ov-c + .ov-c{border-left:1px solid var(--c-border);}
+@media(max-width:640px){.ov-c + .ov-c{border-left:none;border-top:1px solid var(--c-border);}}
+.ov-c h5{margin:0 0 6px;font-size:13px;color:var(--c-text);}
+.ov-big{font-size:22px;font-weight:700;color:var(--c-text);font-variant-numeric:tabular-nums;}
+.ov-big small{font-size:12px;color:var(--c-muted);font-weight:600;}
+.ov-mini{display:grid;grid-template-columns:repeat(5,1fr);gap:4px;margin-top:6px;}
+.ov-mini span b{display:block;font-size:14px;color:var(--c-text);}
+.pbar{height:6px;border-radius:3px;background:var(--c-border);overflow:hidden;margin:4px 0 8px;}
+.pbar i{display:block;height:100%;background:var(--c-fin);border-radius:3px;}
+.rp-head{display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;align-items:flex-start;margin-bottom:12px;}
+.rp-head h3{margin:0;font-size:17px;}
+.err-box{background:#FDE8E8;border:1px solid #F5C2C0;color:#B42318;border-radius:var(--radius-sm);padding:10px 12px;font-size:12.5px;margin-bottom:12px;}
+.err-box ul{margin:4px 0 0;padding-left:18px;}
+.edit-note{background:#E6EEF8;color:var(--c-primary);border-radius:var(--radius-sm);padding:9px 12px;font-size:12.5px;margin-bottom:12px;}
+.fgrid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;}
+@media(max-width:760px){.fgrid{grid-template-columns:repeat(2,1fr);}}
+.fld label{display:block;font-size:12px;color:var(--c-muted);font-weight:600;margin-bottom:3px;}
+.fld input,.fld textarea,.fld select{width:100%;border:1px solid var(--c-border);border-radius:var(--radius-sm);padding:8px 10px;font-size:13.5px;font-family:inherit;background:#fff;}
+.fld textarea{min-height:60px;resize:vertical;}
+.chk-grid{display:flex;flex-wrap:wrap;gap:6px 14px;font-size:13px;margin:4px 0 6px;}
+.chk-grid label{display:inline-flex;gap:5px;align-items:center;cursor:pointer;}
+.ind-sel{border:1px solid var(--c-border);border-radius:6px;padding:4px 6px;font-size:12.5px;font-family:inherit;background:#fff;}
+.sticky-act{position:sticky;bottom:calc(var(--bottomnav-h) + 8px);background:#fff;border:1px solid var(--c-border);border-radius:var(--radius);box-shadow:var(--shadow-lg);padding:10px 14px;display:flex;gap:8px;justify-content:flex-end;flex-wrap:wrap;z-index:40;}
+@media(min-width:1024px){.sticky-act{bottom:12px;}}
+.tpl{margin-top:4px;font-size:12.5px;}
+.tpl summary{cursor:pointer;color:var(--c-muted);font-weight:700;padding:6px 0;}
+.reset-row{text-align:right;margin-top:8px;}
+/* 列印用正式標題（20261124 使用者指示：PDF 不印頁面說明與班級切換，改放正式報告標題；標題文字依客戶兩份示範版報告） */
+.print-only{display:none;}
+.pt-head{border-bottom:2px solid var(--c-text);padding:0 0 12px;margin:0 0 16px;}
+.pt-kicker{font-size:11px;letter-spacing:.12em;color:var(--c-muted);font-weight:700;text-transform:uppercase;}
+.pt-head h1{margin:6px 0 2px;font-size:24px;line-height:1.3;}
+.pt-en{font-size:12px;color:var(--c-muted);}
+.pt-meta{display:flex;flex-wrap:wrap;gap:4px 18px;margin-top:10px;font-size:12.5px;}
+.pt-meta span{color:var(--c-muted);}
+.pt-meta b{color:var(--c-text);font-weight:600;margin-left:4px;}
+@media print{
+  .side-nav,.topbar,.bottom-nav,.no-print,.tabs,.crumb,.demo-note,.sticky-act,.tpl,.reset-row,#ph-sw,.ph-sw,.page-sub,.cls-head,.rp-head{display:none!important;}
+  .print-only{display:block!important;}
+  .app.has-side .content{margin-left:0!important;}
+  body{background:#fff;}
+  .sec,.ov{box-shadow:none;break-inside:avoid;}
+  details.skill .inner{display:block;}
+}
+</style>
+</head>
+<body>
+<div class="app has-side">
+  <nav class="side-nav" aria-label="主導覽">
+    <div class="side-brand"><a href="../公開網站/p01_home.html" aria-label="回官網" data-i18n-aria-label="nav_t.backToWebsite"><img src="../assets/tli-logo.svg" alt="TLI"></a></div>
+    <div class="side-role"><strong></strong><span></span></div>
+    <a class="side-link" href="t08_my_classes.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="14" rx="2"/><line x1="3" y1="9" x2="21" y2="9"/><circle cx="8" cy="14" r="1.2"/><circle cx="12" cy="14" r="1.2"/><circle cx="16" cy="14" r="1.2"/></svg><span data-i18n="myclasses.nav.myClasses">我的班級</span></a>
+    <a class="side-link" href="t09_lesson_log.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="4" y1="20" x2="20" y2="20"/><rect x="5" y="11" width="3" height="7" rx="1"/><rect x="10.5" y="6" width="3" height="12" rx="1"/><rect x="16" y="9" width="3" height="9" rx="1"/></svg><span data-en="Study progress">學員自學進度</span></a>
+    <a class="side-link" href="t10_my_students.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/></svg><span data-i18n="myclasses.nav.myStudents">我的學員</span></a>
+    <a class="side-link active" href="t14_learning_report.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="8" y1="17" x2="8" y2="14"/><line x1="12" y1="17" x2="12" y2="11"/><line x1="16" y1="17" x2="16" y2="13"/></svg><span data-en="Learning reports">學習報告</span></a>
+    <a class="side-link" href="../公開網站/p01_home.html" style="margin-top:auto;"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg><span data-i18n="nav_t.backToWebsite">回官網</span></a>
+  </nav>
+
+  <header class="topbar">
+    <div class="topbar-left"><a class="topbar-logo-wrap" href="../公開網站/p01_home.html" aria-label="回官網" data-i18n-aria-label="nav_t.backToWebsite"><img src="../assets/tli-logo.svg" alt="TLI"></a><div class="topbar-title" data-en="Learning reports">學習報告</div></div>
+    <div class="topbar-actions"></div>
+  </header>
+
+  <main class="content">
+    <p class="page-sub" data-en="End-of-term learning reports: view the class report and each student's report, fill in student assessments, and submit them to TLI for review before publishing.">期末學習成果報告：查看全班與個人報告、填寫學員評量，送 TLI 審核後發布。</p>
+    <div class="demo-note" data-en="Demo data: reports are shown as they would look at the end of term. Student names come from the project roster; scores, attendance and comments are fictional. This page assumes the teacher has several classes; switch on the right.">示範資料：報告以學期結束時的期末狀態呈現；學員姓名沿用專案名單，成績、出席與評語均為虛構。本頁假設老師同時帶多個班級，可在右側切換。</div>
+
+    <div class="cls-head">
+      <div><h3 id="clsTitle"></h3><div class="small muted" id="clsMeta"></div></div>
+      <div id="clsPick"></div>
+    </div>
+    <div class="tabs no-print" role="tablist">
+      <button class="tab" role="tab" data-tab="class" data-en="Class report">全班報告</button>
+      <button class="tab" role="tab" data-tab="stu" data-en="Student reports">個人報告</button>
+    </div>
+    <div id="view"></div>
+    <div class="reset-row"><button class="btn-link" id="btnReset" data-en="Reset demo data">重設示範資料</button></div>
+  </main>
+
+  <nav class="bottom-nav">
+    <a href="t08_my_classes.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="14" rx="2"/><line x1="3" y1="9" x2="21" y2="9"/><circle cx="8" cy="14" r="1.2"/><circle cx="12" cy="14" r="1.2"/><circle cx="16" cy="14" r="1.2"/></svg><span data-i18n="myclasses.nav.myClasses">我的班級</span></a>
+    <a href="t09_lesson_log.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="4" y1="20" x2="20" y2="20"/><rect x="5" y="11" width="3" height="7" rx="1"/><rect x="10.5" y="6" width="3" height="12" rx="1"/><rect x="16" y="9" width="3" height="9" rx="1"/></svg><span data-en="Study progress">學員自學進度</span></a>
+    <a href="t10_my_students.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/></svg><span data-i18n="myclasses.nav.myStudents">我的學員</span></a>
+    <a class="active" href="t14_learning_report.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="8" y1="17" x2="8" y2="14"/><line x1="12" y1="17" x2="12" y2="11"/><line x1="16" y1="17" x2="16" y2="13"/></svg><span data-en="Reports">學習報告</span></a>
+  </nav>
+  <div class="toast hidden" id="toast" aria-live="polite"></div>
+  <!-- 教師端共用的學生彈窗容器（本頁不用，保留 id 供 _teacher_common.js 的 Esc 關閉） -->
+  <div class="hidden" id="drawerOv"><div id="drawerBody"></div></div>
+</div>
+
+<script>window.TLI_I18N_PAGE_LANGS=['zh-TW','zh-CN','en'];</script>
+<script src="../assets/_shared_masters.js"></script>
+<script src="../assets/_i18n_dict.js"></script>
+<script src="../assets/_i18n_dict_teacher.js"></script>
+<script src="../會員區/_project_learning.js"></script>
+<script src="../assets/_i18n.js"></script>
+<script src="_teacher_common.js"></script>
+<script>
+var PL = TC.PL, T = TC.T, $ = TC.$, esc = PL.esc;
+TC.init();
+
+/* ================= 報告設定（由 TLI 教務／課程管理者設定；教師只能看） =================
+   出處：班級報告 02「完課標準 a/b/c」、09；個人報告 02、附錄；11/23 會議決議 2（完課標準 By Course，A 出席／B 影片／C 測驗各自可設「是否納入」「是否顯示」） */
+var HOURS = 60;            /* 應上時數：兩份範本皆為 60 小時（示意） */
+var TARGET = 'A1';         /* 課程目標：個人報告 01「參照 CEFR A1」（示意） */
+var CRIT = [
+  {k:'A', inc:true, show:true, zh:'出席時數至少 54 小時（應上 60 小時之 90%）', en:'Attendance of at least 54 hours (90% of 60 scheduled hours)', ok:function(d){ return d.att!=null && d.att>=54; }},
+  {k:'B', inc:true, show:true, zh:'TLI Connect 自學影片完成率達 90%', en:'TLI Connect self-study video completion of at least 90%', ok:function(d){ return d.vid!=null && d.vid>=90; }},
+  {k:'C', inc:true, show:true, zh:'單元測驗平均達 70 分，並完成期初與期末測驗', en:'Unit quiz average of at least 70, and both pre-course and final tests completed', ok:function(d){ return d.quiz!=null && d.quiz>=70 && d.tests.pre!=null && d.tests.fin!=null; }}
+];
+var TEST_KEYS = ['pre','s1','s2','fin'];
+function testName(k){ return {pre:T('期初測驗','Pre-course test'), s1:T('階段測驗 1','Stage test 1'), s2:T('階段測驗 2','Stage test 2'), fin:T('期末測驗','Final test')}[k]; }
+/* 五項核心能力（11/23 會議決議 1：四技能＋互動與溝通，每項 5 個指標）；指標文字取自個人報告 04 */
+var SKILLS = [
+  {k:'L', zh:'聽力', en:'Listening', d:['日常與職場情境的聽解','Listening in daily and workplace contexts'], ind:[
+    ['能聽懂本階段程度的課堂說明及任務指示','Understands common classroom instructions given in Chinese'],
+    ['聽懂階段程度主題的對話，抓出關鍵訊息','Identifies key information in short conversations on familiar topics'],
+    ['聽懂階段程度的詞彙與句義','Understands level-appropriate vocabulary and sentence meanings'],
+    ['聽懂階段程度的內容並回答問題','Comprehends short audio recordings and answers related questions'],
+    ['能從符合本階段程度的口語內容中辨識並擷取重要資訊','Understands simple workplace requests and task instructions']]},
+  {k:'S', zh:'口說', en:'Speaking', d:['發音、表達與互動','Pronunciation, expression and interaction'], ind:[
+    ['聲調與發音清楚，聽者能理解','Produces clear tones and pronunciation that are easy to understand'],
+    ['能運用此階段學過的詞彙與句型表達意思','Formulates complete short sentences using learned vocabulary and structures'],
+    ['能針對此階段所學主題進行口語描述及表達','Introduces oneself and discusses basic work and daily life topics'],
+    ['能在符合本階段程度的情境中提問、回答及進行對話','Asks and answers questions to complete short conversational tasks'],
+    ['能根據階段程度提出請求或完成溝通任務','Expresses basic needs and asks for assistance appropriately']]},
+  {k:'R', zh:'閱讀', en:'Reading', d:['拼音／漢字認讀與短文理解','Pinyin/character recognition and short-text comprehension'], ind:[
+    ['能辨識及理解本階段所學的拼音或漢字','Reads learned Pinyin accurately with correct tones'],
+    ['能理解本階段所學詞彙、句型及句義','Recognizes common Chinese characters and vocabulary taught in class'],
+    ['能理解本階段程度的對話與短文','Comprehends short dialogues and texts in the course materials'],
+    ['能理解本階段程度所呈現的短文、資訊或文章','Understands practical task information such as notices, signs, and prices'],
+    ['能從本階段程度的文字內容中找出重點及所需資訊','Extracts key details (e.g., time, location) from short messages']]},
+  {k:'W', zh:'書寫', en:'Writing', d:['拼音輸入與短句書寫','Pinyin input and short-sentence writing'], ind:[
+    ['能以手寫或輸入方式正確打出階段所學詞彙','Types correct words accurately using Pinyin input'],
+    ['能使用正確語序，寫出符合本階段的句子','Writes simple sentences with correct word order'],
+    ['能運用本階段所學詞彙與句型進行造句或寫作','Constructs sentences using target grammar patterns learned in class'],
+    ['能依照情境需求完成指定書寫任務','Fills in basic personal details and level-appropriate forms'],
+    ['能針對本階段主題或情境，撰寫適當文字訊息','Writes short notes, such as scheduling meetings or replying to colleagues']]},
+  {k:'I', zh:'互動與溝通', en:'Interaction', d:['雙向交流與對話流暢度','Two-way exchange and conversational fluency'], ind:[
+    ['能理解並適切回應他人的訊息','Comprehends and responds appropriately to messages from conversation partners'],
+    ['能主動發起及參與交流','Initiates and actively participates in everyday spoken exchanges'],
+    ['能維持並推進雙向溝通','Sustains and moves forward a basic two-way communication'],
+    ['能確認訊息、澄清誤解及修復溝通','Confirms details, clarifies misunderstandings, and repairs communication breakdowns'],
+    ['能透過互動與他人共同完成溝通目的','Collaborates effectively through interaction to achieve shared communicative goals']]}
+];
+var SCALE = [['尚未掌握','Not yet'],['初步掌握','Emerging'],['基本掌握','Developing'],['良好掌握','Proficient'],['熟練掌握','Advanced']];
+/* 情境任務：選用模組（11/23 決議 1：教務於後台「情境任務維護」自訂並決定是否開啟）；任務取自兩份範本 05 */
+var TASKS_ON = true;
+var TASKS = [['介紹自己及工作資訊','Introduce oneself and one\'s job'],['日常寒暄及問候','Everyday greetings and small talk'],['確認會議日期與時間','Confirm meeting dates and times'],['提出日常生活需求','Express everyday needs'],['描述簡單職場問題','Describe simple workplace problems']];
+var TASK_ST = {I:['可獨立完成','Can do independently','badge-ok'], H:['需要提示','Needs prompting','badge-info'], N:['尚未達成','Not yet achieved','badge-warn'], X:['未評量','Not assessed','badge-muted']};
+/* 教師評語標籤：個人報告 07、班級報告 07 */
+var STR_P = [['聽力理解良好','Good listening comprehension'],['閱讀進步明顯','Clear progress in reading'],['學習態度積極','Positive learning attitude'],['口語表達積極','Active in speaking'],['句型掌握良好','Good command of sentence patterns'],['情境任務完成度佳','Completes scenario tasks well']];
+var IMP_P = [['發音與聲調','Pronunciation and tones'],['句型結構','Sentence structure'],['書寫及拼音輸入','Writing and Pinyin input'],['口說流利度','Speaking fluency'],['詞彙運用','Vocabulary use'],['閱讀理解','Reading comprehension'],['課後複習習慣','After-class review habits']];
+var STR_C = [['聽力理解進步','Improved listening comprehension'],['日常與職場溝通進步','Improved daily and workplace communication'],['情境任務達成良好','Scenario tasks well achieved'],['課堂參與積極','Active class participation'],['口語表達主動','Proactive in speaking'],['閱讀能力提升','Improved reading'],['學習態度穩定','Steady learning attitude']];
+var IMP_C = [['聲調與發音','Tones and pronunciation'],['口說流利度與應變','Speaking fluency and responsiveness'],['書寫及拼音輸入','Writing and Pinyin input'],['詞彙與句型運用','Vocabulary and sentence patterns'],['情境任務達成','Scenario task achievement'],['課後複習','After-class review'],['出席穩定度','Attendance consistency']];
+/* 下一階段建議：班級報告 08（條件由課程管理者設定）。20261124 使用者指示：只列建議作法，不顯示人數與名單 */
+var NEXT_C = [
+  {zh:'基礎華語 Level 2', en:'Basic Mandarin Level 2', who:['達成本階段目標的學員','Students who met this term\'s goals'], act:['延伸核心聽說能力與實用讀寫。','Extend core listening/speaking and practical reading/writing.']},
+  {zh:'口說加強訓練', en:'Speaking boost', who:['口說評分 3 分（含）以下的學員','Students with Speaking at 3 or below'], act:['安排小團體角色扮演或短期一對一指導。','Small-group role-play or short one-on-one coaching.']},
+  {zh:'書寫與輸入練習', en:'Writing & input practice', who:['書寫評分 2 分（含）以下的學員','Students with Writing at 2 or below'], act:['引導式拼音輸入訊息與句型建構練習。','Guided Pinyin messaging and sentence-building practice.']},
+  {zh:'出席補強支持', en:'Attendance support', who:['未完成課程的學員','Students who did not complete the course'], act:['提供補課學習及明確的再次評量選項。','Make-up learning and a clear re-assessment option.']}
+];
+/* 報告模板顯示設定：個人報告附錄（TLI 管理端控制） */
+var MODS = [
+  ['學員資訊及修課摘要','Student & course summary',1,'課程／學籍系統','Course / enrollment','基礎欄位','Basic fields'],
+  ['出席與完課','Attendance & completion',1,'點名／課務','Roll call / academic','實體與自學分開','In-class and self-study kept separate'],
+  ['前後測及程度參照','Tests & level reference',1,'測驗紀錄','Test records','缺測時顯示未施測','Shows "Not taken" when missing'],
+  ['五項核心能力評量','Five core skills',1,'教師輸入','Teacher input','可設定前後比較','Pre/post comparison configurable'],
+  ['情境任務','Scenario tasks',1,'教師勾選','Teacher input','依課程動態設定','Set per course'],
+  ['自學影片與單元測驗','Self-study videos & unit quizzes',1,'TLI Connect','TLI Connect','無資料時可隱藏子欄位','Sub-fields hidden when no data'],
+  ['課堂參與度','Class participation',0,'教師輸入','Teacher input','不得代替語言能力分數','Never replaces language scores'],
+  ['Mandarin Lounge','Mandarin Lounge',0,'活動參與紀錄','Session records','不計入真人授課時數','Not counted as class hours'],
+  ['教師評語','Teacher comments',1,'教師輸入／教研審核','Teacher / TLI review','支持選項及自由文字','Tags plus free text'],
+  ['下一階段課程建議','Next-step suggestion',1,'系統建議＋教師確認','System + teacher','不作正式能力證明','Not a formal certificate']
+];
+
+/* ================= 示範資料 ================= */
+var KEY = 'tli_t14_reports_v1';
+var COURSE_NAME = '職場與生活華語 1'; /* 20261124 使用者指示：報告的課程名稱用「職場與生活華語 1」（不沿用自學影音課程包名稱）；英文名稱未提供，英文介面也顯示同一名稱 */
+var DEMO_TODAY = '2027-06-08'; /* 期末報告示範日（使用者 2026-11-24 決定以期末完整報告示範；原型其他頁的今天仍是 2027-03-15） */
+function loadDB(){ try { return JSON.parse(localStorage.getItem(KEY)) || {}; } catch(e){ return {}; } }
+function saveDB(){ try { localStorage.setItem(KEY, JSON.stringify(DB)); } catch(e){} }
+var DB = loadDB();
+/* 每位學員依在班級內的順序套一組示範值（取自兩份範本的示範學員，略作變化） */
+var PROF = [
+  {att:57,  vid:90,  qc:8,  quiz:82, t:[42,50,60,78],   pre:[2,2,1,1,1], fin:[4,3,4,2,3], sc:'IIIHH', str:[0,1,2], imp:[0,1,2], obs:1},
+  {att:60,  vid:100, qc:9,  quiz:88, t:[33,46,58,72],   pre:[2,1,1,1,1], fin:[4,4,3,3,4], sc:'IIIIH', str:[0,3,5], imp:[2,4]},
+  {att:54,  vid:90,  qc:9,  quiz:76, t:[47,55,64,76],   pre:[2,2,2,1,2], fin:[4,3,4,3,3], sc:'IHIIH', str:[1,2],   imp:[0,3]},
+  {att:48,  vid:70,  qc:6,  quiz:68, t:[49,55,61,null], pre:[2,2,1,1,1], fin:[3,3,3,2,3], sc:'HHINX', str:[2,3],   imp:[0,3,6]},
+  {att:52.5,vid:80,  qc:7,  quiz:79, t:[51,58,66,79],   pre:[2,2,2,1,2], fin:[4,3,4,3,3], sc:'IHIHN', str:[0,4],   imp:[3,6]},
+  {att:58.5,vid:90,  qc:9,  quiz:74, t:[40,49,57,69],   pre:[1,1,1,1,1], fin:[3,3,3,3,3], sc:'IHHHH', str:[2,4],   imp:[0,3]},
+  {att:60,  vid:100, qc:10, quiz:91, t:[55,63,72,83],   pre:[3,2,2,2,2], fin:[5,4,4,3,4], sc:'IIIIH', str:[0,1,5], imp:[2]},
+  {att:55.5,vid:100, qc:9,  quiz:80, t:[36,47,56,70],   pre:[2,2,1,1,1], fin:[3,4,3,2,3], sc:'IIHHH', str:[3,4],   imp:[1,2]}
+];
+var OBS = {L:['能理解熟悉提問與基本課室指令。','Understands familiar questions and basic classroom instructions.'], S:['能自我介紹，部分應答仍須提示。','Can introduce self; some responses still need prompting.'], R:['能閱讀附拼音的簡短訊息與常見詞彙。','Reads short Pinyin-supported messages and common words.'], W:['可用拼音輸入簡短句子，需改善語序。','Types short sentences in Pinyin; word order needs work.']};
+function indFrom(v){ return [0,1,0,-1,0].map(function(dlt){ return Math.max(1, Math.min(5, v+dlt)); }); }
+var PROF_OFF = {pcl1:3, pcl3:5}; /* 多班示範：其他班級錯開示範檔，避免各班數字一模一樣；Section B（pcl2）維持原樣 */
+function seed(r, idx){
+  var p = PROF[(idx + (PROF_OFF[r.classId]||0)) % PROF.length];
+  /* 班級內第 6 位：已送出待審；第 7 位：草稿（期末評量尚未填完）；其餘已發布 */
+  var status = idx===5 ? 'review' : (idx===6 ? 'draft' : 'pub');
+  var d = {status:status, ver:1, updated:'2027-06-0'+(1+idx%5), att:p.att, vid:p.vid, vidN:Math.round(p.vid/10), vidT:10, qc:p.qc, qcT:10, quiz:p.quiz,
+    tests:{pre:p.t[0], s1:p.t[1], s2:p.t[2], fin:p.t[3]}, ind:{pre:{}, fin:{}}, obs:{}, sc:p.sc.split(''), str:p.str.slice(), strOther:'', imp:p.imp.slice(), impOther:'',
+    note:'', advice:'完成 TLI Connect 指定複習任務，並透過 Mandarin Lounge 增加口說機會。', next:'Basic Mandarin Level 2；可逐步銜接基礎生活與職場溝通課程。'};
+  SKILLS.forEach(function(s,i){ d.ind.pre[s.k] = indFrom(p.pre[i]); d.ind.fin[s.k] = indFrom(p.fin[i]); d.obs[s.k] = p.obs && OBS[s.k] ? T(OBS[s.k][0],OBS[s.k][1]) : ''; });
+  if(p.obs) d.note = r.name.split(' ')[0]+' 能理解常見課室指令，並逐漸運用所學詞彙進行簡單職場對話。';
+  if(status==='draft'){ /* 草稿：期末測驗、期末評分、情境任務、評語尚未填 */
+    d.tests.fin = null; SKILLS.forEach(function(s){ d.ind.fin[s.k] = [null,null,null,null,null]; d.obs[s.k]=''; });
+    d.sc = ['','','','','']; d.str = []; d.imp = []; d.note=''; d.updated = '2027-05-28';
+  }
+  return d;
+}
+function stuList(cid){ return PL.students(cid); }
+function rep(rid){
+  if(DB[rid]) return DB[rid];
+  var r = PL.rosterById(rid), list = stuList(r.classId), idx = list.map(function(x){ return x.id; }).indexOf(rid);
+  return seed(r, idx);
+}
+function pubData(d){ return d.status==='pub' ? d : (d.prevPub || null); } /* 全班報告只用已發布的版本 */
+function classObs(cid){ return DB['class:'+cid] || {str:[0,1,2], strOther:'', imp:[0,1,2], impOther:''}; }
+
+/* ================= 計算 ================= */
+function avg(a){ a = a.filter(function(x){ return x!=null && !isNaN(x); }); return a.length ? a.reduce(function(s,x){ return s+x; },0)/a.length : null; }
+function f1(x){ return x==null ? '—' : (Math.round(x*10)/10).toFixed(1); }
+function f0(x){ return x==null ? '—' : String(Math.round(x)); }
+function pct1(x){ return x==null ? '—' : (Math.round(x*10)/10).toFixed(1)+'%'; }
+/* 20261124 使用者指示：先移除 N/A 選項；保留 'NA' 判斷只為相容舊的 localStorage 資料 */
+function skillScore(d, phase, k){ var a = (d.ind[phase]||{})[k] || []; return avg(a.map(function(v){ return (v==null||v==='NA') ? null : +v; })); }
+function attRate(d){ return d.att==null ? null : d.att/HOURS*100; }
+function done(d){ return CRIT.filter(function(c){ return c.inc; }).every(function(c){ return c.ok(d); }); }
+function stBadge(s){ var m = {pub:['已發布','Published','badge-ok'], review:['待審核','In review','badge-warn'], draft:['草稿','Draft','badge-info'], none:['未填寫','Not started','badge-muted']}[s||'none']; return '<span class="badge '+m[2]+'">'+T(m[0],m[1])+'</span>'; }
+function doneBadge(d){ return done(d) ? '<span class="badge badge-ok">'+T('完成','Completed')+'</span>' : '<span class="badge badge-danger">'+T('未完成','Not completed')+'</span>'; }
+function testDate(c, k){ return {pre:PL.addDays(c.from,7), s1:PL.addDays(c.from,49), s2:PL.addDays(c.from,84), fin:PL.addDays(c.to,-10)}[k]; }
+function slash(d){ return d.replace(/-/g,'/'); }
+
+/* ================= 圖表（SVG，期初＝橘、期末＝藍：11/23 會議決議 1） ================= */
+function barChart(items){
+  var W=560, H=230, L=34, R=10, Tp=22, B=46, pw=W-L-R, ph=H-Tp-B, n=items.length, slot=pw/Math.max(n,1), bw=Math.min(64, slot*0.5);
+  var s = '<svg viewBox="0 0 '+W+' '+H+'" role="img" aria-label="'+T('測驗平均分數長條圖','Test average bar chart')+'">';
+  [0,25,50,75,100].forEach(function(v){ var y=Tp+ph-ph*v/100; s+='<line x1="'+L+'" x2="'+(W-R)+'" y1="'+y+'" y2="'+y+'" stroke="#EEF0F3" stroke-width="1"/><text x="'+(L-6)+'" y="'+(y+4)+'" font-size="11" fill="#667085" text-anchor="end">'+v+'</text>'; });
+  s += '<line x1="'+L+'" x2="'+(W-R)+'" y1="'+(Tp+ph)+'" y2="'+(Tp+ph)+'" stroke="#98A2B3" stroke-width="1"/>';
+  items.forEach(function(it,i){
+    var cx = L+slot*i+slot/2, x = cx-bw/2;
+    if(it.v==null){ s += '<text x="'+cx+'" y="'+(Tp+ph-8)+'" font-size="12" fill="#98A2B3" text-anchor="middle">'+T('未施測','Not taken')+'</text>'; }
+    else {
+      var h = Math.max(1, ph*it.v/100), y = Tp+ph-h, r = Math.min(4,h);
+      s += '<g><title>'+esc(it.label)+'：'+f1(it.v)+'/100'+(it.n!=null?'（n='+it.n+'）':'')+'</title><path d="M'+x+','+(Tp+ph)+' V'+(y+r)+' Q'+x+','+y+' '+(x+r)+','+y+' H'+(x+bw-r)+' Q'+(x+bw)+','+y+' '+(x+bw)+','+(y+r)+' V'+(Tp+ph)+' Z" fill="'+it.color+'"/>'+
+        '<rect x="'+(cx-slot/2)+'" y="'+Tp+'" width="'+slot+'" height="'+ph+'" fill="transparent"/></g>'+
+        '<text x="'+cx+'" y="'+(y-6)+'" font-size="12.5" font-weight="700" fill="#101828" text-anchor="middle">'+(it.int?f0(it.v):f1(it.v))+'</text>';
+    }
+    s += '<text x="'+cx+'" y="'+(Tp+ph+17)+'" font-size="12" fill="#101828" text-anchor="middle">'+esc(it.label)+'</text>';
+    if(it.sub) s += '<text x="'+cx+'" y="'+(Tp+ph+33)+'" font-size="11" fill="#667085" text-anchor="middle">'+esc(it.sub)+'</text>';
+  });
+  return s+'</svg>';
+}
+function radar(series){
+  var W=380, H=330, cx=190, cy=170, R=112, n=SKILLS.length;
+  function pt(i, v){ var a = (-90 + 360/n*i) * Math.PI/180; return [cx + Math.cos(a)*R*v/5, cy + Math.sin(a)*R*v/5]; }
+  var s = '<svg viewBox="0 0 '+W+' '+H+'" role="img" aria-label="'+T('五項核心能力雷達圖','Five-skill radar chart')+'">';
+  for(var lv=1; lv<=5; lv++){ s += '<polygon points="'+SKILLS.map(function(_,i){ return pt(i,lv).join(','); }).join(' ')+'" fill="none" stroke="'+(lv===5?'#C9D1DB':'#E4E7EC')+'" stroke-width="1"/>'; }
+  SKILLS.forEach(function(sk,i){ var e = pt(i,5); s += '<line x1="'+cx+'" y1="'+cy+'" x2="'+e[0]+'" y2="'+e[1]+'" stroke="#E4E7EC" stroke-width="1"/>';
+    var lp = pt(i,6.05), anc = Math.abs(lp[0]-cx)<4 ? 'middle' : (lp[0]>cx ? 'start' : 'end');
+    s += '<text x="'+lp[0]+'" y="'+(lp[1]+4)+'" font-size="12.5" font-weight="700" fill="#101828" text-anchor="'+anc+'">'+esc(T(sk.zh,sk.en))+'</text>'; });
+  for(lv=1; lv<=5; lv++){ var q = pt(0,lv); s += '<text x="'+(q[0]+5)+'" y="'+(q[1]+4)+'" font-size="10" fill="#98A2B3">'+lv+'</text>'; }
+  series.forEach(function(se){
+    if(!se.vals.some(function(v){ return v!=null; })) return;
+    var pts = se.vals.map(function(v,i){ return pt(i, v==null?0:v); });
+    s += '<polygon points="'+pts.map(function(p){ return p.join(','); }).join(' ')+'" fill="'+se.color+'" fill-opacity=".10" stroke="'+se.color+'" stroke-width="2" stroke-linejoin="round"/>';
+    pts.forEach(function(p,i){ s += '<g><title>'+esc(se.label)+'｜'+esc(T(SKILLS[i].zh,SKILLS[i].en))+'：'+f1(se.vals[i])+' / 5</title><circle cx="'+p[0]+'" cy="'+p[1]+'" r="10" fill="transparent"/><circle cx="'+p[0]+'" cy="'+p[1]+'" r="4.5" fill="'+se.color+'" stroke="#fff" stroke-width="2"/></g>'; });
+  });
+  s += '</svg><div class="legend">'+series.filter(function(se){ return se.vals.some(function(v){ return v!=null; }); }).map(function(se){ return '<span><i style="background:'+se.color+'"></i>'+esc(se.label)+'</span>'; }).join('')+'</div>';
+  return s;
+}
+
+/* ================= 共用片段 ================= */
+function sec(no, title, body, opt){ return '<section class="sec"><h4><span class="no">'+no+'</span>'+title+(opt?'<span class="opt">'+opt+'</span>':'')+'</h4>'+body+'</section>'; }
+function tags(list, on, other){ return '<div class="tag-list">'+list.map(function(t,i){ return '<span class="tag'+(on.indexOf(i)>=0?' on':'')+'">'+(on.indexOf(i)>=0?'✓ ':'')+esc(T(t[0],t[1]))+'</span>'; }).join('')+(other?'<span class="tag on">✓ '+T('其他：','Other: ')+esc(other)+'</span>':'')+'</div>'; }
+function tplPanel(){
+  return '<details class="tpl"><summary>'+T('報告模板顯示設定（由 TLI 管理端設定，教師不能修改）','Report template display settings (set by TLI admin; read-only for teachers)')+'</summary><div class="tbl-wrap"><table class="tbl"><thead><tr><th>'+T('模組','Module')+'</th><th>'+T('預設顯示','Default')+'</th><th>'+T('資料來源','Source')+'</th><th>'+T('設定備註','Note')+'</th></tr></thead><tbody>'+
+    MODS.map(function(m){ return '<tr><td>'+T(m[0],m[1])+'</td><td>'+(m[2]?'<span class="badge badge-ok">'+T('顯示','Shown')+'</span>':'<span class="badge badge-muted">'+T('隱藏（可開啟）','Hidden (can enable)')+'</span>')+'</td><td>'+T(m[3],m[4])+'</td><td>'+T(m[5],m[6])+'</td></tr>'; }).join('')+
+    '</tbody></table></div></details>';
+}
+function critBox(d){
+  var shown = CRIT.filter(function(c){ return c.show; });
+  return '<div class="crit"><b>'+T('完課標準','Completion criteria')+'</b><span class="small muted">'+T('（依課程設定，由 TLI 課程管理者維護）','(set per course by TLI)')+'</span>'+
+    shown.map(function(c){ var ok = d ? c.ok(d) : null;
+      return '<div class="crit-row"><span class="ck '+(d?(ok?'ck-ok':'ck-no'):'')+'">'+(d?(ok?'✓':'✗'):c.k)+'</span><span>'+(d?c.k+'. ':'')+esc(T(c.zh,c.en))+(c.inc?'':'<span class="badge badge-muted" style="margin-left:6px;">'+T('僅顯示，不納入完課','Shown only, not required')+'</span>')+'</span></div>'; }).join('')+'</div>';
+}
+
+/* ================= 狀態與路由 ================= */
+/* 20261124 使用者指示：假設班級老師帶多個班別，只在本頁示範。共用主檔每位老師只帶 1 班（t08–t10 不變），本頁另列同機構其他班級，讓班級切換出現 */
+function myCls(){ var mine = TC.myClasses(), ids = mine.map(function(c){ return c.id; }); return mine.concat(PL.classes().filter(function(c){ return ids.indexOf(c.id)<0; })); }
+var st = {cid:null, tab:PL.qs('tab')==='stu'?'stu':'class', rid:PL.qs('stu'), edit:false, tests:{pre:1,s1:1,s2:1,fin:1}, filt:'all', sfilt:'all', errs:null};
+(function(){ var my = myCls(), q = PL.qs('class'); st.cid = (my.filter(function(c){ return c.id===q; })[0] || my[0] || {}).id || null; if(st.rid) st.tab='stu'; })();
+function syncUrl(){ var p = ['class='+st.cid]; if(st.tab==='stu') p.push('tab=stu'); if(st.rid) p.push('stu='+st.rid); if(PL.qs('rid')) p.push('rid='+PL.qs('rid')); history.replaceState(null,'','?'+p.join('&')); }
+
+function render(){
+  var my = myCls(), c = PL.classById(st.cid);
+  if(!c){ $('view').innerHTML = '<div class="card muted" style="text-align:center;">'+T('目前沒有指派給你的班級。','No classes are assigned to you yet.')+'</div>'; return; }
+  $('clsTitle').textContent = c.name;
+  $('clsMeta').textContent = PL.partner().name+'・'+c.from+' ～ '+c.to+'・'+T('應上 '+HOURS+' 小時（示意）', HOURS+' scheduled hours (sample)');
+  $('clsPick').innerHTML = my.length>1 ? '<label class="cls-pick" for="clsSel"><span>'+T('切換班級（共 '+my.length+' 班）','Switch class ('+my.length+')')+'</span><select class="select-sm" id="clsSel">'+my.map(function(x){ return '<option value="'+x.id+'"'+(x.id===st.cid?' selected':'')+'>'+esc(x.name)+T('（'+stuList(x.id).length+' 人）',' ('+stuList(x.id).length+')')+'</option>'; }).join('')+'</select></label>' : '';
+  if($('clsSel')) $('clsSel').onchange = function(){ st.cid=this.value; st.rid=null; st.edit=false; st.errs=null; st.filt='all'; st.sfilt='all'; window.scrollTo(0,0); render(); };
+  document.querySelectorAll('.tab').forEach(function(b){ b.classList.toggle('active', b.dataset.tab===st.tab); b.setAttribute('aria-selected', b.dataset.tab===st.tab); b.onclick=function(){ st.tab=b.dataset.tab; st.rid=null; st.edit=false; st.errs=null; render(); }; });
+  if(st.tab==='class') renderClass(c); else if(st.rid) (st.edit ? renderEdit(c) : renderPersonal(c)); else renderStuList(c);
+  syncUrl(); PL.xl(document);
+}
+
+/* 列印用正式標題：班級報告依「班級期末學習成果與完課報告」、個人報告依「個別學員學習成果報告」（客戶示範版 v3）；畫面上不顯示 */
+function printHead(kind, c, r, d){
+  /* 20261124 使用者指示：標題下只列報告日期；班級、機構、期間等 01 區塊已有，不重複。個人報告日期用該版本最後更新日 */
+  var meta = [[T('報告日期','Report date'), slash(kind==='class' ? DEMO_TODAY : d.updated)]];
+  return '<div class="print-only pt-head"><div class="pt-kicker">TLI Connect × '+esc(PL.partner().name)+'</div>'+
+    '<h1>'+(kind==='class' ? T('班級期末學習成果與完課報告','Class End-of-Term Learning & Completion Report') : T('個別學員學習成果報告','Student Learning Progress & Assessment Report'))+'</h1>'+
+    ((kind==='class' || T('zh','')==='') ? '' : '<div class="pt-en">Student Learning Progress &amp; Assessment Report</div>')+
+    '<div class="pt-meta">'+meta.map(function(m){ return '<div><span>'+m[0]+'</span><b>'+esc(m[1])+'</b></div>'; }).join('')+'</div></div>';
+}
+/* 列印時把文件標題換成報告名稱，存 PDF 的預設檔名就是報告名 */
+function printAs(name){ var old = document.title; document.title = name; window.print(); setTimeout(function(){ document.title = old; }, 500); }
+
+/* ================= 全班報告（班級報告 01–10） ================= */
+function renderClass(c){
+  var all = stuList(c.id).map(function(r){ var cur = rep(r.id); return {r:r, cur:cur, p:pubData(cur), d:pubData(cur)||cur}; }), pub = all.filter(function(x){ return !!x.p; }), n = pub.length, D = pub.map(function(x){ return x.p; });
+  var cnt = {review:0, draft:0, none:0}; all.forEach(function(x){ if(!x.p) cnt[x.cur.status||'none']++; });
+  var h = printHead('class', c) + '<div class="act-bar no-print"><div class="info-line">'+T('統計納入已發布的個人報告 <b>'+n+'／'+all.length+'</b> 份','Includes <b>'+n+' of '+all.length+'</b> published student reports')+
+    (all.length-n ? T('；待審核 '+cnt.review+'、草稿 '+cnt.draft+' 份未列入',' ; '+cnt.review+' in review and '+cnt.draft+' drafts are excluded') : '')+'</div>'+
+    '<div class="btns"><button class="btn btn-outline btn-sm" id="btnXls">'+T('匯出 Excel','Export Excel')+'</button><button class="btn btn-primary btn-sm" id="btnPdf">'+T('下載 PDF','Download PDF')+'</button></div></div>';
+  /* 01 */
+  h += sec('01', T('班級與課程基本資訊','Class & course information'), '<div class="kv"><div>'+T('學習機構','Institution')+'<b>'+esc(PL.partner().name)+'</b></div><div>'+T('班級','Class')+'<b>'+esc(c.name)+'</b></div><div>'+T('課程名稱','Course')+'<b>'+esc(COURSE_NAME)+'</b></div><div>'+T('授課教師','Teacher')+'<b>'+esc(TC.ME.name)+'</b></div>'+
+    '<div>'+T('班級人數','Class size')+'<b>'+all.length+T(' 人','')+'</b></div><div>'+T('課程期間','Period')+'<b>'+slash(c.from)+' – '+slash(c.to)+'</b></div><div>'+T('課程時數','Hours')+'<b>'+HOURS+T(' 小時（示意）',' h (sample)')+'</b></div><div>'+T('課程目標','Target level')+'<b>'+T('參照 CEFR ','CEFR ')+TARGET+'</b></div></div>');
+  /* 02 */
+  /* 20261124 使用者指示：完課人數、平均完課率、各測驗完成數的分母一律用修課人數（同班級報告範本 17/20、85%）；分子只計已發布的個人報告 */
+  var N = all.length, comp = D.filter(done).length, tc = function(k){ return D.filter(function(d){ return d.tests[k]!=null; }).length; };
+  h += sec('02', T('班級學習成果摘要','Summary'),
+    '<div class="kpi"><div>'+T('修課人數','Enrolled')+'<b>'+N+'</b></div><div>'+T('完課人數','Completed')+'<b>'+comp+'<small> / '+N+'</small></b></div><div>'+T('平均完課率','Completion rate')+'<b>'+(N?Math.round(comp/N*100)+'%':'—')+'</b></div><div>'+T('平均出席率','Avg attendance')+'<b>'+pct1(avg(D.map(attRate)))+'</b></div>'+
+    '<div>'+T('自學影音平均完成率','Avg video completion')+'<b>'+(n?Math.round(avg(D.map(function(d){return d.vid;})))+'%':'—')+'</b></div><div>'+T('期初測驗完成數','Pre-course tests taken')+'<b>'+tc('pre')+'<small> / '+N+'</small></b></div><div>'+T('階段測驗完成數','Stage tests taken')+'<b>'+D.filter(function(d){ return d.tests.s1!=null && d.tests.s2!=null; }).length+'<small> / '+N+'</small></b></div><div>'+T('期末測驗完成數','Final tests taken')+'<b>'+tc('fin')+'<small> / '+N+'</small></b></div></div>'+
+    critBox(null)+'<p class="note">'+T('完課率與出席率為不同指標；另列測驗完成數，避免對成效作出過度推論。完課人數與測驗完成數的分母為修課人數（'+N+' 人），只計已發布的個人報告'+(N-n?'，尚未發布的 '+(N-n)+' 位暫不計入':'')+'；平均出席率與自學影音平均完成率以已發布報告平均（n='+n+'）。','Completion and attendance are different measures; test counts are listed to avoid over-interpreting results. Completion and test counts use enrollment ('+N+') as the denominator and count published reports only'+(N-n?' ('+(N-n)+' unpublished not yet counted)':'')+'; average attendance and video completion use published reports (n='+n+').')+'</p>');
+  /* 03 */
+  var chips = '<div class="fchip-bar no-print" style="margin-bottom:10px;" role="group" aria-label="'+T('選擇要比較的測驗','Choose tests')+'">'+TEST_KEYS.map(function(k){ return '<button class="fchip'+(st.tests[k]?' active':'')+'" data-tk="'+k+'" aria-pressed="'+(!!st.tests[k])+'">'+(st.tests[k]?'✓ ':'')+testName(k)+'</button>'; }).join('')+'</div>';
+  var sel = TEST_KEYS.filter(function(k){ return st.tests[k]; });
+  var items = sel.map(function(k){ var v = D.map(function(d){ return d.tests[k]; }).filter(function(x){ return x!=null; }); return {label:testName(k), sub:'n='+v.length, v:avg(v), n:v.length, color:k==='pre'?'var(--c-pre)':'var(--c-fin)'}; });
+  var both = D.filter(function(d){ return d.tests.pre!=null && d.tests.fin!=null; }), bp = avg(both.map(function(d){ return d.tests.pre; })), bf = avg(both.map(function(d){ return d.tests.fin; }));
+  var miss = D.length - both.length;
+  h += sec('03', T('全班期初、各階段與期末成績比較','Pre-course, stage and final test comparison'),
+    chips + (sel.length ? '<div class="chart-row"><div class="chart-box">'+barChart(items)+'</div><div class="tbl-wrap"><table class="tbl"><thead><tr><th>'+T('測驗','Test')+'</th><th class="num">'+T('平均分數','Average')+'</th><th class="num">n</th></tr></thead><tbody>'+
+      items.map(function(it){ return '<tr><td>'+it.label+'</td><td class="num">'+f1(it.v)+' / 100</td><td class="num">'+it.n+'</td></tr>'; }).join('')+
+      '<tr><td><b>'+T('期初與期末差異','Pre vs final')+'</b></td><td class="num"><b>'+(bp!=null&&bf!=null?(bf-bp>=0?'+':'')+f1(bf-bp)+T(' 分',''):'—')+'</b></td><td class="num">'+both.length+'</td></tr></tbody></table>'+
+      '<p class="note">'+T('差異只計算期初與期末都有成績的學員（n='+both.length+'）'+(miss?'，'+miss+' 位缺少其中一次成績未列入':'')+'；以未四捨五入的平均計算，顯示到小數一位。解讀進步幅度前須確認兩次測驗採可比較的量尺。','Difference uses students with both scores (n='+both.length+')'+(miss?'; '+miss+' missing one score excluded':'')+'; computed from unrounded means. Confirm the tests share a comparable scale before reading progress.')+'</p></div></div>'
+      : '<div class="muted small">'+T('請至少選擇一項測驗。','Select at least one test.')+'</div>'));
+  /* 04 */
+  var pre = SKILLS.map(function(s){ return avg(D.map(function(d){ return skillScore(d,'pre',s.k); })); }), fin = SKILLS.map(function(s){ return avg(D.map(function(d){ return skillScore(d,'fin',s.k); })); });
+  h += sec('04', T('全班五項核心能力平均表現','Class average: five core skills'),
+    '<div class="chart-row"><div class="chart-box">'+radar([{label:T('期初','Pre-course'), vals:pre, color:'var(--c-pre)'},{label:T('期末','Final'), vals:fin, color:'var(--c-fin)'}])+'</div><div class="tbl-wrap"><table class="tbl"><thead><tr><th>'+T('能力','Skill')+'</th><th class="num">'+T('期初','Pre')+' / 5</th><th class="num">'+T('期末','Final')+' / 5</th></tr></thead><tbody>'+
+    SKILLS.map(function(s,i){ return '<tr><td>'+T(s.zh,s.en)+'</td><td class="num">'+f1(pre[i])+'</td><td class="num"><b>'+f1(fin[i])+'</b></td></tr>'; }).join('')+'</tbody></table>'+
+    '<p class="note">'+T('課程評分規準 1–5 分，涵蓋 '+n+' 位學員。教師分數反映本課程目標達成程度，不代表 CEFR、HSK 或 TOCFL 認證。','Course rubric 1–5, n='+n+'. Teacher scores reflect course goals and are not CEFR, HSK or TOCFL certification.')+'</p></div></div>');
+  /* 05 */
+  if(TASKS_ON){
+    h += sec('05', T('情境任務達成情況','Scenario tasks'), '<div class="tbl-wrap"><table class="tbl"><thead><tr><th>'+T('情境任務','Task')+'</th><th class="num">'+T('可獨立完成','Independent')+'</th><th class="num">'+T('需要提示','Prompted')+'</th><th class="num">'+T('尚未達成／未評量','Not yet / Not assessed')+'</th></tr></thead><tbody>'+
+      TASKS.map(function(t,i){ var k = {I:0,H:0,N:0,X:0}; D.forEach(function(d){ var v = d.sc[i]||'X'; k[v]++; }); return '<tr><td>'+T(t[0],t[1])+'</td><td class="num">'+k.I+'</td><td class="num">'+k.H+'</td><td class="num">'+k.N+'／'+k.X+'</td></tr>'; }).join('')+
+      '</tbody></table></div><p class="note">'+T('「尚未達成／未評量」分開計數，未評量不視為未達成。任務清單依課程設定。','"Not yet" and "Not assessed" are counted separately; not assessed is not treated as not achieved. Tasks are set per course.')+'</p>', T('選用模組・由教務依課程開啟','Optional, enabled per course'));
+  }
+  /* 06 */
+  var fsel = '<select class="select-sm no-print" id="fSel" aria-label="'+T('篩選','Filter')+'">'+[['all',T('全部學員','All students')],['undone',T('未完課','Not completed')],['miss',T('缺少測驗成績','Missing test score')],['unpub',T('報告未發布','Report not published')]].map(function(o){ return '<option value="'+o[0]+'"'+(st.filt===o[0]?' selected':'')+'>'+o[1]+'</option>'; }).join('')+'</select>';
+  var rows = all.filter(function(x){ var d = x.d;
+    if(st.filt==='undone') return !!x.p && !done(d);
+    if(st.filt==='miss') return TEST_KEYS.some(function(k){ return d.tests[k]==null; });
+    if(st.filt==='unpub') return x.cur.status!=='pub';
+    return true; });
+  h += sec('06', T('學員個別學習摘要','Student summary'),
+    '<div style="display:flex;justify-content:space-between;gap:8px;flex-wrap:wrap;align-items:center;margin:-4px 0 8px;"><span class="small muted">'+T('點學員可開啟個人報告','Click a student to open the report')+'</span>'+fsel+'</div>'+
+    '<div class="tbl-wrap"><table class="tbl" style="min-width:860px;"><thead><tr><th>'+T('學員','Student')+'</th><th class="num">'+T('出席時數','Hours')+'</th><th class="num">'+T('出席率','Attend.')+'</th><th class="num">'+T('自學影音','Videos')+'</th><th class="num">'+T('期初','Pre')+'</th><th class="num">'+T('期末','Final')+'</th><th class="num">'+T('聽／說／讀／寫／互動','L / S / R / W / I')+'</th><th>'+T('完課狀態','Completion')+'</th><th>'+T('報告','Report')+'</th></tr></thead><tbody>'+
+    rows.map(function(x){ var d = x.d, pubd = !!x.p;
+      return '<tr class="click'+(pubd?'':' dim')+'" tabindex="0" data-rid="'+x.r.id+'"><td><b style="color:var(--c-text)">'+esc(x.r.name)+'</b></td><td class="num">'+(d.att==null?'—':d.att)+'</td><td class="num">'+pct1(attRate(d))+'</td><td class="num">'+(d.vid==null?'—':d.vid+'%')+'</td><td class="num">'+f0(d.tests.pre)+'</td><td class="num">'+f0(d.tests.fin)+'</td><td class="num">'+SKILLS.map(function(s){ return f1(skillScore(d,'fin',s.k)); }).join(' / ')+'</td><td>'+(pubd?doneBadge(d):'<span class="small">'+T('不列入統計','Excluded')+'</span>')+'</td><td>'+stBadge(x.cur.status)+(x.cur.status!=='pub'&&x.p?'<div class="small muted">'+T('統計採 v'+x.p.ver,'Stats use v'+x.p.ver)+'</div>':'')+'</td></tr>'; }).join('')+
+    (rows.length?'':'<tr><td colspan="9" class="muted" style="text-align:center;padding:20px;">'+T('沒有符合條件的學員。','No students match.')+'</td></tr>')+
+    '</tbody></table></div><p class="note">'+T('能力分數 1–5（各能力 5 個指標的平均）。「—」表示缺少成績或未評量，不計為 0 分。灰字為尚未發布的報告，不列入上方統計。','Skill scores 1–5 (mean of 5 indicators). "—" means missing or not assessed, never 0. Greyed rows are unpublished and excluded from the statistics.')+'</p>');
+  /* 07（教師可編輯） */
+  var co = classObs(c.id);
+  h += sec('07', T('教師綜合觀察與分析','Teacher observations'),
+    '<div class="sub-h">'+T('全班學習優勢（可複選 2–3 項）','Class strengths (choose 2–3)')+'</div><div class="chk-grid" id="coStr">'+STR_C.map(function(t,i){ return '<label><input type="checkbox" value="'+i+'"'+(co.str.indexOf(i)>=0?' checked':'')+'>'+esc(T(t[0],t[1]))+'</label>'; }).join('')+'</div>'+
+    '<div class="fld"><label for="coStrO">'+T('教師補充','Additional notes')+'</label><input id="coStrO" value="'+esc(co.strOther)+'"></div>'+
+    '<div class="sub-h" style="margin-top:12px;">'+T('待加強項目（可複選 1–3 項）','Areas to improve (choose 1–3)')+'</div><div class="chk-grid" id="coImp">'+IMP_C.map(function(t,i){ return '<label><input type="checkbox" value="'+i+'"'+(co.imp.indexOf(i)>=0?' checked':'')+'>'+esc(T(t[0],t[1]))+'</label>'; }).join('')+'</div>'+
+    '<div class="fld"><label for="coImpO">'+T('教師補充','Additional notes')+'</label><input id="coImpO" value="'+esc(co.impOther)+'"></div>'+
+    '<div style="display:flex;justify-content:space-between;gap:8px;align-items:center;margin-top:10px;flex-wrap:wrap;"><span class="small muted">'+T('勾選結果由系統彙整為班級觀察，原始勾選保留供統計。','Selections are compiled into the class observation and kept for statistics.')+'</span><button class="btn btn-outline btn-sm no-print" id="coSave">'+T('儲存觀察','Save observations')+'</button></div>');
+  /* 08 */
+  h += sec('08', T('下一階段課程建議','Next-step suggestions'), '<div class="tbl-wrap"><table class="tbl"><thead><tr><th>'+T('建議項目','Suggestion')+'</th><th>'+T('適用學員','Applies to')+'</th><th>'+T('建議措施','Action')+'</th></tr></thead><tbody>'+
+    NEXT_C.map(function(x){ return '<tr><td><b>'+T(x.zh,x.en)+'</b></td><td>'+T(x.who[0],x.who[1])+'</td><td>'+T(x.act[0],x.act[1])+'</td></tr>'; }).join('')+
+    '</tbody></table></div><p class="note">'+T('建議作法由課程管理者設定，僅供參考，不做人數統計。','Suggestions are set by the course manager for reference only; no student counts.')+'</p>');
+  /* 09 */
+  h += sec('09', T('資料管理與報告說明','Data & calculation notes'), '<ul class="small muted" style="margin:0;padding-left:18px;">'+
+    '<li>'+T('平均值與差異以未四捨五入的數值計算，顯示到小數一位。','Means and differences use unrounded values, shown to one decimal.')+'</li>'+
+    '<li>'+T('缺測或未評量不計入分母，並標示 n。','Missing or not-assessed values are excluded from denominators; n is shown.')+'</li>'+
+    '<li>'+T('班級彙總只納入已審核發布的個人報告；個人報告與班級報告使用同一筆資料。','Only reviewed and published student reports are aggregated; both reports use the same records.')+'</li>'+
+    '<li>'+T('完課門檻、情境任務清單與下一階段建議條件由課程管理者設定。','Completion thresholds, task lists and next-step conditions are set by the course manager.')+'</li>'+
+    '<li>'+T('資料截止日：','Data as of: ')+slash(c.to)+'</li></ul>');
+  /* 10 */
+  h += sec('10', T('填報與審核','Preparation & review'), '<div class="kv"><div>'+T('彙整單位','Compiled by')+'<b>'+T('TLI 教學研究與發展部','TLI Teaching R&D')+'</b></div><div>'+T('審核人','Reviewer')+'<b>'+T('TLI 專案主管（示意）','TLI project lead (sample)')+'</b></div><div>'+T('報告日期','Report date')+'<b>'+slash(PL.addDays(c.to,30))+T('（示意）',' (sample)')+'</b></div><div>'+T('閱覽對象','Audience')+'<b>'+T('核准之機構窗口','Approved institution contacts')+'</b></div></div>');
+  h += tplPanel();
+  $('view').innerHTML = h;
+  /* 事件 */
+  document.querySelectorAll('[data-tk]').forEach(function(b){ b.onclick = function(){ st.tests[b.dataset.tk] = st.tests[b.dataset.tk] ? 0 : 1; render(); }; });
+  $('fSel').onchange = function(){ st.filt = this.value; render(); };
+  document.querySelectorAll('tr[data-rid]').forEach(function(tr){ var go = function(){ st.tab='stu'; st.rid=tr.dataset.rid; st.edit=false; render(); window.scrollTo(0,0); }; tr.onclick = go; tr.onkeydown = function(e){ if(e.key==='Enter') go(); }; });
+  $('coSave').onclick = function(){
+    var s = checked('coStr'), m = checked('coImp');
+    if(s.length<2 || s.length>3 || m.length<1 || m.length>3){ TC.toast(T('優勢請選 2–3 項、待加強請選 1–3 項','Choose 2–3 strengths and 1–3 areas to improve')); return; }
+    DB['class:'+c.id] = {str:s, strOther:$('coStrO').value.trim(), imp:m, impOther:$('coImpO').value.trim()}; saveDB(); TC.toast(T('班級觀察已儲存','Observations saved'));
+  };
+  $('btnPdf').onclick = function(){ printAs(c.name+'_'+T('班級期末學習成果與完課報告','Class learning report')); };
+  $('btnXls').onclick = function(){ exportClass(c, all); };
+}
+function checked(id){ return Array.prototype.slice.call(document.querySelectorAll('#'+id+' input:checked')).map(function(i){ return +i.value; }); }
+function exportClass(c, all){
+  var rr = [[T('班級學習成果報告','Class learning report'), c.name, PL.partner().name, c.from+' ~ '+c.to],[],
+    [T('學員','Student'),'Email',T('報告狀態','Report status'),T('出席時數','Hours'),T('出席率','Attendance %'),T('自學影片完成率','Video %'),T('單元測驗平均','Unit quiz avg')].concat(TEST_KEYS.map(testName)).concat(SKILLS.map(function(s){ return T(s.zh,s.en)+T('（期初）',' (pre)'); })).concat(SKILLS.map(function(s){ return T(s.zh,s.en)+T('（期末）',' (final)'); })).concat([T('完課狀態','Completion')])];
+  all.forEach(function(x){ var d = x.cur;
+    rr.push([x.r.name, x.r.email, {pub:T('已發布','Published'),review:T('待審核','In review'),draft:T('草稿','Draft')}[d.status]||T('未填寫','Not started'), d.att==null?'':d.att, attRate(d)==null?'':f1(attRate(d)), d.vid==null?'':d.vid, d.quiz==null?'':d.quiz]
+      .concat(TEST_KEYS.map(function(k){ return d.tests[k]==null?'':d.tests[k]; })).concat(SKILLS.map(function(s){ var v=skillScore(d,'pre',s.k); return v==null?'':f1(v); })).concat(SKILLS.map(function(s){ var v=skillScore(d,'fin',s.k); return v==null?'':f1(v); })).concat([x.p?(done(x.p)?T('完成','Completed'):T('未完成','Not completed')):T('不列入統計','Excluded')]));
+  });
+  PL.download('class_report_'+c.name.replace(/\s+/g,'_')+'.csv', PL.csv(rr)); TC.toast(T('班級報告已匯出（Excel 可開啟的 CSV）','Class report exported (CSV for Excel)'));
+}
+
+/* ================= 個人報告列表 ================= */
+function renderStuList(c){
+  var all = stuList(c.id).map(function(r){ return {r:r, d:rep(r.id)}; }), k = {pub:0, review:0, draft:0, none:0};
+  all.forEach(function(x){ k[x.d.status||'none']++; });
+  var chips = [['all',T('全部','All')+' '+all.length],['draft',T('草稿／未填寫','Draft / not started')+' '+(k.draft+k.none)],['review',T('待審核','In review')+' '+k.review],['pub',T('已發布','Published')+' '+k.pub]];
+  var rows = all.filter(function(x){ var s = x.d.status||'none'; return st.sfilt==='all' || s===st.sfilt || (st.sfilt==='draft' && s==='none'); });
+  var h = '<div class="act-bar"><div class="fchip-bar">'+chips.map(function(ch){ return '<button class="fchip'+(st.sfilt===ch[0]?' active':'')+'" data-sf="'+ch[0]+'">'+ch[1]+'</button>'; }).join('')+'</div></div>'+
+    '<div class="edit-note">'+T('流程：教師填寫評量 → 送出審核 → TLI 教學研究與發展部審核後發布。已發布的報告才會納入全班報告，並可提供給機構窗口。','Flow: teacher fills in the assessment → submits → TLI Teaching R&D reviews and publishes. Only published reports count toward the class report and can be shared with the institution.')+'</div>'+
+    '<div class="card" style="padding:8px 12px;"><div class="tbl-wrap"><table class="tbl" style="min-width:640px;"><thead><tr><th>'+T('學員','Student')+'</th><th>'+T('報告狀態','Status')+'</th><th>'+T('完課狀態','Completion')+'</th><th class="num">'+T('版本','Ver.')+'</th><th>'+T('最後更新','Updated')+'</th><th></th></tr></thead><tbody>'+
+    rows.map(function(x){ var d = x.d, canEdit = d.status==='draft' || !d.status;
+      return '<tr><td><b>'+esc(x.r.name)+'</b><div class="small muted">'+esc(x.r.email)+'</div></td><td>'+stBadge(d.status)+'</td><td>'+(d.status==='draft'?'<span class="small muted">'+T('評量未完成','Assessment incomplete')+'</span>':doneBadge(d))+'</td><td class="num">v'+d.ver+'</td><td>'+slash(d.updated)+'</td>'+
+        '<td style="text-align:right;white-space:nowrap;"><button class="btn btn-outline btn-sm" data-open="'+x.r.id+'">'+T('查看報告','View')+'</button>'+(canEdit?' <button class="btn btn-primary btn-sm" data-edit="'+x.r.id+'">'+T('填寫評量','Fill in')+'</button>':'')+'</td></tr>'; }).join('')+
+    (rows.length?'':'<tr><td colspan="6" class="muted" style="text-align:center;padding:20px;">'+T('沒有符合條件的報告。','No reports match.')+'</td></tr>')+
+    '</tbody></table></div></div>';
+  $('view').innerHTML = h;
+  document.querySelectorAll('[data-sf]').forEach(function(b){ b.onclick = function(){ st.sfilt = b.dataset.sf; render(); }; });
+  document.querySelectorAll('[data-open]').forEach(function(b){ b.onclick = function(){ st.rid = b.dataset.open; st.edit=false; render(); window.scrollTo(0,0); }; });
+  document.querySelectorAll('[data-edit]').forEach(function(b){ b.onclick = function(){ st.rid = b.dataset.edit; st.edit=true; st.errs=null; render(); window.scrollTo(0,0); }; });
+}
+
+/* ================= 個人報告（個人報告 01–09） ================= */
+function renderPersonal(c){
+  var r = PL.rosterById(st.rid), d = rep(st.rid);
+  var pre = SKILLS.map(function(s){ return skillScore(d,'pre',s.k); }), fin = SKILLS.map(function(s){ return skillScore(d,'fin',s.k); });
+  var act = d.status==='pub' ? '<button class="btn btn-outline btn-sm" id="btnRev">'+T('修改報告（產生新版本）','Revise (new version)')+'</button>'
+          : (d.status==='review' ? '<span class="small muted" style="align-self:center;">'+T('已送審，等待 TLI 審核','Submitted, awaiting TLI review')+'</span>'
+          : '<button class="btn btn-primary btn-sm" id="btnEdit">'+T('填寫評量','Fill in assessment')+'</button>');
+  var h = printHead('stu', c, r, d) + '<div class="crumb"><a href="#" id="back">‹ '+T('個人報告列表','Student reports')+'</a></div>'+
+    '<div class="rp-head"><div><h3>'+T('個別學員學習成果報告','Student learning progress report')+'</h3><div class="small muted">'+esc(r.name)+'・'+stBadge(d.status)+' <span class="small muted">v'+d.ver+'・'+T('資料截止 ','Data as of ')+slash(c.to)+'</span></div></div>'+
+    '<div class="btns no-print" style="display:flex;gap:8px;flex-wrap:wrap;">'+act+'<button class="btn btn-outline btn-sm" id="btnPdf1">'+T('下載 PDF','Download PDF')+'</button></div></div>';
+  if(d.status==='draft') h += '<div class="edit-note">'+T('這份報告還是草稿：期末評量尚未填完，未送審前不會納入全班報告。','This report is a draft; it is excluded from the class report until submitted and published.')+'</div>';
+  /* 總覽（個人報告「學習成果樹狀摘要」） */
+  var nI = d.sc.filter(function(v){ return v==='I'; }).length, f5 = avg(fin);
+  h += '<div class="ov"><div class="ov-h"><small>TLI CONNECT × '+esc(PL.partner().name)+'</small><b>'+T('學習成果總覽','Learning overview')+'</b> <small style="display:inline;">｜'+HOURS+T(' 小時課程・目標參照 CEFR ',' h course・target CEFR ')+TARGET+'</small></div>'+
+    '<div class="ov-c"><h5>'+T('課堂語言表現','In-class language')+'</h5><div class="ov-big">'+f1(f5)+'<small> / 5</small></div>'+T('五項核心能力平均','Five-skill average')+'<div class="ov-mini">'+SKILLS.map(function(s,i){ return '<span>'+T(s.zh,s.en)+'<b>'+f1(fin[i])+'</b></span>'; }).join('')+'</div>'+
+    (TASKS_ON?'<div style="margin-top:8px;">'+T('情境任務可獨立完成 ','Scenario tasks done independently: ')+'<b style="color:var(--c-text)">'+nI+' / '+TASKS.length+T(' 項','')+'</b></div>':'')+'</div>'+
+    '<div class="ov-c"><h5>'+T('自主學習表現','Self-study')+'</h5><div class="ov-big">'+(d.vid==null?'—':d.vid+'%')+'</div>'+T('指定自學影片完成率','Assigned video completion')+'<div class="pbar"><i style="width:'+(d.vid||0)+'%"></i></div>'+
+    '<div class="ov-big">'+Math.round(d.qc/d.qcT*100)+'%</div>'+T('單元測驗完成率','Unit quiz completion')+'<div class="pbar"><i style="width:'+Math.round(d.qc/d.qcT*100)+'%"></i></div></div></div>';
+  /* 01 */
+  h += sec('01', T('學員基本資料與修課摘要','Student & course summary'), '<div class="kv"><div>'+T('學員姓名','Student')+'<b>'+esc(r.name)+'</b></div><div>'+T('機構','Institution')+'<b>'+esc(PL.partner().name)+'</b></div><div>'+T('班級','Class')+'<b>'+esc(c.name)+'</b></div><div>'+T('課程名稱','Course')+'<b>'+esc(COURSE_NAME)+'</b></div>'+
+    '<div>'+T('報告類型','Report type')+'<b>'+T('期末學習成果','End-of-term')+'</b></div><div>'+T('課程時數','Hours')+'<b>'+HOURS+T(' 小時',' h')+'</b></div><div>'+T('報告期間','Period')+'<b>'+slash(c.from)+' – '+slash(c.to)+'</b></div><div>'+T('授課教師','Teacher')+'<b>'+esc(TC.ME.name)+'</b></div></div>');
+  /* 02 */
+  h += sec('02', T('出席與完課','Attendance & completion'), '<div class="kv"><div>'+T('應上時數','Scheduled')+'<b>'+HOURS+T(' 小時',' h')+'</b></div><div>'+T('實際出席','Attended')+'<b>'+(d.att==null?'—':d.att+T(' 小時',' h'))+'</b></div><div>'+T('出席率','Attendance')+'<b>'+pct1(attRate(d))+'</b></div><div>'+T('完課狀態','Completion')+'<b>'+(d.status==='draft'?'—':doneBadge(d))+'</b></div></div>'+
+    critBox(d)+'<p class="note">'+T('真人課程出席時數與線上自主學習進度分別統計。','In-class attendance and online self-study are counted separately.')+'</p>');
+  /* 03 */
+  var tItems = TEST_KEYS.map(function(k){ return {label:testName(k), sub:slash(testDate(c,k)), v:d.tests[k], int:true, color:k==='pre'?'var(--c-pre)':'var(--c-fin)'}; });
+  var chg = d.tests.pre!=null && d.tests.fin!=null ? d.tests.fin - d.tests.pre : null;
+  h += sec('03', T('期初、各階段與期末測驗成績','Test results'), '<div class="chart-row"><div class="chart-box">'+barChart(tItems)+'</div><div class="tbl-wrap"><table class="tbl"><thead><tr><th>'+T('項目','Item')+'</th><th class="num">'+T('成績','Score')+'</th><th>'+T('日期','Date')+'</th></tr></thead><tbody>'+
+    TEST_KEYS.map(function(k){ return '<tr><td>'+testName(k)+'</td><td class="num">'+(d.tests[k]==null?'<span class="muted">'+T('未施測','Not taken')+'</span>':d.tests[k]+' / 100')+'</td><td>'+slash(testDate(c,k))+'</td></tr>'; }).join('')+
+    '<tr><td><b>'+T('期初與期末變化','Pre → final')+'</b></td><td class="num"><b>'+(chg==null?'—':(chg>=0?'+':'')+chg+T(' 分',''))+'</b></td><td class="small muted">'+T('測驗量尺可比較時才顯示','Shown only when scales are comparable')+'</td></tr></tbody></table></div></div>'+
+    '<div class="sub-h" style="margin-top:14px;">'+T('華語能力標準參照','Proficiency references')+'</div><div class="tbl-wrap"><table class="tbl"><thead><tr><th>'+T('標準／工具','Standard')+'</th><th>'+T('本報告呈現','In this report')+'</th></tr></thead><tbody>'+
+    '<tr><td>CEFR</td><td>'+T('課程目標參照 '+TARGET+'；不代表已取得正式認證','Course target '+TARGET+'; not a formal certification')+'</td></tr><tr><td>TOCFL</td><td class="muted">'+T('無正式測驗紀錄','No official test record')+'</td></tr><tr><td>TLICPT</td><td class="muted">'+T('無施測紀錄','No test record')+'</td></tr></tbody></table></div>'+
+    '<p class="note">'+T('課程內測驗、教師 1–5 分評量與標準化語言檢定結果分開呈現，不直接換算。','Course tests, teacher 1–5 ratings and standardized exams are reported separately and not converted.')+'</p>');
+  /* 04 */
+  h += sec('04', T('五項核心能力評量','Five core skills'), '<div class="chart-row"><div class="chart-box">'+radar([{label:T('期初','Pre-course'), vals:pre, color:'var(--c-pre)'},{label:T('期末','Final'), vals:fin, color:'var(--c-fin)'}])+'</div>'+
+    '<div class="tbl-wrap"><table class="tbl"><thead><tr><th>'+T('能力','Skill')+'</th><th class="num">'+T('期初','Pre')+' / 5</th><th class="num">'+T('期末','Final')+' / 5</th><th>'+T('教師觀察','Teacher note')+'</th></tr></thead><tbody>'+
+    SKILLS.map(function(s,i){ return '<tr><td>'+T(s.zh,s.en)+'</td><td class="num">'+f1(pre[i])+'</td><td class="num"><b>'+f1(fin[i])+'</b></td><td class="small">'+(d.obs[s.k]?esc(d.obs[s.k]):'<span class="muted">—</span>')+'</td></tr>'; }).join('')+'</tbody></table></div></div>'+
+    SKILLS.map(function(s){ return '<details class="skill"><summary><span>'+T(s.zh,s.en)+'<span class="small muted" style="font-weight:400;">（'+T(s.d[0],s.d[1])+'）</span></span></summary><div class="inner"><div class="tbl-wrap"><table class="tbl"><thead><tr><th>'+T('代號','Code')+'</th><th>'+T('評估指標','Indicator')+'</th><th>'+T('期初','Pre')+'</th><th>'+T('期末','Final')+'</th></tr></thead><tbody>'+
+      s.ind.map(function(t,j){ return '<tr><td>'+s.k+(j+1)+'</td><td>'+esc(t[0])+'<div class="small muted">'+esc(t[1])+'</div></td><td>'+scoreDots(d.ind.pre[s.k][j])+'</td><td>'+scoreDots(d.ind.fin[s.k][j])+'</td></tr>'; }).join('')+'</tbody></table></div></div></details>'; }).join('')+
+    '<p class="note">'+T('評分量尺：1 尚未掌握｜2 初步掌握｜3 基本掌握｜4 良好掌握｜5 熟練掌握。能力分數為 5 個指標的平均；期初與期末採同一規準，雷達圖依分數自動產生。','Scale: 1 Not yet | 2 Emerging | 3 Developing | 4 Proficient | 5 Advanced. Skill score = mean of 5 indicators; pre and final use the same rubric.')+'</p>');
+  /* 05 */
+  if(TASKS_ON) h += sec('05', T('情境任務達成','Scenario tasks'), '<div class="tbl-wrap"><table class="tbl"><thead><tr><th>'+T('情境任務','Task')+'</th><th>'+T('達成情況','Result')+'</th></tr></thead><tbody>'+
+    TASKS.map(function(t,i){ var v = d.sc[i], m = TASK_ST[v]; return '<tr><td>'+T(t[0],t[1])+'</td><td>'+(m?'<span class="badge '+m[2]+'">'+T(m[0],m[1])+'</span>':'<span class="muted">—</span>')+'</td></tr>'; }).join('')+'</tbody></table></div>', T('選用模組・由教務依課程開啟','Optional, enabled per course'));
+  /* 06 */
+  h += sec('06', T('TLI Connect 自學影片與單元測驗','TLI Connect self-study'), '<div class="tbl-wrap"><table class="tbl"><thead><tr><th>'+T('自學指標','Measure')+'</th><th class="num">'+T('結果','Result')+'</th><th>'+T('資料來源','Source')+'</th></tr></thead><tbody>'+
+    '<tr><td>'+T('指定自學影片完成率','Assigned video completion')+'</td><td class="num">'+d.vid+'%（'+d.vidN+'/'+d.vidT+'）</td><td>'+T('影片學習紀錄','Video records')+'</td></tr>'+
+    '<tr><td>'+T('單元測驗完成率','Unit quiz completion')+'</td><td class="num">'+Math.round(d.qc/d.qcT*100)+'%（'+d.qc+'/'+d.qcT+'）</td><td>'+T('測驗系統','Quiz system')+'</td></tr>'+
+    '<tr><td>'+T('單元測驗平均分數','Unit quiz average')+'</td><td class="num">'+(d.quiz==null?'—':d.quiz+' / 100')+'</td><td>'+T('測驗系統','Quiz system')+'</td></tr></tbody></table></div>');
+  /* 07 */
+  h += sec('07', T('教師綜合評語與改善建議','Teacher comments'),
+    '<div class="sub-h">'+T('學習優勢','Strengths')+'</div>'+(d.str.length||d.strOther?tags(STR_P, d.str, d.strOther):'<div class="muted small">—</div>')+
+    (d.note?'<div class="small" style="margin-top:6px;"><b>'+T('教師個別補充：','Teacher note: ')+'</b>'+esc(d.note)+'</div>':'')+
+    '<div class="sub-h" style="margin-top:12px;">'+T('改善方向','Areas to improve')+'</div>'+(d.imp.length||d.impOther?tags(IMP_P, d.imp, d.impOther):'<div class="muted small">—</div>')+
+    (d.advice?'<div class="small" style="margin-top:6px;"><b>'+T('具體學習建議：','Suggestion: ')+'</b>'+esc(d.advice)+'</div>':''));
+  /* 08 */
+  h += sec('08', T('下一階段學習建議','Next step'), '<div class="small">'+(d.next?'<b>'+T('建議課程：','Suggested course: ')+'</b>'+esc(d.next):'<span class="muted">—</span>')+'</div><p class="note">'+T('系統建議＋教師確認，不作正式能力證明。','System suggestion confirmed by the teacher; not a formal certificate.')+'</p>');
+  /* 09 */
+  h += sec('09', T('填報與審核','Preparation & review'), '<div class="kv"><div>'+T('填報人','Prepared by')+'<b>'+esc(TC.ME.name)+T(' 老師','')+'</b></div><div>'+T('審核單位','Reviewer')+'<b>'+T('TLI 教學研究與發展部','TLI Teaching R&D')+'</b></div><div>'+T('報告狀態','Status')+'<b>'+stBadge(d.status)+'</b></div><div>'+T('版本／最後更新','Version / updated')+'<b>v'+d.ver+'・'+slash(d.updated)+'</b></div></div>'+
+    '<p class="note">'+T('發布後若要修改，系統會產生新版本並重新送審，保留歷次版本。','Revising a published report creates a new version that goes through review again; earlier versions are kept.')+'</p>');
+  h += tplPanel();
+  $('view').innerHTML = h;
+  $('back').onclick = function(e){ e.preventDefault(); st.rid=null; render(); };
+  $('btnPdf1').onclick = function(){ document.querySelectorAll('details.skill').forEach(function(x){ x.open = true; }); printAs(r.name+'_'+T('個別學員學習成果報告','Student learning report')); };
+  if($('btnEdit')) $('btnEdit').onclick = function(){ st.edit=true; st.errs=null; render(); window.scrollTo(0,0); };
+  if($('btnRev')) $('btnRev').onclick = function(){
+    if(!confirm(T('要修改「'+r.name+'」的已發布報告嗎？會產生 v'+(d.ver+1)+' 草稿，送審發布前全班報告仍採用 v'+d.ver+'。','Revise the published report for '+r.name+'? A v'+(d.ver+1)+' draft will be created.'))) return;
+    /* 新版本存成草稿；上一版已發布內容存在 prevPub，新版發布前全班報告仍用它 */
+    var nd = JSON.parse(JSON.stringify(d)); nd.status='draft'; nd.ver=d.ver+1; nd.updated=DEMO_TODAY; nd.prevPub=JSON.parse(JSON.stringify(d)); DB[st.rid]=nd; saveDB(); st.edit=true; st.errs=null; render(); window.scrollTo(0,0);
+  };
+}
+function scoreDots(v){
+  return '<span class="sc">'+[1,2,3,4,5].map(function(n){ return '<span class="'+(v==n?'on':'')+'">'+n+'</span>'; }).join('')+'</span>'+(v==null?' <span class="small muted">'+T('未評','—')+'</span>':'');
+}
+
+/* ================= 填寫評量 ================= */
+function renderEdit(c){
+  var r = PL.rosterById(st.rid), d = rep(st.rid);
+  function indSel(ph, k, j){ var v = d.ind[ph][k][j]; return '<select class="ind-sel" data-ph="'+ph+'" data-k="'+k+'" data-j="'+j+'" aria-label="'+k+(j+1)+' '+(ph==='pre'?T('期初','pre'):T('期末','final'))+'"><option value="">—</option>'+[1,2,3,4,5].map(function(n){ return '<option value="'+n+'"'+(v==n?' selected':'')+'>'+n+' '+T(SCALE[n-1][0],SCALE[n-1][1])+'</option>'; }).join('')+'</select>'; }
+  function cb(list, on, name){ return '<div class="chk-grid" id="'+name+'">'+list.map(function(t,i){ return '<label><input type="checkbox" value="'+i+'"'+(on.indexOf(i)>=0?' checked':'')+'>'+esc(T(t[0],t[1]))+'</label>'; }).join('')+'</div>'; }
+  var h = '<div class="crumb"><a href="#" id="back">‹ '+T('個人報告列表','Student reports')+'</a></div>'+
+    '<div class="rp-head"><div><h3>'+T('填寫評量','Fill in assessment')+'：'+esc(r.name)+'</h3><div class="small muted">'+esc(c.name)+'・'+stBadge(d.status)+' v'+d.ver+'</div></div></div>'+
+    '<div class="edit-note">'+T('可先「儲存草稿」，全部填完再「送出審核」。送出後由 TLI 教學研究與發展部審核，發布前不能再修改。','Save a draft any time; submit when complete. After submission TLI Teaching R&D reviews it, and it can\'t be edited until published.')+'</div>';
+  if(st.errs && st.errs.length) h += '<div class="err-box" role="alert"><b>'+T('還有 '+st.errs.length+' 項需要處理才能送出：','Fix '+st.errs.length+' item(s) before submitting:')+'</b><ul>'+st.errs.map(function(e){ return '<li>'+esc(e)+'</li>'; }).join('')+'</ul></div>';
+  /* 出席與測驗 */
+  h += sec('02・03', T('出席與測驗成績','Attendance & tests'), '<div class="fgrid"><div class="fld"><label for="eAtt">'+T('實際出席時數（應上 '+HOURS+'）','Hours attended (of '+HOURS+')')+'</label><input id="eAtt" type="number" min="0" max="'+HOURS+'" step="0.5" value="'+(d.att==null?'':d.att)+'"></div></div>'+
+    '<p class="note" style="margin-top:4px;">'+T('點名系統尚未串接時，由教師補登出席時數。','Enter attendance manually until roll call is connected.')+'</p>'+
+    '<div class="fgrid" style="margin-top:10px;">'+TEST_KEYS.map(function(k){ return '<div class="fld"><label for="eT_'+k+'">'+testName(k)+'（/100）</label><input id="eT_'+k+'" type="number" min="0" max="100" step="1" value="'+(d.tests[k]==null?'':d.tests[k])+'" placeholder="'+T('未施測','Not taken')+'"></div>'; }).join('')+'</div>'+
+    '<p class="note" style="margin-top:4px;">'+T('留白表示未施測，不會以 0 分計算。','Leave blank if not taken; it is never counted as 0.')+'</p>');
+  /* 五項能力 */
+  h += sec('04', T('五項核心能力評量','Five core skills'), '<p class="small muted" style="margin:-4px 0 6px;">'+T('每項能力 5 個指標，依課堂表現評 1–5 分。期初與期末採同一規準。','Rate each of the 5 indicators 1–5 from class performance. Pre and final use the same rubric.')+'</p>'+
+    SKILLS.map(function(s,si){ return '<details class="skill"'+(si===0?' open':'')+'><summary><span>'+T(s.zh,s.en)+'<span class="small muted" style="font-weight:400;">（'+T(s.d[0],s.d[1])+'）</span></span></summary><div class="inner"><div class="tbl-wrap"><table class="tbl" style="min-width:560px;"><thead><tr><th>'+T('代號','Code')+'</th><th>'+T('評估指標','Indicator')+'</th><th>'+T('期初','Pre')+'</th><th>'+T('期末','Final')+'</th></tr></thead><tbody>'+
+      s.ind.map(function(t,j){ return '<tr><td>'+s.k+(j+1)+'</td><td>'+esc(t[0])+'<div class="small muted">'+esc(t[1])+'</div></td><td>'+indSel('pre',s.k,j)+'</td><td>'+indSel('fin',s.k,j)+'</td></tr>'; }).join('')+
+      '</tbody></table></div><div class="fld" style="margin-top:8px;"><label for="eObs_'+s.k+'">'+T('教師觀察（選填）','Teacher note (optional)')+'</label><input id="eObs_'+s.k+'" value="'+esc(d.obs[s.k]||'')+'"></div></div></details>'; }).join(''));
+  /* 情境任務 */
+  if(TASKS_ON) h += sec('05', T('情境任務達成','Scenario tasks'), '<div class="tbl-wrap"><table class="tbl"><tbody>'+TASKS.map(function(t,i){ return '<tr><td>'+T(t[0],t[1])+'</td><td style="width:200px;"><select class="ind-sel" id="eSc_'+i+'" aria-label="'+esc(T(t[0],t[1]))+'"><option value="">—</option>'+['I','H','N','X'].map(function(k){ return '<option value="'+k+'"'+(d.sc[i]===k?' selected':'')+'>'+T(TASK_ST[k][0],TASK_ST[k][1])+'</option>'; }).join('')+'</select></td></tr>'; }).join('')+'</tbody></table></div>');
+  /* 評語 */
+  h += sec('07', T('教師綜合評語與改善建議','Teacher comments'),
+    '<div class="sub-h">'+T('學習優勢（複選 2–3 項）','Strengths (choose 2–3)')+'</div>'+cb(STR_P, d.str, 'eStr')+'<div class="fgrid"><div class="fld" style="grid-column:span 2;"><label for="eStrO">'+T('其他（選填）','Other (optional)')+'</label><input id="eStrO" value="'+esc(d.strOther)+'"></div></div>'+
+    '<div class="fld" style="margin-top:8px;"><label for="eNote">'+T('教師個別補充','Teacher note')+'</label><textarea id="eNote">'+esc(d.note)+'</textarea></div>'+
+    '<div class="sub-h" style="margin-top:12px;">'+T('改善方向（複選 1–3 項）','Areas to improve (choose 1–3)')+'</div>'+cb(IMP_P, d.imp, 'eImp')+'<div class="fgrid"><div class="fld" style="grid-column:span 2;"><label for="eImpO">'+T('其他（選填）','Other (optional)')+'</label><input id="eImpO" value="'+esc(d.impOther)+'"></div></div>'+
+    '<div class="fld" style="margin-top:8px;"><label for="eAdv">'+T('具體學習建議','Specific suggestion')+'</label><textarea id="eAdv">'+esc(d.advice)+'</textarea></div>');
+  h += sec('08', T('下一階段學習建議','Next step'), '<div class="fld"><label for="eNext">'+T('建議課程（系統預填，教師確認）','Suggested course (prefilled; confirm)')+'</label><input id="eNext" value="'+esc(d.next)+'"></div>');
+  h += '<div class="sticky-act"><button class="btn btn-outline btn-sm" id="eCancel">'+T('取消','Cancel')+'</button><button class="btn btn-outline btn-sm" id="eSave">'+T('儲存草稿','Save draft')+'</button><button class="btn btn-primary btn-sm" id="eSubmit">'+T('送出審核','Submit for review')+'</button></div>';
+  $('view').innerHTML = h;
+  $('back').onclick = $('eCancel').onclick = function(e){ if(e) e.preventDefault(); st.edit=false; st.errs=null; render(); };
+  function collect(){
+    var nd = JSON.parse(JSON.stringify(d)), num = function(id){ var v = $(id).value.trim(); return v==='' ? null : +v; };
+    nd.att = num('eAtt'); TEST_KEYS.forEach(function(k){ nd.tests[k] = num('eT_'+k); });
+    document.querySelectorAll('select[data-ph]').forEach(function(s){ var v = s.value; nd.ind[s.dataset.ph][s.dataset.k][+s.dataset.j] = v==='' ? null : +v; });
+    SKILLS.forEach(function(s){ nd.obs[s.k] = $('eObs_'+s.k).value.trim(); });
+    if(TASKS_ON) TASKS.forEach(function(_,i){ nd.sc[i] = $('eSc_'+i).value; });
+    nd.str = checked('eStr'); nd.imp = checked('eImp'); nd.strOther = $('eStrO').value.trim(); nd.impOther = $('eImpO').value.trim();
+    nd.note = $('eNote').value.trim(); nd.advice = $('eAdv').value.trim(); nd.next = $('eNext').value.trim(); nd.updated = DEMO_TODAY;
+    return nd;
+  }
+  function validate(nd){
+    var e = [];
+    if(nd.att==null) e.push(T('請填實際出席時數','Enter hours attended'));
+    else if(nd.att<0 || nd.att>HOURS) e.push(T('出席時數須在 0–'+HOURS+' 之間','Hours must be 0–'+HOURS));
+    TEST_KEYS.forEach(function(k){ var v = nd.tests[k]; if(v!=null && (v<0 || v>100)) e.push(testName(k)+T(' 須在 0–100 之間',' must be 0–100')); });
+    SKILLS.forEach(function(s){ var miss = nd.ind.fin[s.k].filter(function(v){ return v==null; }).length; if(miss) e.push(T(s.zh+'：期末還有 '+miss+' 個指標未評', s.en+': '+miss+' final indicator(s) not rated')); });
+    if(TASKS_ON){ var m = nd.sc.filter(function(v){ return !v; }).length; if(m) e.push(T('情境任務還有 '+m+' 項未選（無法評量請選「未評量」）', m+' scenario task(s) not set')); }
+    var ns = nd.str.length + (nd.strOther?1:0), ni = nd.imp.length + (nd.impOther?1:0);
+    if(ns<2 || ns>3) e.push(T('學習優勢請選 2–3 項（含其他）','Choose 2–3 strengths'));
+    if(ni<1 || ni>3) e.push(T('改善方向請選 1–3 項（含其他）','Choose 1–3 areas to improve'));
+    return e;
+  }
+  $('eSave').onclick = function(){ var nd = collect(); if(nd.status!=='draft') nd.status='draft'; DB[st.rid] = nd; saveDB(); st.errs=null; TC.toast(T('草稿已儲存','Draft saved')); st.edit=false; render(); window.scrollTo(0,0); };
+  $('eSubmit').onclick = function(){
+    var nd = collect(), e = validate(nd);
+    if(e.length){ DB[st.rid] = Object.assign(nd, {status:'draft'}); saveDB(); st.errs = e; render(); window.scrollTo(0,0); return; }
+    nd.status = 'review'; DB[st.rid] = nd; saveDB(); st.errs=null; st.edit=false; TC.toast(T('已送出，等待 TLI 審核','Submitted for TLI review')); render(); window.scrollTo(0,0);
+  };
+}
+
+$('btnReset').onclick = function(){ if(!confirm(T('要把學習報告的示範資料還原成預設值嗎？','Reset learning report demo data?'))) return; DB = {}; saveDB(); st.rid=null; st.edit=false; st.errs=null; render(); TC.toast(T('已重設示範資料','Demo data reset')); };
+var AUTO_PRINT = PL.qs('print')==='1'; /* 要在第一次 render 前讀，render 會重寫網址把 print 拿掉 */
+TLI_I18N.onRefresh(render);
+render();
+TLI_I18N.init();
+/* 20261124 使用者指示：我的班級卡片「下載班級學習報告」帶 print=1 進來，直接開啟班級報告的 PDF 下載（同「下載 PDF」按鈕；網址重寫時 print 參數會被拿掉，重新整理不會再觸發） */
+if(AUTO_PRINT && st.cid){ st.tab='class'; st.rid=null; st.edit=false; render(); setTimeout(function(){ if($('btnPdf')) $('btnPdf').click(); }, 400); }
+PL.xl(document);
+</script>
+<script src="../assets/_phase_map.js"></script>
+<script src="../assets/_phase_switch.js"></script>
+<script src="../assets/_idle_logout.js"></script>
+</body>
+</html>

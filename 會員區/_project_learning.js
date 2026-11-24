@@ -87,12 +87,12 @@
     if (C.id === 'skuC05') { var p = (M.products || []).filter(function (x) { return x.id === 'skuC05'; })[0]; return p ? p.name : '自學影音課程包（中文基礎）'; }
     return T(C.zh, C.en);
   }
-  function chapterLabel(ci) { return T('第 ' + (ci + 1) + ' 章', 'Lesson ' + (ci + 1)); }
+  function chapterLabel(ci) { return T('第 ' + (ci + 1) + ' 章', { en: 'Lesson ' + (ci + 1), ja: '第' + (ci + 1) + '課' }); }
   function secNo(ci, si) { return (ci + 1) + '-' + (si + 1); }
   function unitName(u) { return T(u.zh, u.en); }
   function typeName(t) { var x = (M.selfPacedItemTypes || []).filter(function (y) { return y.id === t; })[0]; return x ? T(x.zh, x.en) : t; }
   function courseDurSec(C) { return flatItems(C).reduce(function (a, x) { return a + (x.it.durSec || 0); }, 0); }
-  function durLabel(sec) { var m = Math.round(sec / 60), h = Math.floor(m / 60); return h ? T(h + ' 小時 ' + (m % 60) + ' 分', h + ' h ' + (m % 60) + ' min') : T(m + ' 分鐘', m + ' min'); }
+  function durLabel(sec) { var m = Math.round(sec / 60), h = Math.floor(m / 60); return h ? T(h + ' 小時 ' + (m % 60) + ' 分', { en: h + ' h ' + (m % 60) + ' min', ja: h + '時間' + (m % 60) + '分' }) : T(m + ' 分鐘', { en: m + ' min', ja: m + '分' }); }
 
   /* ---------- 身分（目前分頁） ---------- */
   function getSS() { try { return JSON.parse(g.sessionStorage.getItem(SS_KEY)) || {}; } catch (e) { return {}; } }
@@ -357,29 +357,42 @@
   }
 
   /* ---------- 英文／簡中：標了 data-en 的元素依語言換字 ---------- */
+  /* 2026-11-19（回應 BugSmash #35 語系檢查）：data-ja 有值時日文用它，沒有才退回英文 */
   function xl(root) {
+    hookXl();
     (root || document).querySelectorAll('[data-en]').forEach(function (el) {
       if (el.dataset.zh === undefined) { el.dataset.zh = el.textContent; }
-      el.textContent = T(el.dataset.zh, el.getAttribute('data-en'));
+      var ja = el.getAttribute('data-ja'), en = el.getAttribute('data-en');
+      el.textContent = T(el.dataset.zh, ja ? { en: en, ja: ja } : en);
     });
     (root || document).querySelectorAll('[data-en-ph]').forEach(function (el) {
       if (el.dataset.zhPh === undefined) { el.dataset.zhPh = el.getAttribute('placeholder') || ''; }
       el.setAttribute('placeholder', T(el.dataset.zhPh, el.getAttribute('data-en-ph')));
     });
   }
-  if (g.TLI_I18N && g.TLI_I18N.onRefresh) { g.TLI_I18N.onRefresh(function () { xl(document); }); }
+  /* 語系切換時重套 data-en／data-ja。本檔在 _i18n.js 之前載入，載入當下 TLI_I18N 還不存在，
+     所以改在第一次 xl()／DOMContentLoaded 時才掛（2026-11-19 修正：切換語系後側欄等文字停在中文） */
+  var xlHooked = false;
+  function hookXl() {
+    if (xlHooked || !g.TLI_I18N || !g.TLI_I18N.onRefresh) { return; }
+    xlHooked = true; g.TLI_I18N.onRefresh(function () { pjIdentity(); xl(document); });
+  }
 
   /* 會員區各頁：側欄身分列帶入專案合作學員姓名 */
+  /* 專案合作學員的身分列：姓名｜學員＋學校。共用主檔的 renderAccountChrome 會依一般會員帳號重畫這一列（每次切語系也會），
+     所以專案模式在它之後重畫一次（2026-11-19 修正：原本只換姓名，學校仍顯示一般會員的「TLI 直營」，切語系後連姓名也被換掉） */
+  function pjIdentity() {
+    var u = me(); if (u.mode !== 'project') { return; }
+    Array.prototype.forEach.call(document.querySelectorAll('.side-identity'), function (el) {
+      el.innerHTML = esc(u.name) + '｜' + esc(T('學員', { en: 'Student', ja: '受講生' })) + '<div style="font-size:12px;font-weight:400;opacity:.75;margin-top:2px">' + esc(u.partnerName) + '</div>';
+    });
+  }
   function decorateMember() {
-    var u = me();
-    if (u.mode === 'project') {
-      var el = document.querySelector('.side-identity');
-      if (el && el.firstChild && el.firstChild.nodeType === 3) { el.firstChild.nodeValue = u.name + '｜'; }
-    }
+    pjIdentity();
     projectMember();
     xl(document);
   }
-  document.addEventListener('DOMContentLoaded', function () { if (document.querySelector('.side-nav .side-identity')) { decorateMember(); } else { xl(document); } });
+  document.addEventListener('DOMContentLoaded', function () { hookXl(); if (document.querySelector('.side-nav .side-identity')) { decorateMember(); } else { xl(document); } });
 
   /* ---------- 專案合作學員：會員區各頁改讀本人資料（無付費入口） ---------- */
   var PJ_CSS = '[data-pj-hidden]{display:none!important}' +
@@ -418,6 +431,12 @@
     '@media(max-width:639px){.pj-reader{height:420px}.pj-thumbs{width:60px}}' +
     '.pj-ver{border:1px solid var(--c-border);border-radius:8px;padding:6px 8px;font-size:12.5px;font-family:inherit;background:#fff;max-width:150px}' +
     '.pj-mk{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-top:10px}.pj-lesson.cur{background:#EFF8FF;outline:1px solid #B2DDFF}' +
+    /* 章節索引（BugSmash #8，2026-11-18）：桌面版在學習頁右側固定，點選直接跳到該節；手機版不顯示（頁面下方仍有本章各節） */
+    '.pj-toc{display:none}@media(min-width:1100px){.pj-sv{display:grid;grid-template-columns:minmax(0,1fr) 250px;gap:20px;align-items:start}.pj-toc{display:block;position:sticky;top:76px;max-height:calc(100vh - 96px);overflow:auto;background:#fff;border:1px solid var(--c-border);border-radius:12px;padding:12px}}' +
+    '.pj-toc h3{margin:0 0 8px;font-size:13px;color:var(--c-muted);font-weight:700}.pj-toc-ch{font-size:12.5px;font-weight:700;margin:10px 0 4px;color:var(--c-text)}.pj-toc-ch:first-of-type{margin-top:0}' +
+    '.pj-toc-s{display:flex;align-items:flex-start;gap:6px;padding:6px 8px;border-radius:6px;font-size:12.5px;color:var(--c-text);cursor:pointer;line-height:1.4}.pj-toc-s:hover{background:var(--c-bg)}.pj-toc-s.cur{background:#EFF8FF;color:var(--c-primary);font-weight:700}' +
+    '.pj-toc-s i{flex:none;width:14px;height:14px;margin-top:2px;display:inline-flex}.pj-toc-s i svg{width:14px;height:14px}.pj-toc-s.fin i{color:#079455}.pj-toc-s b{font-weight:inherit;flex:none}' +
+    '.pj-acts{display:flex;gap:8px;flex-wrap:wrap;align-items:flex-start}' +
     '.pj-toast{position:fixed;left:50%;bottom:90px;transform:translateX(-50%);background:#101828;color:#fff;padding:10px 20px;border-radius:20px;font-size:13px;font-weight:700;z-index:300}';
   function pjToast(msg) {
     var t = document.getElementById('pjToast');
@@ -425,7 +444,23 @@
     t.textContent = msg; t.style.display = 'block'; clearTimeout(g._pjTt); g._pjTt = setTimeout(function () { t.style.display = 'none'; }, 2200);
   }
   function pjToastHide() { var t = document.getElementById('pjToast'); if (t) { t.style.display = 'none'; } clearTimeout(g._pjTt); }
-  function pjSessLine(b) { return mdLabel(b.date) + ' ' + wd(b.date) + ' ' + b.time + T('（亞利桑那時間）', ' (Arizona time)') + (b.tpTime ? T('・台北 ', ' · Taipei ') + mdLabel(b.tpDate) + ' ' + b.tpTime : ''); }
+  function pjSessLine(b) { return mdLabel(b.date) + ' ' + wd(b.date) + ' ' + b.time + T('（亞利桑那時間）', ' (Arizona time)') + (b.tpTime ? '・' + mdLabel(b.tpDate) + ' ' + b.tpTime + T('（台北時間）', ' (Taipei time)') : '');  /* BugSmash #32：台北移到後面 */ }
+  /* 加入日曆（使用者 2026-11-19 決定，回應 BugSmash #42「課表連結個人 Google Calendar」；一階段 A 先做「加入日曆」按鈕，不做自動同步）：
+     同日使用者指示「只要先有 Google 的就好」：按鈕直接開新分頁到 Google 日曆帶入場次，不提供 Outlook／Apple（.ics）。
+     時間以 UTC 寫入，日曆會依使用者所在時區顯示 */
+  function calStamp(ms) { return new Date(ms).toISOString().replace(/[-:]/g, '').replace(/\.\d{3}/, ''); }
+  function calInfo(b) {
+    var title = 'Mandarin Lounge' + (b.topic ? '：' + T(b.topic, b.topicEn || b.topic) : '');
+    var desc = T('團體場次・', 'Group session · ') + b.teacher + T(' 老師・', ' · ') + toolName(b.tool) + '\n' + T('進入教室：TLI Connect「我的課表」', 'Join from TLI Connect > My Schedule');
+    return { title: title, desc: desc, loc: toolName(b.tool), s: calStamp(b.utc), e: calStamp(b.utc + 30 * 60000) };
+  }
+  function gcalUrl(b) {
+    var c = calInfo(b);
+    return 'https://calendar.google.com/calendar/render?action=TEMPLATE&text=' + encodeURIComponent(c.title) + '&dates=' + c.s + '/' + c.e + '&details=' + encodeURIComponent(c.desc) + '&location=' + encodeURIComponent(c.loc);
+  }
+  function calBtnHtml(b) {
+    return '<a class="btn btn-outline btn-sm" href="' + esc(gcalUrl(b)) + '" target="_blank" rel="noopener">' + T('加入 Google 日曆', 'Add to Google Calendar') + '</a>';
+  }
   function pjTypeLbl(t) { return T('團體場次', 'Group session'); }
   function pjUpcoming(rid) { return myBookings(rid).filter(function (b) { return b.status === 'booked' && b.utc > NOW_UTC; }).sort(function (a, b) { return a.utc - b.utc; }); }
   function pjHead(title, sub) { return '<p class="page-h">' + esc(title) + '</p><p class="page-sub">' + esc(sub) + '</p>'; }
@@ -575,12 +610,14 @@
      電子書不能下載，點「閱讀」開電子書頁（漢字版本＋各輔助語言版本），選輔助語言後開閱讀畫面（上方電子書、下方可選附屬音檔）。
      音檔清單依書本課次排序（4.8 TM-7）；選音檔後跳到該音檔在「目前版本」的起始頁（TM-8：頁碼是音檔 × 版本）。
      示範限制：教材主檔沒有封面圖與總頁數 → 封面用暫代圖、總頁數用「最後一個音檔起始頁＋8（至少 24 頁）」示意；音檔時長亦為示範值。 */
-  function verLabel(k) { var p = k.split('-'); return (p[0] === 'tc' ? T('繁體', 'Traditional') : T('簡體', 'Simplified')) + ' · ' + (p[1] === 'en' ? T('EN 輔助', 'EN support') : T('JP 輔助', 'JP support')); }
+  /* 20261118 教材主語系新增注音、台語＋白話字，輔助語系可關閉（鍵為「主語系-none」）：名稱改讀共用主檔的教材語系 */
+  function mlang(code) { return (M.materialLangs || []).filter(function (l) { return l.code === code; })[0]; }
+  function verLabel(k) { var p = k.split('-'); return scriptName(p[0]) + (p[1] === 'none' ? '' : ' · ' + auxName(p[1])); }
   function courseResources(C) { return C.placeholder ? [] : ((M.selfPacedResources || {})[C.id] || []); }
   function bookById(id) { return (M.materialBooks || []).filter(function (x) { return x.id === id; })[0]; }
-  function scriptName(s) { return s === 'tc' ? T('繁體中文', 'Traditional Chinese') : T('簡體中文', 'Simplified Chinese'); }
-  function auxName(a) { return a === 'en' ? T('英語 English', 'English') : (a === 'ja' ? T('日語 Japanese', 'Japanese') : a); }
-  function bookScripts(b) { var out = []; Object.keys(b.versions || {}).forEach(function (k) { var s = k.split('-')[0]; if (out.indexOf(s) < 0) { out.push(s); } }); return out.sort(function (x, y) { return x === y ? 0 : (x === 'tc' ? -1 : 1); }); }
+  function scriptName(s) { if (s === 'tc') { return T('繁體中文', 'Traditional Chinese'); } if (s === 'sc') { return T('簡體中文', 'Simplified Chinese'); } var l = mlang(s); return l ? T(l.name, l.nameEn || l.name) : s; }
+  function auxName(a) { if (a === 'none') { return T('無輔助語言', 'No support language'); } if (a === 'en') { return T('英語 English', 'English'); } if (a === 'ja') { return T('日語 Japanese', 'Japanese'); } var l = mlang(a); return l ? T(l.name, l.nameEn || l.name) : a; }
+  function bookScripts(b) { var out = []; Object.keys(b.versions || {}).forEach(function (k) { var s = k.split('-')[0]; if (out.indexOf(s) < 0) { out.push(s); } }); var ord = function (c) { var i = (M.materialLangs || []).map(function (l) { return l.code; }).indexOf(c); return i < 0 ? 999 : i; }; return out.sort(function (x, y) { return ord(x) - ord(y); }); }
   function bookAudios(b) { return (b.audios || []).map(function (a, i) { return { a: a, i: i }; }).sort(function (x, y) { return ((x.a.lesson || 999) - (y.a.lesson || 999)) || (x.i - y.i); }).map(function (x) { return x.a; }); }
   function bookPages(b, ver) { var m = 0; (b.audios || []).forEach(function (a) { var p = (a.pages || {})[ver]; if (p > m) { m = p; } }); return Math.max(24, m + 8); }
   function audioLen(a) { return 60 + (hash(a.id) % 60); }
@@ -592,7 +629,7 @@
       if (r.kind === 'book') {
         var b = bookById(r.bookId); if (!b || b.status === '停用') { return; }
         var auds = (b.audios || []).length;
-        h += '<div class="pj-file">' + IC.book + '<div><b>' + esc(T(b.titleZh, b.titleEn || b.titleZh)) + '</b><small>' + T('電子書・線上閱讀', 'E-book · read online') + (auds ? T('・附 ' + auds + ' 個音檔', ' · ' + auds + ' audio tracks') : '') + '</small></div>' +
+        h += '<div class="pj-file">' + IC.book + '<div><b>' + esc(T(b.titleZh, b.titleEn || b.titleZh)) + '</b><small>' + T('電子書・線上閱讀', 'E-book · read online') + (auds ? T('・附 ' + auds + ' 個音檔', { en: ' · ' + auds + ' audio tracks', ja: '・音声' + auds + '件' }) : '') + '</small></div>' +
           '<button type="button" class="btn btn-primary btn-sm" data-pj="book" data-r="' + r.id + '" style="display:inline-flex;align-items:center;gap:6px">' + T('閱讀', 'Read') + '</button></div>';
       } else {
         h += '<div class="pj-file">' + (ICT[r.type] || IC.file) + '<div><b>' + esc(T(r.zh, r.en || r.zh)) + '</b><small>' + typeName(r.type) + '</small></div>' +
@@ -626,7 +663,7 @@
     for (i = 1; i <= N; i++) { thumbs += '<button type="button" class="pj-th' + (i === R.page ? ' on' : '') + '" data-pj="pg" data-p="' + i + '"><span>' + i + '</span></button>'; }
     var onPage = auds.filter(function (a) { return (a.pages || {})[ver] === R.page; });
     var h = '<div class="pj-bk"><button type="button" class="btn btn-outline btn-sm" data-pj="readerback" style="display:inline-flex;align-items:center;gap:6px">' + IC.back + T('返回教材', 'Back to book') + '</button></div>';
-    h += '<div class="pj-ls-h"><div><h2>' + esc(T(b.titleZh, b.titleEn || b.titleZh)) + '</h2><small>' + scriptName(p[0]) + '・' + auxName(p[1]) + '</small></div><span class="badge badge-muted">' + T('第 ' + R.page + '／' + N + ' 頁', 'Page ' + R.page + ' of ' + N) + '</span></div>';
+    h += '<div class="pj-ls-h"><div><h2>' + esc(T(b.titleZh, b.titleEn || b.titleZh)) + '</h2><small>' + scriptName(p[0]) + '・' + auxName(p[1]) + '</small></div><span class="badge badge-muted">' + T('第 ' + R.page + '／' + N + ' 頁', { en: 'Page ' + R.page + ' of ' + N, ja: R.page + '／' + N + 'ページ' }) + '</span></div>';
     h += '<div class="pj-reader"><div class="pj-thumbs">' + thumbs + '</div><div class="pj-pagewrap"><div class="pj-page"><small>' + esc(b.titleZh) + '・' + esc(b.versions[ver]) + '</small><b>' + R.page + '</b>' +
       (onPage.length ? '<span class="pj-pg-au">' + IC.audio + onPage.map(function (a) { return esc(T(a.titleZh, a.titleEn || a.titleZh)); }).join('、') + '</span>' : '') + '<em>' + T('示範頁面', 'Sample page') + '</em></div>' +
       '<div class="pj-pnav"><button type="button" class="btn btn-outline btn-sm" data-pj="pgprev"' + (R.page <= 1 ? ' disabled' : '') + '>' + T('‹ 上一頁', '‹ Prev') + '</button><button type="button" class="btn btn-outline btn-sm" data-pj="pgnext"' + (R.page >= N ? ' disabled' : '') + '>' + T('下一頁 ›', 'Next ›') + '</button></div></div></div>';
@@ -638,20 +675,20 @@
     else if (auds.length) { h += '<p class="small muted" style="margin:6px 2px 0">' + T('選擇音檔後，會跳到該音檔在此版本的起始頁。', 'Choosing a track jumps to its start page in this version.') + '</p>'; }
     return h;
   }
-  function itemMeta(it) { return it.durSec ? mmss(it.durSec) : (it.pages ? T(it.pages + ' 頁', it.pages + ' pages') : ''); }
+  function itemMeta(it) { return it.durSec ? mmss(it.durSec) : (it.pages ? T(it.pages + ' 頁', { en: it.pages + ' pages', ja: it.pages + 'ページ' }) : ''); }
   function pjBuild(kind, u) {
     var P = progress(u.rid), LG = lounge(u.rid, u.perWeek), h = '';
     if (kind === 'm08') {
       if (!u._cid) {
         /* 我的課程：一門課一張卡；只有一門課時仍顯示列表，選單「課程」的行為固定（使用者 2026-11-10 同意） */
-        h += pjHead(T('課程總覽', 'Course Overview'), T('學校為你的班級安排的自學課程，點選課程查看章節內容。', 'Self-paced courses arranged for your class. Select a course to see its lessons and sections.'));
+        h += pjHead(T('自學課程', 'Self-paced Courses'),  /* BugSmash #33 */ T('學校為你的班級安排的自學課程，點選課程查看章節內容。', 'Self-paced courses arranged for your class. Select a course to see its lessons and sections.'));
         COURSES.forEach(function (C) {
           var Pc = progress(u.rid, C.id), nSec = C.chapters.reduce(function (a, ch) { return a + ch.sections.length; }, 0), nx = Pc.started && Pc.pct < 100 ? nextOpenItem(u.rid, C.id) : null;
           var stB = Pc.pct >= 100 ? ['badge-ok', T('已完成', 'Completed')] : (Pc.started ? ['badge-info', T('進行中', 'In progress')] : ['badge-muted', T('未開始', 'Not started')]);
           var nxSec = nx ? C.chapters[nx.ci].sections[nx.si] : null;
           var cvD = M.productCover ? M.productCover(C.id, 'desktop') : '', cvM = M.productCover ? M.productCover(C.id, 'mobile') : '';
           h += '<div class="card pj-course" data-pj="course" data-c="' + C.id + '"><div class="pj-cv"><img class="d" src="' + cvD + '" alt="' + esc(courseName(C.id)) + T(' 封面', ' cover') + '"><img class="m" src="' + cvM + '" alt=""></div><div class="pj-cb"><div class="pj-top"><span>' + esc(courseName(C.id)) + '</span><span class="badge ' + stB[0] + '">' + stB[1] + '</span></div>' +
-            '<p class="small muted" style="margin:6px 0 0">' + T(C.chapters.length + ' 章・' + nSec + ' 節・' + Pc.total + ' 個項目・總時長 ', C.chapters.length + ' lessons · ' + nSec + ' sections · ' + Pc.total + ' items · ') + durLabel(courseDurSec(C)) + '</p>' +
+            '<p class="small muted" style="margin:6px 0 0">' + T(C.chapters.length + ' 章・' + nSec + ' 節・' + Pc.total + ' 個項目・總時長 ', { en: C.chapters.length + ' lessons · ' + nSec + ' sections · ' + Pc.total + ' items · ', ja: '全' + C.chapters.length + '課・' + nSec + '節・' + Pc.total + '項目・合計 ' }) + durLabel(courseDurSec(C)) + '</p>' +
             (C.placeholder ? '<p class="small muted" style="margin:4px 0 0">' + T('示範多門課程用的佔位課程，名稱與內容待定。', 'Placeholder to show multiple courses; name and content TBD.') + '</p>' : '') +
             '<div class="progress" style="margin-top:12px"><div style="width:' + Pc.pct + '%"></div></div>' +
             '<div class="pj-meta"><span>' + T('已完成 ', 'Done ') + Pc.done + '／' + Pc.total + T(' 個項目', ' items') + (nxSec ? T('・接下來：', ' · Up next: ') + secNo(nx.ci, nx.si) + ' ' + esc(T(nxSec.zh, nxSec.en)) : '') + '</span><span>' + Pc.pct + '%</span></div>' +
@@ -660,7 +697,7 @@
       } else {
         /* 課程內容：章 › 節 › 項目，與後台 a03「課程內容」同結構；章、節各自可收合，另有全部展開／全部收合（4.4 §2-2） */
         var C = courseById(u._cid), Pc = progress(u.rid, C.id), nxt = Pc.pct < 100 ? nextOpenItem(u.rid, C.id) : null, op = u._open || (u._open = {});
-        h += '<div class="pj-bk"><button type="button" class="btn btn-outline btn-sm" data-pj="courses" style="display:inline-flex;align-items:center;gap:6px">' + IC.back + T('返回課程總覽', 'Back to course overview') + '</button></div>';
+        h += '<div class="pj-bk"><button type="button" class="btn btn-outline btn-sm" data-pj="courses" style="display:inline-flex;align-items:center;gap:6px">' + IC.back + T('返回自學課程', 'Back to self-paced courses') + '</button></div>';
         h += pjHead(courseName(C.id), T('依自己的步調學習各章節，完成每個項目後進度會自動更新。', 'Study each lesson and section at your own pace. Progress updates as you complete each item.'));
         h += '<div class="card"><div class="pj-top" style="cursor:default"><span>' + T('學習進度', 'Progress') + '</span><span class="badge badge-info">' + esc(u.projectName.replace(/^.*．/, '')) + '</span></div>' +
           '<div class="progress" style="margin-top:12px"><div style="width:' + Pc.pct + '%"></div></div>' +
@@ -700,12 +737,12 @@
       var ub = pjUpcoming(u.rid);
       h += '<div class="card">' + (ub.length ? ub.map(function (b) {
         return '<div class="pj-row"><div><b style="text-align:left;display:block">' + esc(pjSessLine(b)) + '</b><span class="small">' + pjTypeLbl(b.type) + '・' + esc(b.teacher) + T(' 老師・', ' · ') + esc(toolName(b.tool)) + '</span></div>' +
-          '<a class="btn btn-outline btn-sm" href="m16_classroom.html?lesson=' + encodeURIComponent(b.id) + '&type=chat">' + T('進入教室', 'Enter') + '</a></div>';
+          '<div class="pj-acts">' + calBtnHtml(b) + '<a class="btn btn-outline btn-sm" href="m16_classroom.html?lesson=' + encodeURIComponent(b.id) + '&type=chat">' + T('進入教室', 'Enter') + '</a></div></div>';
       }).join('') : '<div class="empty-state"><h4>' + T('目前沒有預約的場次', 'No sessions booked') + '</h4><p style="margin-bottom:12px">' + T('到預約頁選一個時段。', 'Pick a time slot on the booking page.') + '</p><a class="btn btn-primary btn-sm" href="m14_chat_booking.html">' + T('預約場次', 'Book a session') + '</a></div>') + '</div>';
       var hs = seedHistory(u.rid).concat(myBookings(u.rid).filter(function (b) { return b.status === 'booked' && b.utc <= NOW_UTC; }));
       h += '<div class="section-title">' + T('已上過的場次', 'Past sessions') + '</div><div class="card">' + (hs.length ? hs.map(function (b) { return '<div class="pj-row"><div><b style="text-align:left;display:block">' + mdLabel(b.date) + ' ' + wd(b.date) + ' ' + b.time + T('（亞利桑那時間）', ' (Arizona time)') + (b.topic ? '・' + esc(T(b.topic, b.topicEn || b.topic)) : '') + '</b><span class="small">' + pjTypeLbl(b.type) + '・' + esc(b.teacher) + T(' 老師・', ' · ') + esc(toolName(b.tool)) + '</span></div><span class="badge badge-ok" style="align-self:center;flex:none">' + T('已出席', 'Attended') + '</span></div>'; }).join('') : '<p class="small muted" style="margin:0">' + T('還沒有上過的場次。', 'No past sessions yet.') + '</p>') + '</div>';
     } else if (kind === 'm04') {
-      h += pjHead(T('我的專案', 'My Program'), T('學校為你的班級安排的學習內容。', 'What your school arranged for your class.'));
+      h += pjHead(T('我的學習計劃', 'My Program'),  /* BugSmash #44：學生視角用字 */ T('學校為你的班級安排的學習內容。', 'What your school arranged for your class.'));
       h += '<div class="card"><div class="pj-row"><span>' + T('專案', 'Program') + '</span><b>' + esc(u.projectName) + '</b></div>' +
         '<div class="pj-row"><span>' + T('學校', 'School') + '</span><b>' + esc(u.partnerName) + '</b></div>' +
         '<div class="pj-row"><span>' + T('班級', 'Class') + '</span><b>' + esc(u.className) + '</b></div>' +
@@ -723,7 +760,7 @@
       h += '<div class="card pj-form"><label>' + T('姓名', 'Name') + '</label><input readonly value="' + esc(u.name) + '"><label>Email</label><input readonly value="' + esc(u.email) + '">' +
         '<label>' + T('學校', 'School') + '</label><input readonly value="' + esc(u.partnerName) + '"><label>' + T('班級', 'Class') + '</label><input readonly value="' + esc(u.className) + '">' +
         '<label>' + T('班級老師', 'Class teacher') + '</label><input readonly value="' + esc(u.teacherName) + '"><label>' + T('時區', 'Time zone') + '</label><input readonly value="' + T('亞利桑那（UTC-7）', 'Arizona (UTC-7)') + '"></div>';
-      h += '<div class="section-title">' + T('偏好設定', 'Preferences') + '</div><div class="card pj-form"><label>' + T('介面語言', 'Interface language') + '</label><select id="pjLang"><option>English</option><option>繁體中文</option></select>' +
+      h += '<div class="section-title">' + T('偏好設定', 'Preferences') + '</div><div class="card pj-form"><label>' + T('介面語言', 'Interface language') + '</label><select id="pjLang"><option>English</option><option>繁體中文</option><option>简体中文</option><option>日本語</option></select>' +
         '<label style="display:flex;gap:8px;align-items:center;font-weight:600"><input type="checkbox" id="pjMail" checked style="width:auto"> ' + T('場次開始前寄 Email 提醒', 'Email me before a session starts') + '</label>' +
         '<div style="margin-top:14px;display:flex;gap:8px;flex-wrap:wrap"><button type="button" class="btn btn-primary btn-sm" data-pj="save">' + T('儲存', 'Save') + '</button><button type="button" class="btn btn-outline btn-sm" data-pj="logout">' + T('登出', 'Sign out') + '</button></div></div>';
     }
@@ -734,7 +771,7 @@
     var st = document.createElement('style'); st.textContent = PJ_CSS; document.head.appendChild(st);
     Array.prototype.forEach.call(main.children, function (c) { c.setAttribute('data-pj-hidden', '1'); });
     var box = document.createElement('div'); box.id = 'pjMain'; main.appendChild(box);
-    var titles = { m08: ['我的課程', 'My Courses'], m02: ['預約 Mandarin Lounge', 'Book Mandarin Lounge'], m03: ['我的課表', 'My Schedule'], m04: ['我的專案', 'My Program'], m07: ['我的', 'Me'] };
+    var titles = { m08: ['我的課程', 'My Courses', 'マイコース'], m02: ['預約 Mandarin Lounge', 'Book Mandarin Lounge', 'Mandarin Lounge の予約'], m03: ['我的課表', 'My Schedule', 'マイ時間割'], m04: ['我的學習計劃', 'My Program', 'マイ学習プラン'], m07: ['我的', 'Me', 'マイページ'] };
     var V = null, vt = null;   /* V：目前開啟的節 {cid,ci,si,pct,playing}；vt：影片播放計時器 */
     function curC() { return courseById(V.cid); }
     function curSec() { return curC().chapters[V.ci].sections[V.si]; }
@@ -791,7 +828,7 @@
             '<p class="small muted" style="margin:10px 0 0">' + (dn ? T('已看完這支影片，此項目已完成。', 'You have finished this video. This item is completed.') : T('播放到結尾，或拖曳進度條到結尾，即完成此項目。', 'Play to the end, or drag the bar to the end, to complete this item.')) + '</p></div>';
         } else if (it.type === 'material') {
           var f = materialFile(C, V.ci, V.si);
-          h += '<div class="card"><div class="pj-file">' + IC.file + '<div><b>' + esc(f.name) + '</b><small>' + f.fmt + T('・' + f.pages + ' 頁', ' · ' + f.pages + ' pages') + '</small></div><button type="button" class="btn btn-outline btn-sm" data-pj="dl" style="display:inline-flex;align-items:center;gap:6px">' + IC.dl + T('下載', 'Download') + '</button></div>' +
+          h += '<div class="card"><div class="pj-file">' + IC.file + '<div><b>' + esc(f.name) + '</b><small>' + f.fmt + T('・' + f.pages + ' 頁', { en: ' · ' + f.pages + ' pages', ja: '・' + f.pages + 'ページ' }) + '</small></div><button type="button" class="btn btn-outline btn-sm" data-pj="dl" style="display:inline-flex;align-items:center;gap:6px">' + IC.dl + T('下載', 'Download') + '</button></div>' +
             '<div class="pj-mk">' + (dn ? '<span class="pj-cond ok">' + IC.ok + T('已完成', 'Completed') + '</span>' : '<button type="button" class="btn btn-outline btn-sm" data-pj="mark" data-it="' + ii + '">' + T('標記為已完成', 'Mark as completed') + '</button>') +
             '<span class="small muted">' + T('教材讀完後請自行標記完成。', 'Mark the handout as completed after you read it.') + '</span></div></div>';
         } else {
@@ -804,7 +841,16 @@
       }).join('') + '</div>';
       h += '<div class="pj-foot">' + (prev ? '<button type="button" class="btn btn-outline" data-pj="go" data-ci="' + prev.ci + '" data-si="' + prev.si + '">' + IC.back + T('上一節', 'Previous section') + '</button>' : '<button type="button" class="btn btn-outline" data-pj="back">' + IC.back + T('返回課程內容', 'Back to course') + '</button>') +
         (nx ? '<button type="button" class="btn btn-primary" data-pj="go" data-ci="' + nx.ci + '" data-si="' + nx.si + '">' + T('下一節', 'Next section') + IC.next + '</button>' : '<button type="button" class="btn btn-primary" disabled>' + T('已是最後一節', 'Last section') + '</button>') + '</div>';
-      return h;
+      return '<div class="pj-sv"><div>' + h + '</div>' + tocHtml(C, P) + '</div>';
+    }
+    /* 右側章節索引：整門課的章 › 節，標示目前這節與已完成的節（BugSmash #8） */
+    function tocHtml(C, P) {
+      return '<nav class="pj-toc" aria-label="' + T('章節索引', 'Course outline') + '"><h3>' + T('章節索引', 'Course outline') + '</h3>' + C.chapters.map(function (ch, ci) {
+        return '<div class="pj-toc-ch">' + chapterLabel(ci) + '　' + esc(T(ch.zh, ch.en)) + '</div>' + ch.sections.map(function (x, si) {
+          var p2 = P.chapters[ci].sections[si], fin = p2.done >= p2.total, cur = ci === V.ci && si === V.si;
+          return '<div class="pj-toc-s' + (cur ? ' cur' : '') + (fin ? ' fin' : '') + '" data-pj="sec" data-ci="' + ci + '" data-si="' + si + '"' + (cur ? ' aria-current="true"' : '') + '><i>' + (fin ? IC.ok : IC.circ) + '</i><b>' + secNo(ci, si) + '</b><span>' + esc(T(x.zh, x.en)) + '</span></div>';
+        }).join('');
+      }).join('') + '</nav>';
     }
     /* 電子書閱讀畫面的音檔播放（示範：計時器推進進度，時長為示範值） */
     var at = null;
@@ -828,7 +874,7 @@
       else if (u._reader) { box.innerHTML = readerHtml(u); aUpdate(); var th = box.querySelector('.pj-th.on'); if (th && th.scrollIntoView) { th.parentNode.scrollTop = th.offsetTop - th.parentNode.offsetTop - 60; } }
       else if (u._book) { box.innerHTML = bookHtml(u); }
       else { box.innerHTML = pjBuild(kind, u); }
-      var tt = document.querySelector('.topbar-title'); if (tt) { tt.removeAttribute('data-i18n'); tt.removeAttribute('data-en'); tt.textContent = T(titles[kind][0], titles[kind][1]); }
+      var tt = document.querySelector('.topbar-title'); if (tt) { tt.removeAttribute('data-i18n'); tt.removeAttribute('data-en'); tt.textContent = T(titles[kind][0], { en: titles[kind][1], ja: titles[kind][2] }); }
     }
     function setAllOpen(on) {
       var C = courseById(u._cid); u._open = {};
@@ -858,7 +904,7 @@
       else if (a === 'book') { u._book = { rid: el.getAttribute('data-r'), script: null }; u._reader = null; draw(); window.scrollTo(0, 0); }
       else if (a === 'bookback') { u._book = null; draw(); var rt = [].filter.call(box.querySelectorAll('.section-title'), function (x) { return x.textContent === T('教材資源', 'Course resources'); })[0]; if (rt) { rt.scrollIntoView(); } }
       else if (a === 'bscript') { u._book.script = el.getAttribute('data-s'); draw(); }
-      else if (a === 'mp3all') { var bb = bookById((resOf(u, u._book.rid) || {}).bookId); pjToast(T('示範：下載全部 ' + (bb.audios || []).length + ' 個 MP3 錄音檔', 'Demo: downloading all ' + (bb.audios || []).length + ' MP3 files')); }
+      else if (a === 'mp3all') { var bb = bookById((resOf(u, u._book.rid) || {}).bookId); pjToast(T('示範：下載全部 ' + (bb.audios || []).length + ' 個 MP3 錄音檔', { en: 'Demo: downloading all ' + (bb.audios || []).length + ' MP3 files', ja: 'デモ：MP3音声' + (bb.audios || []).length + '件をすべてダウンロード中' })); }
       else if (a === 'read') { u._reader = { rid: u._book.rid, ver: el.getAttribute('data-v'), page: 1, ai: 0, apct: 0, playing: false }; draw(); window.scrollTo(0, 0); }
       else if (a === 'readerback') { stopAud(); u._reader = null; draw(); window.scrollTo(0, 0); }
       else if (a === 'pg') { u._reader.page = +el.getAttribute('data-p'); draw(); }
@@ -882,14 +928,15 @@
     });
   }
   function pjNav(u) {
-    var map = { 'm02_booking.html': ['m14_chat_booking.html', 'Mandarin Lounge'], 'm03_schedule.html': [null, T('我的課表', 'My Schedule')], 'm04_course_detail.html': [null, T('我的專案', 'My Program')] };
+    /* [改連到的頁, 繁中, 英文, 日文]；文字交給 xl() 依語系切換（2026-11-19：原本寫死，切換語系後停在中文） */
+    var map = { 'm02_booking.html': ['m14_chat_booking.html', 'Mandarin Lounge', 'Mandarin Lounge', 'Mandarin Lounge'], 'm03_schedule.html': [null, '我的課表', 'My Schedule', 'マイ時間割'], 'm04_course_detail.html': [null, '我的學習計劃', 'My Program', 'マイ学習プラン'], 'm18_learning_dashboard.html': [null, '學習儀表板', 'Learning Dashboard', '学習ダッシュボード'] };
     document.querySelectorAll('.side-nav a.side-link, .bottom-nav a').forEach(function (a) {
       var href = a.getAttribute('href') || '';
       /* 成績單、證書、我的（個人資料）屬一階段 B，1A 專案合作學員不顯示 */
       if (/m06_renew|m13_checkout|m19_certificates|m20_transcripts|m07_profile/.test(href)) { a.style.display = 'none'; return; }
       Object.keys(map).forEach(function (k) {
         if (href.indexOf(k) < 0) { return; }
-        var sp = a.querySelector('span'); if (sp) { sp.removeAttribute('data-i18n'); sp.removeAttribute('data-en'); sp.textContent = k === 'm02_booking.html' ? 'Mandarin Lounge' : map[k][1]; }
+        var sp = a.querySelector('span'); if (sp) { sp.removeAttribute('data-i18n'); sp.setAttribute('data-en', map[k][2]); sp.setAttribute('data-ja', map[k][3]); sp.dataset.zh = map[k][1]; sp.textContent = T(map[k][1], { en: map[k][2], ja: map[k][3] }); }
         if (map[k][0]) { a.setAttribute('href', map[k][0]); }
       });
     });

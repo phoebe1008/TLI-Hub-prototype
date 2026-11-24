@@ -58,7 +58,15 @@ function sseUid(p){ return p + Date.now().toString(36) + Math.floor(Math.random(
 function sseLocName(l){ var t = SSE_LOC.filter(function(x){ return x[0] === l; })[0]; return t ? T(t[2], t[3]) : l; }
 function sseTxt(html){ return String(html||'').replace(/<[^>]*>/g,'').replace(/&nbsp;/g,' ').trim(); }
 function sseLibs(){ return TLI_MASTERS.resourceLibraries; }
-function sseLib(key){ return sseLibs().find(function(l){ return l.key === key; }); }
+/* 加入項目的素材類型多一個「測驗」（使用者 2026-11-19 決定，回應 BugSmash #9「每章會有練習題或小測，可新增項目類型以匯入測驗」）：
+   只列出測驗管理（a22）中類型為「隨堂單元考」的測驗；測驗在測驗管理建立，這裡只能選用、不能新增。
+   名稱抄自 a22_quizzes.html 的 QUIZZES（qtype＝隨堂單元考），兩邊改名稱時要同步 */
+var SSE_QUIZ_LIB = {key:'quizzes', label:'測驗', prefix:'qz', quiz:true, items:[
+  '第 1 單元：機場入境與問候・單元測驗','第 2 單元：校園生活會話・單元測驗','第 3 單元：商務會議開場・單元測驗','第 4 單元：電話聯繫用語・單元測驗',
+  '第 5 單元：Email 商務書信・單元測驗','第 6 單元：產品簡報練習・單元測驗','第 7 單元：價格協商情境・單元測驗','第 8 單元：期中口說總複習・單元測驗',
+  '機場情境互動練習（Wordwall・配對遊戲）','商務會話綜合練習（Wordwall・隨機轉盤）']};
+function sseItemLibs(){ return sseLibs().concat([SSE_QUIZ_LIB]); }
+function sseLib(key){ return sseItemLibs().find(function(l){ return l.key === key; }); }
 function sseAsset(libKey, assetId){
   var lib = sseLib(libKey); if (!lib) return null;
   var n = parseInt(String(assetId).slice(lib.prefix.length), 10);
@@ -81,6 +89,7 @@ function ssEdOpen(id){
     SSE.status = p.status; SSE.hasDraft = !!p.draft; SSE.savedAt = p.at; SSE.legacy = {ch:p.ch, sec:p.sec, items:p.items, min:p.min, unk:p.unk};
     SSE.audit = [{at:p.at, actor:p.actor||'', act:p.act || (p.status==='封存'?'封存':p.status==='已發佈'?'發佈':'儲存草稿')}];
   }
+  SSE.chapters.forEach(function(c){ if (!c.items) c.items = []; });   // 2026-11-24：單元可直接放項目，舊資料補空陣列
   SSE_AUDIT_ALL = false;
   curView = 'ssEdit'; closeSsMenu(); renderAll(); window.scrollTo(0,0);
 }
@@ -104,7 +113,7 @@ function sseLeave(){ SSE = null; curView = 'list'; renderAll(); }
 /* ---------- 儲存／發佈 ---------- */
 function sseCounts(){
   var ch = SSE.chapters.length, sec = 0, it = 0, av = false;
-  SSE.chapters.forEach(function(c){ sec += c.sections.length; c.sections.forEach(function(s){ it += s.items.length; s.items.forEach(function(x){ if (sseIsAV(x.libKey)) av = true; }); }); });
+  SSE.chapters.forEach(function(c){ sec += c.sections.length; sseChItems(c).forEach(function(x){ it++; if (sseIsAV(x.libKey)) av = true; }); });
   return {ch:ch, sec:sec, items:it, av:av};
 }
 function sseNextCode(){
@@ -138,11 +147,12 @@ function sseValidate(){
   if (!SSE.subId) errs.push({msg:T('子分類未選','Sub-category is not selected'), jump:'sse_subId'});
   if (!SSE.name.en.trim()) errs.push({msg:T('產品名稱（English）未填','Product name (English) is empty'), jump:'sse_name'});
   if (!SSE.level) errs.push({msg:T('分級未選','Level is not selected'), jump:'sse_level'});
-  if (!SSE.chapters.length) errs.push({msg:T('至少需要一章','At least one chapter is required'), jump:'sse_structure'});
+  if (!SSE.chapters.length) errs.push({msg:T('至少需要一個單元','At least one chapter is required'), jump:'sse_structure'});
   SSE.chapters.forEach(function(c, ci){
-    var cn = T('第 '+(ci+1)+' 章','Chapter '+(ci+1));
+    var cn = T('第 '+(ci+1)+' 單元','Chapter '+(ci+1));
     if (!c.title.en.trim()) errs.push({msg:cn+T('：標題（English）未填',': title (English) is empty'), jump:'ch_'+c.id});
-    if (!c.sections.length) errs.push({msg:cn+T('：至少需要一節',': needs at least one section'), jump:'ch_'+c.id});
+    if (!sseChItems(c).length) errs.push({msg:cn+T('：至少需要一個項目（可直接加在單元下或節內）',': needs at least one item (directly in the lesson or in a section)'), jump:'ch_'+c.id});
+    c.items.forEach(function(x, xi){ if (!x.title.en.trim()) errs.push({msg:cn+' '+T('項目 ','item ')+(xi+1)+T('：標題（English）未填',': title (English) is empty'), jump:'it_'+x.id}); });
     c.sections.forEach(function(s, si){
       var sn = cn+' '+(ci+1)+'-'+(si+1);
       if (!s.title.en.trim()) errs.push({msg:sn+T('：節標題（English）未填',': section title (English) is empty'), jump:'sec_'+s.id});
@@ -174,7 +184,7 @@ function sseFieldCounts(){
   var out = {}; SSE_LKEYS.forEach(function(l){ out[l] = {f:0,t:0}; });
   function add(obj, isHtml){ SSE_LKEYS.forEach(function(l){ out[l].t++; if ((isHtml ? sseTxt(sseV(obj,l)) : String(sseV(obj,l)).trim())) out[l].f++; }); }
   add(SSE.name); add(SSE.desc, true);
-  SSE.chapters.forEach(function(c){ add(c.title); c.sections.forEach(function(s){ add(s.title); s.items.forEach(function(x){ add(x.title); }); }); });
+  SSE.chapters.forEach(function(c){ add(c.title); c.items.forEach(function(x){ add(x.title); }); c.sections.forEach(function(s){ add(s.title); s.items.forEach(function(x){ add(x.title); }); }); });
   return out;
 }
 function sseLocaleTabsHtml(){
@@ -301,11 +311,14 @@ function sseTeachSave(){
   closeModalId('ssModal'); sseDirty(); renderAll();
 }
 
-/* ---------- 四層內容結構 ---------- */
+/* ---------- 四層內容結構 ----------
+   2026-11-24 使用者決定：「節」不一定有，單元下可直接加入項目（c.items）；單元內先列直屬項目，再列節。 */
+function sseChItems(c){ var a = (c.items || []).slice(); c.sections.forEach(function(s){ a = a.concat(s.items); }); return a; }
 function sseFind(kind, id){
   var r = null;
   SSE.chapters.forEach(function(c, ci){
     if (kind==='ch' && c.id===id) r = {o:c, arr:SSE.chapters, i:ci};
+    (c.items || []).forEach(function(x, xi){ if (kind==='it' && x.id===id) r = {o:x, arr:c.items, i:xi, sec:null, ch:c}; });
     c.sections.forEach(function(s, si){
       if (kind==='sec' && s.id===id) r = {o:s, arr:c.sections, i:si, ch:c, ci:ci};
       s.items.forEach(function(x, xi){ if (kind==='it' && x.id===id) r = {o:x, arr:s.items, i:xi, sec:s, ch:c}; });
@@ -315,31 +328,33 @@ function sseFind(kind, id){
 }
 function sseTypesOf(items){ var seen = {}, out = []; items.forEach(function(x){ var t = sseTypeLabel(x.libKey); if (t && !seen[t]){ seen[t] = 1; out.push(t); } }); return out; }
 function sseTypeTags(types){ return types.map(function(t){ return '<span class="badge grey" style="margin-left:4px">'+t+'</span>'; }).join(''); }
-function sseStructureHtml(){
-  var L = SSE.locale, c = sseCounts();
-  var totalTxt = c.items ? (c.av ? T('總時長尚不完整（影音素材時長未知）','Total duration incomplete (some media durations unknown)') : T('無影音素材','No audio/video')) : '—';
-  var chap = SSE.chapters.map(function(ch, ci){
-    var secs = ch.sections.map(function(s, si){
-      var items = s.items.map(function(x, xi){
+function sseItemRow(x, L){
         var a = sseAsset(x.libKey, x.assetId);
         return '<div class="pickrow" style="gap:8px;padding-left:34px;flex-wrap:wrap"><span class="badge blue">'+sseTypeLabel(x.libKey)+'</span>' +
           '<div style="flex:1;min-width:200px"><input type="text" id="it_'+x.id+'" value="'+escAttr(sseV(x.title,L))+'" placeholder="'+T('項目標題（學員看到的）','Item title (seen by students)')+'" oninput="sseFind(\'it\',\''+x.id+'\').o.title[SSE.locale]=this.value;sseDirty()">'+sseRefHtml(x.title)+'<div class="hint">'+T('素材：','Asset: ')+escHtml(a?a.name:x.assetId)+'（'+(a?a.lib.label:'')+'）</div></div>' +
           '<label class="small" style="white-space:nowrap"><input type="checkbox" '+(x.trial?'checked':'')+' onchange="sseFind(\'it\',\''+x.id+'\').o.trial=this.checked;sseDirty()" style="width:auto"> '+T('開放試聽','Free preview')+'</label>' +
           '<button class="btn ghost sm" onclick="sseMove(\'it\',\''+x.id+'\',-1)">↑</button><button class="btn ghost sm" onclick="sseMove(\'it\',\''+x.id+'\',1)">↓</button>' +
           '<button class="btn ghost sm" onclick="ssePickOpen(\'replace\',\''+x.id+'\')">'+T('更換素材','Replace')+'</button><button class="btn ghost sm" onclick="sseRemove(\'it\',\''+x.id+'\')">'+T('移除','Remove')+'</button></div>';
-      }).join('');
+}
+function sseStructureHtml(){
+  var L = SSE.locale, c = sseCounts();
+  var totalTxt = c.items ? (c.av ? T('總時長尚不完整（影音素材時長未知）','Total duration incomplete (some media durations unknown)') : T('無影音素材','No audio/video')) : '—';
+  var chap = SSE.chapters.map(function(ch, ci){
+    var direct = ch.items.map(function(x){ return sseItemRow(x, L); }).join('');
+    var secs = ch.sections.map(function(s, si){
+      var items = s.items.map(function(x){ return sseItemRow(x, L); }).join('');
       return '<div style="border:1px solid var(--g200);border-radius:8px;margin:6px 0 6px 18px" id="sec_'+s.id+'"><div class="pickrow" style="gap:8px;background:var(--g50);flex-wrap:wrap"><button class="btn ghost sm" onclick="sseFind(\'sec\',\''+s.id+'\').o.open=!sseFind(\'sec\',\''+s.id+'\').o.open;renderAll()">'+(s.open?'▾':'▸')+'</button>' +
         '<b style="min-width:34px">'+(ci+1)+'-'+(si+1)+'</b><div style="flex:1;min-width:180px"><input type="text" value="'+escAttr(sseV(s.title,L))+'" placeholder="'+T('節標題','Section title')+'" oninput="sseFind(\'sec\',\''+s.id+'\').o.title[SSE.locale]=this.value;sseDirty()">'+sseRefHtml(s.title)+'</div>' +
         sseTypeTags(sseTypesOf(s.items)) + '<button class="btn ghost sm" onclick="sseMove(\'sec\',\''+s.id+'\',-1)">↑</button><button class="btn ghost sm" onclick="sseMove(\'sec\',\''+s.id+'\',1)">↓</button>' +
         '<button class="btn ghost sm" onclick="ssePickOpen(\'item\',\''+s.id+'\')">'+T('＋ 加入項目','+ Add item')+'</button><button class="btn ghost sm" onclick="sseRemove(\'sec\',\''+s.id+'\')">'+T('移除','Remove')+'</button></div>' +
         (s.open ? (items || '<div class="small" style="padding:8px 34px;color:var(--g500)">'+T('此節尚無項目（草稿可先留空，發佈前至少一個）。','No items yet (a draft may stay empty; at least one is required to publish).')+'</div>') : '') + '</div>';
     }).join('');
-    var allItems = []; ch.sections.forEach(function(s){ allItems = allItems.concat(s.items); });
+    var allItems = sseChItems(ch);
     return '<div style="border:1px solid var(--g200);border-radius:10px;margin-bottom:10px" id="ch_'+ch.id+'"><div class="pickrow" style="gap:8px;flex-wrap:wrap"><button class="btn ghost sm" onclick="sseFind(\'ch\',\''+ch.id+'\').o.open=!sseFind(\'ch\',\''+ch.id+'\').o.open;renderAll()">'+(ch.open?'▾':'▸')+'</button>' +
-      '<b>'+T('第 '+(ci+1)+' 章','Lesson '+(ci+1))+'</b><div style="flex:1;min-width:200px"><input type="text" value="'+escAttr(sseV(ch.title,L))+'" placeholder="'+T('章標題','Lesson title')+'" oninput="sseFind(\'ch\',\''+ch.id+'\').o.title[SSE.locale]=this.value;sseDirty()">'+sseRefHtml(ch.title)+'</div>' + sseTypeTags(sseTypesOf(allItems)) +
+      '<b>'+T('第 '+(ci+1)+' 單元','Lesson '+(ci+1))+'</b><div style="flex:1;min-width:200px"><input type="text" value="'+escAttr(sseV(ch.title,L))+'" placeholder="'+T('單元標題','Lesson title')+'" oninput="sseFind(\'ch\',\''+ch.id+'\').o.title[SSE.locale]=this.value;sseDirty()">'+sseRefHtml(ch.title)+'</div>' + sseTypeTags(sseTypesOf(allItems)) +
       '<button class="btn ghost sm" onclick="sseMove(\'ch\',\''+ch.id+'\',-1)">↑</button><button class="btn ghost sm" onclick="sseMove(\'ch\',\''+ch.id+'\',1)">↓</button>' +
-      '<button class="btn ghost sm" onclick="sseSecNew(\''+ch.id+'\')">'+T('＋ 新增節','+ Add section')+'</button><button class="btn ghost sm" onclick="sseRemove(\'ch\',\''+ch.id+'\')">'+T('移除','Remove')+'</button></div>' +
-      (ch.open ? (secs || '<div class="small" style="padding:8px 14px;color:var(--g500)">'+T('此章尚無節。','No sections yet.')+'</div>') : '') + '</div>';
+      '<button class="btn ghost sm" onclick="ssePickOpen(\'item\',\''+ch.id+'\')">'+T('＋ 加入項目','+ Add item')+'</button><button class="btn ghost sm" onclick="sseSecNew(\''+ch.id+'\')">'+T('＋ 新增節','+ Add section')+'</button><button class="btn ghost sm" onclick="sseRemove(\'ch\',\''+ch.id+'\')">'+T('移除','Remove')+'</button></div>' +
+      (ch.open ? ((direct + secs) || '<div class="small" style="padding:8px 14px;color:var(--g500)">'+T('此單元尚無項目。可直接加入項目，或先新增節再加入項目。','No items yet. Add items directly, or add a section first.')+'</div>') : '') + '</div>';
   }).join('');
   var res = SSE.resources.map(function(r, i){
     var name, type;
@@ -349,17 +364,17 @@ function sseStructureHtml(){
     return '<div class="pickrow" style="gap:8px;flex-wrap:wrap"><span class="badge blue">'+type+'</span><div style="flex:1;min-width:200px"><b>'+escHtml(name)+'</b>'+titleIn+'</div>' +
       '<button class="btn ghost sm" onclick="sseResMove('+i+',-1)">↑</button><button class="btn ghost sm" onclick="sseResMove('+i+',1)">↓</button><button class="btn ghost sm" onclick="sseResRemove('+i+')">'+T('移除','Remove')+'</button></div>';
   }).join('');
-  return '<div class="card" id="sse_structure"><div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px"><h2 style="margin:0">'+T('課程內容（章 → 節 → 項目）','Course content (Lesson → Section → Item)')+'</h2>' +
-    '<span><button class="btn ghost sm" onclick="sseExpand(false)">'+T('全部收合','Collapse all')+'</button> <button class="btn ghost sm" onclick="sseExpand(true)">'+T('全部展開','Expand all')+'</button> <button class="btn sm" onclick="sseChNew()">'+T('＋ 新增章','+ Add lesson')+'</button></span></div>' +
-    '<div class="hint" style="margin:6px 0 10px">'+T('每個項目引用一筆素材；章、節的編號依位置自動產生。項目標題是學員看到的內容，素材名稱只供後台辨識。','Each item links one asset; lesson and section numbers follow their position. Item titles are what students see; asset names are for admins only.')+'</div>' +
-    '<div class="small" style="margin-bottom:8px"><b>'+T('內容摘要：','Summary: ')+'</b>'+c.ch+T(' 章 · ',' lessons · ')+c.sec+T(' 節 · ',' sections · ')+c.items+T(' 項',' items')+'　<b>'+T('總時長：','Total duration: ')+'</b>'+totalTxt+'</div>' +
-    (chap || '<div class="note">'+T('尚未建立章。草稿可先留空；發佈前至少一章、每章至少一節、每節至少一個項目。','No lessons yet. A draft may stay empty; publishing needs at least one lesson, each with a section, each with an item.')+'</div>') +
+  return '<div class="card" id="sse_structure"><div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px"><h2 style="margin:0">'+T('課程內容（單元 → 節 → 項目）','Course content (Lesson → Section → Item)')+'</h2>' +
+    '<span><button class="btn ghost sm" onclick="sseExpand(false)">'+T('全部收合','Collapse all')+'</button> <button class="btn ghost sm" onclick="sseExpand(true)">'+T('全部展開','Expand all')+'</button> <button class="btn sm" onclick="sseChNew()">'+T('＋ 新增單元','+ Add lesson')+'</button></span></div>' +
+    '<div class="hint" style="margin:6px 0 10px">'+T('每個項目引用一筆素材；項目可直接加在單元下，也可先分節再加入（節可省略）。單元、節的編號依位置自動產生。項目標題是學員看到的內容，素材名稱只供後台辨識。','Each item links one asset; items can go directly under a lesson or into sections (sections are optional). Lesson and section numbers follow their position. Item titles are what students see; asset names are for admins only.')+'</div>' +
+    '<div class="small" style="margin-bottom:8px"><b>'+T('內容摘要：','Summary: ')+'</b>'+c.ch+T(' 單元 · ',' lessons · ')+c.sec+T(' 節 · ',' sections · ')+c.items+T(' 項',' items')+'　<b>'+T('總時長：','Total duration: ')+'</b>'+totalTxt+'</div>' +
+    (chap || '<div class="note">'+T('尚未建立單元。草稿可先留空；發佈前至少一個單元、每個單元至少一個項目；有建立節的話，每節至少一個項目。','No lessons yet. A draft may stay empty; publishing needs at least one lesson with at least one item, and every section you add needs an item.')+'</div>') +
     '<div style="border-top:1px dashed var(--g200);margin-top:14px;padding-top:12px"><div style="display:flex;justify-content:space-between;align-items:center"><h2 style="margin:0">'+T('教材資源','Course resources')+'</h2><button class="btn ghost sm" onclick="sseResOpen()">'+T('＋ 新增教材資源','+ Add resource')+'</button></div>' +
     '<div class="hint" style="margin:6px 0">'+T('教材資源不列入學習進度計算。','Course resources are not counted in learning progress.')+' '+T('可混合加入多本教材與資源庫素材，並可排序、移除。','Mix textbooks and library assets; reorder or remove them anytime.')+'</div>' +
     (res || '<div class="note">'+T('尚未加入教材資源。','No resources yet.')+'</div>') + '</div></div>';
 }
 function sseExpand(open){ SSE.chapters.forEach(function(c){ c.open = open; c.sections.forEach(function(s){ s.open = open; }); }); renderAll(); }
-function sseChNew(){ SSE.chapters.push({id:sseUid('ch'), title:sseML(), open:true, sections:[]}); sseDirty(); renderAll(); }
+function sseChNew(){ SSE.chapters.push({id:sseUid('ch'), title:sseML(), open:true, items:[], sections:[]}); sseDirty(); renderAll(); }
 function sseSecNew(chId){
   document.getElementById('ssModalBody').innerHTML = '<h3>'+T('新增節','Add section')+'</h3><div class="formrow"><label>'+T('目前資料語系的節標題（'+sseLocName(SSE.locale)+'）','Section title in the current data language ('+sseLocName(SSE.locale)+')')+'</label><span class="req">*</span><input type="text" id="sse_secname"><div class="hint">'+T('草稿可先建立空白節；發佈前每一節至少需有一個項目。','A draft may start with an empty section; each section needs at least one item before publishing.')+'</div></div>' +
     '<div style="display:flex;justify-content:flex-end;gap:8px"><button class="btn ghost" onclick="closeModalId(\'ssModal\')">'+T('取消','Cancel')+'</button><button class="btn" onclick="sseSecCreate(\''+chId+'\')">'+T('建立節','Create')+'</button></div>';
@@ -375,7 +390,7 @@ function sseMove(kind, id, d){ var f = sseFind(kind, id); if (!f) return; var j 
 function sseRemove(kind, id){
   var f = sseFind(kind, id); if (!f) return;
   var n = '', secN = 0, itN = 0;
-  if (kind === 'ch'){ secN = f.o.sections.length; f.o.sections.forEach(function(s){ itN += s.items.length; }); n = T('將一併移除 '+secN+' 節、'+itN+' 個項目。','This also removes '+secN+' section(s) and '+itN+' item(s).'); }
+  if (kind === 'ch'){ secN = f.o.sections.length; itN = sseChItems(f.o).length; n = T('將一併移除 '+secN+' 節、'+itN+' 個項目。','This also removes '+secN+' section(s) and '+itN+' item(s).'); }
   else if (kind === 'sec'){ n = T('將一併移除 '+f.o.items.length+' 個項目。','This also removes '+f.o.items.length+' item(s).'); }
   else { n = T('只解除素材引用，不刪除資源庫中的素材。','Only the asset link is removed; the library asset is not deleted.'); }
   ssConfirm(T('確認移除','Confirm removal'), n, T('確認移除','Remove'), true, function(){ f.arr.splice(f.i, 1); sseDirty(); renderAll(); });
@@ -383,7 +398,7 @@ function sseRemove(kind, id){
 
 /* ---------- 素材挑選器（加入項目／更換素材／教材資源的素材庫路徑） ---------- */
 function ssePickOpen(mode, target){
-  SSE_P = { mode:mode, target:target, lib:'videos', q:'', sel:[], tab:'lib', newName:'', newTags:[], newFile:'', nameAuto:false };
+  SSE_P = { mode:mode, target:target, lib:'videos', q:'', sel:[], tab:'lib', newName:'', newTags:[], newFile:'', nameAuto:false, src:'上傳檔案', newEmbed:'' };
   if (mode === 'replace'){ var f = sseFind('it', target); if (f) SSE_P.lib = f.o.libKey; }
   if (mode === 'cover'){ SSE_P.lib = 'images'; if (SSE.cover[target]) SSE_P.sel = [SSE.cover[target]]; }   // 封面只能從圖片庫選，素材類型固定
   ssePickRender(); document.getElementById('ssModal').classList.add('open');
@@ -391,26 +406,36 @@ function ssePickOpen(mode, target){
 function ssePickRender(){
   var P = SSE_P, lib = sseLib(P.lib), multi = P.mode !== 'replace' && P.mode !== 'cover';
   var q = P.q.trim().toLowerCase();
-  var typeSel = P.mode === 'cover' ? '<select disabled><option>'+lib.label+'</option></select>' : '<select onchange="SSE_P.lib=this.value;SSE_P.sel=[];ssePickTypeChanged();ssePickRender()">'+sseLibs().map(function(l){ return '<option value="'+l.key+'"'+(P.lib===l.key?' selected':'')+'>'+l.label+'</option>'; }).join('')+'</select>';
-  var body;
+  var typeSel = P.mode === 'cover' ? '<select disabled><option>'+lib.label+'</option></select>' : '<select onchange="SSE_P.lib=this.value;SSE_P.sel=[];ssePickTypeChanged();ssePickRender()">'+((P.mode==='item'||P.mode==='replace') ? sseItemLibs() : sseLibs()).map(function(l){ return '<option value="'+l.key+'"'+(P.lib===l.key?' selected':'')+'>'+l.label+'</option>'; }).join('')+'</select>';
+  var body, isQuiz = !!lib.quiz;
+  if (isQuiz) P.tab = 'lib';
   if (P.tab === 'lib'){
     var tagF = P.tagF || [];
     var rows = lib.items.map(function(n, i){ var id = lib.prefix+i; return {id:id, name:n, tags:(lib.tags||{})[id]||[]}; })
       .filter(function(x){ return !q || x.name.toLowerCase().indexOf(q) >= 0; })
       .filter(function(x){ return !tagF.length || x.tags.some(function(t){ return tagF.indexOf(t) >= 0; }); });   // 4.9 §二：同時符合類型、名稱、標籤；多選標籤符合任一個
     body = '<input type="text" placeholder="'+T('搜尋素材名稱','Search asset name')+'" value="'+escAttr(P.q)+'" id="sse_pq" oninput="SSE_P.q=this.value;ssePickRender();var e=document.getElementById(\'sse_pq\');e.focus();e.setSelectionRange(e.value.length,e.value.length)">' +
-      '<div style="display:flex;gap:6px 14px;flex-wrap:wrap;align-items:center;margin-top:10px"><span style="font-size:13.5px;color:var(--g500)">'+T('內容標籤','Content tags')+'</span>'+CONTENT_TAGS.map(function(t){ return '<label style="cursor:pointer;display:inline-flex;align-items:center;gap:5px"><input type="checkbox" '+(tagF.indexOf(t)>=0?'checked':'')+' onchange="ssePickTagFilter(\''+escAttr(t)+'\',this.checked)" style="width:auto"> '+escHtml(t)+'</label>'; }).join('')+'<span class="hint" style="margin:0">'+T('複選時符合任一標籤即可','Matches any selected tag')+'</span></div>' +
-      '<div class="pickListWrap" style="margin-top:8px;max-height:260px">'+(rows.map(function(x){ return '<div class="pickrow"><input type="'+(multi?'checkbox':'radio')+'" name="sse_pk" '+(P.sel.indexOf(x.id)>=0?'checked':'')+' onchange="ssePickToggle(\''+x.id+'\',this.checked)" style="width:auto"><span class="pname" onclick="this.previousElementSibling.click()">'+escHtml(x.name)+(x.tags.length?' <span class="small" style="color:var(--g500)">'+escHtml(x.tags.join('、'))+'</span>':'')+'</span></div>'; }).join('') || '<div class="small" style="padding:8px 0">'+T('此庫沒有符合的素材。','No matching assets in this library.')+'</div>')+'</div>' +
+      (isQuiz ? '' : '<div style="display:flex;gap:6px 14px;flex-wrap:wrap;align-items:center;margin-top:10px"><span style="font-size:13.5px;color:var(--g500)">'+T('內容標籤','Content tags')+'</span>'+CONTENT_TAGS.map(function(t){ return '<label style="cursor:pointer;display:inline-flex;align-items:center;gap:5px"><input type="checkbox" '+(tagF.indexOf(t)>=0?'checked':'')+' onchange="ssePickTagFilter(\''+escAttr(t)+'\',this.checked)" style="width:auto"> '+escHtml(t)+'</label>'; }).join('')+'<span class="hint" style="margin:0">'+T('複選時符合任一標籤即可','Matches any selected tag')+'</span></div>') +
+      '<div class="pickListWrap" style="margin-top:8px;max-height:260px">'+(rows.map(function(x){ return '<div class="pickrow"><input type="'+(multi?'checkbox':'radio')+'" name="sse_pk" '+(P.sel.indexOf(x.id)>=0?'checked':'')+' onchange="ssePickToggle(\''+x.id+'\',this.checked)" style="width:auto"><span class="pname" onclick="this.previousElementSibling.click()">'+escHtml(x.name)+(x.tags.length?' <span class="small" style="color:var(--g500)">'+escHtml(x.tags.join('、'))+'</span>':'')+'</span></div>'; }).join('') || '<div class="small" style="padding:8px 0">'+(isQuiz ? T('沒有符合的測驗。','No matching quizzes.') : T('此庫沒有符合的素材。','No matching assets in this library.'))+'</div>')+'</div>' +
       '';
   } else {
     /* 新增分頁（4.9 §三；版面依客戶 4.4 原型）：上傳檔案、素材名稱（自動帶入可改）、內容標籤必填；必填未完成前插入按鈕停用
-       20261110 使用者要求與資源庫 a18 一致，拿掉「輸入網址／iframe 嵌入碼」，只能上傳檔案 */
-    body = '<div style="border:1px dashed var(--g500);border-radius:10px;background:var(--g50);padding:22px 16px;text-align:center"><button type="button" class="btn ghost" onclick="ssePickChooseFile()">'+T('選擇新的素材檔案','Choose a new asset file')+'</button>' +
+       20261110 使用者要求與資源庫 a18 一致，拿掉「輸入網址／iframe 嵌入碼」，只能上傳檔案
+       2026-11-19 使用者要求補回 iframe（與資源庫 a18 新增素材一致，網址嵌入不恢復）；封面只能是圖片檔，不提供 iframe */
+    var canEmbed = P.mode !== 'cover', useEmbed = canEmbed && P.src === 'iframe 嵌入碼';
+    var srcRow = canEmbed ? '<div class="formrow"><label>'+T('來源','Source')+'</label><div>' + ['上傳檔案','iframe 嵌入碼'].map(function(v){
+        return '<label style="display:inline-flex;align-items:center;gap:5px;margin-right:16px;cursor:pointer"><input type="radio" name="sse_src" style="width:auto" '+(P.src===v?'checked':'')+' onchange="ssePickSrc(\''+v+'\')"> '+(v==='上傳檔案' ? T('上傳檔案','Upload file') : T('iframe 嵌入碼','iframe embed code'))+'</label>'; }).join('') + '</div></div>' : '';
+    body = srcRow + (useEmbed
+      ? '<div><label style="font-size:13.5px;color:var(--g500)">'+T('iframe 嵌入碼','iframe embed code')+' <span class="req">*</span></label>' +
+        '<textarea id="sse_embed" rows="4" style="width:100%;margin-top:5px;padding:7px 10px;border:1px solid var(--g200);border-radius:8px;font:inherit;font-size:13px;box-sizing:border-box" placeholder="&lt;iframe src=&quot;https://…&quot;&gt;&lt;/iframe&gt;" oninput="ssePickEmbedInput(this.value)">'+escHtml(P.newEmbed)+'</textarea>' +
+        '<div class="hint" id="sse_embedErr" style="color:#C0392B;'+(P.newEmbed.trim() && !sseIsIframe(P.newEmbed) ? '' : 'display:none')+'">'+T('請輸入含 src 的 &lt;iframe&gt; 嵌入碼。','Enter an &lt;iframe&gt; embed code with src.')+'</div>' +
+        '<div class="hint">'+T('貼上外部平台提供的 &lt;iframe&gt; 嵌入碼。','Paste the &lt;iframe&gt; embed code provided by the external platform.')+'</div></div>'
+      : '<div style="border:1px dashed var(--g500);border-radius:10px;background:var(--g50);padding:22px 16px;text-align:center"><button type="button" class="btn ghost" onclick="ssePickChooseFile()">'+T('選擇新的素材檔案','Choose a new asset file')+'</button>' +
         '<div class="hint" id="sse_fileState" style="margin-top:8px">'+(P.newFile ? T('已選擇檔案','File selected') : T('尚未選擇檔案','No file selected'))+'</div>' +
-        '<div class="hint">'+T('僅限 '+(lib.formats||'').split(',').join('、')+' 格式。','Formats: '+(lib.formats||'').split(',').join(', ')+' only.')+'</div></div>' +
+        '<div class="hint">'+T('僅限 '+(lib.formats||'').split(',').join('、')+' 格式。','Formats: '+(lib.formats||'').split(',').join(', ')+' only.')+'</div></div>') +
       '<div style="margin-top:16px;padding-top:14px;border-top:1px solid var(--g200)"><label style="font-size:13.5px;color:var(--g500)">'+T('素材名稱','Asset name')+' <span class="req">*</span></label>' +
         '<input type="text" id="sse_newname" style="margin-top:5px" value="'+escAttr(P.newName)+'" placeholder="'+T('例：L5 教學影片-描述外表','e.g. L5 Teaching Video - Describing Appearance')+'" oninput="ssePickNameInput(this.value)">' +
-        '<p class="hint">'+T('由檔名自動帶入，可修改；不必手動命名，但不可清空新增。','Filled in from the file name and editable; no need to name it manually, but it cannot be empty.')+'</p>' +
+        '<p class="hint">'+(useEmbed ? T('自動帶入「類型－來源網域」，可修改，但不可清空新增。','Filled in as “Type – source domain” and editable, but it cannot be empty.') : T('由檔名自動帶入，可修改；不必手動命名，但不可清空新增。','Filled in from the file name and editable; no need to name it manually, but it cannot be empty.'))+'</p>' +
         '<div style="margin-top:12px"><span style="font-size:13.5px;color:var(--g500)">'+T('內容標籤','Content tags')+' <span class="req">*</span></span>' +
         '<div style="margin-top:6px">'+TLI_TagDD.html('sse_new', P.newTags, CONTENT_TAGS, ssePickValid)+'</div>' +   // 20261110 改為下拉選單（可複選、關鍵字篩選），元件在 assets/_tag_dd.js
         '<p class="hint">'+T('至少選一個。素材數量一多，標籤是唯一有效的篩選方式。','Pick at least one. As assets multiply, tags are the only effective way to filter.')+'</p></div></div>';
@@ -419,8 +444,8 @@ function ssePickRender(){
     ? '<button class="btn" onclick="ssePickConfirm()">'+(P.mode==='cover' ? T('選用','Use') : P.mode==='replace' ? T('更換','Replace') : T('加入所選（'+P.sel.length+'）','Add selected ('+P.sel.length+')'))+'</button>'
     : '<button class="btn" id="sse_newInsert" onclick="ssePickCreate()"'+(ssePickMiss().miss.length?' disabled':'')+'>'+T('新增並插入','Create and insert')+'</button>';
   document.getElementById('ssModalBody').innerHTML = '<h3>'+(P.mode==='cover' ? T('選擇封面圖片（'+(P.target==='d'?'桌機版':'手機版')+'）','Choose cover image ('+(P.target==='d'?'desktop':'mobile')+')') : P.mode==='replace' ? T('更換素材','Replace asset') : P.mode==='edres' ? T('新增資源・選擇素材','Add resource · choose asset') : P.mode==='res' ? T('從素材庫取用','Take from the library') : T('加入項目・選擇素材','Add item · choose asset'))+'</h3>' +
-    '<div class="formrow"><label>'+T('素材類型','Asset type')+'</label>'+typeSel+'<div class="hint">'+(P.mode==='cover' ? T('封面只能從圖片庫選，素材類型固定為圖片庫。','Covers can only come from the image library; the asset type is fixed.') : T('選定後，資源庫只顯示該類型素材。','The library shows only assets of the selected type.'))+'</div></div>' +
-    '<div class="tabs" style="margin:6px 0 10px"><button class="'+(P.tab==='lib'?'active':'')+'" onclick="SSE_P.tab=\'lib\';ssePickRender()">'+T('資源庫','Library')+'</button><button class="'+(P.tab==='new'?'active':'')+'" onclick="SSE_P.tab=\'new\';ssePickRender()">'+T('新增','New')+'</button></div>' + body +
+    '<div class="formrow"><label>'+T('素材類型','Asset type')+'</label>'+typeSel+'<div class="hint">'+(P.mode==='cover' ? T('封面只能從圖片庫選，素材類型固定為圖片庫。','Covers can only come from the image library; the asset type is fixed.') : isQuiz ? T('只列出「測驗管理」中類型為「隨堂單元考」的測驗；要新增測驗請到「測驗管理」建立。','Lists only quizzes of type “Quiz / Unit Test” in Quiz Management; create new quizzes in Quiz Management.') : T('選定後，資源庫只顯示該類型素材。','The library shows only assets of the selected type.'))+'</div></div>' +
+    (isQuiz ? '<div style="margin:6px 0 10px"></div>' : '<div class="tabs" style="margin:6px 0 10px"><button class="'+(P.tab==='lib'?'active':'')+'" onclick="SSE_P.tab=\'lib\';ssePickRender()">'+T('資源庫','Library')+'</button><button class="'+(P.tab==='new'?'active':'')+'" onclick="SSE_P.tab=\'new\';ssePickRender()">'+T('新增','New')+'</button></div>') + body +
     '<div style="display:flex;justify-content:flex-end;align-items:center;gap:8px;margin-top:14px">'+(P.tab==='new' ? '<span class="hint" id="sse_newWhy" style="margin:0 auto 0 0">'+ssePickMiss().why+'</span>' : '')+'<button class="btn ghost" onclick="closeModalId(\'ssModal\')">'+T('取消','Cancel')+'</button>'+footer+'</div>';
 }
 function ssePickToggle(id, on){
@@ -431,7 +456,8 @@ function ssePickToggle(id, on){
 }
 function ssePickMiss(){
   var P = SSE_P, miss = [];
-  if (!P.newFile) miss.push(T('素材檔案','Asset file'));
+  if (P.mode !== 'cover' && P.src === 'iframe 嵌入碼'){ if (!sseIsIframe(P.newEmbed)) miss.push(T('iframe 嵌入碼','iframe embed code')); }
+  else if (!P.newFile) miss.push(T('素材檔案','Asset file'));
   if (!P.newName.trim()) miss.push(T('素材名稱','Asset name'));
   if (!P.newTags.length) miss.push(T('內容標籤','Content tags'));
   return {miss:miss, why: miss.length ? T('尚缺：','Missing: ')+miss.join(T('、',', ')) : ''};
@@ -441,9 +467,27 @@ function ssePickValid(){
   if (w) w.textContent = m.why; if (b) b.disabled = m.miss.length > 0;
 }
 function ssePickTagFilter(t, on){ var a = SSE_P.tagF || []; SSE_P.tagF = on ? (a.indexOf(t)<0 ? a.concat(t) : a) : a.filter(function(x){ return x !== t; }); ssePickRender(); }
+/* iframe 嵌入（2026-11-19）：需為含 src 的 <iframe>；名稱自動帶入「類型－來源網域」 */
+function sseIsIframe(s){ return /^\s*<iframe[\s\S]*\ssrc\s*=\s*["'][^"']+["'][\s\S]*>/i.test(s || ''); }
+function sseIframeHost(s){ var m = /\ssrc\s*=\s*["']([^"']+)["']/i.exec(s || ''); try { return m ? new URL(m[1]).hostname : ''; } catch(e){ return ''; } }
+function ssePickSrc(v){ var P = SSE_P; P.src = v; if (P.nameAuto){ P.newName = ''; P.nameAuto = false; } if (v === 'iframe 嵌入碼') ssePickAutoEmbedName(); ssePickRender(); }
+function ssePickAutoEmbedName(){
+  var P = SSE_P, host = sseIframeHost(P.newEmbed);
+  if (P.newName.trim() && !P.nameAuto) return;
+  P.newName = host ? sseLib(P.lib).label.replace('庫','') + '－' + host : ''; P.nameAuto = !!host;
+}
+function ssePickEmbedInput(v){
+  var P = SSE_P; P.newEmbed = v;
+  var err = document.getElementById('sse_embedErr'); if (err) err.style.display = (v.trim() && !sseIsIframe(v)) ? '' : 'none';
+  ssePickAutoEmbedName();
+  var n = document.getElementById('sse_newname'); if (n) n.value = P.newName;
+  ssePickValid();
+}
 function ssePickNameInput(v){ SSE_P.newName = v; SSE_P.nameAuto = false; ssePickValid(); }
 function ssePickTypeChanged(){   // 4.9 §三：變更素材類型後，先前選取且不相容的檔案不得保留
-  var P = SSE_P; if (P.newFile){ P.newFile = ''; if (P.nameAuto) P.newName = ''; }
+  var P = SSE_P;
+  if (P.mode !== 'cover' && P.src === 'iframe 嵌入碼'){ if (P.nameAuto) P.newName = ''; ssePickAutoEmbedName(); return; }   // iframe 不受類型限制，只更新自動帶入的名稱
+  if (P.newFile){ P.newFile = ''; if (P.nameAuto) P.newName = ''; }
   P.nameAuto = false;
 }
 function ssePickChooseFile(){
@@ -457,13 +501,15 @@ function ssePickCreate(){
   if (m.miss.length){ showToast(m.why); return; }
   var lib = sseLib(P.lib); lib.items.push(P.newName.trim()); lib.tags = lib.tags || {};
   var id = lib.prefix + (lib.items.length - 1); lib.tags[id] = P.newTags.slice();
+  if (P.mode !== 'cover' && P.src === 'iframe 嵌入碼'){ lib.embeds = lib.embeds || {}; lib.embeds[id] = P.newEmbed.trim(); }
   P.sel = [id]; ssePickConfirm();
 }
 function ssePickConfirm(){
   var P = SSE_P; if (!P.sel.length){ showToast(T('請先選擇素材','Choose an asset first')); return; }
   if (P.mode === 'edres'){ closeModalId('ssModal'); apResApply(P.sel); return; }   // 預約／活動的「使用資源」共用同一個挑選彈窗
   if (P.mode === 'item'){
-    var s = sseFind('sec', P.target).o;
+    var fs = sseFind('sec', P.target), s = fs ? fs.o : null;
+    if (!s){ var ch = sseFind('ch', P.target).o; s = {items:ch.items}; ch.open = true; }   // 2026-11-24：目標是單元時，直接加在單元下
     P.sel.forEach(function(id){ var a = sseAsset(P.lib, id), t = sseML(); t[SSE.locale] = a ? a.name : ''; s.items.push({id:sseUid('it'), title:t, libKey:P.lib, assetId:id, trial:false}); });
     s.open = true;
   } else if (P.mode === 'cover'){

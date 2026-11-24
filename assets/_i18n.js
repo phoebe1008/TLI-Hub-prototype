@@ -29,6 +29,16 @@
   var EN_DICT = DICT_SRC.en || {};
   // 五語擴充：日文／德文詞典（只有宣告 TLI_I18N_PAGE_LANGS 的頁面會用到）
   var JA_DICT = DICT_SRC.ja || {};
+  // 2026-11-19（回應 BugSmash #35，學生端補齊日文）：英文→日文對照表（assets/_i18n_dict_ja.js 的 TLI_I18N_DICT.jaByEn）。
+  // 日文模式下，t() 第二參數沒有 ja、或 data-i18n key 在日文詞典查不到時，用英文去這張表查日文；查不到才退回英文。
+  var JA_BY_EN = DICT_SRC.jaByEn || {};
+  function jaFromEn(en) {
+    if (typeof en !== 'string' || !en) return null;
+    if (hasOwn(JA_BY_EN, en)) return JA_BY_EN[en];
+    var m = /^(\s*)([\s\S]*?)(\s*)$/.exec(en);   // 保留字串前後空白（組字串時的間隔）
+    if (m && m[2] && hasOwn(JA_BY_EN, m[2])) return m[1] + JA_BY_EN[m[2]] + m[3];
+    return null;
+  }
   var DE_DICT = DICT_SRC.de || {};
   var PAGE_LANGS = (global.TLI_I18N_PAGE_LANGS && global.TLI_I18N_PAGE_LANGS.length) ? global.TLI_I18N_PAGE_LANGS : null;
   var hasOwn = function (o, k) { return Object.prototype.hasOwnProperty.call(o, k); };
@@ -37,6 +47,7 @@
     if (!key) return null;
     var d = lang === 'ja' ? JA_DICT : (lang === 'de' ? DE_DICT : null);
     if (d && hasOwn(d, key)) return d[key];
+    if (lang === 'ja' && hasOwn(EN_DICT, key)) { var jk = jaFromEn(EN_DICT[key]); if (jk !== null) return jk; }
     if (hasOwn(EN_DICT, key)) return EN_DICT[key];
     return null;
   }
@@ -198,9 +209,11 @@
       if (curLang === 'zh-CN') return convertCN(zh);
       if (curLang === 'zh-TW') return zh;
       var v = en[curLang];
+      if ((v === undefined || v === null) && curLang === 'ja') v = jaFromEn(en.en);
       if (v === undefined || v === null) v = en.en;
       return (v !== undefined && v !== null) ? v : zh;
     }
+    if (curLang === 'ja') { var jv = jaFromEn(en); if (jv !== null) return jv; }
     if (isJaDe(curLang)) return (en !== undefined && en !== null) ? en : zh;
     if (curLang === 'en') return (en !== undefined && en !== null) ? en : zh;
     if (curLang === 'zh-CN') return convertCN(zh);

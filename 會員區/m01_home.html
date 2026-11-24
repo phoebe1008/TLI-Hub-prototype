@@ -58,7 +58,11 @@ button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible{ou
 @media(min-width:1024px){
   .side-nav{display:flex;flex-direction:column;position:fixed;left:0;top:0;bottom:0;width:310px;background:#fff;border-right:1px solid var(--c-border);padding:18px 12px;z-index:50;}
   .side-brand{display:flex;align-items:center;padding:0 8px 18px;}
-  .side-brand img{height:28px;width:auto;}
+  .side-brand a{display:flex;align-items:center;gap:7px;text-decoration:none;white-space:nowrap;}
+  .side-brand img{height:17px;width:auto;}
+  /* 20261112 TLI × CONNECT 聯名標示 */
+  .side-brand .cobrand-x{font-size:14px;font-weight:300;line-height:1;color:#98A2B3;}
+  .side-brand .cobrand-name{font-size:14px;font-weight:800;letter-spacing:.08em;line-height:1;color:var(--c-primary,#1B4E8C);}
   .side-identity{padding:0 8px 14px;margin-bottom:6px;font-size:12.5px;font-weight:700;color:var(--c-text);border-bottom:1px solid var(--c-border);}
   .side-link{display:flex;align-items:center;gap:10px;padding:10px 10px;border-radius:8px;font-size:14px;font-weight:600;color:var(--c-muted);margin-bottom:2px;}
   .side-link svg{width:19px;height:19px;flex:none;}
@@ -283,7 +287,7 @@ button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible{ou
 <body>
 <div class="app has-side">
   <nav class="side-nav" data-i18n-aria-label="member.nav.aria" aria-label="主導覽">
-    <div class="side-brand"><a href="../公開網站/p01_home.html" data-i18n-aria-label="member.logoAria" aria-label="TLI 官網"><img src="../assets/tli-logo.svg" alt="TLI"></a></div>
+    <div class="side-brand"><a href="../公開網站/p01_home.html" data-i18n-aria-label="member.logoAria" aria-label="TLI 官網"><img src="../assets/tli-logo.svg" alt="TLI"><span class="cobrand-x" aria-hidden="true">×</span><span class="cobrand-name">CONNECT</span></a></div>
     <div class="side-identity">Emma Johnson｜<span data-i18n="member.role.student">學員</span></div>
     <a class="side-link active" href="m01_home.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11l9-8 9 8"/><path d="M5 10v10a1 1 0 001 1h3v-6h6v6h3a1 1 0 001-1V10"/></svg><span data-i18n="member.nav.home">首頁</span></a>
     <a class="side-link" href="m02_booking.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18M12 14v6M9 17h6"/></svg><span data-i18n="member.nav.booking">預約與報名</span></a>
@@ -292,7 +296,7 @@ button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible{ou
     <a class="side-link" href="m18_learning_dashboard.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="4" y1="20" x2="20" y2="20"/><rect x="5" y="11" width="3" height="7" rx="1"/><rect x="10.5" y="6" width="3" height="12" rx="1"/><rect x="16" y="9" width="3" height="9" rx="1"/></svg><span data-en="Learning Dashboard">學習儀表板</span></a>
     <a class="side-link" href="m20_transcripts.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 3H7a2 2 0 00-2 2v14a2 2 0 002 2h10a2 2 0 002-2V8z"/><path d="M14 3v5h5"/><path d="M9 13h6M9 17h6"/></svg><span data-en="Transcripts">成績單</span></a>
     <a class="side-link" href="m19_certificates.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="9" r="6"/><path d="M8.5 14.5L7 22l5-3 5 3-1.5-7.5"/></svg><span data-en="Certificates">證書</span></a>
-    <a class="side-link" href="m04_course_detail.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="5" width="20" height="14" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/><line x1="6" y1="15" x2="10" y2="15"/></svg><span data-i18n="member.nav.myPlan">我的方案</span></a>
+    <a class="side-link" href="m04_course_detail.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="5" width="20" height="14" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/><line x1="6" y1="15" x2="10" y2="15"/></svg><span data-i18n="member.nav.myPlan">我的學習計劃</span></a>
     <a class="side-link" href="m07_profile.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 4-7 8-7s8 3 8 7"/></svg><span data-i18n="member.nav.me">我的</span></a>
     <a class="side-link" href="../公開網站/p01_home.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg><span data-i18n="member.nav.backToSite">回官網</span></a>
   </nav>
@@ -364,7 +368,7 @@ button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible{ou
 
     <div class="card" style="margin-top:12px;">
       <div class="flex-between">
-        <h3 style="margin:0;font-size:15px;" data-i18n="m01.myPlansTitle">我的方案</h3>
+        <h3 style="margin:0;font-size:15px;" data-i18n="m01.myPlansTitle">我的學習計劃</h3>
         <a href="m04_course_detail.html" class="small muted" data-i18n="m01.btnSeeAllPlans">查看全部方案 ›</a>
       </div>
       <div class="home-plan-list" id="homePlanList">
@@ -534,7 +538,7 @@ button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible{ou
       <p id="pjWelcomeSub">－</p>
     </div>
 
-    <div class="section-title" data-en="Today">今日待辦</div>
+    <div class="section-title" data-en="Today's classes">今日課程</div><!-- BugSmash #43：學生視角用字 -->
     <div class="card"><div id="pjTodo"></div></div>
 
     <div class="section-title" data-en="My class">我的班級</div>
@@ -549,7 +553,7 @@ button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible{ou
       </div>
     </div>
 
-    <div class="section-title" data-en="Start here">開始使用</div>
+    <div class="section-title" data-en="Learning resources">學習資源</div><!-- BugSmash #31 -->
     <div class="card">
       <div class="stack">
         <div class="list-row step-row">
@@ -632,7 +636,7 @@ button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible{ou
   </div>
 </div>
 
-<script>window.TLI_I18N_PAGE_LANGS=['zh-TW','zh-CN','en'];</script>
+<script>window.TLI_I18N_PAGE_LANGS=['zh-TW','zh-CN','en','ja'];/* BugSmash #35（使用者 2026-11-19 決定）：學生系統語系為繁、簡、英、日；官網維持五語 */</script>
 <script src="../assets/_i18n_dict.js"></script>
 <script src="../assets/_i18n_dict_member.js"></script>
 <script src="../assets/_i18n_dict_ja.js"></script>
@@ -1052,7 +1056,7 @@ function renderProjectView(){
   if(next){ rows.push([T('下一場 Mandarin Lounge：','Next Mandarin Lounge: ')+PL.mdLabel(next.date)+' '+next.time, PL.toolName(next.tool)+'・'+next.teacher, 'm16_classroom.html?lesson='+encodeURIComponent(next.id)+'&type=chat', T('進入教室','Enter')]); }
   else if(LG.remaining>0){ rows.push([T('預約本週的 Mandarin Lounge','Book your Mandarin Lounge for this week'), T('本週還剩 ','Left this week: ')+LG.remaining+T(' 次',''), 'm14_chat_booking.html', T('去預約','Book')]); }
   if(!P.started){ var s11 = PL.COURSES[0].chapters[0].sections[0]; rows.push([T('開始第一節自學','Start your first section'), '1-1　'+T(s11.zh,s11.en), 'm08_self_paced.html', T('開始','Start')]); }
-  else if(P.lastGap>=7){ rows.push([T('已 '+P.lastGap+' 天沒有學習','No study for '+P.lastGap+' days'), T('繼續章節進度','Pick up where you left off'), 'm08_self_paced.html', T('繼續','Continue')]); }
+  else if(P.lastGap>=7){ rows.push([T('已 '+P.lastGap+' 天沒有學習',{en:'No study for '+P.lastGap+' days',ja:P.lastGap+'日間学習していません'}), T('繼續章節進度','Pick up where you left off'), 'm08_self_paced.html', T('繼續','Continue')]); }
   document.getElementById('pjTodo').innerHTML = rows.length ? rows.map(function(r){
     return '<div class="list-row"><div class="icon-box">'+ico+'</div><div class="body"><h4>'+r[0]+'</h4><p>'+r[1]+'</p></div><div class="trail"><button class="btn btn-outline btn-sm" onclick="location.href=\''+r[2]+'\'">'+r[3]+'</button></div></div>';
   }).join('') : '<p class="small muted" style="margin:0;">'+T('目前沒有待辦事項。','Nothing to do right now.')+'</p>';
@@ -1077,14 +1081,14 @@ document.addEventListener('keydown', function(e){
 /* 目前帳號：問候語與「我的方案」只顯示此帳號自己的方案與課時（不跨來源合併） */
 function renderAccountHome(){
   var a = TLI_MASTERS.currentAccount(), first = a.name.split(' ')[0];
-  document.getElementById('greetDefault').textContent = T('早安，'+first+'，這是妳今天的學習概況。','Good morning, '+first+'. Here’s today’s overview.');
+  document.getElementById('greetDefault').textContent = T('早安，'+first+'，這是妳今天的學習概況。',{en:'Good morning, '+first+'. Here’s today’s overview.',ja:'おはようございます、'+first+'さん。今日の学習状況です。'});
   var list = document.getElementById('homePlanList');
   Array.prototype.forEach.call(list.querySelectorAll('[data-generated]'), function(n){ n.parentNode.removeChild(n); });
   if(TLI_MASTERS.isDemoAccount(a)) return;
   var unit = TLI_MASTERS.sourceUnitName(a), plans = a.plans || [];
   var html = '';
   if(!plans.length){
-    html = '<p class="small muted" data-generated="1" style="margin:8px 0 0;">'+T('此帳號（'+unit+'）目前沒有已啟用的方案。','This account ('+unit+') has no active plan yet.')+'</p>';
+    html = '<p class="small muted" data-generated="1" style="margin:8px 0 0;">'+T('此帳號（'+unit+'）目前沒有已啟用的方案。',{en:'This account ('+unit+') has no active plan yet.',ja:'このアカウント（'+unit+'）には有効なプランがありません。'})+'</p>';
   } else {
     plans.forEach(function(pl){
       html += '<div class="home-plan-card" data-generated="1"><div class="home-plan-badges"><span class="badge badge-payer-company">'+unit+'</span><span class="badge badge-ok">'+T('生效中','Active')+'</span></div>'+

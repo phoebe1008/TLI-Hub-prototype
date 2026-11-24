@@ -43,7 +43,11 @@ button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible{ou
 @media(min-width:1024px){
   .side-nav{display:flex;flex-direction:column;position:fixed;left:0;top:0;bottom:0;width:310px;background:#fff;border-right:1px solid var(--c-border);padding:18px 12px;z-index:50;}
   .side-brand{display:flex;align-items:center;padding:0 8px 18px;}
-  .side-brand img{height:28px;width:auto;}
+  .side-brand a{display:flex;align-items:center;gap:7px;text-decoration:none;white-space:nowrap;}
+  .side-brand img{height:17px;width:auto;}
+  /* 20261112 TLI × CONNECT 聯名標示 */
+  .side-brand .cobrand-x{font-size:14px;font-weight:300;line-height:1;color:#98A2B3;}
+  .side-brand .cobrand-name{font-size:14px;font-weight:800;letter-spacing:.08em;line-height:1;color:var(--c-primary,#1B4E8C);}
   .side-identity{padding:0 8px 14px;margin-bottom:6px;font-size:12.5px;font-weight:700;color:var(--c-text);border-bottom:1px solid var(--c-border);}
   .side-link{display:flex;align-items:center;gap:10px;padding:10px 10px;border-radius:8px;font-size:14px;font-weight:600;color:var(--c-muted);margin-bottom:2px;}
   .side-link svg{width:19px;height:19px;flex:none;}
@@ -255,7 +259,7 @@ button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible{ou
 <body>
 <div class="app has-side">
   <nav class="side-nav" aria-label="主導覽" data-i18n-aria-label="member.nav.aria">
-    <div class="side-brand"><a href="../公開網站/p01_home.html" aria-label="TLI 官網" data-i18n-aria-label="member.logoAria"><img src="../assets/tli-logo.svg" alt="TLI"></a></div>
+    <div class="side-brand"><a href="../公開網站/p01_home.html" aria-label="TLI 官網" data-i18n-aria-label="member.logoAria"><img src="../assets/tli-logo.svg" alt="TLI"><span class="cobrand-x" aria-hidden="true">×</span><span class="cobrand-name">CONNECT</span></a></div>
     <div class="side-identity">Emma Johnson｜<span data-i18n="member.role.student">學員</span></div>
     <a class="side-link" href="m01_home.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11l9-8 9 8"/><path d="M5 10v10a1 1 0 001 1h3v-6h6v6h3a1 1 0 001-1V10"/></svg><span data-i18n="member.nav.home">首頁</span></a>
     <a class="side-link" href="m02_booking.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18M12 14v6M9 17h6"/></svg><span data-i18n="member.nav.booking">預約與報名</span></a>
@@ -264,7 +268,7 @@ button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible{ou
     <a class="side-link" href="m18_learning_dashboard.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/></svg><span data-i18n="m19.nav.dashboard">學習儀表板</span></a>
     <a class="side-link active" href="m20_transcripts.html" aria-current="page"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 3H7a2 2 0 00-2 2v14a2 2 0 002 2h10a2 2 0 002-2V8z"/><path d="M14 3v5h5"/><path d="M9 13h6M9 17h6"/></svg><span data-en="Transcripts">成績單</span></a>
     <a class="side-link" href="m19_certificates.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="9" r="6"/><path d="M8.5 14L7 22l5-3 5 3-1.5-8"/></svg><span data-i18n="m19.title">證書</span></a>
-    <a class="side-link" href="m04_course_detail.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="5" width="20" height="14" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/><line x1="6" y1="15" x2="10" y2="15"/></svg><span data-i18n="member.nav.myPlan">我的方案</span></a>
+    <a class="side-link" href="m04_course_detail.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="5" width="20" height="14" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/><line x1="6" y1="15" x2="10" y2="15"/></svg><span data-i18n="member.nav.myPlan">我的學習計劃</span></a>
     <a class="side-link" href="m07_profile.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 4-7 8-7s8 3 8 7"/></svg><span data-i18n="member.nav.me">我的</span></a>
     <a class="side-link" href="../公開網站/p01_home.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg><span data-i18n="member.nav.backToSite">回官網</span></a>
   </nav>
@@ -332,7 +336,7 @@ button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible{ou
   </nav>
 </div>
 <div class="toast hidden" id="toast"></div>
-<script>window.TLI_I18N_PAGE_LANGS=['zh-TW','zh-CN','en'];</script>
+<script>window.TLI_I18N_PAGE_LANGS=['zh-TW','zh-CN','en','ja'];/* BugSmash #35（使用者 2026-11-19 決定）：學生系統語系為繁、簡、英、日；官網維持五語 */</script>
 <script src="../assets/_shared_masters.js"></script>
 <script src="../assets/_i18n_dict.js"></script>
 <script src="../assets/_i18n_dict_member.js"></script>
@@ -443,7 +447,7 @@ function render(){
   $('trList').innerHTML=list.map(function(x){
     var on=sel&&x.kind===sel.kind&&x.id===sel.id;
     var h,p;
-    if(x.kind==='placement'){ var r=x.rec; h=TT(r.langName+'程度測驗成績單',(LANG_EN[r.langName]||r.langName)+' placement test transcript'); p=TT('測驗日期 ','Test date ')+r.date+' · '+TT('建議等級 ','Suggested level ')+r.level; }
+    if(x.kind==='placement'){ var r=x.rec; h=TT(r.langName+'程度測驗成績單',{en:(LANG_EN[r.langName]||r.langName)+' placement test transcript',ja:TT(r.langName,LANG_EN[r.langName]||r.langName)+'レベルチェックテスト成績証明書'}); p=TT('測驗日期 ','Test date ')+r.date+' · '+TT('建議等級 ','Suggested level ')+r.level; }
     else { h=NM(x.course)+TT(' 課程成績單',' course transcript'); p=TT('單元考 ','Unit tests ')+x.total+(x.stageAll?' · '+TT('階段考 ','Stage exams ')+x.stageAll:'')+' · '+(x.avg==null?TT('尚無平均','No average yet'):TT('平均 ','Average ')+x.avg); }
     return '<button type="button" class="cert-item'+(on?' sel':'')+'" data-k="'+x.kind+'" data-i="'+esc(x.id)+'"><span class="badge badge-info">'+esc(x.no)+'</span><h4>'+esc(h)+'</h4><p>'+esc(p)+'</p></button>';
   }).join('');
@@ -476,7 +480,7 @@ function fillSheet(){
         var ok=r.score!=null&&r.score>=r.pass;
         return '<tr><td>'+esc(r.unit)+'</td><td>'+TT(r.kind,r.kind==='階段考'?'Stage exam':'Unit test')+'</td><td class="num">'+(r.score==null?'－':r.score)+'</td><td>'+(r.stage==='absent'?'<span class="tr-ng">'+TT('未參加','Did not take')+'</span> <span class="small muted">('+TT('非強制，已留紀錄','optional, recorded')+')</span>':r.stage==='pending'?TT('已指派待作答','Assigned, not yet taken')+' <span class="small muted">('+TT('期限 ','due ')+r.date+')</span>':r.score==null?TT('進行中','In progress'):(ok?'<span class="tr-ok">'+TT('達標','Passed')+'</span>':'<span class="tr-ng">'+TT('未達標','Not passed')+'</span>'))+' <span class="small muted">('+TT('門檻 ','pass ')+r.pass+')</span>'+'</td><td class="num">'+r.attempts+'</td><td>'+r.date+'</td></tr>';
       }).join('')+'</table>'+
-      '<div class="tr-sum"><div>'+TT('課程平均','Course average')+' <b>'+(x.avg==null?'－':x.avg)+'</b></div><div>'+TT('達標單元','Units passed')+' <b>'+x.passed+' / '+x.total+'</b></div>'+(x.stageAll?'<div>'+TT('階段考','Stage exams')+' <b>'+TT('已作答 '+x.stageTaken+'・未參加 '+x.stageAbsent,'Taken '+x.stageTaken+' · Did not take '+x.stageAbsent)+'</b></div>':'')+'</div>'+signHtml();
+      '<div class="tr-sum"><div>'+TT('課程平均','Course average')+' <b>'+(x.avg==null?'－':x.avg)+'</b></div><div>'+TT('達標單元','Units passed')+' <b>'+x.passed+' / '+x.total+'</b></div>'+(x.stageAll?'<div>'+TT('階段考','Stage exams')+' <b>'+TT('已作答 '+x.stageTaken+'・未參加 '+x.stageAbsent,{en:'Taken '+x.stageTaken+' · Did not take '+x.stageAbsent,ja:'受験済み '+x.stageTaken+'・未受験 '+x.stageAbsent})+'</b></div>':'')+'</div>'+signHtml();
   }
   $('trSheet').innerHTML=h;
 }

@@ -40,7 +40,11 @@ button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible{ou
 @media(min-width:1024px){
   .side-nav{display:flex;flex-direction:column;position:fixed;left:0;top:0;bottom:0;width:310px;background:#fff;border-right:1px solid var(--c-border);padding:18px 12px;z-index:50;overflow-y:auto;}
   .side-brand{display:flex;align-items:center;padding:0 8px 18px;}
-  .side-brand img{height:28px;width:auto;}
+  .side-brand a{display:flex;align-items:center;gap:7px;text-decoration:none;white-space:nowrap;}
+  .side-brand img{height:17px;width:auto;}
+  /* 20261112 TLI × CONNECT 聯名標示 */
+  .side-brand .cobrand-x{font-size:14px;font-weight:300;line-height:1;color:#98A2B3;}
+  .side-brand .cobrand-name{font-size:14px;font-weight:800;letter-spacing:.08em;line-height:1;color:var(--c-primary,#1B4E8C);}
   .side-identity{padding:0 8px 14px;margin-bottom:6px;font-size:12.5px;font-weight:700;color:var(--c-text);border-bottom:1px solid var(--c-border);}
   .side-link{display:flex;align-items:center;gap:10px;padding:10px 10px;border-radius:8px;font-size:14px;font-weight:600;color:var(--c-muted);margin-bottom:2px;}
   .side-link svg{width:19px;height:19px;flex:none;}
@@ -133,14 +137,44 @@ button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible{ou
 .dchip{flex:none;min-width:62px;text-align:center;padding:8px 10px;border-radius:var(--radius-sm);border:1px solid var(--c-border);background:#fff;font-size:12.5px;font-weight:700;cursor:pointer;font-family:inherit;color:var(--c-text);}
 .dchip small{display:block;font-weight:500;color:var(--c-muted);font-size:11px;}
 .dchip.on{border-color:var(--c-primary);background:#E6EEF8;color:var(--c-primary);}
+/* BugSmash #45（使用者 2026-11-19 指示，一階段 A）：月／週／列表 檢視切換＋前一／後一（月／週） */
+.cal-bar{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:10px;}
+.vseg{display:inline-flex;border:1px solid var(--c-border);border-radius:20px;overflow:hidden;background:#fff;}
+.vseg button{border:none;background:none;padding:7px 16px;font-size:12.5px;font-family:inherit;color:var(--c-text);cursor:pointer;}
+.vseg button+button{border-left:1px solid var(--c-border);}
+.vseg button.on{background:var(--c-primary);color:#fff;}
+.cal-nav{display:flex;align-items:center;gap:6px;}
+.cal-nav .cal-lbl{min-width:118px;text-align:center;font-weight:700;font-size:13.5px;}
+.cal-nav button{border:1px solid var(--c-border);background:#fff;border-radius:var(--radius-sm);padding:6px 10px;font-size:12.5px;font-family:inherit;color:var(--c-text);cursor:pointer;white-space:nowrap;}
+.cal-nav button:disabled{opacity:.4;cursor:default;}
+.wk-grid{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:6px;margin-bottom:8px;}
+.wk-grid .dchip{min-width:0;padding:8px 2px;}
+.dchip.none{color:var(--c-muted);background:#F7F8FA;cursor:default;}
+.dchip .cnt{display:block;margin-top:3px;font-size:11px;font-weight:700;color:var(--c-primary);}
+.dchip.none .cnt{color:var(--c-muted);font-weight:500;}
+.mo-grid{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:4px;margin-bottom:8px;}
+.mo-grid .mo-h{text-align:center;font-size:11.5px;color:var(--c-muted);padding:2px 0 4px;}
+.mo-grid .mo-d{min-height:52px;border:1px solid var(--c-border);border-radius:var(--radius-sm);background:#fff;padding:5px 4px;text-align:left;font-family:inherit;font-size:12.5px;color:var(--c-text);cursor:pointer;}
+.mo-grid .mo-d b{font-weight:600;}
+.mo-grid .mo-d .cnt{display:block;margin-top:4px;font-size:11px;font-weight:700;color:var(--c-primary);}
+.mo-grid .mo-d.none{background:#F7F8FA;color:var(--c-muted);cursor:default;}
+.mo-grid .mo-d.on{border-color:var(--c-primary);background:#E6EEF8;}
+.mo-grid .mo-blank{min-height:52px;}
+.sel-note{font-size:12.5px;color:var(--c-muted);margin:2px 0 8px;}
+.sel-note a{color:var(--c-primary);cursor:pointer;text-decoration:underline;margin-left:6px;}
 .sess{display:flex;gap:12px;align-items:center;padding:13px 0;border-top:1px solid var(--c-border);}
 .sess:first-child{border-top:none;padding-top:2px;}
 .sess .s-time{flex:none;width:92px;}
 .sess .s-time b{display:block;font-size:15px;}
-.sess .s-time span{font-size:11.5px;color:var(--c-muted);}
+.sess .s-time span{display:block;font-size:13px;color:var(--c-muted);margin-top:2px;}
 .sess .s-body{flex:1;min-width:0;}
 .sess .s-body h4{margin:0 0 3px;font-size:13.5px;overflow-wrap:anywhere;}
 .sess .s-body p{margin:0;font-size:12px;color:var(--c-muted);}
+/* BugSmash #41：場次資訊改用小圖示＋文字（老師、時長、上課工具、名額、台北時間） */
+.sess .s-body p.s-meta{display:flex;flex-wrap:wrap;align-items:center;gap:3px 14px;margin:2px 0;}
+.s-meta span{display:inline-flex;align-items:center;gap:4px;white-space:nowrap;}
+.s-meta svg{width:14px;height:14px;flex:none;color:var(--c-muted);}
+.s-meta .full{color:#B42318;}
 .sess .s-act{flex:none;text-align:right;display:flex;flex-direction:column;gap:6px;align-items:flex-end;}
 @media(max-width:520px){
   .sess{flex-wrap:wrap;}
@@ -162,7 +196,7 @@ button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible{ou
 <body>
 <div class="app has-side">
   <nav class="side-nav" aria-label="主導覽" data-i18n-aria-label="member.nav.aria">
-    <div class="side-brand"><a href="../公開網站/p01_home.html" aria-label="TLI 官網" data-i18n-aria-label="member.logoAria"><img src="../assets/tli-logo.svg" alt="TLI"></a></div>
+    <div class="side-brand"><a href="../公開網站/p01_home.html" aria-label="TLI 官網" data-i18n-aria-label="member.logoAria"><img src="../assets/tli-logo.svg" alt="TLI"><span class="cobrand-x" aria-hidden="true">×</span><span class="cobrand-name">CONNECT</span></a></div>
     <div class="side-identity">Emma Johnson｜<span data-i18n="member.role.student">學員</span></div>
     <a class="side-link" href="m01_home.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11l9-8 9 8"/><path d="M5 10v10a1 1 0 001 1h3v-6h6v6h3a1 1 0 001-1V10"/></svg><span data-i18n="member.nav.home">首頁</span></a>
     <a class="side-link active" href="m02_booking.html" aria-current="page"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18M12 14v6M9 17h6"/></svg><span data-i18n="member.nav.booking">預約與報名</span></a>
@@ -171,7 +205,7 @@ button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible{ou
     <a class="side-link" href="m18_learning_dashboard.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="4" y1="20" x2="20" y2="20"/><rect x="5" y="11" width="3" height="7" rx="1"/><rect x="10.5" y="6" width="3" height="12" rx="1"/><rect x="16" y="9" width="3" height="9" rx="1"/></svg><span data-en="Learning Dashboard">學習儀表板</span></a>
     <a class="side-link" href="m20_transcripts.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 3H7a2 2 0 00-2 2v14a2 2 0 002 2h10a2 2 0 002-2V8z"/><polyline points="14 3 14 8 19 8"/><line x1="9" y1="13" x2="15" y2="13"/><line x1="9" y1="17" x2="15" y2="17"/></svg><span data-en="Transcripts">成績單</span></a>
     <a class="side-link" href="m19_certificates.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="9" r="6"/><path d="M8.5 14.5L7 22l5-3 5 3-1.5-7.5"/></svg><span data-en="Certificates">證書</span></a>
-    <a class="side-link" href="m04_course_detail.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="5" width="20" height="14" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/><line x1="6" y1="15" x2="10" y2="15"/></svg><span data-i18n="member.nav.myPlan">我的方案</span></a>
+    <a class="side-link" href="m04_course_detail.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="5" width="20" height="14" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/><line x1="6" y1="15" x2="10" y2="15"/></svg><span data-i18n="member.nav.myPlan">我的學習計劃</span></a>
     <a class="side-link" href="m07_profile.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 4-7 8-7s8 3 8 7"/></svg><span data-i18n="member.nav.me">我的</span></a>
     <a class="side-link" href="../公開網站/p01_home.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg><span data-i18n="member.nav.backToSite">回官網</span></a>
   </nav>
@@ -210,7 +244,8 @@ button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible{ou
     <div class="card" id="nextCard"></div>
 
     <div class="section-title" data-en="Available sessions">可預約場次</div>
-        <div class="date-strip" id="dateStrip"></div>
+    <div class="cal-bar"><div class="vseg" id="viewSeg" role="tablist" aria-label="檢視方式"></div><div class="cal-nav" id="calNav"></div></div>
+    <div id="dateStrip"></div>
     <div class="tool-bar">
       <input type="search" id="q" data-en-ph="Search teacher or topic" placeholder="搜尋老師或主題" aria-label="搜尋">
       <select class="select-sm" id="sortSel" aria-label="排序"></select>
@@ -242,7 +277,7 @@ button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible{ou
 </div>
 
 <div class="toast hidden" id="toast"></div>
-<script>window.TLI_I18N_PAGE_LANGS=['zh-TW','zh-CN','en'];</script>
+<script>window.TLI_I18N_PAGE_LANGS=['zh-TW','zh-CN','en','ja'];/* BugSmash #35（使用者 2026-11-19 決定）：學生系統語系為繁、簡、英、日；官網維持五語 */</script>
 <script src="../assets/_shared_masters.js"></script>
 <script src="../assets/_i18n_dict.js"></script>
 <script src="../assets/_i18n_dict_member.js"></script>
@@ -258,17 +293,18 @@ if(U.mode==='project'){ var _st=document.getElementById('subTxt'); _st.textConte
 function $(i){ return document.getElementById(i); }
 function showToast(msg){ var t=$('toast'); t.textContent=msg; t.classList.remove('hidden'); clearTimeout(window._tt); window._tt=setTimeout(function(){ t.classList.add('hidden'); },2600); }
 function toggleBell(){ var b=$('bellPanel'); if(b) b.classList.toggle('open'); }
-var SESS = [], state = {date:'all', sort:'time', q:'', open:false, shown:12, my:'up'};
+var SESS = [], state = {date:'all', sort:'time', q:'', open:false, shown:12, my:'up', view:'week', wk:PL.week, mo:PL.today.slice(0,7)};
 
 function tzName(){ return U.mode==='project' ? T('亞利桑那時間（UTC-7）','Arizona time (UTC-7)') : T('台北時間','Taipei time'); }
 function endTime(t){ var p=t.split(':'); var m=(+p[0])*60+(+p[1])+30; return PL.pad(Math.floor(m/60)%24)+':'+PL.pad(m%60); }
 function typeName(t){ return T('團體場次','Group session'); }
+/* 客戶回饋（BugSmash #39，2026-11-17）：日期在上、時間在下，時間格式 18:30~19:00 */
 function timeBlock(x){
-  var h='<b>'+x.time+'</b><span>'+T('到 ','to ')+endTime(x.time)+'</span>';
-  return h;
+  return '<b>'+dateLabel(x.date)+'</b><span>'+x.time+'~'+endTime(x.time)+'</span>';
 }
 function dateLabel(d){ return PL.mdLabel(d)+' '+PL.wd(d); }
-function secondTz(x){ return U.mode==='project' ? T('台北 ','Taipei ')+PL.mdLabel(x.tpDate)+' '+x.tpTime : ''; }
+/* 客戶回饋（BugSmash #32）：台北移到後面，寫成「（台北時間）」 */
+function secondTz(x){ return U.mode==='project' ? PL.mdLabel(x.tpDate)+' '+x.tpTime+T('（台北時間）',' (Taipei time)') : ''; }
 
 function refreshData(){ SESS = PL.sessionsFor(U); }
 function lg(){ return PL.lounge(U.rid, U.perWeek); }
@@ -295,13 +331,53 @@ function renderNext(){
     '<div style="display:flex;gap:8px;flex-wrap:wrap;"><a class="btn btn-primary btn-sm" href="'+enterHref(n)+'">'+T('進入教室','Enter classroom')+'</a>'+(PL.cancellable(n)?'<button type="button" class="btn btn-outline btn-sm" onclick="askCancel(\''+n.id+'\')">'+T('取消預約','Cancel')+'</button>':'')+'</div></div>';
 }
 
+/* 客戶回饋（BugSmash #45，使用者 2026-11-19 指示直接處理、放一階段 A）：
+   以週或月為呈現單位，可切換 月／週／列表；週、月有「前一／後一」按鈕。預設「週」（週一到週日，同每週額度的計算週）。
+   週、月：下方列表只列該期間的場次；點某一天只看那天，再點一次取消。列表：列出全部可預約場次。 */
+function monthLabel(ym){ var p = ym.split('-'); return T(p[0]+' 年 '+(+p[1])+' 月', {en:['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'][+p[1]-1]+' '+p[0], ja:p[0]+'年'+(+p[1])+'月'}); }
+function addMonths(ym, n){ var p = ym.split('-'), m = (+p[0])*12 + (+p[1]-1) + n; return Math.floor(m/12)+'-'+PL.pad(m%12+1); }
+function inPeriod(d){
+  if(state.view==='week') return d >= state.wk && d <= PL.addDays(state.wk, 6);
+  if(state.view==='month') return d.slice(0,7) === state.mo;
+  return true;
+}
+function dayCount(d){ return SESS.filter(function(s){ return s.date===d; }).length; }
+function cntTxt(n){ return n ? n+T(' 場',' sess.') : T('無場次','None'); }
+function setView(v){ state.view=v; state.date='all'; state.shown=12; renderTabs(); renderList(); }
+function movePeriod(n){
+  if(state.view==='week') state.wk = PL.addDays(state.wk, 7*n); else state.mo = addMonths(state.mo, n);
+  state.date='all'; state.shown=12; renderTabs(); renderList();
+}
+function pickDay(d){ if(!dayCount(d)) return; state.date = state.date===d ? 'all' : d; state.shown=12; renderTabs(); renderList(); }
 function renderTabs(){
-  /* 日期列：有場次的日期 */
-  var days = []; SESS.forEach(function(s){ if(days.indexOf(s.date)<0) days.push(s.date); });
-  var h = '<button type="button" class="dchip'+(state.date==='all'?' on':'')+'" data-d="all">'+T('全部日期','All dates')+'<small>'+SESS.length+T(' 場',' sessions')+'</small></button>';
-  days.slice(0,16).forEach(function(d){ h += '<button type="button" class="dchip'+(state.date===d?' on':'')+'" data-d="'+d+'">'+PL.mdLabel(d)+'<small>'+PL.wd(d)+'</small></button>'; });
-  $('dateStrip').innerHTML = h;
-  $('dateStrip').querySelectorAll('button').forEach(function(b){ b.onclick=function(){ state.date=b.dataset.d; state.shown=12; renderTabs(); renderList(); }; });
+  var views = [['month',T('月','Month')],['week',T('週','Week')],['list',T('列表','List')]];
+  $('viewSeg').setAttribute('aria-label', T('檢視方式','View'));
+  $('viewSeg').innerHTML = views.map(function(v){ return '<button type="button" role="tab" aria-selected="'+(state.view===v[0])+'" class="'+(state.view===v[0]?'on':'')+'" onclick="setView(\''+v[0]+'\')">'+v[1]+'</button>'; }).join('');
+  var nav = '', body = '';
+  if(state.view==='week'){
+    var atFirst = state.wk <= PL.week;
+    nav = '<button type="button" onclick="movePeriod(-1)"'+(atFirst?' disabled':'')+'>‹ '+T('前一週','Prev week')+'</button><span class="cal-lbl">'+PL.mdLabel(state.wk)+'–'+PL.mdLabel(PL.addDays(state.wk,6))+'</span><button type="button" onclick="movePeriod(1)">'+T('後一週','Next week')+' ›</button>';
+    body = '<div class="wk-grid">';
+    for(var i=0;i<7;i++){ var d = PL.addDays(state.wk, i), n = dayCount(d);
+      body += '<button type="button" class="dchip'+(state.date===d?' on':'')+(n?'':' none')+'" onclick="pickDay(\''+d+'\')"'+(n?'':' aria-disabled="true"')+'>'+PL.mdLabel(d)+'<small>'+PL.wd(d)+'</small><span class="cnt">'+cntTxt(n)+'</span></button>'; }
+    body += '</div>';
+  } else if(state.view==='month'){
+    var atFirstM = state.mo <= PL.today.slice(0,7);
+    nav = '<button type="button" onclick="movePeriod(-1)"'+(atFirstM?' disabled':'')+'>‹ '+T('前一月','Prev month')+'</button><span class="cal-lbl">'+monthLabel(state.mo)+'</span><button type="button" onclick="movePeriod(1)">'+T('後一月','Next month')+' ›</button>';
+    var first = state.mo+'-01', start = PL.weekStart(first), last = PL.addDays(addMonths(state.mo,1)+'-01', -1), end = PL.addDays(PL.weekStart(last), 6);
+    body = '<div class="mo-grid">' + [['一','Mon'],['二','Tue'],['三','Wed'],['四','Thu'],['五','Fri'],['六','Sat'],['日','Sun']].map(function(w){ return '<div class="mo-h">'+T(w[0],w[1])+'</div>'; }).join('');
+    for(var d2 = start; d2 <= end; d2 = PL.addDays(d2,1)){
+      if(d2.slice(0,7)!==state.mo){ body += '<div class="mo-blank"></div>'; continue; }
+      var n2 = dayCount(d2);
+      body += '<button type="button" class="mo-d'+(state.date===d2?' on':'')+(n2?'':' none')+'" onclick="pickDay(\''+d2+'\')"'+(n2?'':' aria-disabled="true"')+'><b>'+(+d2.slice(8))+'</b>'+(n2?'<span class="cnt">'+cntTxt(n2)+'</span>':'')+'</button>';
+    }
+    body += '</div>';
+  }
+  if(state.view!=='list') body += '<div class="sel-note">'+(state.date==='all'
+    ? T('點日期只看當天的場次。','Tap a date to see only that day.')
+    : T('只看 ','Showing ')+PL.mdLabel(state.date)+' '+PL.wd(state.date)+'<a onclick="pickDay(\''+state.date+'\')">'+T('看整'+(state.view==='week'?'週':'月'),'Show whole '+(state.view==='week'?'week':'month'))+'</a>')+'</div>';
+  $('calNav').innerHTML = nav;
+  $('dateStrip').innerHTML = body;
   var sel=$('sortSel'); var cur=state.sort;
   sel.innerHTML = '<option value="time">'+T('依時間','By time')+'</option><option value="seats">'+T('依剩餘名額','By open seats')+'</option>'; sel.value=cur;
 }
@@ -310,6 +386,7 @@ function filtered(){
   var q = state.q.toLowerCase();
   var a = SESS.filter(function(s){
     if(state.date!=='all' && s.date!==state.date) return false;
+    if(!inPeriod(s.date)) return false;
     if(state.open && s.full) return false;
     if(q){ var hay=(s.teacher+' '+(s.topic||'')+' '+(s.topicEn||'')).toLowerCase(); if(hay.indexOf(q)<0) return false; }
     return true;
@@ -324,15 +401,27 @@ function actionHtml(s){
   if(remainingForWeek<=0) return '<button type="button" class="btn btn-primary btn-sm" disabled>'+T('額度已用完','Quota used up')+'</button>';
   return '<button type="button" class="btn btn-primary btn-sm" onclick="openBook(\''+s.id+'\')">'+T('預約','Book')+'</button>';
 }
+/* 場次資訊小圖示（BugSmash #41，客戶附圖示意：時鐘＋時長、人像＋老師） */
+var MI = {
+  user:'<svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="10" cy="6.5" r="3"/><path d="M4 17c0-3 2.7-5 6-5s6 2 6 5"/></svg>',
+  clock:'<svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="10" cy="10" r="7"/><polyline points="10 6 10 10 12.8 11.6"/></svg>',
+  video:'<svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="2.5" y="5.5" width="10.5" height="9" rx="1.5"/><path d="M13 9l4.5-2.5v7L13 11"/></svg>',
+  seat:'<svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="7.5" cy="7" r="2.6"/><path d="M2.8 16c0-2.7 2.1-4.4 4.7-4.4s4.7 1.7 4.7 4.4"/><circle cx="14" cy="8" r="2"/><path d="M13.6 11.8c2.2 0 3.6 1.5 3.6 4.2"/></svg>',
+  globe:'<svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="10" cy="10" r="7.5"/><line x1="2.5" y1="10" x2="17.5" y2="10"/><path d="M10 2.5c2 2.2 3 4.7 3 7.5s-1 5.3-3 7.5c-2-2.2-3-4.7-3-7.5s1-5.3 3-7.5z"/></svg>'
+};
+function miItem(k, html, cls){ return '<span'+(cls?' class="'+cls+'"':'')+'>'+MI[k]+html+'</span>'; }
+function sessMeta(s, withSeat){
+  return '<p class="s-meta">'+miItem('user', PL.esc(s.teacher))+miItem('clock', '30 '+T('分鐘','min'))+miItem('video', PL.toolName(s.tool))+
+    (withSeat ? (s.full ? miItem('seat', T('名額已滿','No seats left'), 'full') : miItem('seat', T('剩 ','Seats left: ')+s.left+T(' ／ 上限 ',' / max ')+s.cap+T(' 人',''))) : '')+'</p>';
+}
 function renderList(){
   var a = filtered(), shown = a.slice(0, state.shown);
   $('sessList').innerHTML = shown.length ? shown.map(function(s){
     var title = PL.esc(T(s.topic,s.topicEn));
-    var seat = '・'+(s.full ? T('名額已滿','No seats left') : T('剩 ','Seats left: ')+s.left+T(' ／ 上限 ',' / max ')+s.cap+T(' 人',''));
-    return '<div class="sess"><div class="s-time">'+timeBlock(s)+'<span style="display:block;">'+dateLabel(s.date)+'</span></div>'+
-      '<div class="s-body"><h4>'+title+' <span class="badge badge-grp">'+typeName(s.type)+'</span></h4><p>'+PL.esc(s.teacher)+'・30 '+T('分鐘','min')+'・'+PL.toolName(s.tool)+seat+'</p>'+(U.mode==='project'?'<p>'+secondTz(s)+'</p>':'')+'</div>'+
+    return '<div class="sess"><div class="s-time">'+timeBlock(s)+'</div>'+
+      '<div class="s-body"><h4>'+title+' <span class="badge badge-grp">'+typeName(s.type)+'</span></h4>'+sessMeta(s, true)+(U.mode==='project'?'<p class="s-meta">'+miItem('globe', secondTz(s))+'</p>':'')+'</div>'+
       '<div class="s-act">'+actionHtml(s)+'</div></div>';
-  }).join('') : '<div class="empty-box">'+T('沒有符合條件的場次。調整日期或篩選看看。','No sessions match. Try another date or filter.')+'</div>';
+  }).join('') : '<div class="empty-box">'+(state.view==='list' ? T('沒有符合條件的場次。調整篩選看看。','No sessions match. Try another filter.') : T('這段期間沒有符合條件的場次，換'+(state.view==='week'?'一週':'一個月')+'或調整篩選看看。','No sessions match in this period. Try another '+(state.view==='week'?'week':'month')+' or filter.'))+'</div>';
   $('moreBtn').classList.toggle('hidden', a.length<=state.shown);
 }
 
@@ -356,7 +445,8 @@ function renderMy(){
     if(state.my==='up'){ acts = '<a class="btn btn-primary btn-sm" href="'+enterHref(b)+'">'+T('進入教室','Enter')+'</a>'+(PL.cancellable(b)?'<button type="button" class="btn btn-outline btn-sm" onclick="askCancel(\''+b.id+'\')">'+T('取消','Cancel')+'</button>':'<span class="small muted">'+T('開始前 2 小時內不可取消','Cannot cancel within 2 hours')+'</span>'); }
     else if(state.my==='done'){ acts = '<span class="badge badge-ok">'+T('已完成','Completed')+'</span>'; }
     else { acts = '<span class="badge badge-muted">'+T('已取消','Cancelled')+'</span>'; }
-    return '<div class="sess"><div class="s-time"><b>'+b.time+'</b><span>'+dateLabel(b.date)+'</span></div><div class="s-body"><h4>'+PL.esc(T(b.topic||'日常對話：自我介紹',b.topicEn||'Everyday Talk: Self-introduction'))+' <span class="badge badge-grp">'+typeName(b.type)+'</span></h4><p>'+PL.esc(b.teacher)+'・'+PL.toolName(b.tool)+'</p></div><div class="s-act">'+acts+'</div></div>';
+    /* 客戶回饋（BugSmash #40）：補上時長 */
+    return '<div class="sess"><div class="s-time">'+timeBlock(b)+'</div><div class="s-body"><h4>'+PL.esc(T(b.topic||'日常對話：自我介紹',b.topicEn||'Everyday Talk: Self-introduction'))+' <span class="badge badge-grp">'+typeName(b.type)+'</span></h4>'+sessMeta(b, false)+'</div><div class="s-act">'+acts+'</div></div>';
   }).join('') : '<div class="empty-box">'+T('這裡還沒有紀錄。','Nothing here yet.')+'</div>';
 }
 

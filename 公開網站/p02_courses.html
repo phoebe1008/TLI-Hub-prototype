@@ -290,6 +290,60 @@ main{max-width:1160px;margin:0 auto;padding:0 24px;}
 .ai-tl-step.done{opacity:1;color:var(--c-text);}
 .ai-tl-step .dot{flex:none;width:20px;height:20px;border-radius:50%;border:2px solid var(--c-border);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:800;color:transparent;margin-top:1px;}
 .ai-tl-step.done .dot{background:var(--c-secondary);border-color:var(--c-secondary);color:#fff;}
+/* ===== 2026-11-24 前台分類：置頂 banner／第一層標題／第二層分頁／第三層群組 ===== */
+.btn-light{background:#fff;color:var(--c-primary);}
+.btn-light:hover{background:#EEF3FA;}
+.pc-banner{background:linear-gradient(120deg,#123A6B,#1B4E8C);color:#fff;}
+.pc-banner[hidden]{display:none;}
+.pc-banner-inner{position:relative;max-width:1160px;margin:0 auto;padding:44px 24px 56px;}
+.pc-slide{display:none;grid-template-columns:1.25fr .85fr;gap:44px;align-items:center;}
+.pc-slide.active{display:grid;}
+.pc-slide-eyebrow{font-size:13px;font-weight:700;opacity:.78;margin-bottom:8px;letter-spacing:.3px;}
+.pc-slide h2{font-size:34px;font-weight:800;line-height:1.3;margin-bottom:10px;}
+.pc-slide p{font-size:15.5px;opacity:.9;max-width:580px;margin-bottom:10px;}
+.pc-slide-meta{font-size:13.5px;opacity:.8;margin-bottom:12px;}
+.pc-slide-price{font-size:26px;font-weight:800;margin-bottom:18px;}
+.pc-slide-cta{display:flex;gap:10px;flex-wrap:wrap;}
+.pc-slide-visual{aspect-ratio:16/10;border-radius:18px;position:relative;overflow:hidden;}
+.pc-slide-visual::after{content:'';position:absolute;top:0;bottom:0;right:-10%;width:36%;transform:skewX(-14deg);}
+.pc-slide-visual.dt-1{background:#DCE6F6;}.pc-slide-visual.dt-1::after{background:#AFC5E4;}
+.pc-slide-visual.dt-2{background:#DDEEE6;}.pc-slide-visual.dt-2::after{background:#A9D6C4;}
+.pc-slide-visual.dt-3{background:#EBE5D8;}.pc-slide-visual.dt-3::after{background:#CFC6B2;}
+.pc-bn-arrow{position:absolute;top:50%;transform:translateY(-50%);width:38px;height:38px;border-radius:50%;border:1px solid rgba(255,255,255,.45);background:rgba(255,255,255,.12);color:#fff;font-size:22px;line-height:1;cursor:pointer;}
+.pc-bn-arrow:hover{background:rgba(255,255,255,.24);}
+.pc-bn-arrow.prev{left:-22px;}.pc-bn-arrow.next{right:-22px;}
+.pc-bn-dots{position:absolute;left:0;right:0;bottom:20px;display:flex;justify-content:center;gap:8px;}
+.pc-bn-dots button{width:8px;height:8px;border-radius:4px;border:0;padding:0;background:rgba(255,255,255,.45);cursor:pointer;transition:width .2s;}
+.pc-bn-dots button.active{background:#fff;width:22px;}
+.pc-head{max-width:1160px;margin:0 auto;padding:30px 24px 0;}
+.pc-head h1{font-size:30px;font-weight:800;}
+.pc-tabs-wrap{max-width:1160px;margin:14px auto 0;padding:0 24px;}
+.pc-tabs{display:flex;background:#fff;border-radius:14px;box-shadow:0 6px 18px rgba(16,24,40,.08);overflow-x:auto;scrollbar-width:none;}
+.pc-tabs::-webkit-scrollbar{display:none;}
+.pc-tab{flex:1 0 auto;min-width:120px;background:none;border:0;border-bottom:4px solid transparent;font-family:inherit;font-size:17px;font-weight:800;color:#B8BFCA;padding:18px 20px 14px;cursor:pointer;transition:color .15s,border-color .15s;}
+.pc-tab:hover{color:var(--c-text);}
+.pc-tab.active{color:var(--c-primary);border-bottom-color:var(--c-primary);}
+.pc-desc{margin:20px 0 0;font-size:15px;color:var(--c-muted);line-height:1.8;}
+.pc-desc ul,.pc-desc ol{padding-left:22px;}
+.pc-desc a{color:var(--c-primary);text-decoration:underline;}
+#pcShelves{padding:4px 0 10px;}   /* 與 .pc-desc 都在 main 內，main 已有左右留白 */
+.pc-shelf{margin-top:28px;}
+.pc-shelf.featured{background:var(--c-bg);border:1px solid var(--c-border);border-radius:16px;padding:20px 20px 22px;}
+.pc-shelf-head{display:flex;align-items:center;gap:10px;margin-bottom:14px;flex-wrap:wrap;}
+.pc-shelf-head h2{font-size:21px;font-weight:800;}
+.pc-feat{background:#FCE9DA;color:#B54708;font-size:12px;font-weight:800;border-radius:12px;padding:3px 10px;}
+.pc-shelf-count{font-size:13px;color:var(--c-muted);}
+.pc-shelf-nav{margin-left:auto;display:flex;gap:6px;}
+.pc-shelf-nav button{width:34px;height:34px;border-radius:50%;border:1px solid var(--c-border);background:#fff;cursor:pointer;font-size:18px;line-height:1;color:var(--c-text);}
+.pc-shelf-nav button:hover{background:var(--c-bg);}
+.pc-shelf-row{display:grid;grid-auto-flow:column;grid-auto-columns:calc((100% - 72px) / 4);gap:24px;overflow-x:auto;scroll-snap-type:x mandatory;padding:2px 2px 8px;scrollbar-width:thin;}
+.pc-shelf-row .course-card{scroll-snap-align:start;}
+.pc-empty{text-align:center;padding:48px 16px;border:1px dashed var(--c-border);border-radius:16px;margin-top:28px;}
+.pc-empty h3{font-size:18px;font-weight:800;margin-bottom:6px;}
+.pc-empty p{color:var(--c-muted);margin-bottom:16px;}
+@media(max-width:1000px){.pc-shelf-row{grid-auto-columns:calc((100% - 24px) / 2);}}
+@media(max-width:860px){.pc-slide{grid-template-columns:1fr;}.pc-slide-visual{display:none;}.pc-slide h2{font-size:26px;}.pc-bn-arrow{display:none;}}
+@media(max-width:600px){.pc-shelf-row{grid-auto-columns:82%;gap:14px;}.pc-tab{font-size:15px;min-width:92px;padding:14px 12px 11px;}.pc-head h1{font-size:24px;}.pc-banner-inner{padding:32px 16px 48px;}}
 </style>
 </head>
 <body>
@@ -312,68 +366,14 @@ main{max-width:1160px;margin:0 auto;padding:0 24px;}
   </div>
 </header>
 
-<section class="course-hero">
-  <div class="course-hero-inner">
-    <div>
-      <h1 data-i18n="p02_hero_h1">銷售方案與組合包</h1>
-      <p class="course-hero-lead" data-i18n="p02_hero_lead">依分類、上課方式、制度與型態篩選，找到最適合你的銷售方案或組合包。</p>
-      <p class="course-hero-stats" data-i18n="p02_hero_stats">19 個銷售方案・4 組組合包・7 種語言</p>
-    </div>
-    <div class="course-hero-visual" aria-hidden="true">
-      <svg width="62%" height="62%" viewBox="0 0 220 140" fill="none" stroke="#1B4E8C" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-        <rect x="18" y="26" width="92" height="60" rx="4"/>
-        <path d="M8 92h112l-8 10H16z"/>
-        <circle cx="64" cy="48" r="10"/>
-        <path d="M47 78c0-12 7.6-19 17-19s17 7 17 19"/>
-        <path d="M140 18h60a8 8 0 0 1 8 8v30a8 8 0 0 1-8 8h-36l-15 15v-15h-9a8 8 0 0 1-8-8V26a8 8 0 0 1 8-8z"/>
-        <path d="M152 39h36M152 50h24"/>
-      </svg>
-    </div>
-  </div>
-</section>
-
-<div class="filter-wrap">
-  <div class="filter-row-sub">
-    <div class="filter-group filter-search"><input type="text" id="searchInput" data-i18n-placeholder="p02_filter_search_ph" placeholder="搜尋方案名稱" oninput="onSearchInput()"></div>
-    <button type="button" class="more-filter-toggle" id="moreFilterBtn" onclick="toggleMoreFilter()" aria-expanded="false" data-i18n="p02_filter_more">更多篩選 ▾</button>
-    <button class="pill-clear" onclick="clearPills()" data-i18n="p02_filter_clear">清除篩選</button>
-  </div>
-  <div class="more-filter-panel" id="moreFilterPanel">
-    <div class="filter-group"><span class="filter-group-label" data-i18n="p02_filter_category">分類</span><div style="display:flex;gap:6px;flex-wrap:wrap;" id="pillCategory"></div></div>
-    <div class="filter-group"><span class="filter-group-label" data-i18n="p02_filter_delivery">上課方式</span><div style="display:flex;gap:6px;flex-wrap:wrap;" id="pillDelivery"></div></div>
-    <div class="filter-group"><span class="filter-group-label" data-i18n="p02_filter_schedule">制度</span><div style="display:flex;gap:6px;flex-wrap:wrap;" id="pillSchedule"></div></div>
-    <div class="filter-group"><span class="filter-group-label" data-i18n="p02_filter_format">型態</span><div style="display:flex;gap:6px;flex-wrap:wrap;" id="pillFormat"></div></div>
-    <div class="filter-group"><span class="filter-group-label" data-i18n="p02_filter_priceband">價格帶</span><div style="display:flex;gap:6px;flex-wrap:wrap;" id="pillPriceBand"></div></div>
-  </div>
-</div>
+<!-- 2026-11-24 前台分類：置頂方案 banner／第一層標題／第二層分頁（資料見 assets/_plan_categories.js） -->
+<section class="pc-banner" id="pcBanner" hidden></section>
+<div class="pc-head"><h1 id="pcL1Title"></h1></div>
+<div class="pc-tabs-wrap" id="pcTabsWrap"><div class="pc-tabs" id="pcTabs"></div></div>
 
 <main>
-  <div class="results-bar">
-    <div class="results-count" id="resultsCount">共 12 門課</div>
-    <div class="sort-row">
-      <label for="sortSel" data-i18n="p02_sort_label">排序</label>
-      <select id="sortSel" onchange="applySort()">
-        <option value="reco" data-i18n="p02_sort_reco">推薦</option>
-        <option value="new" data-i18n="p02_sort_new">最新</option>
-        <option value="price" data-i18n="p02_sort_price">價格</option>
-      </select>
-    </div>
-  </div>
-
-  <div class="card-grid" id="cardGrid"></div>
-
-  <div class="loadmore-row" id="loadMoreRow">
-    <button type="button" class="btn btn-outline" id="loadMoreBtn" onclick="loadMorePlans()" data-i18n="p02_loadmore">載入更多方案</button>
-  </div>
-
-  <div class="empty-state" id="emptyState">
-    <div class="empty-inner">
-      <div class="empty-illus"><svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg></div>
-      <h3 data-i18n="p02_empty_title">目前篩選條件下沒有符合的方案</h3>
-      <p data-i18n="p02_empty_desc">試試調整篩選條件，或直接讓顧問幫您推薦合適的方案</p>
-      <button type="button" class="btn btn-primary" onclick="aiOpen('fab')" data-i18n="p02_empty_cta">找顧問幫我推薦</button>
-    </div>
-  </div>
+  <div class="pc-desc" id="pcDesc"></div>
+  <div id="pcShelves"></div>
 
   <div class="p02-cta-row">
     <p data-i18n="p02_note_text">自學課程與 Mandarin Lounge 權益隨方案提供，可請顧問依目標推薦合適的方案。</p>
@@ -443,6 +443,7 @@ main{max-width:1160px;margin:0 auto;padding:0 24px;}
 
 <div class="toast" id="toast"></div>
 
+<script src="../assets/_plan_categories.js"></script>
 <script>
 function showToast(msg){
   var t = document.getElementById('toast');
@@ -452,43 +453,6 @@ function showToast(msg){
   window._toastTimer = setTimeout(function(){ t.classList.remove('show'); }, 2200);
 }
 
-/* ===== 篩選定義（可擴充陣列；fallback 為示範版預設繁中文字，語系字典缺 key 時使用，避免切換語系顯示 undefined） ===== */
-var CATEGORY_DEFS = [
-  {key:'zh', labelKey:'p02_cat_zh', fallback:'中文'},
-  {key:'foreign', labelKey:'p02_cat_foreign', fallback:'外文'},
-  {key:'culture', labelKey:'p02_cat_culture', fallback:'文化'},
-  {key:'corp', labelKey:'p02_cat_corp', fallback:'商業'},
-  {key:'cert', labelKey:'p02_cat_cert', fallback:'師培'}
-];
-var DELIVERY_DEFS = [
-  {key:'online', labelKey:'p02_delivery_online', fallback:'線上'},
-  {key:'offline', labelKey:'p02_delivery_offline', fallback:'實體'}
-];
-var SCHEDULE_DEFS = [
-  {key:'semester', labelKey:'p02_sched_semester', fallback:'學期制'},
-  {key:'flexible', labelKey:'p02_sched_flexible', fallback:'彈性制'}
-];
-var FORMAT_DEFS = [
-  {key:'1on1', labelKey:'p02_format_1on1', fallback:'一對一'},
-  {key:'group-live', labelKey:'p02_format_grouplive', fallback:'團體直播'},
-  {key:'chatroom', labelKey:'p02_format_chatroom', fallback:'Mandarin Lounge'},
-  {key:'self-paced', labelKey:'p02_format_selfpaced', fallback:'自學'},
-  {key:'activity', labelKey:'p02_format_activity', fallback:'活動'}
-];
-var PRICEBAND_DEFS = [
-  {key:'lt5k', labelKey:'p02_price_lt5k', fallback:'5,000 以下'},
-  {key:'5to15k', labelKey:'p02_price_5to15k', fallback:'5,000–15,000'},
-  {key:'15to35k', labelKey:'p02_price_15to35k', fallback:'15,000–35,000'},
-  {key:'gt35k', labelKey:'p02_price_gt35k', fallback:'35,000 以上'},
-  {key:'quote', labelKey:'p02_price_quote_band', fallback:'顧問報價'}
-];
-function priceBandOf(price){
-  if(price === null) return 'quote';
-  if(price < 5000) return 'lt5k';
-  if(price < 15000) return '5to15k';
-  if(price < 35000) return '15to35k';
-  return 'gt35k';
-}
 /* 產品型態徽章與銷售標籤（型態名稱與標籤為固定 UI 詞彙，隨語系切換；方案本身的名稱／賣點等示範內容不隨語系切換）
    註：以函式包裝而非在頂層直接呼叫 T()，因為本段落執行時 T() 尚未定義（語系模組於檔案後段才載入），
    函式內容只在實際被呼叫（渲染卡片）時才求值，屆時 T() 已可用 */
@@ -901,114 +865,6 @@ function includesSummaryLine(plan){
   }).join(zhLike ? '＋' : ' + ');
 }
 
-var activeFilters = { category:new Set(), delivery:new Set(), schedule:new Set(), format:new Set(), priceBand:new Set() };
-var searchKeyword = '';
-var PLAN_VISIBLE_STEP = 8;
-var visibleCount = PLAN_VISIBLE_STEP;
-
-function fillTabs(){
-  /* 分類標籤：多選 chips（沿用 .pill-sm 樣式，可複選） */
-  var wrap = document.getElementById('pillCategory');
-  var dict = tliDict();
-  wrap.innerHTML = '';
-  CATEGORY_DEFS.forEach(function(c){
-    var b = document.createElement('button');
-    b.type = 'button';
-    b.className = 'pill-sm' + (activeFilters.category.has(c.key) ? ' active' : '');
-    b.textContent = dict[c.labelKey] || c.fallback;
-    b.onclick = function(){
-      if(activeFilters.category.has(c.key)){ activeFilters.category.delete(c.key); }
-      else { activeFilters.category.add(c.key); }
-      visibleCount = PLAN_VISIBLE_STEP;
-      fillTabs();
-      renderPlans();
-    };
-    wrap.appendChild(b);
-  });
-}
-function fillPills(){
-  var dict = tliDict();
-  function fill(containerId, defs, key){
-    var wrap = document.getElementById(containerId);
-    wrap.innerHTML = '';
-    defs.forEach(function(def){
-      var b = document.createElement('button');
-      b.type = 'button';
-      b.className = 'pill-sm' + (activeFilters[key].has(def.key) ? ' active' : '');
-      b.textContent = dict[def.labelKey] || def.fallback;
-      b.onclick = function(){
-        if(activeFilters[key].has(def.key)){ activeFilters[key].delete(def.key); }
-        else { activeFilters[key].add(def.key); }
-        visibleCount = PLAN_VISIBLE_STEP;
-        fillPills();
-        renderPlans();
-      };
-      wrap.appendChild(b);
-    });
-  }
-  fill('pillDelivery', DELIVERY_DEFS, 'delivery');
-  fill('pillSchedule', SCHEDULE_DEFS, 'schedule');
-  fill('pillFormat', FORMAT_DEFS, 'format');
-  fill('pillPriceBand', PRICEBAND_DEFS, 'priceBand');
-}
-function toggleMoreFilter(){
-  var panel=document.getElementById('moreFilterPanel');
-  var btn=document.getElementById('moreFilterBtn');
-  var open=panel.classList.toggle('open');
-  btn.setAttribute('aria-expanded', open ? 'true' : 'false');
-}
-function onSearchInput(){
-  var input = document.getElementById('searchInput');
-  searchKeyword = input ? input.value.trim().toLowerCase() : '';
-  visibleCount = PLAN_VISIBLE_STEP;
-  renderPlans();
-}
-function clearPills(){
-  Object.keys(activeFilters).forEach(function(k){ activeFilters[k].clear(); });
-  searchKeyword = '';
-  var input = document.getElementById('searchInput');
-  if(input) input.value = '';
-  visibleCount = PLAN_VISIBLE_STEP;
-  fillTabs();
-  fillPills();
-  renderPlans();
-}
-function planMatches(p){
-  if(activeFilters.category.size){
-    var anyC = p.categoryKeys.some(function(k){ return activeFilters.category.has(k); });
-    if(!anyC) return false;
-  }
-  if(activeFilters.delivery.size){
-    var anyD = p.deliveryKeys.some(function(k){ return activeFilters.delivery.has(k); });
-    if(!anyD) return false;
-  }
-  if(activeFilters.schedule.size && !activeFilters.schedule.has(p.scheduleKey)) return false;
-  if(activeFilters.format.size){
-    var anyF = p.formatKeys.some(function(k){ return activeFilters.format.has(k); });
-    if(!anyF) return false;
-  }
-  if(activeFilters.priceBand.size && !activeFilters.priceBand.has(priceBandOf(p.price))) return false;
-  if(searchKeyword){
-    var hay = (p.name + ' ' + p.pitch).toLowerCase();
-    if(hay.indexOf(searchKeyword) === -1) return false;
-  }
-  return true;
-}
-function currentSortKey(){
-  var sel = document.getElementById('sortSel');
-  return sel ? sel.value : 'reco';
-}
-function sortedPlans(list){
-  var key = currentSortKey();
-  var copy = list.slice();
-  if(key === 'new') copy.sort(function(a,b){ return PLANS.indexOf(b) - PLANS.indexOf(a); });
-  else if(key === 'price') copy.sort(function(a,b){ return (a.price===null?1e9:a.price) - (b.price===null?1e9:b.price); });
-  else copy.sort(function(a,b){
-    var order = {hot:0, promo:1, 'new':1, null:2};
-    return (order[a.salesTag] - order[b.salesTag]) || (PLANS.indexOf(a) - PLANS.indexOf(b));
-  });
-  return copy;
-}
 function planCardHtml(p){
   var dict = tliDict();
   var dtClass = 'dt-' + ((PLANS.indexOf(p) % 3) + 1);
@@ -1036,27 +892,6 @@ function planCardHtml(p){
     '</div>'+
   '</div>';
 }
-function renderPlans(){
-  var dict = tliDict();
-  var filtered = sortedPlans(PLANS.filter(planMatches));
-  var shown = filtered.slice(0, visibleCount);
-
-  var grid = document.getElementById('cardGrid');
-  grid.innerHTML = shown.map(planCardHtml).join('');
-  grid.style.display = filtered.length === 0 ? 'none' : '';
-
-  var moreRow = document.getElementById('loadMoreRow');
-  moreRow.classList.toggle('hide', visibleCount >= filtered.length);
-
-  document.getElementById('resultsCount').innerHTML = tliFmt(dict.p02_results_count, {n: filtered.length});
-  document.getElementById('emptyState').classList.toggle('show', filtered.length === 0);
-}
-function loadMorePlans(){
-  visibleCount += PLAN_VISIBLE_STEP;
-  renderPlans();
-}
-function applySort(){ visibleCount = PLAN_VISIBLE_STEP; renderPlans(); }
-
 function packageCardHtml(pkg){
   var dict = tliDict();
   var orig = packageOriginalTotal(pkg);
@@ -1082,37 +917,110 @@ function renderPackages(){
   grid.innerHTML = PACKAGES.map(packageCardHtml).join('');
 }
 
-/* URL 舊契約相容：p01／m08／p03 麵包屑仍連到舊 category 值（zh-1on1-online／flex／self-paced），
-   對應到新篩選模型的「型態」與「分類」條件，確保外部連結持續有效 */
+/* ===== 2026-11-24 前台分類（三層，資料見 assets/_plan_categories.js，後台在「銷售方案設定 › 前台分類」維護）=====
+   第一層＝頁首選單（?l1=），第二層＝本頁分頁（?l2=，可有描述），第三層＝方案群組，主打群組排最前面並加「主打」標示；
+   同一方案可出現在多個群組。勾「置頂」的方案顯示在本頁最上方的 banner（取代原本的頁首說明區）。
+   原本的分類／上課方式／制度／型態／價格帶篩選，改由三層分類取代。 */
+var PC = window.TLI_PLAN_CATS;
+var pcState = {l1:null, l2:null};
+var PLAN_IDS = PLANS.map(function(p){ return p.id; });
+/* 舊連結相容：p01／m08／p03 仍可能帶 ?category=，對應到新分類；分類被刪除時退回第一層第一個 */
 var LEGACY_CATEGORY_MAP = {
-  'zh-1on1-online': {category:'zh', format:'1on1'},
-  'flex': {format:'group-live'},
-  'self-paced': {format:'self-paced'}
+  'zh':['c1'], 'foreign':['c2'], 'cert':['c3'], 'corp':['c4'], 'culture':['c1','c1d'],
+  'zh-1on1-online':['c1','c1a'], 'flex':['c1','c1c'], 'self-paced':['c1','c1d']
 };
-function applyUrlFilter(){
-  var params = new URLSearchParams(window.location.search);
-  var catKey = params.get('category');
-  if(!catKey) return;
-  var newCat = CATEGORY_DEFS.filter(function(c){ return c.key === catKey; })[0];
-  if(newCat){
-    activeFilters.category.add(newCat.key);
-    return;
-  }
-  var legacy = LEGACY_CATEGORY_MAP[catKey];
-  if(legacy){
-    if(legacy.category) activeFilters.category.add(legacy.category);
-    if(legacy.format) activeFilters.format.add(legacy.format);
-  }
+function pcEsc(s){ return String(s == null ? '' : s).replace(/[&<>"]/g, function(ch){ return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[ch]; }); }
+function pcInitFromUrl(){
+  var q = new URLSearchParams(location.search), legacy = LEGACY_CATEGORY_MAP[q.get('category')];
+  pcState.l1 = q.get('l1'); pcState.l2 = q.get('l2');
+  if(!pcState.l1 && legacy){ pcState.l1 = legacy[0]; pcState.l2 = legacy[1] || null; }
 }
+function pcResolve(){
+  var l1 = PC.byId(pcState.l1); if(!l1 || l1.level !== 1) l1 = PC.roots()[0] || null;
+  var l2 = PC.byId(pcState.l2); if(!l2 || !l1 || l2.parent !== l1.id) l2 = l1 ? (PC.children(l1.id)[0] || null) : null;
+  pcState.l1 = l1 ? l1.id : null; pcState.l2 = l2 ? l2.id : null;
+  return {l1:l1, l2:l2};
+}
+function pcSelectL2(id){
+  pcState.l2 = id;
+  try { var u = new URL(location.href); u.searchParams.set('l1', pcState.l1); u.searchParams.set('l2', id); u.searchParams.delete('category'); history.replaceState(null, '', u); } catch(e){}
+  renderCategoryView();
+}
+function pcScroll(btn, d){
+  var row = btn.closest('.pc-shelf').querySelector('.pc-shelf-row');
+  row.scrollBy({left: d * row.clientWidth * 0.9, behavior: 'smooth'});
+}
+function pcSyncShelfNav(){
+  document.querySelectorAll('.pc-shelf').forEach(function(sh){
+    var row = sh.querySelector('.pc-shelf-row'), nav = sh.querySelector('.pc-shelf-nav');
+    if(row && nav) nav.style.visibility = row.scrollWidth > row.clientWidth + 4 ? '' : 'hidden';
+  });
+}
+window.addEventListener('resize', pcSyncShelfNav);
+function renderCategoryView(){
+  var r = pcResolve();
+  document.getElementById('pcL1Title').textContent = r.l1 ? PC.txt(r.l1.name) : T('課程', {en:'Courses'});
+  var l2s = r.l1 ? PC.children(r.l1.id) : [];
+  document.getElementById('pcTabs').innerHTML = l2s.map(function(x){
+    return '<button type="button" class="pc-tab'+(r.l2 && x.id === r.l2.id ? ' active' : '')+'" onclick="pcSelectL2(\''+x.id+'\')">'+pcEsc(PC.txt(x.name))+'</button>';
+  }).join('');
+  document.getElementById('pcTabsWrap').style.display = l2s.length ? '' : 'none';
+  var desc = r.l2 ? PC.txt(r.l2.desc) : '', descEl = document.getElementById('pcDesc');
+  descEl.innerHTML = desc;
+  descEl.style.display = desc.replace(/<[^>]*>/g, '').trim() ? '' : 'none';
+  var html = (r.l2 ? PC.shelvesOf(r.l2.id) : []).map(function(s){
+    var plans = PC.plansOf(s.id, PLAN_IDS).map(planById).filter(Boolean);
+    if(!plans.length) return '';
+    return '<section class="pc-shelf'+(s.featured ? ' featured' : '')+'">' +
+      '<div class="pc-shelf-head"><h2>'+pcEsc(PC.txt(s.name))+'</h2>' +
+        (s.featured ? '<span class="pc-feat">'+T('主打', {en:'Featured'})+'</span>' : '') +
+        '<span class="pc-shelf-count">'+T(plans.length+' 個方案', {en:plans.length+' plans'})+'</span>' +
+        '<span class="pc-shelf-nav"><button type="button" aria-label="'+T('上一組', {en:'Previous'})+'" onclick="pcScroll(this,-1)">‹</button><button type="button" aria-label="'+T('下一組', {en:'Next'})+'" onclick="pcScroll(this,1)">›</button></span></div>' +
+      '<div class="pc-shelf-row">'+plans.map(planCardHtml).join('')+'</div></section>';
+  }).join('');
+  document.getElementById('pcShelves').innerHTML = html ||
+    '<div class="pc-empty"><h3>'+T('這個分類目前沒有方案', {en:'No plans in this category yet'})+'</h3><p>'+T('可以看看其他分類，或請顧問幫您推薦。', {en:'Try another category, or ask an advisor for a recommendation.'})+'</p>' +
+    '<button type="button" class="btn btn-primary" onclick="aiOpen(\'fab\')">'+tliDict().p02_empty_cta+'</button></div>';
+  pcSyncShelfNav();
+}
+/* ---------- 置頂 banner ---------- */
+var pcBannerIdx = 0, pcBannerTimer = null;
+function pcPinnedPlans(){ return PC.state().pinned.map(planById).filter(Boolean); }
+function renderBanner(){
+  var pins = pcPinnedPlans(), b = document.getElementById('pcBanner'), dict = tliDict();
+  clearInterval(pcBannerTimer);
+  if(!pins.length){ b.hidden = true; b.innerHTML = ''; return; }
+  b.hidden = false;
+  if(pcBannerIdx >= pins.length) pcBannerIdx = 0;
+  b.innerHTML = '<div class="pc-banner-inner">' + pins.map(function(p, i){
+      var cats = PC.catsOf(p.id), l3 = cats.length ? PC.byId(cats[0]) : null, eyebrow = l3 ? PC.path(l3.parent) : '';
+      return '<div class="pc-slide'+(i === pcBannerIdx ? ' active' : '')+'">' +
+        '<div class="pc-slide-text">' + (eyebrow ? '<div class="pc-slide-eyebrow">'+pcEsc(eyebrow)+'</div>' : '') +
+          '<h2>'+p.name+'</h2><p>'+planText(p.pitch)+'</p>' +
+          '<div class="pc-slide-meta">'+includesSummaryLine(p)+'・'+planText(p.validity)+'</div>' +
+          '<div class="pc-slide-price">'+(p.price !== null ? fmtPrice(p.price) : dict.p02_price_quote)+'</div>' +
+          '<div class="pc-slide-cta"><a class="btn btn-light" href="p03_course_detail.html?plan='+p.id+'">'+dict.p02_view_plan+'</a>' +
+            (p.mode === 'online-direct' ? '<a class="btn btn-accent" href="../會員區/m13_checkout.html?plan='+p.id+'">'+dict.p02_buy_now+'</a>' : '') + '</div>' +
+        '</div>' +
+        '<div class="pc-slide-visual dt-'+((PLANS.indexOf(p) % 3) + 1)+'" aria-hidden="true"></div>' +
+      '</div>';
+    }).join('') +
+    (pins.length > 1 ? '<button type="button" class="pc-bn-arrow prev" aria-label="'+T('上一則', {en:'Previous'})+'" onclick="pcBannerGo(-1)">‹</button><button type="button" class="pc-bn-arrow next" aria-label="'+T('下一則', {en:'Next'})+'" onclick="pcBannerGo(1)">›</button>' +
+      '<div class="pc-bn-dots">'+pins.map(function(_, i){ return '<button type="button" class="'+(i === pcBannerIdx ? 'active' : '')+'" aria-label="'+(i+1)+'" onclick="pcBannerTo('+i+')"></button>'; }).join('')+'</div>' : '') +
+    '</div>';
+  if(pins.length > 1) pcBannerTimer = setInterval(function(){ pcBannerGo(1); }, 6000);
+}
+function pcBannerTo(i){ pcBannerIdx = i; renderBanner(); }
+function pcBannerGo(d){ var n = pcPinnedPlans().length; if(!n) return; pcBannerIdx = (pcBannerIdx + d + n) % n; renderBanner(); }
+
 function renderAllDynamic(){
-  fillTabs();
-  fillPills();
-  renderPlans();
+  renderBanner();
+  renderCategoryView();
   renderPackages();
 }
-/* 註：initial render 與 TLI_I18N.onRefresh 註冊移到檔案後段（語系模組載入、T() 可用之後）再執行，
-   applyUrlFilter() 不依賴 T()，可以留在這裡先跑，決定好篩選條件 */
-applyUrlFilter();
+/* 註：initial render 與 TLI_I18N.onRefresh 註冊移到檔案後段（語系模組載入、T() 可用之後）再執行；
+   pcInitFromUrl() 不依賴 T()，可以留在這裡先跑 */
+pcInitFromUrl();
 </script>
 
 <button class="ai-fab" onclick="aiOpen('fab')" aria-label="開啟線上諮詢" data-i18n-aria-label="ai_fab_aria"><svg width="23" height="23" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg></button>
